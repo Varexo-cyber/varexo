@@ -18,6 +18,17 @@ exports.handler = async (event) => {
   const params = event.queryStringParameters || {};
 
   try {
+    // Auto-migrate: add new columns if missing
+    try {
+      await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS invoice_date DATE DEFAULT NOW()`;
+      await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS customer_name VARCHAR(255)`;
+      await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS customer_company VARCHAR(255)`;
+      await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS customer_address TEXT`;
+      await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS customer_postal VARCHAR(20)`;
+      await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS customer_city VARCHAR(100)`;
+      await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS customer_phone VARCHAR(50)`;
+    } catch (e) { /* columns may already exist */ }
+
     // GET /invoices?email=... or ?all=true
     if (event.httpMethod === 'GET') {
       let result;

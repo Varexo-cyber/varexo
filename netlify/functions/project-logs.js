@@ -18,6 +18,20 @@ exports.handler = async (event) => {
   const params = event.queryStringParameters || {};
 
   try {
+    // Auto-create table if it doesn't exist
+    await sql`
+      CREATE TABLE IF NOT EXISTS project_logs (
+        id SERIAL PRIMARY KEY,
+        project_id INTEGER NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        log_type VARCHAR(50) DEFAULT 'update',
+        created_by VARCHAR(255),
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
     const mapLog = (l) => ({
       id: l.id.toString(),
       projectId: l.project_id.toString(),

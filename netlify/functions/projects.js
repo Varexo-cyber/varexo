@@ -18,6 +18,11 @@ exports.handler = async (event) => {
   const params = event.queryStringParameters || {};
 
   try {
+    // Auto-migrate: add progress column if missing
+    try {
+      await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS progress INTEGER DEFAULT 0`;
+    } catch (e) { /* column may already exist */ }
+
     // GET /projects?email=... - Get projects for customer
     // GET /projects?all=true - Get all projects (admin)
     if (event.httpMethod === 'GET') {
