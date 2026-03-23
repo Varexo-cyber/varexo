@@ -4,12 +4,13 @@ import { mockAuth } from '../services/mockAuth';
 import { roleService } from '../services/roleService';
 import { projectService, Customer, Project, Invoice, ProjectLog } from '../services/projectService';
 import { invoicesAPI } from '../services/api';
+import { getContactMessages, ContactMessage } from '../services/contactService';
 import PageTransition from '../components/PageTransition';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'customers' | 'projects' | 'invoices'>('customers');
+  const [activeTab, setActiveTab] = useState<'customers' | 'projects' | 'invoices' | 'recurring' | 'messages'>('customers');
   
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -26,6 +27,18 @@ const AdminDashboard: React.FC = () => {
   const [showCustomerDeleteConfirm, setShowCustomerDeleteConfirm] = useState<string | null>(null);
   const [showCustomerDropdown, setShowCustomerDropdown] = useState<string | null>(null);
   const [showInvoiceDeleteConfirm, setShowInvoiceDeleteConfirm] = useState<string | null>(null);
+  const [showProjectDropdown, setShowProjectDropdown] = useState<string | null>(null);
+  const [showInvoiceDropdown, setShowInvoiceDropdown] = useState<string | null>(null);
+  const [contactMessages, setContactMessages] = useState<ContactMessage[]>([]);
+  const [recurringInvoices, setRecurringInvoices] = useState<any[]>([]);
+  const [showRecurringForm, setShowRecurringForm] = useState(false);
+  const [recurringForm, setRecurringForm] = useState({
+    customerEmail: '',
+    description: '',
+    amount: '',
+    startDate: new Date().toISOString().split('T')[0],
+    intervalMonths: 1
+  });
   const [showProjectLogs, setShowProjectLogs] = useState(false);
   const [selectedProjectForLogs, setSelectedProjectForLogs] = useState<Project | null>(null);
   const [projectLogs, setProjectLogs] = useState<ProjectLog[]>([]);
@@ -83,14 +96,16 @@ const AdminDashboard: React.FC = () => {
       const target = event.target as Element;
       if (!target.closest('.dropdown-container')) {
         setShowCustomerDropdown(null);
+        setShowProjectDropdown(null);
+        setShowInvoiceDropdown(null);
       }
     };
 
-    if (showCustomerDropdown) {
+    if (showCustomerDropdown || showProjectDropdown || showInvoiceDropdown) {
       document.addEventListener('click', handleClickOutside);
       return () => document.removeEventListener('click', handleClickOutside);
     }
-  }, [showCustomerDropdown]);
+  }, [showCustomerDropdown, showProjectDropdown, showInvoiceDropdown]);
 
   const loadData = async () => {
     try {
@@ -111,6 +126,17 @@ const AdminDashboard: React.FC = () => {
       setInvoices(projectService.getAllInvoices());
       setStats(projectService.getStats());
     }
+    // Load contact messages separately (won't fail if table doesn't exist yet)
+    try {
+      const msgs = await getContactMessages();
+      setContactMessages(msgs);
+    } catch (e) { console.log('No contact messages yet'); }
+    // Load recurring invoices
+    try {
+      const res = await fetch('/.netlify/functions/recurring-invoices?all=true');
+      const ri = await res.json();
+      setRecurringInvoices(Array.isArray(ri) ? ri : []);
+    } catch (e) { console.log('No recurring invoices yet'); }
   };
 
   const handleCreateProject = async (e: React.FormEvent) => {
@@ -214,6 +240,50 @@ const AdminDashboard: React.FC = () => {
       setInvoiceForm(prev => ({ ...prev, invoiceNumber: `${year}-${String(nextNum).padStart(3, '0')}` }));
     }
     setShowInvoiceForm(true);
+  };
+
+  const handleCreateRecurring = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await fetch('/.netlify/functions/recurring-invoices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerEmail: recurringForm.customerEmail,
+          description: recurringForm.description,
+          amount: parseFloat(recurringForm.amount),
+          startDate: recurringForm.startDate,
+          intervalMonths: recurringForm.intervalMonths,
+        }),
+      });
+      setShowRecurringForm(false);
+      setRecurringForm({ customerEmail: '', description: '', amount: '', startDate: new Date().toISOString().split('T')[0], intervalMonths: 1 });
+      loadData();
+    } catch (error) {
+      console.error('Error creating recurring invoice:', error);
+    }
+  };
+
+  const handleToggleRecurring = async (id: string, active: boolean) => {
+    try {
+      await fetch(`/.netlify/functions/recurring-invoices/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active: !active }),
+      });
+      loadData();
+    } catch (error) {
+      console.error('Error toggling recurring invoice:', error);
+    }
+  };
+
+  const handleDeleteRecurring = async (id: string) => {
+    try {
+      await fetch(`/.netlify/functions/recurring-invoices/${id}`, { method: 'DELETE' });
+      loadData();
+    } catch (error) {
+      console.error('Error deleting recurring invoice:', error);
+    }
   };
 
   const handleDeleteProject = async (projectId: string) => {
@@ -796,6 +866,26 @@ const AdminDashboard: React.FC = () => {
               >
                 Facturen ({invoices.length})
               </button>
+              <button
+                onClick={() => setActiveTab('recurring')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'recurring'
+                    ? 'border-primary-500 text-primary-400'
+                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                Terugkerend ({recurringInvoices.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('messages')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'messages'
+                    ? 'border-primary-500 text-primary-400'
+                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                Berichten ({contactMessages.length})
+              </button>
             </nav>
           </div>
 
@@ -969,25 +1059,50 @@ const AdminDashboard: React.FC = () => {
                         </span>
                         <span className="text-xs text-gray-400">{project.customerEmail}</span>
                       </div>
-                      <div className="flex justify-end space-x-2">
-                        <button
-                          onClick={() => openProjectLogs(project)}
-                          className="text-green-400 hover:text-green-300 text-sm"
-                        >
-                          Logs
-                        </button>
-                        <button
-                          onClick={() => openEditProject(project)}
-                          className="text-primary-400 hover:text-primary-300 text-sm"
-                        >
-                          Bewerken
-                        </button>
-                        <button
-                          onClick={() => setShowDeleteConfirm(project.id)}
-                          className="text-red-400 hover:text-red-300 text-sm"
-                        >
-                          Verwijderen
-                        </button>
+                      <div className="flex justify-end">
+                        <div className="relative dropdown-container">
+                          <button
+                            onClick={() => setShowProjectDropdown(showProjectDropdown === project.id ? null : project.id)}
+                            className="text-gray-400 hover:text-white p-2 rounded hover:bg-dark-700"
+                          >
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                            </svg>
+                          </button>
+
+                          {showProjectDropdown === project.id && (
+                            <div className="absolute right-0 mt-1 w-48 bg-dark-800 border border-dark-600 rounded-lg shadow-xl z-50 py-1">
+                              <button
+                                onClick={() => { openProjectLogs(project); setShowProjectDropdown(null); }}
+                                className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                Logs Bekijken
+                              </button>
+                              <button
+                                onClick={() => { openEditProject(project); setShowProjectDropdown(null); }}
+                                className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Bewerken
+                              </button>
+                              <div className="border-t border-dark-600 my-1"></div>
+                              <button
+                                onClick={() => { setShowDeleteConfirm(project.id); setShowProjectDropdown(null); }}
+                                className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-dark-700 hover:text-red-300 flex items-center gap-2"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Verwijderen
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       {/* Delete Confirmation */}
@@ -1036,7 +1151,8 @@ const AdminDashboard: React.FC = () => {
                     </thead>
                     <tbody className="divide-y divide-dark-700">
                       {invoices.map((invoice) => (
-                        <tr key={invoice.id}>
+                        <React.Fragment key={invoice.id}>
+                        <tr>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div>
                               <div className="text-sm font-medium text-white">{invoice.invoiceNumber}</div>
@@ -1060,60 +1176,299 @@ const AdminDashboard: React.FC = () => {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div className="flex space-x-3">
+                            <div className="relative dropdown-container">
                               <button
-                                onClick={() => openInvoiceDetails(invoice)}
-                                className="text-blue-400 hover:text-blue-300"
+                                onClick={() => setShowInvoiceDropdown(showInvoiceDropdown === invoice.id ? null : invoice.id)}
+                                className="text-gray-400 hover:text-white p-2 rounded hover:bg-dark-700"
                               >
-                                Bekijk
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                                </svg>
                               </button>
-                              <button
-                                onClick={() => generatePDF(invoice)}
-                                className="text-primary-400 hover:text-primary-300"
-                              >
-                                PDF
-                              </button>
-                              <button
-                                onClick={() => setShowInvoiceDeleteConfirm(invoice.id)}
-                                className="text-red-400 hover:text-red-300"
-                              >
-                                Verwijderen
-                              </button>
+
+                              {showInvoiceDropdown === invoice.id && (
+                                <div className="absolute right-0 mt-1 w-48 bg-dark-800 border border-dark-600 rounded-lg shadow-xl z-50 py-1">
+                                  <button
+                                    onClick={() => { openInvoiceDetails(invoice); setShowInvoiceDropdown(null); }}
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    Bekijken
+                                  </button>
+                                  <button
+                                    onClick={() => { generatePDF(invoice); setShowInvoiceDropdown(null); }}
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Download PDF
+                                  </button>
+                                  <div className="border-t border-dark-600 my-1"></div>
+                                  <button
+                                    onClick={() => { setShowInvoiceDeleteConfirm(invoice.id); setShowInvoiceDropdown(null); }}
+                                    className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-dark-700 hover:text-red-300 flex items-center gap-2"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    Verwijderen
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </td>
-
-                          {/* Invoice Delete Confirmation */}
-                          {showInvoiceDeleteConfirm === invoice.id && (
-                            <tr>
-                              <td colSpan={5} className="px-6 py-4">
-                                <div className="p-3 bg-red-900/30 border border-red-700 rounded-lg">
-                                  <p className="text-red-300 text-sm mb-2">
-                                    Weet je zeker dat je factuur <strong>{invoice.invoiceNumber}</strong> wilt verwijderen? 
-                                    Dit kan niet ongedaan worden gemaakt.
-                                  </p>
-                                  <div className="flex space-x-2">
-                                    <button
-                                      onClick={() => handleDeleteInvoice(invoice.id)}
-                                      className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500"
-                                    >
-                                      Ja, verwijderen
-                                    </button>
-                                    <button
-                                      onClick={() => setShowInvoiceDeleteConfirm(null)}
-                                      className="px-3 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600"
-                                    >
-                                      Annuleren
-                                    </button>
-                                  </div>
-                                </div>
-                              </td>
-                            </tr>
-                          )}
                         </tr>
+
+                        {/* Invoice Delete Confirmation */}
+                        {showInvoiceDeleteConfirm === invoice.id && (
+                          <tr>
+                            <td colSpan={5} className="px-6 py-4">
+                              <div className="p-3 bg-red-900/30 border border-red-700 rounded-lg">
+                                <p className="text-red-300 text-sm mb-2">
+                                  Weet je zeker dat je factuur <strong>{invoice.invoiceNumber}</strong> wilt verwijderen? 
+                                  Dit kan niet ongedaan worden gemaakt.
+                                </p>
+                                <div className="flex space-x-2">
+                                  <button
+                                    onClick={() => handleDeleteInvoice(invoice.id)}
+                                    className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500"
+                                  >
+                                    Ja, verwijderen
+                                  </button>
+                                  <button
+                                    onClick={() => setShowInvoiceDeleteConfirm(null)}
+                                    className="px-3 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600"
+                                  >
+                                    Annuleren
+                                  </button>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                        </React.Fragment>
                       ))}
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'recurring' && (
+            <div className="bg-dark-800 rounded-lg border border-dark-700">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-semibold text-white">Terugkerende Facturen</h2>
+                  <button
+                    onClick={() => setShowRecurringForm(true)}
+                    className="bg-primary-500 text-dark-900 px-4 py-2 rounded-lg font-medium hover:bg-primary-400 text-sm"
+                  >
+                    + Nieuwe Terugkerende Factuur
+                  </button>
+                </div>
+
+                {recurringInvoices.length === 0 ? (
+                  <div className="text-center py-12">
+                    <svg className="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <p className="text-gray-400">Nog geen terugkerende facturen ingesteld</p>
+                    <p className="text-gray-500 text-sm mt-1">Stel maandelijkse facturen in voor onderhoud en andere diensten</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-dark-700">
+                      <thead>
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Klant</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Omschrijving</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Bedrag</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Cyclus</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Volgende</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Acties</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-dark-700">
+                        {recurringInvoices.map((ri: any) => (
+                          <tr key={ri.id}>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-white">{ri.customerEmail}</div>
+                              {ri.customerName && <div className="text-xs text-gray-400">{ri.customerName}</div>}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-300">{ri.description}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                              €{parseFloat(ri.amount).toFixed(2)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                              Elke {ri.intervalMonths === 1 ? 'maand' : `${ri.intervalMonths} maanden`}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                              {new Date(ri.nextInvoiceDate).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-2 py-1 text-xs rounded-full ${ri.active ? 'bg-green-900 text-green-300' : 'bg-gray-800 text-gray-400'}`}>
+                                {ri.active ? 'Actief' : 'Gepauzeerd'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <div className="flex space-x-3">
+                                <button
+                                  onClick={() => handleToggleRecurring(ri.id, ri.active)}
+                                  className={`${ri.active ? 'text-yellow-400 hover:text-yellow-300' : 'text-green-400 hover:text-green-300'}`}
+                                >
+                                  {ri.active ? 'Pauzeer' : 'Activeer'}
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteRecurring(ri.id)}
+                                  className="text-red-400 hover:text-red-300"
+                                >
+                                  Verwijder
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Recurring Invoice Form Modal */}
+          {showRecurringForm && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-dark-800 rounded-lg p-6 w-full max-w-md border border-dark-700">
+                <h3 className="text-xl font-semibold text-white mb-4">Nieuwe Terugkerende Factuur</h3>
+                <form onSubmit={handleCreateRecurring}>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Klant</label>
+                      <select
+                        value={recurringForm.customerEmail}
+                        onChange={(e) => setRecurringForm({ ...recurringForm, customerEmail: e.target.value })}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                        required
+                      >
+                        <option value="">Selecteer klant...</option>
+                        {customers.map(c => (
+                          <option key={c.email} value={c.email}>{c.displayName || c.email}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Omschrijving</label>
+                      <input
+                        type="text"
+                        value={recurringForm.description}
+                        onChange={(e) => setRecurringForm({ ...recurringForm, description: e.target.value })}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                        placeholder="bijv. Website onderhoud maandelijks"
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Bedrag (incl. BTW)</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={recurringForm.amount}
+                          onChange={(e) => setRecurringForm({ ...recurringForm, amount: e.target.value })}
+                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                          placeholder="49.99"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Cyclus (maanden)</label>
+                        <select
+                          value={recurringForm.intervalMonths}
+                          onChange={(e) => setRecurringForm({ ...recurringForm, intervalMonths: parseInt(e.target.value) })}
+                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                        >
+                          <option value={1}>Elke maand</option>
+                          <option value={2}>Elke 2 maanden</option>
+                          <option value={3}>Elk kwartaal</option>
+                          <option value={6}>Elk half jaar</option>
+                          <option value={12}>Elk jaar</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Startdatum (eerste factuur)</label>
+                      <input
+                        type="date"
+                        value={recurringForm.startDate}
+                        onChange={(e) => setRecurringForm({ ...recurringForm, startDate: e.target.value })}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="flex space-x-3 mt-6">
+                    <button type="submit" className="flex-1 bg-primary-500 text-dark-900 py-2 rounded-lg font-medium hover:bg-primary-400">
+                      Aanmaken
+                    </button>
+                    <button type="button" onClick={() => setShowRecurringForm(false)} className="flex-1 bg-dark-700 text-gray-300 py-2 rounded-lg font-medium hover:bg-dark-600">
+                      Annuleren
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'messages' && (
+            <div className="bg-dark-800 rounded-lg border border-dark-700">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-semibold text-white">Berichten</h2>
+                </div>
+                {contactMessages.length === 0 ? (
+                  <div className="text-center py-12">
+                    <svg className="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                    <p className="text-gray-400">Nog geen berichten ontvangen</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {contactMessages.map((msg) => (
+                      <div key={msg.id} className="bg-dark-900 p-5 rounded-lg border border-dark-700">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-blue-900/50 rounded-full flex items-center justify-center">
+                              <span className="text-blue-300 font-semibold text-sm">{msg.naam.charAt(0).toUpperCase()}</span>
+                            </div>
+                            <div>
+                              <h3 className="text-white font-medium">{msg.naam}</h3>
+                              <p className="text-gray-400 text-sm">{msg.email}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className={`px-2 py-1 text-xs rounded-full ${
+                              msg.type === 'quote' ? 'bg-blue-900 text-blue-300' : 'bg-gray-800 text-gray-300'
+                            }`}>
+                              {msg.type === 'quote' ? 'Offerte' : 'Contact'}
+                            </span>
+                            <span className="text-gray-500 text-xs">
+                              {new Date(msg.createdAt).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{msg.bericht}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}

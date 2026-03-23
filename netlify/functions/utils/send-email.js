@@ -50,7 +50,7 @@ function emailTemplate(title, content, ctaText, ctaUrl) {
             <p style="margin:0;color:#666;font-size:12px;line-height:1.6;">
               <strong>Varexo</strong><br>
               Regulierenstraat 10, 2694BA 's-Gravenzande<br>
-              +31 6 36075966 | info@varexo.nl
+              info@varexo.nl
             </p>
             <p style="margin:12px 0 0;color:#999;font-size:11px;">
               Dit is een automatisch bericht vanuit het Varexo klantenportaal.
@@ -62,7 +62,7 @@ function emailTemplate(title, content, ctaText, ctaUrl) {
   `;
 }
 
-async function sendEmail(to, subject, title, content, ctaText, ctaUrl) {
+async function sendEmail(to, subject, title, content, ctaText, ctaUrl, attachments) {
   // Skip if SMTP not configured
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
     console.log('Email skipped: SMTP not configured');
@@ -71,12 +71,16 @@ async function sendEmail(to, subject, title, content, ctaText, ctaUrl) {
 
   try {
     const transporter = createTransporter();
-    await transporter.sendMail({
+    const mailOptions = {
       from: `"Varexo" <${process.env.SMTP_USER}>`,
       to,
       subject,
       html: emailTemplate(title, content, ctaText, ctaUrl),
-    });
+    };
+    if (attachments && attachments.length > 0) {
+      mailOptions.attachments = attachments;
+    }
+    await transporter.sendMail(mailOptions);
     console.log(`Email sent to ${to}: ${subject}`);
     return true;
   } catch (error) {
@@ -123,7 +127,7 @@ async function sendProjectDeletedEmail(customerEmail, customerName, projectTitle
   return sendEmail(customerEmail, `Project verwijderd: ${projectTitle}`, 'Project Verwijderd', content, null, null);
 }
 
-async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, amount) {
+async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, amount, invoiceData) {
   const content = `
     <p style="color:#333;font-size:15px;line-height:1.7;">
       Beste ${customerName || 'klant'},
@@ -136,10 +140,45 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
       <p style="margin:0;color:#333;font-size:20px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)} <span style="font-size:13px;font-weight:400;color:#666;">(incl. 21% BTW)</span></p>
     </div>
     <p style="color:#333;font-size:15px;line-height:1.7;">
-      Ga naar uw klantenportaal om de factuur te bekijken.
+      De factuur vindt u als PDF in de bijlage van deze e-mail. U kunt ook inloggen op uw klantenportaal voor meer informatie.
     </p>
   `;
-  return sendEmail(customerEmail, `Nieuwe factuur: ${invoiceNumber}`, 'Nieuwe Factuur', content, 'Bekijk Factuur in Portaal', `${PORTAL_URL}/login`);
+
+  // Generate PDF attachment
+  let attachments = [];
+  try {
+    const { generateInvoicePDF } = require('./generate-invoice-pdf');
+    const pdfBuffer = await generateInvoicePDF({
+      invoiceNumber,
+      invoiceDate: invoiceData?.invoiceDate || new Date().toISOString(),
+      customerName: invoiceData?.customerName || customerName || '',
+      customerCompany: invoiceData?.customerCompany || '',
+      customerAddress: invoiceData?.customerAddress || '',
+      customerPostal: invoiceData?.customerPostal || '',
+      customerCity: invoiceData?.customerCity || '',
+      customerEmail,
+      customerPhone: invoiceData?.customerPhone || '',
+      items: invoiceData?.items || [],
+      amount,
+    });
+    attachments = [{
+      filename: `Factuur-${invoiceNumber}.pdf`,
+      content: pdfBuffer,
+      contentType: 'application/pdf',
+    }];
+  } catch (pdfErr) {
+    console.error('PDF generation failed, sending without attachment:', pdfErr.message);
+  }
+
+  return sendEmail(
+    customerEmail,
+    `Nieuwe factuur: ${invoiceNumber}`,
+    'Nieuwe Factuur',
+    content,
+    'Bekijk Klantenportaal',
+    `${PORTAL_URL}/login`,
+    attachments
+  );
 }
 
 async function sendProjectUpdateEmail(customerEmail, customerName, projectTitle, updateTitle, updateDescription, logType) {

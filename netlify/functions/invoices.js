@@ -135,8 +135,19 @@ exports.handler = async (event) => {
 
       const i = result[0];
 
-      // Send email notification
-      try { await sendNewInvoiceEmail(customerEmail, customerName || '', finalInvoiceNumber, amount); } catch (e) { console.log('Email skip:', e.message); }
+      // Send email notification with PDF attachment
+      try {
+        await sendNewInvoiceEmail(customerEmail, customerName || '', finalInvoiceNumber, amount, {
+          invoiceDate: invoiceDate || new Date().toISOString(),
+          customerName: customerName || '',
+          customerCompany: customerCompany || '',
+          customerAddress: customerAddress || '',
+          customerPostal: customerPostal || '',
+          customerCity: customerCity || '',
+          customerPhone: customerPhone || '',
+          items: items || [],
+        });
+      } catch (e) { console.log('Email skip:', e.message); }
 
       return { statusCode: 200, headers, body: JSON.stringify({
         id: i.id.toString(),

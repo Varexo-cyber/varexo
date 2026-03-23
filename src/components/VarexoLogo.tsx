@@ -46,24 +46,24 @@ const VarexoLogo: React.FC<VarexoLogoProps> = ({ size = 32, showText = false, cl
         />
         <defs>
           <linearGradient id="gradLeft" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#34d399" />
-            <stop offset="100%" stopColor="#10b981" />
+            <stop offset="0%" stopColor="#4fc3f7" />
+            <stop offset="100%" stopColor="#29b6f6" />
           </linearGradient>
           <linearGradient id="gradRight" x1="100%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#047857" />
-            <stop offset="100%" stopColor="#065f46" />
+            <stop offset="0%" stopColor="#1565c0" />
+            <stop offset="100%" stopColor="#0d47a1" />
           </linearGradient>
           <linearGradient id="gradCenter" x1="50%" y1="0%" x2="50%" y2="100%">
-            <stop offset="0%" stopColor="#6ee7b7" />
-            <stop offset="100%" stopColor="#10b981" />
+            <stop offset="0%" stopColor="#81d4fa" />
+            <stop offset="100%" stopColor="#42a5f5" />
           </linearGradient>
           <linearGradient id="gradLeftFacet" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#6ee7b7" />
-            <stop offset="100%" stopColor="#34d399" />
+            <stop offset="0%" stopColor="#b3e5fc" />
+            <stop offset="100%" stopColor="#4fc3f7" />
           </linearGradient>
           <linearGradient id="gradRightFacet" x1="100%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#059669" />
-            <stop offset="100%" stopColor="#047857" />
+            <stop offset="0%" stopColor="#1976d2" />
+            <stop offset="100%" stopColor="#1565c0" />
           </linearGradient>
         </defs>
       </svg>

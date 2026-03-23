@@ -1,4 +1,5 @@
-// Simple standalone mock contact service - no Firebase, no APIs
+const API_BASE = '/.netlify/functions';
+
 export interface ContactForm {
   naam: string;
   email: string;
@@ -7,31 +8,25 @@ export interface ContactForm {
   package?: string;
 }
 
-// Store submissions in localStorage for demo purposes
-const CONTACTS_KEY = 'varexo_contacts';
-const QUOTES_KEY = 'varexo_quotes';
+export interface ContactMessage {
+  id: string;
+  naam: string;
+  email: string;
+  bericht: string;
+  type: string;
+  status: string;
+  createdAt: string;
+}
 
 export const submitContactForm = async (formData: ContactForm): Promise<{ success: boolean; id?: string; error?: string }> => {
   try {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    const submission = {
-      ...formData,
-      id: 'contact-' + Date.now(),
-      timestamp: new Date().toISOString(),
-      status: 'new'
-    };
-
-    // Store in localStorage
-    const existing = JSON.parse(localStorage.getItem(CONTACTS_KEY) || '[]');
-    existing.push(submission);
-    localStorage.setItem(CONTACTS_KEY, JSON.stringify(existing));
-
-    // Log to console for demo
-    console.log('Contact form submitted:', submission);
-
-    return { success: true, id: submission.id };
+    const response = await fetch(`${API_BASE}/contact-messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    const data = await response.json();
+    return { success: true, id: data.id };
   } catch (error) {
     console.error('Error submitting contact form:', error);
     return { success: false, error: 'Failed to submit form' };
@@ -39,28 +34,15 @@ export const submitContactForm = async (formData: ContactForm): Promise<{ succes
 };
 
 export const submitQuoteRequest = async (formData: ContactForm): Promise<{ success: boolean; id?: string; error?: string }> => {
+  return submitContactForm({ ...formData, type: 'quote' });
+};
+
+export const getContactMessages = async (): Promise<ContactMessage[]> => {
   try {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    const submission = {
-      ...formData,
-      id: 'quote-' + Date.now(),
-      timestamp: new Date().toISOString(),
-      status: 'pending'
-    };
-
-    // Store in localStorage
-    const existing = JSON.parse(localStorage.getItem(QUOTES_KEY) || '[]');
-    existing.push(submission);
-    localStorage.setItem(QUOTES_KEY, JSON.stringify(existing));
-
-    // Log to console for demo
-    console.log('Quote request submitted:', submission);
-
-    return { success: true, id: submission.id };
+    const response = await fetch(`${API_BASE}/contact-messages`);
+    return await response.json();
   } catch (error) {
-    console.error('Error submitting quote request:', error);
-    return { success: false, error: 'Failed to submit quote request' };
+    console.error('Error fetching messages:', error);
+    return [];
   }
 };

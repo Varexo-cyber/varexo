@@ -16,5 +16,8 @@
   to = "/index.html"
   status = 200
 
+[functions."process-recurring-invoices"]
+  schedule = "0 8 * * *"
+
 [context.production]
   command = "npm run build"
