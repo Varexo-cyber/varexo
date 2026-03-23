@@ -49,11 +49,25 @@ const AdminDashboard: React.FC = () => {
     return unsubscribe;
   }, [navigate]);
 
-  const loadData = () => {
-    setCustomers(projectService.getCustomers());
-    setProjects(projectService.getAllProjects());
-    setInvoices(projectService.getAllInvoices());
-    setStats(projectService.getStats());
+  const loadData = async () => {
+    try {
+      const [c, p, i, s] = await Promise.all([
+        projectService.getCustomersAsync(),
+        projectService.getAllProjectsAsync(),
+        projectService.getAllInvoicesAsync(),
+        projectService.getStatsAsync()
+      ]);
+      setCustomers(c);
+      setProjects(p);
+      setInvoices(i);
+      setStats(s);
+    } catch (err) {
+      console.warn('API failed, using localStorage fallback:', err);
+      setCustomers(projectService.getCustomers());
+      setProjects(projectService.getAllProjects());
+      setInvoices(projectService.getAllInvoices());
+      setStats(projectService.getStats());
+    }
   };
 
   const handleCreateProject = async (e: React.FormEvent) => {
@@ -61,7 +75,7 @@ const AdminDashboard: React.FC = () => {
     if (!selectedCustomer) return;
 
     try {
-      projectService.createProject({
+      await projectService.createProjectAsync({
         title: projectForm.title,
         description: projectForm.description,
         status: projectForm.status,
@@ -84,7 +98,7 @@ const AdminDashboard: React.FC = () => {
     if (!editingProject) return;
 
     try {
-      projectService.updateProject(editingProject.id, {
+      await projectService.updateProjectAsync(editingProject.id, {
         title: projectForm.title,
         description: projectForm.description,
         status: projectForm.status,
@@ -125,7 +139,7 @@ const AdminDashboard: React.FC = () => {
         total: item.quantity * item.price
       }));
 
-      projectService.createInvoice({
+      await projectService.createInvoiceAsync({
         projectTitle: invoiceForm.projectTitle,
         customerEmail: selectedCustomer,
         amount: items.reduce((sum, item) => sum + item.total, 0),

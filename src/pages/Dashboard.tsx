@@ -31,9 +31,18 @@ const CustomerDashboard: React.FC = () => {
     return unsubscribe;
   }, [navigate]);
 
-  const loadCustomerData = (email: string) => {
-    setProjects(projectService.getProjectsForCustomer(email));
-    setInvoices(projectService.getInvoicesForCustomer(email));
+  const loadCustomerData = async (email: string) => {
+    try {
+      const [p, i] = await Promise.all([
+        projectService.getProjectsForCustomerAsync(email),
+        projectService.getInvoicesForCustomerAsync(email)
+      ]);
+      setProjects(p);
+      setInvoices(i);
+    } catch {
+      setProjects(projectService.getProjectsForCustomer(email));
+      setInvoices(projectService.getInvoicesForCustomer(email));
+    }
   };
 
   if (loading) {
