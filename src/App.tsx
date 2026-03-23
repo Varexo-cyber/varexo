@@ -23,7 +23,7 @@ import WhatsAppButton from './components/WhatsAppButton';
 import HelpWidget from './components/HelpWidget';
 
 function App() {
-  const [_user, setUser] = React.useState<any>(null);
+  const [, setUser] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
