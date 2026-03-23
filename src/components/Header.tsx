@@ -8,6 +8,8 @@ const Header: React.FC = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,6 +19,28 @@ const Header: React.FC = () => {
     });
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const isMobile = window.innerWidth < 768; // md breakpoint
+      
+      if (isMobile) {
+        if (currentScrollY > lastScrollY && currentScrollY > 80) {
+          // Scrolling down - hide header
+          setIsHidden(true);
+        } else {
+          // Scrolling up - show header
+          setIsHidden(false);
+        }
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   const handleLogout = async () => {
     await mockAuth.signOut();
@@ -35,7 +59,7 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className="bg-dark-950/80 backdrop-blur-md shadow-lg border-b border-dark-700/50 sticky top-0 z-50">
+    <header className={`bg-dark-950/80 backdrop-blur-md shadow-lg border-b border-dark-700/50 sticky top-0 z-50 transition-transform duration-300 ease-out md:transform-none ${isHidden ? '-translate-y-full' : 'translate-y-0'}`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <Link to="/" className="flex items-center">

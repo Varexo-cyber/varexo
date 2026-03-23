@@ -19,7 +19,7 @@ exports.handler = async (event) => {
       const customers = await sql`SELECT COUNT(*) as count FROM users WHERE is_admin = FALSE`;
       const projects = await sql`SELECT COUNT(*) as count FROM projects`;
       const activeProjects = await sql`SELECT COUNT(*) as count FROM projects WHERE status = 'active'`;
-      const revenue = await sql`SELECT COALESCE(SUM(amount), 0) as total FROM invoices WHERE status = 'paid'`;
+      const revenue = await sql`SELECT COALESCE(SUM(amount), 0) as total FROM invoices WHERE status != 'draft'`;
       const pendingInvoices = await sql`SELECT COUNT(*) as count FROM invoices WHERE status = 'sent'`;
       const overdueInvoices = await sql`SELECT COUNT(*) as count FROM invoices WHERE status = 'overdue'`;
 

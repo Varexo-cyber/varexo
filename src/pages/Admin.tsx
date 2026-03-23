@@ -29,6 +29,8 @@ const AdminDashboard: React.FC = () => {
   const [showInvoiceDeleteConfirm, setShowInvoiceDeleteConfirm] = useState<string | null>(null);
   const [showProjectDropdown, setShowProjectDropdown] = useState<string | null>(null);
   const [showInvoiceDropdown, setShowInvoiceDropdown] = useState<string | null>(null);
+  const [showMessageDropdown, setShowMessageDropdown] = useState<string | null>(null);
+  const [showMessageDeleteConfirm, setShowMessageDeleteConfirm] = useState<string | null>(null);
   const [contactMessages, setContactMessages] = useState<ContactMessage[]>([]);
   const [recurringInvoices, setRecurringInvoices] = useState<any[]>([]);
   const [showRecurringForm, setShowRecurringForm] = useState(false);
@@ -98,14 +100,15 @@ const AdminDashboard: React.FC = () => {
         setShowCustomerDropdown(null);
         setShowProjectDropdown(null);
         setShowInvoiceDropdown(null);
+        setShowMessageDropdown(null);
       }
     };
 
-    if (showCustomerDropdown || showProjectDropdown || showInvoiceDropdown) {
+    if (showCustomerDropdown || showProjectDropdown || showInvoiceDropdown || showMessageDropdown) {
       document.addEventListener('click', handleClickOutside);
       return () => document.removeEventListener('click', handleClickOutside);
     }
-  }, [showCustomerDropdown, showProjectDropdown, showInvoiceDropdown]);
+  }, [showCustomerDropdown, showProjectDropdown, showInvoiceDropdown, showMessageDropdown]);
 
   const loadData = async () => {
     try {
@@ -283,6 +286,25 @@ const AdminDashboard: React.FC = () => {
       loadData();
     } catch (error) {
       console.error('Error deleting recurring invoice:', error);
+    }
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    try {
+      // Try API first
+      try {
+        await fetch(`/.netlify/functions/contact-messages/${id}`, { method: 'DELETE' });
+      } catch (apiErr) {
+        // API not available, delete from localStorage
+        const stored = JSON.parse(localStorage.getItem('varexo_contacts') || '[]');
+        const filtered = stored.filter((m: any) => m.id !== id);
+        localStorage.setItem('varexo_contacts', JSON.stringify(filtered));
+      }
+      setShowMessageDeleteConfirm(null);
+      setShowMessageDropdown(null);
+      loadData();
+    } catch (error) {
+      console.error('Error deleting message:', error);
     }
   };
 
@@ -1462,9 +1484,55 @@ const AdminDashboard: React.FC = () => {
                             <span className="text-gray-500 text-xs">
                               {new Date(msg.createdAt).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                             </span>
+                            {/* Dropdown Menu */}
+                            <div className="relative dropdown-container">
+                              <button
+                                onClick={() => setShowMessageDropdown(showMessageDropdown === msg.id ? null : msg.id)}
+                                className="text-gray-400 hover:text-white p-2 rounded hover:bg-dark-700"
+                              >
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                                </svg>
+                              </button>
+
+                              {showMessageDropdown === msg.id && (
+                                <div className="absolute right-0 mt-1 w-48 bg-dark-800 border border-dark-600 rounded-lg shadow-xl z-50 py-1">
+                                  <button
+                                    onClick={() => { setShowMessageDeleteConfirm(msg.id); setShowMessageDropdown(null); }}
+                                    className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-dark-700 hover:text-red-300 flex items-center gap-2"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    Verwijderen
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                         <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{msg.bericht}</p>
+
+                        {/* Delete Confirmation */}
+                        {showMessageDeleteConfirm === msg.id && (
+                          <div className="mt-3 p-3 bg-red-900/30 border border-red-700 rounded-lg">
+                            <p className="text-red-300 text-sm mb-2">Weet je zeker dat je dit bericht wilt verwijderen?</p>
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => handleDeleteMessage(msg.id)}
+                                className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500"
+                              >
+                                Ja, verwijderen
+                              </button>
+                              <button
+                                onClick={() => setShowMessageDeleteConfirm(null)}
+                                className="px-3 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600"
+                              >
+                                Annuleren
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

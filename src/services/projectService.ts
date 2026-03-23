@@ -359,7 +359,7 @@ class ProjectService {
       totalCustomers: customers.length,
       totalProjects: projects.length,
       activeProjects: projects.filter(p => p.status === 'active').length,
-      totalRevenue: invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0),
+      totalRevenue: invoices.filter(i => i.status !== 'draft').reduce((sum, i) => sum + i.amount, 0),
       pendingInvoices: invoices.filter(i => i.status === 'sent').length,
       overdueInvoices: invoices.filter(i => i.status === 'overdue').length
     };

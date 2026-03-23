@@ -23,12 +23,12 @@ function emailTemplate(title, content, ctaText, ctaUrl) {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>${title}</title>
     </head>
-    <body style="margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#0a0f1a;">
-      <div style="max-width:600px;margin:40px auto;background:#111827;border-radius:16px;border:1px solid #1e3a2f;overflow:hidden;">
+    <body style="margin:0;padding:20px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f5f5f5;">
+      <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:hidden;border:1px solid #e0e0e0;">
         
         <!-- Header -->
-        <div style="background:linear-gradient(135deg,#064e3b 0%,#0f172a 50%,#064e3b 100%);padding:40px;text-align:center;border-bottom:2px solid #10b981;">
-          <div style="max-width:180px;margin:0 auto 20px;">
+        <div style="background:linear-gradient(135deg,#ffffff 0%,#f8fffe 100%);padding:30px 40px;text-align:center;border-bottom:3px solid #10b981;">
+          <div style="max-width:140px;margin:0 auto 15px;">
             <!-- Varexo Logo -->
             <svg width="180" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -65,31 +65,32 @@ function emailTemplate(title, content, ctaText, ctaUrl) {
               <polygon points="90,15 62,15 50,45 65,55" fill="url(#gradRightFacet)" opacity="0.9" />
             </svg>
           </div>
-          <h1 style="color:#ffffff;font-size:28px;font-weight:300;margin:0;letter-spacing:3px;">${title}</h1>
+          <h1 style="color:#1a1a1a;font-size:24px;font-weight:600;margin:0;letter-spacing:1px;">${title}</h1>
+          <p style="color:#10b981;font-size:12px;margin:8px 0 0;letter-spacing:2px;text-transform:uppercase;">ICT • Websites • Software</p>
         </div>
 
         <!-- Content -->
-        <div style="padding:40px 40px 20px;">
+        <div style="padding:40px 40px 20px;background:#ffffff;">
           ${content}
         </div>
 
         <!-- CTA Button -->
         ${ctaText && ctaUrl ? `
-        <div style="padding:0 40px 40px;text-align:center;">
-          <a href="${ctaUrl}" style="display:inline-block;background:#10b981;color:#ffffff;padding:16px 32px;text-decoration:none;border-radius:8px;font-weight:600;font-size:16px;letter-spacing:0.5px;">
+        <div style="padding:0 40px 40px;text-align:center;background:#ffffff;">
+          <a href="${ctaUrl}" style="display:inline-block;background:#10b981;color:#ffffff;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;box-shadow:0 4px 12px rgba(16,185,129,0.25);">
             ${ctaText}
           </a>
         </div>
         ` : ''}
 
         <!-- Footer -->
-        <div style="background:#0a0f1a;padding:24px 40px;border-top:1px solid #1e3a2f;">
-          <p style="margin:0;color:#6b7280;font-size:12px;line-height:1.6;">
-            <strong style="color:#10b981;">Varexo</strong> &bull; ICT &bull; Websites &bull; Software<br>
+        <div style="background:#f8f9fa;padding:24px 40px;border-top:1px solid #e9ecef;">
+          <p style="margin:0;color:#6c757d;font-size:13px;line-height:1.6;text-align:center;">
+            <strong style="color:#10b981;">Varexo</strong><br>
             Regulierenstraat 10, 2694BA 's-Gravenzande<br>
             <a href="mailto:info@varexo.nl" style="color:#10b981;text-decoration:none;">info@varexo.nl</a>
           </p>
-          <p style="margin:12px 0 0;color:#4b5563;font-size:11px;">
+          <p style="margin:12px 0 0;color:#adb5bd;font-size:11px;text-align:center;">
             Dit is een automatisch bericht vanuit het Varexo klantenportaal.
           </p>
         </div>
@@ -130,16 +131,16 @@ async function sendEmail(to, subject, title, content, ctaText, ctaUrl, attachmen
 
 async function sendNewProjectEmail(customerEmail, customerName, projectTitle) {
   const content = `
-    <p style="color:#e5e7eb;font-size:15px;line-height:1.7;">
+    <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">
       Beste ${customerName || 'klant'},
     </p>
-    <p style="color:#9ca3af;font-size:15px;line-height:1.7;">
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">
       Er is een nieuw project voor u aangemaakt:
     </p>
-    <div style="background:#0d2818;border-left:4px solid #10b981;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
-      <p style="margin:0;color:#10b981;font-size:18px;font-weight:600;">${projectTitle}</p>
+    <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0;color:#059669;font-size:18px;font-weight:600;">${projectTitle}</p>
     </div>
-    <p style="color:#9ca3af;font-size:15px;line-height:1.7;">
+    <p style="color:#555555;font-size:16px;line-height:1.7;">
       Ga naar uw klantenportaal om de details te bekijken en de voortgang te volgen.
     </p>
   `;
@@ -148,16 +149,16 @@ async function sendNewProjectEmail(customerEmail, customerName, projectTitle) {
 
 async function sendProjectDeletedEmail(customerEmail, customerName, projectTitle) {
   const content = `
-    <p style="color:#e5e7eb;font-size:15px;line-height:1.7;">
+    <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">
       Beste ${customerName || 'klant'},
     </p>
-    <p style="color:#9ca3af;font-size:15px;line-height:1.7;">
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">
       Het volgende project is verwijderd:
     </p>
-    <div style="background:#1c1917;border-left:4px solid #ef4444;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
-      <p style="margin:0;color:#fca5a5;font-size:18px;font-weight:600;">${projectTitle}</p>
+    <div style="background:#fef2f2;border-left:4px solid #ef4444;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0;color:#dc2626;font-size:18px;font-weight:600;">${projectTitle}</p>
     </div>
-    <p style="color:#9ca3af;font-size:15px;line-height:1.7;">
+    <p style="color:#555555;font-size:16px;line-height:1.7;">
       Heeft u vragen? Neem gerust contact met ons op.
     </p>
   `;
@@ -168,23 +169,26 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
   const dueDate = invoiceData?.dueDate ? new Date(invoiceData.dueDate).toLocaleDateString('nl-NL') : '14 dagen na factuurdatum';
   
   const content = `
-    <p style="color:#e5e7eb;font-size:15px;line-height:1.7;">
+    <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">
       Beste ${customerName || 'klant'},
     </p>
-    <p style="color:#9ca3af;font-size:15px;line-height:1.7;">
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">
       Er staat een nieuwe factuur voor u klaar. Gelieve deze binnen de gestelde termijn te voldoen.
     </p>
-    <div style="background:#0d2818;border-left:4px solid #10b981;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
-      <p style="margin:0 0 8px;color:#10b981;font-size:16px;font-weight:600;">Factuur ${invoiceNumber}</p>
-      <p style="margin:0 0 8px;color:#ffffff;font-size:24px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)} <span style="font-size:13px;font-weight:400;color:#6b7280;">(incl. 21% BTW)</span></p>
-      <p style="margin:4px 0 0;color:#6b7280;font-size:13px;">Te betalen voor: <strong style="color:#fbbf24;">${dueDate}</strong></p>
+    <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0 0 8px;color:#059669;font-size:16px;font-weight:600;">Factuur ${invoiceNumber}</p>
+      <p style="margin:0 0 8px;color:#1a1a1a;font-size:28px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)} <span style="font-size:14px;font-weight:400;color:#6b7280;">(incl. 21% BTW)</span></p>
+      <p style="margin:4px 0 0;color:#6b7280;font-size:14px;">Te betalen voor: <strong style="color:#d97706;">${dueDate}</strong></p>
     </div>
-    <p style="color:#9ca3af;font-size:15px;line-height:1.7;">
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">
       De factuur vindt u als PDF in de bijlage van deze e-mail. 
-      U kunt betalen via bankoverschrijving naar IBAN: <strong style="color:#e5e7eb;">NL75INGB0756428726</strong>
-      t.n.v. <strong style="color:#e5e7eb;">Mohammed Taher</strong>.
     </p>
-    <p style="color:#9ca3af;font-size:15px;line-height:1.7;margin-top:12px;">
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">
+      U kunt betalen via bankoverschrijving naar:<br>
+      <strong style="color:#1a1a1a;">IBAN: NL75INGB0756428726</strong><br>
+      <strong style="color:#1a1a1a;">t.n.v. Mohammed Taher</strong>
+    </p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;">
       Bekijk uw klantenportaal voor meer informatie en het overzicht van al uw facturen.
     </p>
   `;
@@ -238,18 +242,18 @@ async function sendProjectUpdateEmail(customerEmail, customerName, projectTitle,
   const typeLabel = typeLabels[logType] || 'Project update';
 
   const content = `
-    <p style="color:#e5e7eb;font-size:15px;line-height:1.7;">
+    <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">
       Beste ${customerName || 'klant'},
     </p>
-    <p style="color:#9ca3af;font-size:15px;line-height:1.7;">
-      Er is een nieuwe update voor uw project <strong style="color:#10b981;">${projectTitle}</strong>:
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">
+      Er is een nieuwe update voor uw project <strong style="color:#059669;">${projectTitle}</strong>:
     </p>
-    <div style="background:#0d2818;border-left:4px solid #10b981;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
-      <p style="margin:0 0 4px;color:#34d399;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;">${typeLabel}</p>
-      <p style="margin:0 0 8px;color:#ffffff;font-size:18px;font-weight:600;">${updateTitle}</p>
-      ${updateDescription ? `<p style="margin:0;color:#9ca3af;font-size:14px;line-height:1.6;">${updateDescription}</p>` : ''}
+    <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0 0 4px;color:#10b981;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;">${typeLabel}</p>
+      <p style="margin:0 0 8px;color:#1a1a1a;font-size:18px;font-weight:600;">${updateTitle}</p>
+      ${updateDescription ? `<p style="margin:0;color:#555555;font-size:15px;line-height:1.6;">${updateDescription}</p>` : ''}
     </div>
-    <p style="color:#9ca3af;font-size:15px;line-height:1.7;">
+    <p style="color:#555555;font-size:16px;line-height:1.7;">
       Ga naar uw klantenportaal om alle details en de voortgang te bekijken.
     </p>
   `;
@@ -258,20 +262,20 @@ async function sendProjectUpdateEmail(customerEmail, customerName, projectTitle,
 
 async function sendProgressUpdateEmail(customerEmail, customerName, projectTitle, progress) {
   const content = `
-    <p style="color:#e5e7eb;font-size:15px;line-height:1.7;">
+    <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">
       Beste ${customerName || 'klant'},
     </p>
-    <p style="color:#9ca3af;font-size:15px;line-height:1.7;">
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">
       De voortgang van uw project is bijgewerkt:
     </p>
-    <div style="background:#0d2818;border-left:4px solid #10b981;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
-      <p style="margin:0 0 12px;color:#10b981;font-size:18px;font-weight:600;">${projectTitle}</p>
-      <div style="background:#1f2937;border-radius:10px;height:20px;overflow:hidden;">
+    <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0 0 12px;color:#059669;font-size:18px;font-weight:600;">${projectTitle}</p>
+      <div style="background:#e5e7eb;border-radius:10px;height:20px;overflow:hidden;">
         <div style="background:linear-gradient(90deg,#059669,#10b981);height:100%;width:${progress}%;border-radius:10px;"></div>
       </div>
-      <p style="margin:8px 0 0;color:#ffffff;font-size:16px;font-weight:600;text-align:center;">${progress}% voltooid</p>
+      <p style="margin:12px 0 0;color:#1a1a1a;font-size:16px;font-weight:600;text-align:center;">${progress}% voltooid</p>
     </div>
-    <p style="color:#9ca3af;font-size:15px;line-height:1.7;">
+    <p style="color:#555555;font-size:16px;line-height:1.7;">
       Ga naar uw klantenportaal voor meer details.
     </p>
   `;
