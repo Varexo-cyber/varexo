@@ -360,12 +360,13 @@ const AdminDashboard: React.FC = () => {
     const customerPhone = (invoice as any).customerPhone || '';
     const customerEmail = invoice.customerEmail;
     const invoiceNumber = (invoice as any).invoiceNumber || invoice.invoiceNumber;
-    const invoiceDate = (invoice as any).invoiceDate || new Date(invoice.createdAt).toLocaleDateString('nl-NL');
+    const rawDate = (invoice as any).invoiceDate || invoice.createdAt;
+    const invoiceDate = rawDate ? new Date(rawDate).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
     
-    // Calculate totals
-    const subtotal = invoice.amount;
-    const btw = 0; // BTW 0% voor particulier
-    const total = subtotal + btw;
+    // Calculate totals - BTW 21% is inbegrepen
+    const totalIncl = invoice.amount;
+    const subtotalExcl = totalIncl / 1.21;
+    const btwAmount = totalIncl - subtotalExcl;
 
     const html = `
       <!DOCTYPE html>
@@ -572,20 +573,44 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </div>
               <div class="logo-section">
-                <!-- Clean Varexo Logo -->
-                <svg width="140" height="70" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- Varexo Logo -->
+                <svg width="180" height="80" viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg">
                   <defs>
-                    <linearGradient id="vGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" style="stop-color:#2563eb"/>
-                      <stop offset="100%" style="stop-color:#1e40af"/>
+                    <linearGradient id="vLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#7cb8d4"/>
+                      <stop offset="100%" style="stop-color:#4a9cc7"/>
+                    </linearGradient>
+                    <linearGradient id="vRight" x1="100%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" style="stop-color:#1a3a5c"/>
+                      <stop offset="100%" style="stop-color:#2a5a8c"/>
+                    </linearGradient>
+                    <linearGradient id="vCenter" x1="50%" y1="0%" x2="50%" y2="100%">
+                      <stop offset="0%" style="stop-color:#5ba3cb"/>
+                      <stop offset="100%" style="stop-color:#3d8ab8"/>
+                    </linearGradient>
+                    <linearGradient id="vLeftFacet" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#a8d4e6"/>
+                      <stop offset="100%" style="stop-color:#6db5d4"/>
+                    </linearGradient>
+                    <linearGradient id="vRightFacet" x1="100%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" style="stop-color:#1e4d7a"/>
+                      <stop offset="100%" style="stop-color:#2a6a9e"/>
                     </linearGradient>
                   </defs>
-                  <!-- V shape -->
-                  <path d="M30,25 L70,85 L110,25" fill="none" stroke="url(#vGradient)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- Left side of V -->
+                  <polygon points="15,15 65,105 50,105 5,30" fill="url(#vLeft)"/>
+                  <!-- Right side of V -->
+                  <polygon points="115,15 65,105 80,105 120,30" fill="url(#vRight)"/>
+                  <!-- Center highlight -->
+                  <polygon points="65,105 45,60 65,48 85,60" fill="url(#vCenter)" opacity="0.85"/>
+                  <!-- Left facet -->
+                  <polygon points="15,15 48,15 65,48 45,60" fill="url(#vLeftFacet)" opacity="0.9"/>
+                  <!-- Right facet -->
+                  <polygon points="115,15 82,15 65,48 85,60" fill="url(#vRightFacet)" opacity="0.9"/>
                   <!-- Text VAREXO -->
-                  <text x="125" y="65" font-family="system-ui, -apple-system, sans-serif" font-size="42" font-weight="700" fill="#1e40af" letter-spacing="2">VAREXO</text>
+                  <text x="138" y="68" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="700" fill="#1a3050" letter-spacing="3">VAREXO</text>
                   <!-- Tagline -->
-                  <text x="125" y="82" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#64748b" letter-spacing="1.5">ICT • WEBSITES • SOFTWARE</text>
+                  <text x="140" y="88" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#5a9ec4" letter-spacing="2">ICT  •  WEBSITES  •  SOFTWARE</text>
                 </svg>
                 <div class="company-info">
                   <strong>Varexo</strong><br>
@@ -646,17 +671,18 @@ const AdminDashboard: React.FC = () => {
             <div class="totals-section">
               <div class="totals-table">
                 <div class="totals-row">
-                  <span>Subtotaal</span>
-                  <span>€${subtotal.toFixed(2)}</span>
+                  <span>Subtotaal (excl. BTW)</span>
+                  <span>€${subtotalExcl.toFixed(2)}</span>
                 </div>
                 <div class="totals-row">
-                  <span>Btw</span>
-                  <span>€${btw.toFixed(2)}</span>
+                  <span>BTW 21%</span>
+                  <span>€${btwAmount.toFixed(2)}</span>
                 </div>
                 <div class="totals-row total">
-                  <span>Totaal</span>
-                  <span>€${total.toFixed(2)}</span>
+                  <span>Totaal (incl. BTW)</span>
+                  <span>€${totalIncl.toFixed(2)}</span>
                 </div>
+                <div style="font-size:11px;color:#666;margin-top:6px;text-align:right;">Alle bedragen zijn inclusief 21% BTW</div>
               </div>
             </div>
 
@@ -669,7 +695,7 @@ const AdminDashboard: React.FC = () => {
                   <strong>Varexo</strong><br>
                   t.n.v. Mohammed Taher<br>
                   IBAN: NL75INGB0756428726<br>
-                  BTW: niet van toepassing (particulier)
+                  BTW: 21% inbegrepen
                 </div>
               </div>
             </div>
