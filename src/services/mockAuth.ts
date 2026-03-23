@@ -90,24 +90,28 @@ export const mockAuth = {
     }
   },
 
-  // Sign in with Google (mock simulation)
-  signInWithGoogle: async (): Promise<MockUser> => {
-    await new Promise(resolve => setTimeout(resolve, 1200));
+  // Save Google user to database and localStorage
+  saveGoogleUser: async (email: string, displayName: string, photoURL?: string): Promise<MockUser> => {
+    const user: MockUser = { email, displayName, photoURL, provider: 'google' };
 
-    const mockGoogleEmails = ['john.doe@gmail.com', 'jane.smith@gmail.com', 'user@gmail.com'];
-    const randomEmail = mockGoogleEmails[Math.floor(Math.random() * mockGoogleEmails.length)];
-    const displayName = randomEmail.split('@')[0].replace('.', ' ');
-    const photoURL = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff`;
-
-    const user: MockUser = {
-      email: randomEmail,
-      displayName,
-      photoURL,
-      provider: 'google'
-    };
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-    return user;
+    // Try saving to database via API
+    try {
+      const dbUser = await authAPI.googleLogin(email, displayName, photoURL);
+      const savedUser: MockUser = {
+        email: dbUser.email || email,
+        displayName: dbUser.displayName || displayName,
+        photoURL: dbUser.photoURL || photoURL,
+        provider: 'google',
+        isAdmin: dbUser.isAdmin
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(savedUser));
+      return savedUser;
+    } catch (apiErr) {
+      console.error('Google API save failed:', apiErr);
+      // Fallback: save to localStorage only
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+      return user;
+    }
   },
 
   // Sign out

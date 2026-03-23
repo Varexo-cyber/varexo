@@ -13,8 +13,18 @@ exports.handler = async (event) => {
   }
 
   const sql = neon();
-  const path = event.path.replace('/.netlify/functions/auth', '').replace('/api/auth', '');
+  const rawPath = event.path || '';
+  const path = rawPath.replace('/.netlify/functions/auth', '').replace('/api/auth', '') || '/';
   const body = event.body ? JSON.parse(event.body) : {};
+
+  // Debug endpoint
+  if (event.httpMethod === 'GET' && (path === '/debug' || path === '/debug/')) {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ rawPath, path, method: event.httpMethod })
+    };
+  }
 
   try {
     // POST /auth/signup

@@ -55,16 +55,8 @@ const SignUp: React.FC = () => {
     try {
       const googleUser: GoogleUser = await googleAuthService.signIn();
       
-      // Convert Google user to our MockUser format and store
-      const user = {
-        email: googleUser.email,
-        displayName: googleUser.displayName,
-        photoURL: googleUser.photoURL,
-        provider: 'google' as const
-      };
-      
-      // Store in localStorage using our existing auth structure
-      localStorage.setItem('varexo_user', JSON.stringify(user));
+      // Save Google user to database + localStorage
+      await mockAuth.saveGoogleUser(googleUser.email, googleUser.displayName, googleUser.photoURL);
       
       navigate('/dashboard');
     } catch (error: any) {
