@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { mockAuth } from '../services/mockAuth';
 import { roleService } from '../services/roleService';
 import { projectService, Customer, Project, Invoice, ProjectLog } from '../services/projectService';
+import { invoicesAPI } from '../services/api';
 import PageTransition from '../components/PageTransition';
 
 const AdminDashboard: React.FC = () => {
@@ -23,6 +24,8 @@ const AdminDashboard: React.FC = () => {
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [showCustomerDeleteConfirm, setShowCustomerDeleteConfirm] = useState<string | null>(null);
+  const [showCustomerDropdown, setShowCustomerDropdown] = useState<string | null>(null);
+  const [showInvoiceDeleteConfirm, setShowInvoiceDeleteConfirm] = useState<string | null>(null);
   const [showProjectLogs, setShowProjectLogs] = useState(false);
   const [selectedProjectForLogs, setSelectedProjectForLogs] = useState<Project | null>(null);
   const [projectLogs, setProjectLogs] = useState<ProjectLog[]>([]);
@@ -73,6 +76,21 @@ const AdminDashboard: React.FC = () => {
 
     return unsubscribe;
   }, [navigate]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.dropdown-container')) {
+        setShowCustomerDropdown(null);
+      }
+    };
+
+    if (showCustomerDropdown) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [showCustomerDropdown]);
 
   const loadData = async () => {
     try {
@@ -182,6 +200,22 @@ const AdminDashboard: React.FC = () => {
     setSelectedInvoice(null);
   };
 
+  const openInvoiceForm = async (customerEmail?: string) => {
+    if (customerEmail) setSelectedCustomer(customerEmail);
+    // Auto-fetch next invoice number
+    try {
+      const data = await invoicesAPI.getNextNumber();
+      setInvoiceForm(prev => ({ ...prev, invoiceNumber: data.nextNumber }));
+    } catch {
+      // Fallback: generate locally
+      const year = new Date().getFullYear();
+      const existing = invoices.filter(i => i.invoiceNumber.startsWith(`${year}-`));
+      const nextNum = existing.length + 1;
+      setInvoiceForm(prev => ({ ...prev, invoiceNumber: `${year}-${String(nextNum).padStart(3, '0')}` }));
+    }
+    setShowInvoiceForm(true);
+  };
+
   const handleDeleteProject = async (projectId: string) => {
     try {
       await projectService.deleteProjectAsync(projectId);
@@ -199,6 +233,16 @@ const AdminDashboard: React.FC = () => {
       loadData();
     } catch (error) {
       console.error('Error deleting customer:', error);
+    }
+  };
+
+  const handleDeleteInvoice = async (invoiceId: string) => {
+    try {
+      await projectService.deleteInvoiceAsync(invoiceId);
+      setShowInvoiceDeleteConfirm(null);
+      loadData();
+    } catch (error) {
+      console.error('Error deleting invoice:', error);
     }
   };
 
@@ -766,31 +810,59 @@ const AdminDashboard: React.FC = () => {
                             {customer.invoiceCount}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div className="flex space-x-2">
+                            <div className="relative dropdown-container">
                               <button
-                                onClick={() => {
-                                  setSelectedCustomer(customer.email);
-                                  setShowProjectForm(true);
-                                }}
-                                className="text-primary-400 hover:text-primary-300"
+                                onClick={() => setShowCustomerDropdown(showCustomerDropdown === customer.email ? null : customer.email)}
+                                className="text-gray-400 hover:text-white p-2 rounded hover:bg-dark-700"
                               >
-                                Project
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                                </svg>
                               </button>
-                              <button
-                                onClick={() => {
-                                  setSelectedCustomer(customer.email);
-                                  setShowInvoiceForm(true);
-                                }}
-                                className="text-green-400 hover:text-green-300"
-                              >
-                                Factuur
-                              </button>
-                              <button
-                                onClick={() => setShowCustomerDeleteConfirm(customer.email)}
-                                className="text-red-400 hover:text-red-300"
-                              >
-                                Verwijderen
-                              </button>
+
+                              {/* Dropdown Menu */}
+                              {showCustomerDropdown === customer.email && (
+                                <div className="absolute right-0 mt-2 w-48 bg-dark-800 border border-dark-600 rounded-lg shadow-lg z-10">
+                                  <button
+                                    onClick={() => {
+                                      setSelectedCustomer(customer.email);
+                                      setShowProjectForm(true);
+                                      setShowCustomerDropdown(null);
+                                    }}
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                    Nieuw Project
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      openInvoiceForm(customer.email);
+                                      setShowCustomerDropdown(null);
+                                    }}
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Nieuwe Factuur
+                                  </button>
+                                  <div className="border-t border-dark-600"></div>
+                                  <button
+                                    onClick={() => {
+                                      setShowCustomerDeleteConfirm(customer.email);
+                                      setShowCustomerDropdown(null);
+                                    }}
+                                    className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-dark-700 hover:text-red-300 flex items-center gap-2"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    Klant Verwijderen
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </td>
 
@@ -975,8 +1047,42 @@ const AdminDashboard: React.FC = () => {
                               >
                                 PDF
                               </button>
+                              <button
+                                onClick={() => setShowInvoiceDeleteConfirm(invoice.id)}
+                                className="text-red-400 hover:text-red-300"
+                              >
+                                Verwijderen
+                              </button>
                             </div>
                           </td>
+
+                          {/* Invoice Delete Confirmation */}
+                          {showInvoiceDeleteConfirm === invoice.id && (
+                            <tr>
+                              <td colSpan={5} className="px-6 py-4">
+                                <div className="p-3 bg-red-900/30 border border-red-700 rounded-lg">
+                                  <p className="text-red-300 text-sm mb-2">
+                                    Weet je zeker dat je factuur <strong>{invoice.invoiceNumber}</strong> wilt verwijderen? 
+                                    Dit kan niet ongedaan worden gemaakt.
+                                  </p>
+                                  <div className="flex space-x-2">
+                                    <button
+                                      onClick={() => handleDeleteInvoice(invoice.id)}
+                                      className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500"
+                                    >
+                                      Ja, verwijderen
+                                    </button>
+                                    <button
+                                      onClick={() => setShowInvoiceDeleteConfirm(null)}
+                                      className="px-3 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600"
+                                    >
+                                      Annuleren
+                                    </button>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
                         </tr>
                       ))}
                     </tbody>
@@ -1197,14 +1303,13 @@ const AdminDashboard: React.FC = () => {
                     {/* Invoice Details */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Factuurnummer</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Factuurnummer <span className="text-gray-500 text-xs">(automatisch)</span></label>
                         <input
                           type="text"
                           value={invoiceForm.invoiceNumber}
                           onChange={(e) => setInvoiceForm(prev => ({ ...prev, invoiceNumber: e.target.value }))}
-                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
-                          placeholder="bv. 2026-001"
-                          required
+                          className="w-full px-3 py-2 bg-dark-900 border border-dark-600 rounded-lg text-primary-400 font-mono"
+                          readOnly
                         />
                       </div>
                       <div>

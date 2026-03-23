@@ -29,6 +29,26 @@ exports.handler = async (event) => {
       await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS customer_phone VARCHAR(50)`;
     } catch (e) { /* columns may already exist */ }
 
+    // GET /invoices?nextNumber=true - Get next invoice number
+    if (event.httpMethod === 'GET' && params.nextNumber === 'true') {
+      const year = new Date().getFullYear().toString();
+      const pattern = `${year}-%`;
+      const lastInvoice = await sql`
+        SELECT invoice_number FROM invoices 
+        WHERE invoice_number LIKE ${pattern}
+        ORDER BY invoice_number DESC LIMIT 1
+      `;
+      
+      let nextNum = 1;
+      if (lastInvoice.length > 0) {
+        const lastNum = parseInt(lastInvoice[0].invoice_number.split('-')[1]) || 0;
+        nextNum = lastNum + 1;
+      }
+      
+      const nextNumber = `${year}-${String(nextNum).padStart(3, '0')}`;
+      return { statusCode: 200, headers, body: JSON.stringify({ nextNumber }) };
+    }
+
     // GET /invoices?email=... or ?all=true
     if (event.httpMethod === 'GET') {
       let result;
@@ -70,8 +90,23 @@ exports.handler = async (event) => {
         amount, status, dueDate, items 
       } = body;
       
-      // Use provided invoice number or generate one
-      const finalInvoiceNumber = invoiceNumber || `INV-${Date.now()}`;
+      // Auto-generate invoice number in YYYY-NNN format if not provided
+      let finalInvoiceNumber = invoiceNumber;
+      if (!finalInvoiceNumber) {
+        const year = new Date().getFullYear().toString();
+        const pattern = `${year}-%`;
+        const lastInv = await sql`
+          SELECT invoice_number FROM invoices 
+          WHERE invoice_number LIKE ${pattern}
+          ORDER BY invoice_number DESC LIMIT 1
+        `;
+        let nextNum = 1;
+        if (lastInv.length > 0) {
+          const lastNum = parseInt(lastInv[0].invoice_number.split('-')[1]) || 0;
+          nextNum = lastNum + 1;
+        }
+        finalInvoiceNumber = `${year}-${String(nextNum).padStart(3, '0')}`;
+      }
 
       let result;
       try {

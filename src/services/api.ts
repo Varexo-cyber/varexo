@@ -64,6 +64,9 @@ export const invoicesAPI = {
   getAll: () =>
     apiCall('/invoices?all=true'),
 
+  getNextNumber: () =>
+    apiCall('/invoices?nextNumber=true'),
+
   create: (invoice: { projectTitle: string; customerEmail: string; amount: number; status: string; dueDate: string; items: any[] }) =>
     apiCall('/invoices', { method: 'POST', body: JSON.stringify(invoice) }),
 
