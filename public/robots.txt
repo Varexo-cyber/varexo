@@ -1,0 +1,10 @@
+# Varexo - ICT & Webdevelopment
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /login
+Disallow: /signup
+
+Sitemap: https://varexo.nl/sitemap.xml
