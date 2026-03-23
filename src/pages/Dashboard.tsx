@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mockAuth, MockUser } from '../services/mockAuth';
 import { roleService } from '../services/roleService';
-import { projectService, Project, Invoice } from '../services/projectService';
+import { projectService, Project, Invoice, ProjectLog } from '../services/projectService';
 import PageTransition from '../components/PageTransition';
 
 const CustomerDashboard: React.FC = () => {
@@ -12,6 +12,9 @@ const CustomerDashboard: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [projectLogs, setProjectLogs] = useState<ProjectLog[]>([]);
+  const [logsLoading, setLogsLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = mockAuth.onAuthChanged((currentUser) => {
@@ -30,6 +33,52 @@ const CustomerDashboard: React.FC = () => {
 
     return unsubscribe;
   }, [navigate]);
+
+  const openProjectDetails = async (project: Project) => {
+    setSelectedProject(project);
+    setLogsLoading(true);
+    try {
+      const logs = await projectService.getProjectLogsAsync(project.id);
+      setProjectLogs(logs);
+    } catch {
+      setProjectLogs(projectService.getProjectLogs(project.id));
+    }
+    setLogsLoading(false);
+  };
+
+  const closeProjectDetails = () => {
+    setSelectedProject(null);
+    setProjectLogs([]);
+  };
+
+  const getProgressColor = (progress: number) => {
+    if (progress < 25) return 'bg-red-500';
+    if (progress < 50) return 'bg-yellow-500';
+    if (progress < 75) return 'bg-blue-500';
+    return 'bg-green-500';
+  };
+
+  const getLogTypeIcon = (type: string) => {
+    switch (type) {
+      case 'milestone': return '🎯';
+      case 'feature': return '✨';
+      case 'bugfix': return '🐛';
+      case 'design': return '🎨';
+      case 'deployment': return '🚀';
+      default: return '📝';
+    }
+  };
+
+  const getLogTypeLabel = (type: string) => {
+    switch (type) {
+      case 'milestone': return 'Mijlpaal';
+      case 'feature': return 'Nieuwe functie';
+      case 'bugfix': return 'Bugfix';
+      case 'design': return 'Design';
+      case 'deployment': return 'Deployment';
+      default: return 'Update';
+    }
+  };
 
   const loadCustomerData = async (email: string) => {
     try {
@@ -159,10 +208,34 @@ const CustomerDashboard: React.FC = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {projects.map((project) => (
-                      <div key={project.id} className="bg-dark-900 p-4 rounded-lg border border-dark-700">
-                        <h3 className="text-lg font-medium text-white mb-2">{project.title}</h3>
-                        <p className="text-gray-400 text-sm mb-3">{project.description}</p>
-                        <div className="flex justify-between items-center mb-2">
+                      <div 
+                        key={project.id} 
+                        onClick={() => openProjectDetails(project)}
+                        className="bg-dark-900 p-4 rounded-lg border border-dark-700 hover:border-primary-500 cursor-pointer transition group"
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-lg font-medium text-white group-hover:text-primary-400 transition">{project.title}</h3>
+                          <svg className="w-5 h-5 text-gray-500 group-hover:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-3 line-clamp-2">{project.description}</p>
+                        
+                        {/* Progress Bar */}
+                        <div className="mb-3">
+                          <div className="flex justify-between text-xs text-gray-400 mb-1">
+                            <span>Voortgang</span>
+                            <span>{project.progress || 0}%</span>
+                          </div>
+                          <div className="w-full bg-dark-700 rounded-full h-2">
+                            <div 
+                              className={`${getProgressColor(project.progress || 0)} h-2 rounded-full transition-all duration-500`}
+                              style={{ width: `${project.progress || 0}%` }}
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center">
                           <span className={`px-2 py-1 text-xs rounded-full ${
                             project.status === 'active' ? 'bg-green-900 text-green-300' :
                             project.status === 'completed' ? 'bg-blue-900 text-blue-300' :
@@ -173,17 +246,12 @@ const CustomerDashboard: React.FC = () => {
                              project.status === 'active' ? 'Actief' :
                              project.status === 'completed' ? 'Voltooid' : 'Gepauzeerd'}
                           </span>
+                          {project.deadline && (
+                            <span className="text-xs text-gray-500">
+                              {new Date(project.deadline).toLocaleDateString('nl-NL')}
+                            </span>
+                          )}
                         </div>
-                        {project.deadline && (
-                          <p className="text-xs text-gray-500">
-                            Deadline: {new Date(project.deadline).toLocaleDateString('nl-NL')}
-                          </p>
-                        )}
-                        {project.budget && (
-                          <p className="text-xs text-gray-500">
-                            Budget: €{project.budget.toFixed(2)}
-                          </p>
-                        )}
                       </div>
                     ))}
                   </div>
@@ -257,6 +325,108 @@ const CustomerDashboard: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Project Details Modal */}
+      {selectedProject && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-dark-800 rounded-lg border border-dark-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-white mb-2">{selectedProject.title}</h2>
+                  <p className="text-gray-400">{selectedProject.description}</p>
+                </div>
+                <button onClick={closeProjectDetails} className="text-gray-400 hover:text-white">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Progress Section */}
+              <div className="bg-dark-900 p-4 rounded-lg border border-dark-700 mb-6">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-lg font-semibold text-white">Voortgang</h3>
+                  <span className="text-2xl font-bold text-primary-400">{selectedProject.progress || 0}%</span>
+                </div>
+                <div className="w-full bg-dark-700 rounded-full h-3 mb-4">
+                  <div 
+                    className={`${getProgressColor(selectedProject.progress || 0)} h-3 rounded-full transition-all duration-500`}
+                    style={{ width: `${selectedProject.progress || 0}%` }}
+                  ></div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                  <div className="bg-dark-800 p-3 rounded">
+                    <div className="text-xs text-gray-400">Status</div>
+                    <div className="text-sm font-medium text-white">
+                      {selectedProject.status === 'planning' ? 'Planning' :
+                       selectedProject.status === 'active' ? 'Actief' :
+                       selectedProject.status === 'completed' ? 'Voltooid' : 'Gepauzeerd'}
+                    </div>
+                  </div>
+                  {selectedProject.deadline && (
+                    <div className="bg-dark-800 p-3 rounded">
+                      <div className="text-xs text-gray-400">Deadline</div>
+                      <div className="text-sm font-medium text-white">
+                        {new Date(selectedProject.deadline).toLocaleDateString('nl-NL')}
+                      </div>
+                    </div>
+                  )}
+                  {selectedProject.budget && (
+                    <div className="bg-dark-800 p-3 rounded">
+                      <div className="text-xs text-gray-400">Budget</div>
+                      <div className="text-sm font-medium text-white">€{selectedProject.budget.toFixed(2)}</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Project Logs */}
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-4">Project Updates & Logs</h3>
+                {logsLoading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
+                    <p className="text-gray-400 mt-2">Updates laden...</p>
+                  </div>
+                ) : projectLogs.length === 0 ? (
+                  <div className="bg-dark-900 p-6 rounded-lg border border-dark-700 text-center">
+                    <p className="text-gray-400">Nog geen updates voor dit project.</p>
+                    <p className="text-gray-500 text-sm mt-1">De admin zal hier updates plaatsen.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {projectLogs.map((log) => (
+                      <div key={log.id} className="bg-dark-900 p-4 rounded-lg border border-dark-700">
+                        <div className="flex items-start gap-3">
+                          <span className="text-2xl">{getLogTypeIcon(log.logType)}</span>
+                          <div className="flex-1">
+                            <div className="flex justify-between items-start mb-1">
+                              <div>
+                                <span className="text-xs font-medium text-primary-400 uppercase tracking-wide">
+                                  {getLogTypeLabel(log.logType)}
+                                </span>
+                                <h4 className="text-white font-medium">{log.title}</h4>
+                              </div>
+                              <span className="text-xs text-gray-500">
+                                {new Date(log.createdAt).toLocaleDateString('nl-NL')}
+                              </span>
+                            </div>
+                            <p className="text-gray-400 text-sm">{log.description}</p>
+                            {log.createdBy && (
+                              <p className="text-xs text-gray-500 mt-2">Door: {log.createdBy}</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </PageTransition>
   );
 };

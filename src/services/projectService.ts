@@ -1,5 +1,16 @@
 // Project and Invoice management - uses Netlify Functions API with localStorage fallback
-import { projectsAPI, invoicesAPI, customersAPI, statsAPI } from './api';
+import { projectsAPI, invoicesAPI, customersAPI, statsAPI, projectLogsAPI } from './api';
+
+export interface ProjectLog {
+  id: string;
+  projectId: string;
+  title: string;
+  description: string;
+  logType: 'update' | 'milestone' | 'bugfix' | 'feature' | 'design' | 'deployment';
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface Project {
   id: string;
@@ -11,6 +22,8 @@ export interface Project {
   updatedAt: string;
   deadline?: string;
   budget?: number;
+  progress?: number;
+  features?: string[];
 }
 
 export interface Invoice {
@@ -278,6 +291,86 @@ class ProjectService {
       pendingInvoices: invoices.filter(i => i.status === 'sent').length,
       overdueInvoices: invoices.filter(i => i.status === 'overdue').length
     };
+  }
+
+  // Project Logs management
+  async getProjectLogsAsync(projectId: string): Promise<ProjectLog[]> {
+    try {
+      return await projectLogsAPI.getForProject(projectId);
+    } catch {
+      return this.getProjectLogs(projectId);
+    }
+  }
+
+  getProjectLogs(projectId: string): ProjectLog[] {
+    const logs = JSON.parse(localStorage.getItem(`varexo_logs_${projectId}`) || '[]');
+    return logs.sort((a: ProjectLog, b: ProjectLog) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async addProjectLogAsync(log: Omit<ProjectLog, 'id' | 'createdAt' | 'updatedAt'>): Promise<ProjectLog> {
+    try {
+      return await projectLogsAPI.create(log as any);
+    } catch {
+      return this.addProjectLog(log);
+    }
+  }
+
+  addProjectLog(log: Omit<ProjectLog, 'id' | 'createdAt' | 'updatedAt'>): ProjectLog {
+    const logs = this.getProjectLogs(log.projectId);
+    const newLog: ProjectLog = {
+      ...log,
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    logs.unshift(newLog);
+    localStorage.setItem(`varexo_logs_${log.projectId}`, JSON.stringify(logs.slice(0, 50))); // Keep last 50 logs
+    return newLog;
+  }
+
+  async updateProjectLogAsync(id: string, projectId: string, updates: Partial<ProjectLog>): Promise<ProjectLog | null> {
+    try {
+      return await projectLogsAPI.update(id, updates);
+    } catch {
+      return this.updateProjectLog(id, projectId, updates);
+    }
+  }
+
+  updateProjectLog(id: string, projectId: string, updates: Partial<ProjectLog>): ProjectLog | null {
+    const logs = this.getProjectLogs(projectId);
+    const index = logs.findIndex(l => l.id === id);
+    if (index === -1) return null;
+    
+    logs[index] = { ...logs[index], ...updates, updatedAt: new Date().toISOString() };
+    localStorage.setItem(`varexo_logs_${projectId}`, JSON.stringify(logs));
+    return logs[index];
+  }
+
+  async deleteProjectLogAsync(id: string, projectId: string): Promise<boolean> {
+    try {
+      await projectLogsAPI.delete(id);
+      return true;
+    } catch {
+      return this.deleteProjectLog(id, projectId);
+    }
+  }
+
+  deleteProjectLog(id: string, projectId: string): boolean {
+    const logs = this.getProjectLogs(projectId);
+    const filtered = logs.filter(l => l.id !== id);
+    if (filtered.length === logs.length) return false;
+    
+    localStorage.setItem(`varexo_logs_${projectId}`, JSON.stringify(filtered));
+    return true;
+  }
+
+  // Update project progress
+  async updateProjectProgressAsync(projectId: string, progress: number): Promise<Project | null> {
+    return this.updateProjectAsync(projectId, { progress: Math.max(0, Math.min(100, progress)) });
+  }
+
+  updateProjectProgress(projectId: string, progress: number): Project | null {
+    return this.updateProject(projectId, { progress: Math.max(0, Math.min(100, progress)) });
   }
 }
 

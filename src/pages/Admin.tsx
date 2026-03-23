@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mockAuth } from '../services/mockAuth';
 import { roleService } from '../services/roleService';
-import { projectService, Customer, Project, Invoice } from '../services/projectService';
+import { projectService, Customer, Project, Invoice, ProjectLog } from '../services/projectService';
 import PageTransition from '../components/PageTransition';
 
 const AdminDashboard: React.FC = () => {
@@ -21,15 +21,34 @@ const AdminDashboard: React.FC = () => {
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<string>('');
 
+  const [showProjectLogs, setShowProjectLogs] = useState(false);
+  const [selectedProjectForLogs, setSelectedProjectForLogs] = useState<Project | null>(null);
+  const [projectLogs, setProjectLogs] = useState<ProjectLog[]>([]);
+  const [newLogForm, setNewLogForm] = useState({
+    title: '',
+    description: '',
+    logType: 'update' as 'update' | 'milestone' | 'bugfix' | 'feature' | 'design' | 'deployment'
+  });
+
   const [projectForm, setProjectForm] = useState({
     title: '',
     description: '',
     status: 'planning' as 'planning' | 'active' | 'completed' | 'paused',
     deadline: '',
-    budget: ''
+    budget: '',
+    progress: 0
   });
 
   const [invoiceForm, setInvoiceForm] = useState({
+    invoiceNumber: '',
+    invoiceDate: new Date().toISOString().split('T')[0],
+    customerName: '',
+    customerCompany: '',
+    customerAddress: '',
+    customerPostal: '',
+    customerCity: '',
+    customerPhone: '',
+    customerEmail: '',
     projectTitle: '',
     amount: '',
     dueDate: '',
@@ -85,7 +104,7 @@ const AdminDashboard: React.FC = () => {
       });
 
       setShowProjectForm(false);
-      setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '' });
+      setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '', progress: 0 });
       setSelectedCustomer('');
       loadData();
     } catch (error) {
@@ -108,7 +127,7 @@ const AdminDashboard: React.FC = () => {
 
       setShowEditProjectForm(false);
       setEditingProject(null);
-      setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '' });
+      setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '', progress: 0 });
       loadData();
     } catch (error) {
       console.error('Error updating project:', error);
@@ -122,9 +141,60 @@ const AdminDashboard: React.FC = () => {
       description: project.description,
       status: project.status,
       deadline: project.deadline || '',
-      budget: project.budget?.toString() || ''
+      budget: project.budget?.toString() || '',
+      progress: project.progress || 0
     });
     setShowEditProjectForm(true);
+  };
+
+  const openProjectLogs = async (project: Project) => {
+    setSelectedProjectForLogs(project);
+    try {
+      const logs = await projectService.getProjectLogsAsync(project.id);
+      setProjectLogs(logs);
+    } catch {
+      setProjectLogs(projectService.getProjectLogs(project.id));
+    }
+    setShowProjectLogs(true);
+  };
+
+  const closeProjectLogs = () => {
+    setShowProjectLogs(false);
+    setSelectedProjectForLogs(null);
+    setProjectLogs([]);
+    setNewLogForm({ title: '', description: '', logType: 'update' });
+  };
+
+  const handleAddLog = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedProjectForLogs) return;
+
+    try {
+      await projectService.addProjectLogAsync({
+        projectId: selectedProjectForLogs.id,
+        title: newLogForm.title,
+        description: newLogForm.description,
+        logType: newLogForm.logType,
+        createdBy: 'Admin'
+      });
+      
+      setNewLogForm({ title: '', description: '', logType: 'update' });
+      
+      // Refresh logs
+      const logs = await projectService.getProjectLogsAsync(selectedProjectForLogs.id);
+      setProjectLogs(logs);
+    } catch (error) {
+      console.error('Error adding log:', error);
+    }
+  };
+
+  const handleUpdateProgress = async (projectId: string, progress: number) => {
+    try {
+      await projectService.updateProjectProgressAsync(projectId, progress);
+      loadData();
+    } catch (error) {
+      console.error('Error updating progress:', error);
+    }
   };
 
   const handleCreateInvoice = async (e: React.FormEvent) => {
@@ -149,7 +219,21 @@ const AdminDashboard: React.FC = () => {
       });
 
       setShowInvoiceForm(false);
-      setInvoiceForm({ projectTitle: '', amount: '', dueDate: '', items: [{ description: '', quantity: 1, price: 0, total: 0 }] });
+      setInvoiceForm({ 
+        invoiceNumber: '', 
+        invoiceDate: new Date().toISOString().split('T')[0], 
+        customerName: '', 
+        customerCompany: '', 
+        customerAddress: '', 
+        customerPostal: '', 
+        customerCity: '', 
+        customerPhone: '', 
+        customerEmail: '', 
+        projectTitle: '', 
+        amount: '', 
+        dueDate: '', 
+        items: [{ description: '', quantity: 1, price: 0, total: 0 }] 
+      });
       setSelectedCustomer('');
       loadData();
     } catch (error) {
@@ -178,59 +262,324 @@ const AdminDashboard: React.FC = () => {
   };
 
   const generatePDF = (invoice: Invoice) => {
+    // Get customer details from invoice metadata or form
+    const customerName = (invoice as any).customerName || invoice.customerEmail.split('@')[0];
+    const customerCompany = (invoice as any).customerCompany || '';
+    const customerAddress = (invoice as any).customerAddress || '';
+    const customerPostal = (invoice as any).customerPostal || '';
+    const customerCity = (invoice as any).customerCity || '';
+    const customerPhone = (invoice as any).customerPhone || '';
+    const customerEmail = invoice.customerEmail;
+    const invoiceNumber = (invoice as any).invoiceNumber || invoice.invoiceNumber;
+    const invoiceDate = (invoice as any).invoiceDate || new Date(invoice.createdAt).toLocaleDateString('nl-NL');
+    
+    // Calculate totals
+    const subtotal = invoice.amount;
+    const btw = 0; // BTW 0% voor particulier
+    const total = subtotal + btw;
+
     const html = `
+      <!DOCTYPE html>
       <html>
         <head>
-          <title>Factuur ${invoice.invoiceNumber}</title>
+          <meta charset="UTF-8">
+          <title>Factuur ${invoiceNumber}</title>
           <style>
-            body { font-family: Arial, sans-serif; margin: 40px; }
-            .header { border-bottom: 2px solid #10b981; padding-bottom: 20px; margin-bottom: 30px; }
-            .invoice-info { float: right; text-align: right; }
-            .items { margin: 30px 0; }
-            .items table { width: 100%; border-collapse: collapse; }
-            .items th, .items td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-            .items th { background-color: #f5f5f5; }
-            .total { text-align: right; font-size: 18px; font-weight: bold; margin-top: 20px; }
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: 'Inter', Arial, sans-serif; 
+              background: linear-gradient(135deg, #d4edda 0%, #a8d8ea 50%, #d4edda 100%);
+              min-height: 100vh;
+              padding: 60px;
+              color: #333;
+            }
+            .invoice-container {
+              max-width: 800px;
+              margin: 0 auto;
+              background: white;
+              box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+              position: relative;
+            }
+            .header-section {
+              background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
+              padding: 40px;
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+            }
+            .header-left h1 {
+              font-size: 32px;
+              font-weight: 700;
+              color: #000;
+              margin-bottom: 30px;
+            }
+            .invoice-info {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 20px;
+            }
+            .info-block h3 {
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+              color: #000;
+              margin-bottom: 8px;
+              letter-spacing: 0.5px;
+            }
+            .info-block p {
+              font-size: 16px;
+              color: #000;
+            }
+            .logo-section {
+              text-align: right;
+            }
+            .logo-section img {
+              max-width: 150px;
+              margin-bottom: 10px;
+            }
+            .company-info {
+              font-size: 12px;
+              color: #333;
+              line-height: 1.6;
+              text-align: right;
+            }
+            .customer-section {
+              padding: 30px 40px;
+              display: flex;
+              justify-content: space-between;
+            }
+            .customer-details {
+              max-width: 300px;
+            }
+            .customer-label {
+              font-size: 11px;
+              font-weight: 600;
+              text-transform: uppercase;
+              color: #000;
+              margin-bottom: 8px;
+            }
+            .customer-details p {
+              font-size: 13px;
+              color: #333;
+              line-height: 1.5;
+            }
+            .customer-email {
+              color: #0066cc;
+              text-decoration: underline;
+            }
+            .summary-row {
+              display: grid;
+              grid-template-columns: 1fr 1fr 2fr 1fr;
+              background: #f8f9fa;
+              margin: 0 40px;
+              padding: 15px 20px;
+              border: 1px solid #dee2e6;
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+              color: #2c6e4f;
+            }
+            .summary-row span {
+              text-align: center;
+            }
+            .summary-row span:first-child {
+              text-align: left;
+            }
+            .summary-row span:last-child {
+              text-align: right;
+            }
+            .items-table {
+              margin: 0 40px;
+              border-collapse: collapse;
+              width: calc(100% - 80px);
+            }
+            .items-table th {
+              text-align: left;
+              padding: 15px 20px;
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+              color: #2c6e4f;
+              border-bottom: 2px solid #2c6e4f;
+            }
+            .items-table td {
+              padding: 20px;
+              font-size: 13px;
+              color: #333;
+              border-bottom: 1px solid #eee;
+            }
+            .items-table .quantity { text-align: center; width: 80px; }
+            .items-table .description { text-align: left; }
+            .items-table .price { text-align: right; width: 120px; }
+            .items-table .total { text-align: right; width: 120px; }
+            .totals-section {
+              margin: 30px 40px 0 40px;
+              padding-bottom: 40px;
+              display: flex;
+              justify-content: flex-end;
+            }
+            .totals-table {
+              width: 300px;
+            }
+            .totals-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 8px 0;
+              font-size: 13px;
+              color: #333;
+            }
+            .totals-row.total {
+              font-weight: 600;
+              font-size: 16px;
+              border-top: 2px solid #333;
+              padding-top: 12px;
+              margin-top: 8px;
+            }
+            .footer {
+              background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
+              padding: 30px 40px;
+              margin-top: 40px;
+            }
+            .footer-content {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+            }
+            .footer-left {
+              font-size: 11px;
+              color: #333;
+            }
+            .footer-right {
+              text-align: right;
+              font-size: 12px;
+              color: #333;
+              line-height: 1.8;
+            }
+            .footer-right strong {
+              font-weight: 600;
+            }
+            @media print {
+              body { background: white; padding: 0; }
+              .invoice-container { box-shadow: none; }
+            }
           </style>
         </head>
         <body>
-          <div class="header">
-            <h1>Varexo Factuur</h1>
-            <div class="invoice-info">
-              <p><strong>Factuurnummer:</strong> ${invoice.invoiceNumber}</p>
-              <p><strong>Datum:</strong> ${new Date(invoice.createdAt).toLocaleDateString('nl-NL')}</p>
-              <p><strong>Verloopdatum:</strong> ${new Date(invoice.dueDate).toLocaleDateString('nl-NL')}</p>
+          <div class="invoice-container">
+            <!-- Header Section -->
+            <div class="header-section">
+              <div class="header-left">
+                <h1>FACTUUR</h1>
+                <div class="invoice-info">
+                  <div class="info-block">
+                    <h3>Datum</h3>
+                    <p>${invoiceDate}</p>
+                  </div>
+                  <div class="info-block">
+                    <h3>Factuurnummer</h3>
+                    <p>${invoiceNumber}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="logo-section">
+                <svg width="120" height="60" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#4a90d9"/>
+                      <stop offset="100%" style="stop-color:#2c5aa0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M20,60 L40,20 L60,60 L80,20 L100,60" fill="none" stroke="url(#logoGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <text x="110" y="50" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#2c5aa0">VAREXO</text>
+                  <text x="110" y="65" font-family="Arial, sans-serif" font-size="9" fill="#666" letter-spacing="2">ICT • WEBSITES • SOFTWARE</text>
+                </svg>
+                <div class="company-info">
+                  <strong>Varexo</strong><br>
+                  Regulierenstraat 10<br>
+                  2694BA 's-Gravenzande<br>
+                  +31 6 36075966<br>
+                  Info@varexo.nl
+                </div>
+              </div>
             </div>
-          </div>
-          
-          <h2>Factuur voor: ${invoice.customerEmail}</h2>
-          <h3>Project: ${invoice.projectTitle}</h3>
-          
-          <div class="items">
-            <table>
+
+            <!-- Customer Section -->
+            <div class="customer-section">
+              <div class="customer-details">
+                <div class="customer-label">Factuur aan:</div>
+                <p>
+                  ${customerCompany ? `<strong>${customerCompany}</strong><br>` : ''}
+                  ${customerName}<br>
+                  ${customerAddress}<br>
+                  ${customerPostal} ${customerCity}<br>
+                  ${customerPhone}<br>
+                  <span class="customer-email">${customerEmail}</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Summary Row -->
+            <div class="summary-row">
+              <span>VAREXO</span>
+              <span>DIENSTVERLENING</span>
+              <span>BETALINGSVOORWAARDEN<br><small style="font-weight:400;font-size:11px;">Betaling binnen 14 dagen</small></span>
+              <span>${invoiceForm.dueDate ? new Date(invoiceForm.dueDate).toLocaleDateString('nl-NL') : new Date(invoice.dueDate).toLocaleDateString('nl-NL')}</span>
+            </div>
+
+            <!-- Items Table -->
+            <table class="items-table">
               <thead>
                 <tr>
-                  <th>Omschrijving</th>
-                  <th>Aantal</th>
-                  <th>Prijs</th>
-                  <th>Totaal</th>
+                  <th class="quantity">Aantal</th>
+                  <th class="description">Omschrijving</th>
+                  <th class="price">Prijs per eenheid</th>
+                  <th class="total">Regeltotaal</th>
                 </tr>
               </thead>
               <tbody>
                 ${invoice.items.map(item => `
                   <tr>
-                    <td>${item.description}</td>
-                    <td>${item.quantity}</td>
-                    <td>€${item.price.toFixed(2)}</td>
-                    <td>€${item.total.toFixed(2)}</td>
+                    <td class="quantity">${item.quantity}</td>
+                    <td class="description">${item.description}</td>
+                    <td class="price">€${item.price.toFixed(2)}</td>
+                    <td class="total">€${item.total.toFixed(2)}</td>
                   </tr>
                 `).join('')}
               </tbody>
             </table>
-          </div>
-          
-          <div class="total">
-            Totaalbedrag: €${invoice.amount.toFixed(2)}
+
+            <!-- Totals Section -->
+            <div class="totals-section">
+              <div class="totals-table">
+                <div class="totals-row">
+                  <span>Subtotaal</span>
+                  <span>€${subtotal.toFixed(2)}</span>
+                </div>
+                <div class="totals-row">
+                  <span>Btw</span>
+                  <span>€${btw.toFixed(2)}</span>
+                </div>
+                <div class="totals-row total">
+                  <span>Totaal</span>
+                  <span>€${total.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+              <div class="footer-content">
+                <div class="footer-left">
+                </div>
+                <div class="footer-right">
+                  <strong>Varexo</strong><br>
+                  t.n.v. Mohammed Taher<br>
+                  IBAN: NL75INGB0756428726<br>
+                  BTW: niet van toepassing (particulier)
+                </div>
+              </div>
+            </div>
           </div>
         </body>
       </html>
@@ -409,7 +758,26 @@ const AdminDashboard: React.FC = () => {
                     <div key={project.id} className="bg-dark-900 p-4 rounded-lg border border-dark-700">
                       <h3 className="text-lg font-medium text-white mb-2">{project.title}</h3>
                       <p className="text-gray-400 text-sm mb-3">{project.description}</p>
-                      <div className="flex justify-between items-center mb-2">
+                      
+                      {/* Progress Bar */}
+                      <div className="mb-3">
+                        <div className="flex justify-between text-xs text-gray-400 mb-1">
+                          <span>Voortgang</span>
+                          <span>{project.progress || 0}%</span>
+                        </div>
+                        <div className="w-full bg-dark-700 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full transition-all duration-500 ${
+                              (project.progress || 0) < 25 ? 'bg-red-500' :
+                              (project.progress || 0) < 50 ? 'bg-yellow-500' :
+                              (project.progress || 0) < 75 ? 'bg-blue-500' : 'bg-green-500'
+                            }`}
+                            style={{ width: `${project.progress || 0}%` }}
+                          ></div>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center mb-3">
                         <span className={`px-2 py-1 text-xs rounded-full ${
                           project.status === 'active' ? 'bg-green-900 text-green-300' :
                           project.status === 'completed' ? 'bg-blue-900 text-blue-300' :
@@ -420,7 +788,13 @@ const AdminDashboard: React.FC = () => {
                         </span>
                         <span className="text-xs text-gray-400">{project.customerEmail}</span>
                       </div>
-                      <div className="flex justify-end">
+                      <div className="flex justify-end space-x-2">
+                        <button
+                          onClick={() => openProjectLogs(project)}
+                          className="text-green-400 hover:text-green-300 text-sm"
+                        >
+                          Logs
+                        </button>
                         <button
                           onClick={() => openEditProject(project)}
                           className="text-primary-400 hover:text-primary-300 text-sm"
@@ -639,6 +1013,29 @@ const AdminDashboard: React.FC = () => {
                       />
                     </div>
                     <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">
+                        Voortgang: {projectForm.progress}%
+                      </label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={projectForm.progress}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, progress: parseInt(e.target.value) }))}
+                        className="w-full h-2 bg-dark-700 rounded-lg appearance-none cursor-pointer"
+                      />
+                      <div className="w-full bg-dark-700 rounded-full h-2 mt-2">
+                        <div 
+                          className={`h-2 rounded-full transition-all duration-500 ${
+                            projectForm.progress < 25 ? 'bg-red-500' :
+                            projectForm.progress < 50 ? 'bg-yellow-500' :
+                            projectForm.progress < 75 ? 'bg-blue-500' : 'bg-green-500'
+                          }`}
+                          style={{ width: `${projectForm.progress}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                    <div>
                       <label className="block text-sm font-medium text-gray-300 mb-1">Budget</label>
                       <input
                         type="number"
@@ -654,7 +1051,7 @@ const AdminDashboard: React.FC = () => {
                       onClick={() => {
                         setShowEditProjectForm(false);
                         setEditingProject(null);
-                        setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '' });
+                        setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '', progress: 0 });
                       }}
                       className="px-4 py-2 text-gray-400 hover:text-white"
                     >
@@ -675,15 +1072,45 @@ const AdminDashboard: React.FC = () => {
           {/* Invoice Form Modal */}
           {showInvoiceForm && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-dark-800 rounded-lg p-6 w-full max-w-2xl border border-dark-700 max-h-[90vh] overflow-y-auto">
+              <div className="bg-dark-800 rounded-lg p-6 w-full max-w-3xl border border-dark-700 max-h-[90vh] overflow-y-auto">
                 <h3 className="text-xl font-semibold text-white mb-4">Nieuwe Factuur</h3>
                 <form onSubmit={handleCreateInvoice}>
                   <div className="space-y-4">
+                    {/* Invoice Details */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Factuurnummer</label>
+                        <input
+                          type="text"
+                          value={invoiceForm.invoiceNumber}
+                          onChange={(e) => setInvoiceForm(prev => ({ ...prev, invoiceNumber: e.target.value }))}
+                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                          placeholder="bv. 2026-001"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Factuurdatum</label>
+                        <input
+                          type="date"
+                          value={invoiceForm.invoiceDate}
+                          onChange={(e) => setInvoiceForm(prev => ({ ...prev, invoiceDate: e.target.value }))}
+                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {/* Customer Selection */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Klant</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Klant (e-mail)</label>
                       <select
                         value={selectedCustomer}
-                        onChange={(e) => setSelectedCustomer(e.target.value)}
+                        onChange={(e) => {
+                          setSelectedCustomer(e.target.value);
+                          // Auto-fill customer email
+                          setInvoiceForm(prev => ({ ...prev, customerEmail: e.target.value }));
+                        }}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                         required
                       >
@@ -695,17 +1122,88 @@ const AdminDashboard: React.FC = () => {
                         ))}
                       </select>
                     </div>
+
+                    {/* Customer Details */}
+                    <div className="bg-dark-900 p-4 rounded-lg border border-dark-700">
+                      <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">Klantgegevens</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-400 mb-1">Bedrijfsnaam</label>
+                          <input
+                            type="text"
+                            value={invoiceForm.customerCompany}
+                            onChange={(e) => setInvoiceForm(prev => ({ ...prev, customerCompany: e.target.value }))}
+                            className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm"
+                            placeholder="Bedrijfsnaam"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-400 mb-1">Contactpersoon</label>
+                          <input
+                            type="text"
+                            value={invoiceForm.customerName}
+                            onChange={(e) => setInvoiceForm(prev => ({ ...prev, customerName: e.target.value }))}
+                            className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm"
+                            placeholder="Naam"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-400 mb-1">Adres</label>
+                          <input
+                            type="text"
+                            value={invoiceForm.customerAddress}
+                            onChange={(e) => setInvoiceForm(prev => ({ ...prev, customerAddress: e.target.value }))}
+                            className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm"
+                            placeholder="Straat + huisnummer"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-400 mb-1">Telefoon</label>
+                          <input
+                            type="text"
+                            value={invoiceForm.customerPhone}
+                            onChange={(e) => setInvoiceForm(prev => ({ ...prev, customerPhone: e.target.value }))}
+                            className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm"
+                            placeholder="+31 6 12345678"
+                          />
+                        </div>
+                        <div className="flex gap-2">
+                          <div className="w-1/3">
+                            <label className="block text-xs font-medium text-gray-400 mb-1">Postcode</label>
+                            <input
+                              type="text"
+                              value={invoiceForm.customerPostal}
+                              onChange={(e) => setInvoiceForm(prev => ({ ...prev, customerPostal: e.target.value }))}
+                              className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm"
+                              placeholder="1234AB"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <label className="block text-xs font-medium text-gray-400 mb-1">Plaats</label>
+                            <input
+                              type="text"
+                              value={invoiceForm.customerCity}
+                              onChange={(e) => setInvoiceForm(prev => ({ ...prev, customerCity: e.target.value }))}
+                              className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm"
+                              placeholder="Amsterdam"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Project</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Project / Omschrijving</label>
                       <input
                         type="text"
                         value={invoiceForm.projectTitle}
                         onChange={(e) => setInvoiceForm(prev => ({ ...prev, projectTitle: e.target.value }))}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
-                        placeholder="Projectnaam"
+                        placeholder="Website Ontwikkeling"
                         required
                       />
                     </div>
+
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-1">Vervaldatum</label>
                       <input
@@ -717,6 +1215,7 @@ const AdminDashboard: React.FC = () => {
                       />
                     </div>
                     
+                    {/* Invoice Items */}
                     <div>
                       <div className="flex justify-between items-center mb-2">
                         <label className="block text-sm font-medium text-gray-300">Factuurregels</label>
@@ -728,37 +1227,54 @@ const AdminDashboard: React.FC = () => {
                           + Regel toevoegen
                         </button>
                       </div>
-                      {invoiceForm.items.map((item, index) => (
-                        <div key={index} className="grid grid-cols-4 gap-2 mb-2">
-                          <input
-                            type="text"
-                            placeholder="Omschrijving"
-                            value={item.description}
-                            onChange={(e) => updateInvoiceItem(index, 'description', e.target.value)}
-                            className="px-2 py-1 bg-dark-700 border border-dark-600 rounded text-white text-sm"
-                            required
-                          />
-                          <input
-                            type="number"
-                            placeholder="Aantal"
-                            value={item.quantity}
-                            onChange={(e) => updateInvoiceItem(index, 'quantity', parseInt(e.target.value) || 1)}
-                            className="px-2 py-1 bg-dark-700 border border-dark-600 rounded text-white text-sm"
-                            required
-                          />
-                          <input
-                            type="number"
-                            placeholder="Prijs"
-                            value={item.price}
-                            onChange={(e) => updateInvoiceItem(index, 'price', parseFloat(e.target.value) || 0)}
-                            className="px-2 py-1 bg-dark-700 border border-dark-600 rounded text-white text-sm"
-                            required
-                          />
-                          <div className="px-2 py-1 bg-dark-900 border border-dark-600 rounded text-gray-400 text-sm">
-                            €{((item.quantity || 1) * (item.price || 0)).toFixed(2)}
+                      <div className="bg-dark-900 p-3 rounded-lg border border-dark-700">
+                        <div className="grid grid-cols-12 gap-2 mb-2 text-xs text-gray-400 uppercase">
+                          <div className="col-span-1">Aantal</div>
+                          <div className="col-span-6">Omschrijving</div>
+                          <div className="col-span-3">Prijs</div>
+                          <div className="col-span-2">Totaal</div>
+                        </div>
+                        {invoiceForm.items.map((item, index) => (
+                          <div key={index} className="grid grid-cols-12 gap-2 mb-2">
+                            <input
+                              type="number"
+                              placeholder="1"
+                              value={item.quantity}
+                              onChange={(e) => updateInvoiceItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                              className="col-span-1 px-2 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm text-center"
+                              required
+                            />
+                            <input
+                              type="text"
+                              placeholder="Omschrijving"
+                              value={item.description}
+                              onChange={(e) => updateInvoiceItem(index, 'description', e.target.value)}
+                              className="col-span-6 px-2 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm"
+                              required
+                            />
+                            <input
+                              type="number"
+                              placeholder="0.00"
+                              value={item.price}
+                              onChange={(e) => updateInvoiceItem(index, 'price', parseFloat(e.target.value) || 0)}
+                              className="col-span-3 px-2 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm"
+                              required
+                            />
+                            <div className="col-span-2 px-2 py-2 bg-dark-800 border border-dark-600 rounded text-gray-400 text-sm flex items-center justify-end">
+                              €{((item.quantity || 1) * (item.price || 0)).toFixed(2)}
+                            </div>
+                          </div>
+                        ))}
+                        {/* Total */}
+                        <div className="border-t border-dark-600 mt-3 pt-3 flex justify-end">
+                          <div className="text-right">
+                            <div className="text-sm text-gray-400">Totaalbedrag</div>
+                            <div className="text-xl font-bold text-white">
+                              €{invoiceForm.items.reduce((sum, item) => sum + (item.quantity * item.price), 0).toFixed(2)}
+                            </div>
                           </div>
                         </div>
-                      ))}
+                      </div>
                     </div>
                   </div>
                   <div className="flex justify-end space-x-3 mt-6">
@@ -773,13 +1289,125 @@ const AdminDashboard: React.FC = () => {
                       type="submit"
                       className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
                     >
-                      Aanmaken
+                      Aanmaken & PDF Genereren
                     </button>
                   </div>
                 </form>
               </div>
             </div>
           )}
+          {/* Project Logs Modal */}
+          {showProjectLogs && selectedProjectForLogs && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-dark-800 rounded-lg border border-dark-700 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-6">
+                    <div>
+                      <h3 className="text-xl font-semibold text-white">Project Logs: {selectedProjectForLogs.title}</h3>
+                      <p className="text-gray-400 text-sm">{selectedProjectForLogs.customerEmail}</p>
+                    </div>
+                    <button onClick={closeProjectLogs} className="text-gray-400 hover:text-white">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Add New Log Form */}
+                  <form onSubmit={handleAddLog} className="bg-dark-900 p-4 rounded-lg border border-dark-700 mb-6">
+                    <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">Nieuwe Update Toevoegen</h4>
+                    <div className="space-y-3">
+                      <div>
+                        <input
+                          type="text"
+                          placeholder="Titel van de update"
+                          value={newLogForm.title}
+                          onChange={(e) => setNewLogForm(prev => ({ ...prev, title: e.target.value }))}
+                          className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded-lg text-white"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <textarea
+                          placeholder="Beschrijving van wat er is gedaan..."
+                          value={newLogForm.description}
+                          onChange={(e) => setNewLogForm(prev => ({ ...prev, description: e.target.value }))}
+                          className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded-lg text-white"
+                          rows={2}
+                          required
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <select
+                          value={newLogForm.logType}
+                          onChange={(e) => setNewLogForm(prev => ({ ...prev, logType: e.target.value as any }))}
+                          className="px-3 py-2 bg-dark-800 border border-dark-600 rounded-lg text-white"
+                        >
+                          <option value="update">📝 Update</option>
+                          <option value="milestone">🎯 Mijlpaal</option>
+                          <option value="feature">✨ Nieuwe functie</option>
+                          <option value="bugfix">🐛 Bugfix</option>
+                          <option value="design">🎨 Design</option>
+                          <option value="deployment">🚀 Deployment</option>
+                        </select>
+                        <button
+                          type="submit"
+                          className="flex-1 px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
+                        >
+                          Toevoegen
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+
+                  {/* Logs List */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-400 uppercase mb-3">Updates & Logs</h4>
+                    {projectLogs.length === 0 ? (
+                      <div className="text-center py-8 bg-dark-900 rounded-lg border border-dark-700">
+                        <p className="text-gray-400">Nog geen updates voor dit project.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {projectLogs.map((log) => (
+                          <div key={log.id} className="bg-dark-900 p-3 rounded-lg border border-dark-700">
+                            <div className="flex items-start gap-3">
+                              <span className="text-xl">
+                                {log.logType === 'milestone' ? '🎯' :
+                                 log.logType === 'feature' ? '✨' :
+                                 log.logType === 'bugfix' ? '🐛' :
+                                 log.logType === 'design' ? '🎨' :
+                                 log.logType === 'deployment' ? '🚀' : '📝'}
+                              </span>
+                              <div className="flex-1">
+                                <div className="flex justify-between items-start">
+                                  <div>
+                                    <span className="text-xs font-medium text-primary-400 uppercase">
+                                      {log.logType === 'milestone' ? 'Mijlpaal' :
+                                       log.logType === 'feature' ? 'Nieuwe functie' :
+                                       log.logType === 'bugfix' ? 'Bugfix' :
+                                       log.logType === 'design' ? 'Design' :
+                                       log.logType === 'deployment' ? 'Deployment' : 'Update'}
+                                    </span>
+                                    <h5 className="text-white font-medium">{log.title}</h5>
+                                  </div>
+                                  <span className="text-xs text-gray-500">
+                                    {new Date(log.createdAt).toLocaleDateString('nl-NL')}
+                                  </span>
+                                </div>
+                                <p className="text-gray-400 text-sm mt-1">{log.description}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
     </PageTransition>

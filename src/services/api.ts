@@ -83,3 +83,18 @@ export const customersAPI = {
 export const statsAPI = {
   get: () => apiCall('/stats'),
 };
+
+// Project Logs API
+export const projectLogsAPI = {
+  getForProject: (projectId: string) =>
+    apiCall(`/project-logs?projectId=${encodeURIComponent(projectId)}`),
+
+  create: (log: { projectId: string; title: string; description: string; logType?: string; createdBy: string }) =>
+    apiCall('/project-logs', { method: 'POST', body: JSON.stringify(log) }),
+
+  update: (id: string, updates: any) =>
+    apiCall(`/project-logs/${id}`, { method: 'PUT', body: JSON.stringify(updates) }),
+
+  delete: (id: string) =>
+    apiCall(`/project-logs/${id}`, { method: 'DELETE' }),
+};
