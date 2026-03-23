@@ -1,5 +1,6 @@
 exports.handler = async (event) => {
   const { neon } = require('@netlify/neon');
+  const { sendProjectUpdateEmail } = require('./utils/send-email');
   
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -62,6 +63,14 @@ exports.handler = async (event) => {
         VALUES (${parseInt(projectId)}, ${title}, ${description}, ${logType || 'update'}, ${createdBy})
         RETURNING *
       `;
+
+      // Send email notification to customer
+      try {
+        const projInfo = await sql`SELECT title, customer_email FROM projects WHERE id = ${parseInt(projectId)}`;
+        if (projInfo.length > 0) {
+          await sendProjectUpdateEmail(projInfo[0].customer_email, '', projInfo[0].title, title, description, logType || 'update');
+        }
+      } catch (e) { console.log('Email skip:', e.message); }
       
       return { statusCode: 200, headers, body: JSON.stringify(mapLog(result[0])) };
     }

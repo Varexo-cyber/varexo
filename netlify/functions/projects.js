@@ -1,4 +1,5 @@
 const { neon } = require('@netlify/neon');
+const { sendNewProjectEmail, sendProjectDeletedEmail, sendProgressUpdateEmail } = require('./utils/send-email');
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -85,6 +86,9 @@ exports.handler = async (event) => {
         updatedAt: p.updated_at
       };
 
+      // Send email notification
+      try { await sendNewProjectEmail(customerEmail, '', title); } catch (e) { console.log('Email skip:', e.message); }
+
       return { statusCode: 200, headers, body: JSON.stringify(project) };
     }
 
@@ -143,7 +147,14 @@ exports.handler = async (event) => {
     // DELETE /projects/:id - Delete project
     if (event.httpMethod === 'DELETE') {
       const id = path.replace('/', '');
+      // Get project info before deleting for email
+      const projInfo = await sql`SELECT title, customer_email FROM projects WHERE id = ${parseInt(id)}`;
+      await sql`DELETE FROM project_logs WHERE project_id = ${parseInt(id)}`;
       await sql`DELETE FROM projects WHERE id = ${parseInt(id)}`;
+      // Send email notification
+      if (projInfo.length > 0) {
+        try { await sendProjectDeletedEmail(projInfo[0].customer_email, '', projInfo[0].title); } catch (e) { console.log('Email skip:', e.message); }
+      }
       return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
     }
 

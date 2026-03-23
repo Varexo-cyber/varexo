@@ -1,4 +1,5 @@
 const { neon } = require('@netlify/neon');
+const { sendNewInvoiceEmail } = require('./utils/send-email');
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -133,6 +134,10 @@ exports.handler = async (event) => {
       }
 
       const i = result[0];
+
+      // Send email notification
+      try { await sendNewInvoiceEmail(customerEmail, customerName || '', finalInvoiceNumber, amount); } catch (e) { console.log('Email skip:', e.message); }
+
       return { statusCode: 200, headers, body: JSON.stringify({
         id: i.id.toString(),
         invoiceNumber: i.invoice_number,
