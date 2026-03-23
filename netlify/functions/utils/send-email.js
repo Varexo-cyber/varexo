@@ -165,19 +165,27 @@ async function sendProjectDeletedEmail(customerEmail, customerName, projectTitle
 }
 
 async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, amount, invoiceData) {
+  const dueDate = invoiceData?.dueDate ? new Date(invoiceData.dueDate).toLocaleDateString('nl-NL') : '14 dagen na factuurdatum';
+  
   const content = `
     <p style="color:#e5e7eb;font-size:15px;line-height:1.7;">
       Beste ${customerName || 'klant'},
     </p>
     <p style="color:#9ca3af;font-size:15px;line-height:1.7;">
-      Er staat een nieuwe factuur voor u klaar:
+      Er staat een nieuwe factuur voor u klaar. Gelieve deze binnen de gestelde termijn te voldoen.
     </p>
     <div style="background:#0d2818;border-left:4px solid #10b981;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
       <p style="margin:0 0 8px;color:#10b981;font-size:16px;font-weight:600;">Factuur ${invoiceNumber}</p>
-      <p style="margin:0;color:#ffffff;font-size:20px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)} <span style="font-size:13px;font-weight:400;color:#6b7280;">(incl. 21% BTW)</span></p>
+      <p style="margin:0 0 8px;color:#ffffff;font-size:24px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)} <span style="font-size:13px;font-weight:400;color:#6b7280;">(incl. 21% BTW)</span></p>
+      <p style="margin:4px 0 0;color:#6b7280;font-size:13px;">Te betalen voor: <strong style="color:#fbbf24;">${dueDate}</strong></p>
     </div>
     <p style="color:#9ca3af;font-size:15px;line-height:1.7;">
-      De factuur vindt u als PDF in de bijlage van deze e-mail. U kunt ook inloggen op uw klantenportaal voor meer informatie.
+      De factuur vindt u als PDF in de bijlage van deze e-mail. 
+      U kunt betalen via bankoverschrijving naar IBAN: <strong style="color:#e5e7eb;">NL75INGB0756428726</strong>
+      t.n.v. <strong style="color:#e5e7eb;">Mohammed Taher</strong>.
+    </p>
+    <p style="color:#9ca3af;font-size:15px;line-height:1.7;margin-top:12px;">
+      Bekijk uw klantenportaal voor meer informatie en het overzicht van al uw facturen.
     </p>
   `;
 

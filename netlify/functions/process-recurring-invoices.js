@@ -103,6 +103,7 @@ exports.handler = async (event) => {
         try {
           await sendNewInvoiceEmail(ri.customer_email, ri.customer_name || '', invoiceNumber, ri.amount, {
             invoiceDate: today,
+            dueDate: dueDateStr,
             customerName: ri.customer_name || '',
             customerCompany: ri.customer_company || '',
             customerAddress: ri.customer_address || '',
