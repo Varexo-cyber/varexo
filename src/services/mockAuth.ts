@@ -108,6 +108,7 @@ export const mockAuth = {
       return savedUser;
     } catch (apiErr) {
       console.error('Google API save failed:', apiErr);
+      alert('Google login DB save failed: ' + (apiErr as Error).message);
       // Fallback: save to localStorage only
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
       return user;
