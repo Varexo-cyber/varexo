@@ -50,11 +50,21 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'POST') {
       const { title, description, status, customerEmail, deadline, budget } = body;
 
-      const result = await sql`
-        INSERT INTO projects (title, description, status, customer_email, deadline, budget, progress)
-        VALUES (${title}, ${description || ''}, ${status || 'planning'}, ${customerEmail}, ${deadline || null}, ${budget || null}, ${body.progress || 0})
-        RETURNING *
-      `;
+      let result;
+      try {
+        result = await sql`
+          INSERT INTO projects (title, description, status, customer_email, deadline, budget, progress)
+          VALUES (${title}, ${description || ''}, ${status || 'planning'}, ${customerEmail}, ${deadline || null}, ${budget || null}, ${body.progress || 0})
+          RETURNING *
+        `;
+      } catch (colErr) {
+        // Fallback without progress column
+        result = await sql`
+          INSERT INTO projects (title, description, status, customer_email, deadline, budget)
+          VALUES (${title}, ${description || ''}, ${status || 'planning'}, ${customerEmail}, ${deadline || null}, ${budget || null})
+          RETURNING *
+        `;
+      }
 
       const p = result[0];
       const project = {
@@ -78,18 +88,33 @@ exports.handler = async (event) => {
       const id = path.replace('/', '');
       const { title, description, status, deadline, budget, progress } = body;
 
-      const result = await sql`
-        UPDATE projects SET
-          title = COALESCE(${title || null}, title),
-          description = COALESCE(${description || null}, description),
-          status = COALESCE(${status || null}, status),
-          deadline = COALESCE(${deadline || null}, deadline),
-          budget = COALESCE(${budget || null}, budget),
-          progress = COALESCE(${typeof progress === 'number' ? progress : null}, progress, 0),
-          updated_at = NOW()
-        WHERE id = ${parseInt(id)}
-        RETURNING *
-      `;
+      let result;
+      try {
+        result = await sql`
+          UPDATE projects SET
+            title = COALESCE(${title || null}, title),
+            description = COALESCE(${description || null}, description),
+            status = COALESCE(${status || null}, status),
+            deadline = COALESCE(${deadline || null}, deadline),
+            budget = COALESCE(${budget || null}, budget),
+            progress = COALESCE(${typeof progress === 'number' ? progress : null}, progress, 0),
+            updated_at = NOW()
+          WHERE id = ${parseInt(id)}
+          RETURNING *
+        `;
+      } catch (colErr) {
+        result = await sql`
+          UPDATE projects SET
+            title = COALESCE(${title || null}, title),
+            description = COALESCE(${description || null}, description),
+            status = COALESCE(${status || null}, status),
+            deadline = COALESCE(${deadline || null}, deadline),
+            budget = COALESCE(${budget || null}, budget),
+            updated_at = NOW()
+          WHERE id = ${parseInt(id)}
+          RETURNING *
+        `;
+      }
 
       if (result.length === 0) {
         return { statusCode: 404, headers, body: JSON.stringify({ error: 'Project niet gevonden' }) };

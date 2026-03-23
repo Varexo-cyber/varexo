@@ -62,33 +62,43 @@ exports.handler = async (event) => {
       // Use provided invoice number or generate one
       const finalInvoiceNumber = invoiceNumber || `INV-${Date.now()}`;
 
-      const result = await sql`
-        INSERT INTO invoices (
-          invoice_number, invoice_date, project_title, customer_email,
-          customer_name, customer_company, customer_address, customer_postal, customer_city, customer_phone,
-          amount, status, due_date, items
-        )
-        VALUES (
-          ${finalInvoiceNumber}, ${invoiceDate || null}, ${projectTitle}, ${customerEmail},
-          ${customerName || null}, ${customerCompany || null}, ${customerAddress || null}, ${customerPostal || null}, ${customerCity || null}, ${customerPhone || null},
-          ${amount}, ${status || 'draft'}, ${dueDate}, ${JSON.stringify(items || [])}
-        )
-        RETURNING *
-      `;
+      let result;
+      try {
+        result = await sql`
+          INSERT INTO invoices (
+            invoice_number, invoice_date, project_title, customer_email,
+            customer_name, customer_company, customer_address, customer_postal, customer_city, customer_phone,
+            amount, status, due_date, items
+          )
+          VALUES (
+            ${finalInvoiceNumber}, ${invoiceDate || null}, ${projectTitle}, ${customerEmail},
+            ${customerName || null}, ${customerCompany || null}, ${customerAddress || null}, ${customerPostal || null}, ${customerCity || null}, ${customerPhone || null},
+            ${amount}, ${status || 'draft'}, ${dueDate}, ${JSON.stringify(items || [])}
+          )
+          RETURNING *
+        `;
+      } catch (colErr) {
+        // Fallback without new columns
+        result = await sql`
+          INSERT INTO invoices (invoice_number, project_title, customer_email, amount, status, due_date, items)
+          VALUES (${finalInvoiceNumber}, ${projectTitle}, ${customerEmail}, ${amount}, ${status || 'draft'}, ${dueDate}, ${JSON.stringify(items || [])})
+          RETURNING *
+        `;
+      }
 
       const i = result[0];
       return { statusCode: 200, headers, body: JSON.stringify({
         id: i.id.toString(),
         invoiceNumber: i.invoice_number,
-        invoiceDate: i.invoice_date,
+        invoiceDate: i.invoice_date || null,
         projectTitle: i.project_title,
         customerEmail: i.customer_email,
-        customerName: i.customer_name,
-        customerCompany: i.customer_company,
-        customerAddress: i.customer_address,
-        customerPostal: i.customer_postal,
-        customerCity: i.customer_city,
-        customerPhone: i.customer_phone,
+        customerName: i.customer_name || null,
+        customerCompany: i.customer_company || null,
+        customerAddress: i.customer_address || null,
+        customerPostal: i.customer_postal || null,
+        customerCity: i.customer_city || null,
+        customerPhone: i.customer_phone || null,
         amount: parseFloat(i.amount),
         status: i.status,
         dueDate: i.due_date,
