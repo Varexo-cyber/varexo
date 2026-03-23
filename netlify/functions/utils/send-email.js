@@ -116,7 +116,10 @@ async function sendEmail(to, subject, title, content, ctaText, ctaUrl, attachmen
       html: emailTemplate(title, content, ctaText, ctaUrl),
     };
     if (attachments && attachments.length > 0) {
+      console.log('Adding attachments:', attachments.map(a => a.filename));
       mailOptions.attachments = attachments;
+    } else {
+      console.log('No attachments to send');
     }
     await transporter.sendMail(mailOptions);
     console.log(`Email sent to ${to}: ${subject}`);
@@ -196,6 +199,7 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
   // Generate PDF attachment
   let attachments = [];
   try {
+    console.log('Starting PDF generation for invoice:', invoiceNumber);
     const { generateInvoicePDF } = require('./generate-invoice-pdf');
     const pdfBuffer = await generateInvoicePDF({
       invoiceNumber,
@@ -210,13 +214,15 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
       items: invoiceData?.items || [],
       amount,
     });
+    console.log('PDF generated successfully, size:', pdfBuffer.length);
     attachments = [{
       filename: `Factuur-${invoiceNumber}.pdf`,
       content: pdfBuffer,
       contentType: 'application/pdf',
     }];
   } catch (pdfErr) {
-    console.error('PDF generation failed, sending without attachment:', pdfErr.message);
+    console.error('PDF generation failed, sending without attachment:', pdfErr);
+    console.error('PDF error stack:', pdfErr.stack);
   }
 
   return sendEmail(

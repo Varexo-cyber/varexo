@@ -355,6 +355,11 @@ class ProjectService {
     const invoices = this.getLocalInvoices();
     const customers = this.getCustomers();
 
+    // Debug logging
+    console.log('All invoices for stats:', invoices);
+    console.log('Non-draft invoices:', invoices.filter(i => i.status !== 'draft'));
+    console.log('Revenue calculation:', invoices.filter(i => i.status !== 'draft').reduce((sum, i) => sum + i.amount, 0));
+
     return {
       totalCustomers: customers.length,
       totalProjects: projects.length,

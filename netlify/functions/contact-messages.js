@@ -3,7 +3,7 @@ const { neon } = require('@netlify/neon');
 const headers = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
   'Content-Type': 'application/json'
 };
 
@@ -64,6 +64,21 @@ exports.handler = async (event) => {
         status: m.status,
         createdAt: m.created_at
       })};
+    }
+
+    // DELETE - Remove a message
+    if (event.httpMethod === 'DELETE') {
+      const id = event.path.split('/').pop();
+      if (!id) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: 'Message ID required' }) };
+      }
+
+      const result = await sql`DELETE FROM contact_messages WHERE id = ${id}`;
+      if (result.rowCount === 0) {
+        return { statusCode: 404, headers, body: JSON.stringify({ error: 'Message not found' }) };
+      }
+
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
     }
 
     return { statusCode: 404, headers, body: JSON.stringify({ error: 'Not found' }) };

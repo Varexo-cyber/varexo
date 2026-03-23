@@ -4,7 +4,7 @@ import { mockAuth } from '../services/mockAuth';
 import { roleService } from '../services/roleService';
 import { projectService, Customer, Project, Invoice, ProjectLog } from '../services/projectService';
 import { invoicesAPI } from '../services/api';
-import { getContactMessages, ContactMessage } from '../services/contactService';
+import { getContactMessages, deleteContactMessage, ContactMessage } from '../services/contactService';
 import PageTransition from '../components/PageTransition';
 
 const AdminDashboard: React.FC = () => {
@@ -291,18 +291,18 @@ const AdminDashboard: React.FC = () => {
 
   const handleDeleteMessage = async (id: string) => {
     try {
-      // Try API first
-      try {
-        await fetch(`/.netlify/functions/contact-messages/${id}`, { method: 'DELETE' });
-      } catch (apiErr) {
-        // API not available, delete from localStorage
-        const stored = JSON.parse(localStorage.getItem('varexo_contacts') || '[]');
-        const filtered = stored.filter((m: any) => m.id !== id);
-        localStorage.setItem('varexo_contacts', JSON.stringify(filtered));
+      const result = await deleteContactMessage(id);
+      if (result.success) {
+        setShowMessageDeleteConfirm(null);
+        setShowMessageDropdown(null);
+        // Reload messages only
+        try {
+          const msgs = await getContactMessages();
+          setContactMessages(msgs);
+        } catch (e) { console.log('Error reloading messages'); }
+      } else {
+        console.error('Failed to delete message:', result.error);
       }
-      setShowMessageDeleteConfirm(null);
-      setShowMessageDropdown(null);
-      loadData();
     } catch (error) {
       console.error('Error deleting message:', error);
     }

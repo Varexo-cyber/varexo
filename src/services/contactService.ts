@@ -96,3 +96,33 @@ export const getContactMessages = async (): Promise<ContactMessage[]> => {
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 };
+
+export const deleteContactMessage = async (id: string): Promise<{ success: boolean; error?: string }> => {
+  // Try API first
+  try {
+    const response = await fetch(`${API_BASE}/contact-messages/${id}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (response.ok) {
+      // Also remove from localStorage if it exists there
+      const stored = JSON.parse(localStorage.getItem('varexo_contacts') || '[]');
+      const filtered = stored.filter((m: any) => m.id !== id);
+      localStorage.setItem('varexo_contacts', JSON.stringify(filtered));
+      return { success: true };
+    }
+  } catch (error) {
+    console.warn('API not available, deleting from localStorage:', error);
+  }
+  
+  // Fallback: delete from localStorage
+  try {
+    const stored = JSON.parse(localStorage.getItem('varexo_contacts') || '[]');
+    const filtered = stored.filter((m: any) => m.id !== id);
+    localStorage.setItem('varexo_contacts', JSON.stringify(filtered));
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting from localStorage:', error);
+    return { success: false, error: 'Failed to delete message' };
+  }
+};

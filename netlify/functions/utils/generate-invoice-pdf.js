@@ -4,6 +4,7 @@ function generateInvoicePDF(invoiceData) {
   return new Promise(async (resolve, reject) => {
     let browser;
     try {
+      console.log('PDF Generation - Starting with data:', JSON.stringify(invoiceData, null, 2));
       const {
         invoiceNumber, invoiceDate, customerName, customerCompany,
         customerAddress, customerPostal, customerCity, customerEmail,
@@ -378,9 +379,11 @@ function generateInvoicePDF(invoiceData) {
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
+      console.log('PDF Generation - Browser launched');
       
       const page = await browser.newPage();
       await page.setContent(html, { waitUntil: 'networkidle0' });
+      console.log('PDF Generation - Content set');
       
       const pdfBuffer = await page.pdf({
         format: 'A4',
@@ -392,6 +395,7 @@ function generateInvoicePDF(invoiceData) {
           left: '20px'
         }
       });
+      console.log('PDF Generation - PDF created, size:', pdfBuffer.length);
 
       await browser.close();
       resolve(pdfBuffer);
