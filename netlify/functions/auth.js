@@ -1,4 +1,4 @@
-const { getDb } = require('./db');
+const { neon } = require('@netlify/neon');
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -12,7 +12,7 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers, body: '' };
   }
 
-  const sql = getDb();
+  const sql = neon();
   const path = event.path.replace('/.netlify/functions/auth', '').replace('/api/auth', '');
   const body = event.body ? JSON.parse(event.body) : {};
 
