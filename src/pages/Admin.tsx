@@ -24,6 +24,10 @@ const AdminDashboard: React.FC = () => {
   const [showProjectLogs, setShowProjectLogs] = useState(false);
   const [selectedProjectForLogs, setSelectedProjectForLogs] = useState<Project | null>(null);
   const [projectLogs, setProjectLogs] = useState<ProjectLog[]>([]);
+  
+  // Invoice details modal
+  const [showInvoiceDetails, setShowInvoiceDetails] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [newLogForm, setNewLogForm] = useState({
     title: '',
     description: '',
@@ -122,7 +126,8 @@ const AdminDashboard: React.FC = () => {
         description: projectForm.description,
         status: projectForm.status,
         deadline: projectForm.deadline || undefined,
-        budget: projectForm.budget ? parseFloat(projectForm.budget) : undefined
+        budget: projectForm.budget ? parseFloat(projectForm.budget) : undefined,
+        progress: projectForm.progress
       });
 
       setShowEditProjectForm(false);
@@ -163,6 +168,16 @@ const AdminDashboard: React.FC = () => {
     setSelectedProjectForLogs(null);
     setProjectLogs([]);
     setNewLogForm({ title: '', description: '', logType: 'update' });
+  };
+
+  const openInvoiceDetails = (invoice: Invoice) => {
+    setSelectedInvoice(invoice);
+    setShowInvoiceDetails(true);
+  };
+
+  const closeInvoiceDetails = () => {
+    setShowInvoiceDetails(false);
+    setSelectedInvoice(null);
   };
 
   const handleAddLog = async (e: React.FormEvent) => {
@@ -210,8 +225,16 @@ const AdminDashboard: React.FC = () => {
       }));
 
       await projectService.createInvoiceAsync({
+        invoiceNumber: invoiceForm.invoiceNumber,
+        invoiceDate: invoiceForm.invoiceDate,
         projectTitle: invoiceForm.projectTitle,
         customerEmail: selectedCustomer,
+        customerName: invoiceForm.customerName,
+        customerCompany: invoiceForm.customerCompany,
+        customerAddress: invoiceForm.customerAddress,
+        customerPostal: invoiceForm.customerPostal,
+        customerCity: invoiceForm.customerCity,
+        customerPhone: invoiceForm.customerPhone,
         amount: items.reduce((sum, item) => sum + item.total, 0),
         status: 'draft',
         dueDate: invoiceForm.dueDate,
@@ -483,16 +506,20 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </div>
               <div class="logo-section">
-                <svg width="120" height="60" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                <!-- Clean Varexo Logo -->
+                <svg width="140" height="70" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
                   <defs>
-                    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" style="stop-color:#4a90d9"/>
-                      <stop offset="100%" style="stop-color:#2c5aa0"/>
+                    <linearGradient id="vGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#2563eb"/>
+                      <stop offset="100%" style="stop-color:#1e40af"/>
                     </linearGradient>
                   </defs>
-                  <path d="M20,60 L40,20 L60,60 L80,20 L100,60" fill="none" stroke="url(#logoGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-                  <text x="110" y="50" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#2c5aa0">VAREXO</text>
-                  <text x="110" y="65" font-family="Arial, sans-serif" font-size="9" fill="#666" letter-spacing="2">ICT • WEBSITES • SOFTWARE</text>
+                  <!-- V shape -->
+                  <path d="M30,25 L70,85 L110,25" fill="none" stroke="url(#vGradient)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- Text VAREXO -->
+                  <text x="125" y="65" font-family="system-ui, -apple-system, sans-serif" font-size="42" font-weight="700" fill="#1e40af" letter-spacing="2">VAREXO</text>
+                  <!-- Tagline -->
+                  <text x="125" y="82" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#64748b" letter-spacing="1.5">ICT • WEBSITES • SOFTWARE</text>
                 </svg>
                 <div class="company-info">
                   <strong>Varexo</strong><br>
@@ -852,12 +879,20 @@ const AdminDashboard: React.FC = () => {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button
-                              onClick={() => generatePDF(invoice)}
-                              className="text-primary-400 hover:text-primary-300"
-                            >
-                              PDF
-                            </button>
+                            <div className="flex space-x-3">
+                              <button
+                                onClick={() => openInvoiceDetails(invoice)}
+                                className="text-blue-400 hover:text-blue-300"
+                              >
+                                Bekijk
+                              </button>
+                              <button
+                                onClick={() => generatePDF(invoice)}
+                                className="text-primary-400 hover:text-primary-300"
+                              >
+                                PDF
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -1296,6 +1331,145 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
           )}
+          {/* Invoice Details Modal */}
+          {showInvoiceDetails && selectedInvoice && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-dark-800 rounded-lg border border-dark-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-6">
+                    <div>
+                      <h3 className="text-2xl font-bold text-white">Factuur Details</h3>
+                      <p className="text-primary-400 text-lg">{selectedInvoice.invoiceNumber}</p>
+                    </div>
+                    <button onClick={closeInvoiceDetails} className="text-gray-400 hover:text-white">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6 mb-6">
+                    {/* Invoice Info */}
+                    <div className="bg-dark-900 p-4 rounded-lg border border-dark-700">
+                      <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">Factuurinformatie</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Factuurnummer:</span>
+                          <span className="text-white">{selectedInvoice.invoiceNumber}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Factuurdatum:</span>
+                          <span className="text-white">{selectedInvoice.invoiceDate ? new Date(selectedInvoice.invoiceDate).toLocaleDateString('nl-NL') : new Date(selectedInvoice.createdAt).toLocaleDateString('nl-NL')}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Vervaldatum:</span>
+                          <span className="text-white">{new Date(selectedInvoice.dueDate).toLocaleDateString('nl-NL')}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Status:</span>
+                          <span className="text-white capitalize">{selectedInvoice.status}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Project:</span>
+                          <span className="text-white">{selectedInvoice.projectTitle}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Customer Info */}
+                    <div className="bg-dark-900 p-4 rounded-lg border border-dark-700">
+                      <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">Klantgegevens</h4>
+                      <div className="space-y-2 text-sm">
+                        {selectedInvoice.customerCompany && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Bedrijf:</span>
+                            <span className="text-white">{selectedInvoice.customerCompany}</span>
+                          </div>
+                        )}
+                        {selectedInvoice.customerName && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Contact:</span>
+                            <span className="text-white">{selectedInvoice.customerName}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">E-mail:</span>
+                          <span className="text-white">{selectedInvoice.customerEmail}</span>
+                        </div>
+                        {selectedInvoice.customerPhone && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Telefoon:</span>
+                            <span className="text-white">{selectedInvoice.customerPhone}</span>
+                          </div>
+                        )}
+                        {(selectedInvoice.customerAddress || selectedInvoice.customerPostal || selectedInvoice.customerCity) && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Adres:</span>
+                            <span className="text-white text-right">
+                              {selectedInvoice.customerAddress && <div>{selectedInvoice.customerAddress}</div>}
+                              {(selectedInvoice.customerPostal || selectedInvoice.customerCity) && (
+                                <div>{selectedInvoice.customerPostal} {selectedInvoice.customerCity}</div>
+                              )}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Invoice Items */}
+                  <div className="bg-dark-900 p-4 rounded-lg border border-dark-700 mb-6">
+                    <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">Factuurregels</h4>
+                    <table className="w-full">
+                      <thead>
+                        <tr className="text-left text-xs text-gray-400 uppercase border-b border-dark-700">
+                          <th className="pb-2">Omschrijving</th>
+                          <th className="pb-2 text-center">Aantal</th>
+                          <th className="pb-2 text-right">Prijs</th>
+                          <th className="pb-2 text-right">Totaal</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedInvoice.items.map((item, idx) => (
+                          <tr key={idx} className="text-sm">
+                            <td className="py-2 text-white">{item.description}</td>
+                            <td className="py-2 text-center text-gray-300">{item.quantity}</td>
+                            <td className="py-2 text-right text-gray-300">€{item.price.toFixed(2)}</td>
+                            <td className="py-2 text-right text-white font-medium">€{item.total.toFixed(2)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr className="border-t border-dark-700">
+                          <td colSpan={3} className="pt-3 text-right text-gray-400">Totaalbedrag:</td>
+                          <td className="pt-3 text-right text-xl font-bold text-primary-400">€{selectedInvoice.amount.toFixed(2)}</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      onClick={closeInvoiceDetails}
+                      className="px-4 py-2 text-gray-400 hover:text-white"
+                    >
+                      Sluiten
+                    </button>
+                    <button
+                      onClick={() => {
+                        generatePDF(selectedInvoice);
+                        closeInvoiceDetails();
+                      }}
+                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
+                    >
+                      PDF Genereren
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Project Logs Modal */}
           {showProjectLogs && selectedProjectForLogs && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

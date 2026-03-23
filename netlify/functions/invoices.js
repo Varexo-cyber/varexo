@@ -32,8 +32,15 @@ exports.handler = async (event) => {
       const invoices = result.map(i => ({
         id: i.id.toString(),
         invoiceNumber: i.invoice_number,
+        invoiceDate: i.invoice_date,
         projectTitle: i.project_title,
         customerEmail: i.customer_email,
+        customerName: i.customer_name,
+        customerCompany: i.customer_company,
+        customerAddress: i.customer_address,
+        customerPostal: i.customer_postal,
+        customerCity: i.customer_city,
+        customerPhone: i.customer_phone,
         amount: parseFloat(i.amount),
         status: i.status,
         dueDate: i.due_date,
@@ -46,12 +53,26 @@ exports.handler = async (event) => {
 
     // POST /invoices
     if (event.httpMethod === 'POST') {
-      const { projectTitle, customerEmail, amount, status, dueDate, items } = body;
-      const invoiceNumber = `INV-${Date.now()}`;
+      const { 
+        invoiceNumber, invoiceDate, projectTitle, customerEmail, 
+        customerName, customerCompany, customerAddress, customerPostal, customerCity, customerPhone,
+        amount, status, dueDate, items 
+      } = body;
+      
+      // Use provided invoice number or generate one
+      const finalInvoiceNumber = invoiceNumber || `INV-${Date.now()}`;
 
       const result = await sql`
-        INSERT INTO invoices (invoice_number, project_title, customer_email, amount, status, due_date, items)
-        VALUES (${invoiceNumber}, ${projectTitle}, ${customerEmail}, ${amount}, ${status || 'draft'}, ${dueDate}, ${JSON.stringify(items || [])})
+        INSERT INTO invoices (
+          invoice_number, invoice_date, project_title, customer_email,
+          customer_name, customer_company, customer_address, customer_postal, customer_city, customer_phone,
+          amount, status, due_date, items
+        )
+        VALUES (
+          ${finalInvoiceNumber}, ${invoiceDate || null}, ${projectTitle}, ${customerEmail},
+          ${customerName || null}, ${customerCompany || null}, ${customerAddress || null}, ${customerPostal || null}, ${customerCity || null}, ${customerPhone || null},
+          ${amount}, ${status || 'draft'}, ${dueDate}, ${JSON.stringify(items || [])}
+        )
         RETURNING *
       `;
 
@@ -59,8 +80,15 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({
         id: i.id.toString(),
         invoiceNumber: i.invoice_number,
+        invoiceDate: i.invoice_date,
         projectTitle: i.project_title,
         customerEmail: i.customer_email,
+        customerName: i.customer_name,
+        customerCompany: i.customer_company,
+        customerAddress: i.customer_address,
+        customerPostal: i.customer_postal,
+        customerCity: i.customer_city,
+        customerPhone: i.customer_phone,
         amount: parseFloat(i.amount),
         status: i.status,
         dueDate: i.due_date,

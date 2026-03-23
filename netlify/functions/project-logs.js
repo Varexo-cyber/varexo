@@ -18,14 +18,25 @@ exports.handler = async (event) => {
   const params = event.queryStringParameters || {};
 
   try {
+    const mapLog = (l) => ({
+      id: l.id.toString(),
+      projectId: l.project_id.toString(),
+      title: l.title,
+      description: l.description,
+      logType: l.log_type || 'update',
+      createdBy: l.created_by,
+      createdAt: l.created_at,
+      updatedAt: l.updated_at
+    });
+
     // GET /project-logs?projectId=xxx - Get logs for a project
     if (event.httpMethod === 'GET' && params.projectId) {
       const result = await sql`
         SELECT * FROM project_logs 
-        WHERE project_id = ${params.projectId}
+        WHERE project_id = ${parseInt(params.projectId)}
         ORDER BY created_at DESC
       `;
-      return { statusCode: 200, headers, body: JSON.stringify(result) };
+      return { statusCode: 200, headers, body: JSON.stringify(result.map(mapLog)) };
     }
 
     // POST /project-logs - Add new log
@@ -34,11 +45,11 @@ exports.handler = async (event) => {
       
       const result = await sql`
         INSERT INTO project_logs (project_id, title, description, log_type, created_by)
-        VALUES (${projectId}, ${title}, ${description}, ${logType || 'update'}, ${createdBy})
+        VALUES (${parseInt(projectId)}, ${title}, ${description}, ${logType || 'update'}, ${createdBy})
         RETURNING *
       `;
       
-      return { statusCode: 200, headers, body: JSON.stringify(result[0]) };
+      return { statusCode: 200, headers, body: JSON.stringify(mapLog(result[0])) };
     }
 
     // PUT /project-logs/:id - Update log
@@ -49,7 +60,7 @@ exports.handler = async (event) => {
       const result = await sql`
         UPDATE project_logs 
         SET title = ${title}, description = ${description}, log_type = ${logType}, updated_at = NOW()
-        WHERE id = ${logId}
+        WHERE id = ${parseInt(logId)}
         RETURNING *
       `;
       
@@ -57,7 +68,7 @@ exports.handler = async (event) => {
         return { statusCode: 404, headers, body: JSON.stringify({ error: 'Log not found' }) };
       }
       
-      return { statusCode: 200, headers, body: JSON.stringify(result[0]) };
+      return { statusCode: 200, headers, body: JSON.stringify(mapLog(result[0])) };
     }
 
     // DELETE /project-logs/:id - Delete log

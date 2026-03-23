@@ -36,6 +36,31 @@ exports.handler = async (event) => {
         customer_email VARCHAR(255) NOT NULL REFERENCES users(email) ON DELETE CASCADE,
         deadline DATE,
         budget DECIMAL(10,2),
+        progress INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    // Migration: Add progress column if it doesn't exist yet
+    await sql`
+      DO $$ 
+      BEGIN 
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='projects' AND column_name='progress') THEN
+          ALTER TABLE projects ADD COLUMN progress INTEGER DEFAULT 0;
+        END IF;
+      END $$
+    `;
+
+    // Create project_logs table
+    await sql`
+      CREATE TABLE IF NOT EXISTS project_logs (
+        id SERIAL PRIMARY KEY,
+        project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        log_type VARCHAR(50) DEFAULT 'update',
+        created_by VARCHAR(255),
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       )

@@ -28,14 +28,21 @@ export interface Project {
 
 export interface Invoice {
   id: string;
+  invoiceNumber: string;
+  invoiceDate: string;
   projectTitle: string;
   customerEmail: string;
+  customerName?: string;
+  customerCompany?: string;
+  customerAddress?: string;
+  customerPostal?: string;
+  customerCity?: string;
+  customerPhone?: string;
   amount: number;
   status: 'draft' | 'sent' | 'paid' | 'overdue';
   createdAt: string;
   dueDate: string;
   items: InvoiceItem[];
-  invoiceNumber: string;
 }
 
 export interface InvoiceItem {
@@ -76,7 +83,12 @@ class ProjectService {
   // Project management
   async createProjectAsync(project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>): Promise<Project> {
     try {
-      return await projectsAPI.create(project as any);
+      const result = await projectsAPI.create(project as any);
+      // Sync to localStorage as backup
+      const projects = this.getLocalProjects();
+      projects.push(result);
+      this.saveLocalProjects(projects);
+      return result;
     } catch {
       console.warn('API unavailable, using localStorage');
       return this.createProject(project);
@@ -98,7 +110,11 @@ class ProjectService {
 
   async getProjectsForCustomerAsync(customerEmail: string): Promise<Project[]> {
     try {
-      return await projectsAPI.getForCustomer(customerEmail);
+      const projects = await projectsAPI.getForCustomer(customerEmail);
+      // Merge into localStorage for offline backup
+      const allLocal = this.getLocalProjects().filter(p => p.customerEmail !== customerEmail);
+      this.saveLocalProjects([...allLocal, ...projects]);
+      return projects;
     } catch {
       return this.getProjectsForCustomer(customerEmail);
     }
@@ -110,7 +126,10 @@ class ProjectService {
 
   async getAllProjectsAsync(): Promise<Project[]> {
     try {
-      return await projectsAPI.getAll();
+      const projects = await projectsAPI.getAll();
+      // Sync to localStorage as backup
+      this.saveLocalProjects(projects);
+      return projects;
     } catch {
       return this.getAllProjects();
     }
@@ -122,7 +141,10 @@ class ProjectService {
 
   async updateProjectAsync(id: string, updates: Partial<Project>): Promise<Project | null> {
     try {
-      return await projectsAPI.update(id, updates);
+      const result = await projectsAPI.update(id, updates);
+      // Sync to localStorage
+      this.updateProject(id, updates);
+      return result;
     } catch {
       return this.updateProject(id, updates);
     }
@@ -157,7 +179,7 @@ class ProjectService {
   }
 
   // Invoice management
-  async createInvoiceAsync(invoice: Omit<Invoice, 'id' | 'createdAt' | 'invoiceNumber'>): Promise<Invoice> {
+  async createInvoiceAsync(invoice: Omit<Invoice, 'id' | 'createdAt'>): Promise<Invoice> {
     try {
       return await invoicesAPI.create(invoice as any);
     } catch {
@@ -165,14 +187,12 @@ class ProjectService {
     }
   }
 
-  createInvoice(invoice: Omit<Invoice, 'id' | 'createdAt' | 'invoiceNumber'>): Invoice {
+  createInvoice(invoice: Omit<Invoice, 'id' | 'createdAt'>): Invoice {
     const invoices = this.getLocalInvoices();
-    const invoiceNumber = `INV-${Date.now()}`;
     const newInvoice: Invoice = {
       ...invoice,
       id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-      invoiceNumber
+      createdAt: new Date().toISOString()
     };
     invoices.push(newInvoice);
     this.saveLocalInvoices(invoices);
@@ -296,7 +316,10 @@ class ProjectService {
   // Project Logs management
   async getProjectLogsAsync(projectId: string): Promise<ProjectLog[]> {
     try {
-      return await projectLogsAPI.getForProject(projectId);
+      const logs = await projectLogsAPI.getForProject(projectId);
+      // Sync to localStorage
+      localStorage.setItem(`varexo_logs_${projectId}`, JSON.stringify(logs));
+      return logs;
     } catch {
       return this.getProjectLogs(projectId);
     }
@@ -309,7 +332,12 @@ class ProjectService {
 
   async addProjectLogAsync(log: Omit<ProjectLog, 'id' | 'createdAt' | 'updatedAt'>): Promise<ProjectLog> {
     try {
-      return await projectLogsAPI.create(log as any);
+      const result = await projectLogsAPI.create(log as any);
+      // Also save to localStorage as backup
+      const logs = JSON.parse(localStorage.getItem(`varexo_logs_${log.projectId}`) || '[]');
+      logs.unshift(result);
+      localStorage.setItem(`varexo_logs_${log.projectId}`, JSON.stringify(logs.slice(0, 50)));
+      return result;
     } catch {
       return this.addProjectLog(log);
     }

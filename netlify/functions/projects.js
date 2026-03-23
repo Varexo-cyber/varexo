@@ -38,6 +38,7 @@ exports.handler = async (event) => {
         customerEmail: p.customer_email,
         deadline: p.deadline,
         budget: p.budget ? parseFloat(p.budget) : undefined,
+        progress: p.progress || 0,
         createdAt: p.created_at,
         updatedAt: p.updated_at
       }));
@@ -50,8 +51,8 @@ exports.handler = async (event) => {
       const { title, description, status, customerEmail, deadline, budget } = body;
 
       const result = await sql`
-        INSERT INTO projects (title, description, status, customer_email, deadline, budget)
-        VALUES (${title}, ${description || ''}, ${status || 'planning'}, ${customerEmail}, ${deadline || null}, ${budget || null})
+        INSERT INTO projects (title, description, status, customer_email, deadline, budget, progress)
+        VALUES (${title}, ${description || ''}, ${status || 'planning'}, ${customerEmail}, ${deadline || null}, ${budget || null}, ${body.progress || 0})
         RETURNING *
       `;
 
@@ -64,6 +65,7 @@ exports.handler = async (event) => {
         customerEmail: p.customer_email,
         deadline: p.deadline,
         budget: p.budget ? parseFloat(p.budget) : undefined,
+        progress: p.progress || 0,
         createdAt: p.created_at,
         updatedAt: p.updated_at
       };
@@ -74,7 +76,7 @@ exports.handler = async (event) => {
     // PUT /projects/:id - Update project
     if (event.httpMethod === 'PUT') {
       const id = path.replace('/', '');
-      const { title, description, status, deadline, budget } = body;
+      const { title, description, status, deadline, budget, progress } = body;
 
       const result = await sql`
         UPDATE projects SET
@@ -83,6 +85,7 @@ exports.handler = async (event) => {
           status = COALESCE(${status || null}, status),
           deadline = COALESCE(${deadline || null}, deadline),
           budget = COALESCE(${budget || null}, budget),
+          progress = COALESCE(${typeof progress === 'number' ? progress : null}, progress, 0),
           updated_at = NOW()
         WHERE id = ${parseInt(id)}
         RETURNING *
@@ -101,6 +104,7 @@ exports.handler = async (event) => {
         customerEmail: p.customer_email,
         deadline: p.deadline,
         budget: p.budget ? parseFloat(p.budget) : undefined,
+        progress: p.progress || 0,
         createdAt: p.created_at,
         updatedAt: p.updated_at
       })};

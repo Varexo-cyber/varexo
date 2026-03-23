@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS projects (
   customer_email VARCHAR(255) NOT NULL REFERENCES users(email) ON DELETE CASCADE,
   deadline DATE,
   budget DECIMAL(10,2),
+  progress INTEGER DEFAULT 0 CHECK (progress >= 0 AND progress <= 100),
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -32,8 +33,15 @@ CREATE TABLE IF NOT EXISTS projects (
 CREATE TABLE IF NOT EXISTS invoices (
   id SERIAL PRIMARY KEY,
   invoice_number VARCHAR(50) UNIQUE NOT NULL,
+  invoice_date DATE DEFAULT NOW(),
   project_title VARCHAR(255) NOT NULL,
   customer_email VARCHAR(255) NOT NULL REFERENCES users(email) ON DELETE CASCADE,
+  customer_name VARCHAR(255),
+  customer_company VARCHAR(255),
+  customer_address TEXT,
+  customer_postal VARCHAR(20),
+  customer_city VARCHAR(100),
+  customer_phone VARCHAR(50),
   amount DECIMAL(10,2) NOT NULL,
   status VARCHAR(50) DEFAULT 'draft' CHECK (status IN ('draft', 'sent', 'paid', 'overdue')),
   due_date DATE NOT NULL,
@@ -50,3 +58,18 @@ ON CONFLICT (email) DO NOTHING;
 INSERT INTO users (email, display_name, password_hash, provider) 
 VALUES ('demo@varexo.nl', 'Demo Klant', 'demo123', 'email')
 ON CONFLICT (email) DO NOTHING;
+
+-- Project logs table
+CREATE TABLE IF NOT EXISTS project_logs (
+  id SERIAL PRIMARY KEY,
+  project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  log_type VARCHAR(50) DEFAULT 'update' CHECK (log_type IN ('update', 'milestone', 'bugfix', 'feature', 'design', 'deployment')),
+  created_by VARCHAR(255),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Migration: Add progress column to existing projects table
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS progress INTEGER DEFAULT 0 CHECK (progress >= 0 AND progress <= 100);
