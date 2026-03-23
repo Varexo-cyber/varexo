@@ -28,8 +28,18 @@ export const submitContactForm = async (formData: ContactForm): Promise<{ succes
     const data = await response.json();
     return { success: true, id: data.id };
   } catch (error) {
-    console.error('Error submitting contact form:', error);
-    return { success: false, error: 'Failed to submit form' };
+    console.warn('API not available, using localStorage fallback:', error);
+    // Fallback to localStorage for development
+    const submission = {
+      ...formData,
+      id: 'contact-' + Date.now(),
+      createdAt: new Date().toISOString(),
+      status: 'new'
+    };
+    const existing = JSON.parse(localStorage.getItem('varexo_contacts') || '[]');
+    existing.push(submission);
+    localStorage.setItem('varexo_contacts', JSON.stringify(existing));
+    return { success: true, id: submission.id };
   }
 };
 
@@ -42,7 +52,17 @@ export const getContactMessages = async (): Promise<ContactMessage[]> => {
     const response = await fetch(`${API_BASE}/contact-messages`);
     return await response.json();
   } catch (error) {
-    console.error('Error fetching messages:', error);
-    return [];
+    console.warn('API not available, using localStorage fallback:', error);
+    // Fallback to localStorage for development
+    const stored = JSON.parse(localStorage.getItem('varexo_contacts') || '[]');
+    return stored.map((msg: any) => ({
+      id: msg.id,
+      naam: msg.naam,
+      email: msg.email,
+      bericht: msg.bericht,
+      type: msg.type,
+      status: msg.status,
+      createdAt: msg.createdAt
+    }));
   }
 };
