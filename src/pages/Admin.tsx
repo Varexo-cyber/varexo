@@ -21,6 +21,8 @@ const AdminDashboard: React.FC = () => {
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<string>('');
 
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [showCustomerDeleteConfirm, setShowCustomerDeleteConfirm] = useState<string | null>(null);
   const [showProjectLogs, setShowProjectLogs] = useState(false);
   const [selectedProjectForLogs, setSelectedProjectForLogs] = useState<Project | null>(null);
   const [projectLogs, setProjectLogs] = useState<ProjectLog[]>([]);
@@ -145,7 +147,7 @@ const AdminDashboard: React.FC = () => {
       title: project.title,
       description: project.description,
       status: project.status,
-      deadline: project.deadline || '',
+      deadline: project.deadline ? project.deadline.substring(0, 10) : '',
       budget: project.budget?.toString() || '',
       progress: project.progress || 0
     });
@@ -178,6 +180,26 @@ const AdminDashboard: React.FC = () => {
   const closeInvoiceDetails = () => {
     setShowInvoiceDetails(false);
     setSelectedInvoice(null);
+  };
+
+  const handleDeleteProject = async (projectId: string) => {
+    try {
+      await projectService.deleteProjectAsync(projectId);
+      setShowDeleteConfirm(null);
+      loadData();
+    } catch (error) {
+      console.error('Error deleting project:', error);
+    }
+  };
+
+  const handleDeleteCustomer = async (email: string) => {
+    try {
+      await projectService.deleteCustomerAsync(email);
+      setShowCustomerDeleteConfirm(null);
+      loadData();
+    } catch (error) {
+      console.error('Error deleting customer:', error);
+    }
   };
 
   const handleAddLog = async (e: React.FormEvent) => {
@@ -763,8 +785,42 @@ const AdminDashboard: React.FC = () => {
                               >
                                 Factuur
                               </button>
+                              <button
+                                onClick={() => setShowCustomerDeleteConfirm(customer.email)}
+                                className="text-red-400 hover:text-red-300"
+                              >
+                                Verwijderen
+                              </button>
                             </div>
                           </td>
+
+                          {/* Customer Delete Confirmation */}
+                          {showCustomerDeleteConfirm === customer.email && (
+                            <tr>
+                              <td colSpan={5} className="px-6 py-4">
+                                <div className="p-3 bg-red-900/30 border border-red-700 rounded-lg">
+                                  <p className="text-red-300 text-sm mb-2">
+                                    Weet je zeker dat je klant <strong>{customer.displayName}</strong> wilt verwijderen? 
+                                    Dit verwijdert ook alle projecten en facturen van deze klant.
+                                  </p>
+                                  <div className="flex space-x-2">
+                                    <button
+                                      onClick={() => handleDeleteCustomer(customer.email)}
+                                      className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500"
+                                    >
+                                      Ja, verwijderen
+                                    </button>
+                                    <button
+                                      onClick={() => setShowCustomerDeleteConfirm(null)}
+                                      className="px-3 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600"
+                                    >
+                                      Annuleren
+                                    </button>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
                         </tr>
                       ))}
                     </tbody>
@@ -828,7 +884,34 @@ const AdminDashboard: React.FC = () => {
                         >
                           Bewerken
                         </button>
+                        <button
+                          onClick={() => setShowDeleteConfirm(project.id)}
+                          className="text-red-400 hover:text-red-300 text-sm"
+                        >
+                          Verwijderen
+                        </button>
                       </div>
+
+                      {/* Delete Confirmation */}
+                      {showDeleteConfirm === project.id && (
+                        <div className="mt-3 p-3 bg-red-900/30 border border-red-700 rounded-lg">
+                          <p className="text-red-300 text-sm mb-2">Weet je zeker dat je dit project wilt verwijderen?</p>
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleDeleteProject(project.id)}
+                              className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500"
+                            >
+                              Ja, verwijderen
+                            </button>
+                            <button
+                              onClick={() => setShowDeleteConfirm(null)}
+                              className="px-3 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600"
+                            >
+                              Annuleren
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

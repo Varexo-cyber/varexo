@@ -77,6 +77,7 @@ export const invoicesAPI = {
 // Customers API
 export const customersAPI = {
   getAll: () => apiCall('/customers'),
+  delete: (email: string) => apiCall(`/customers/${email}`, { method: 'DELETE' }),
 };
 
 // Stats API

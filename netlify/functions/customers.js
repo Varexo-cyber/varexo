@@ -3,7 +3,7 @@ const { neon } = require('@netlify/neon');
 const headers = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, DELETE, OPTIONS',
   'Content-Type': 'application/json'
 };
 
@@ -13,6 +13,7 @@ exports.handler = async (event) => {
   }
 
   const sql = neon();
+  const path = event.path.replace('/.netlify/functions/customers', '').replace('/api/customers', '');
 
   try {
     // GET /customers - Get all customers with project/invoice counts
@@ -45,6 +46,19 @@ exports.handler = async (event) => {
       }));
 
       return { statusCode: 200, headers, body: JSON.stringify(customers) };
+    }
+
+    // DELETE /customers/:email - Delete customer
+    if (event.httpMethod === 'DELETE' && path) {
+      const email = path.replace('/', '');
+      
+      // Delete customer's projects, invoices, and user record
+      await sql`DELETE FROM project_logs WHERE project_id IN (SELECT id FROM projects WHERE customer_email = ${email})`;
+      await sql`DELETE FROM projects WHERE customer_email = ${email}`;
+      await sql`DELETE FROM invoices WHERE customer_email = ${email}`;
+      await sql`DELETE FROM users WHERE email = ${email}`;
+      
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Klant verwijderd' }) };
     }
 
     return { statusCode: 404, headers, body: JSON.stringify({ error: 'Route niet gevonden' }) };

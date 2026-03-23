@@ -268,6 +268,58 @@ class ProjectService {
     }
   }
 
+  async deleteCustomerAsync(email: string): Promise<boolean> {
+    try {
+      await customersAPI.delete(email);
+      return true;
+    } catch {
+      return this.deleteCustomer(email);
+    }
+  }
+
+  deleteCustomer(email: string): boolean {
+    const customers = this.getCustomers();
+    const filtered = customers.filter((c: Customer) => c.email !== email);
+    if (filtered.length === customers.length) return false;
+    
+    this.saveLocalCustomers(filtered);
+    return true;
+  }
+
+  getLocalCustomers(): Customer[] {
+    const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
+    const projects = this.getLocalProjects();
+    const invoices = this.getLocalInvoices();
+
+    return users.map((user: any) => ({
+      email: user.email,
+      displayName: user.displayName,
+      phone: user.phone,
+      company: user.company,
+      createdAt: user.createdAt || new Date().toISOString(),
+      projectCount: projects.filter(p => p.customerEmail === user.email).length,
+      invoiceCount: invoices.filter(i => i.customerEmail === user.email).length
+    })).filter((customer: Customer) => customer.email !== 'info@varexo.nl');
+  }
+
+  saveLocalCustomers(customers: Customer[]): void {
+    // Get existing users and update only the customer fields
+    const existingUsers = JSON.parse(localStorage.getItem('varexo_users') || '[]');
+    const updatedUsers = existingUsers.filter((user: any) => user.email === 'info@varexo.nl' || customers.some((c: Customer) => c.email === user.email));
+    
+    // Add customer data for non-admin users
+    customers.forEach((customer: Customer) => {
+      const existingUser = updatedUsers.find((u: any) => u.email === customer.email);
+      if (existingUser) {
+        existingUser.displayName = customer.displayName;
+        existingUser.phone = customer.phone;
+        existingUser.company = customer.company;
+      }
+    });
+    
+    localStorage.setItem('varexo_users', JSON.stringify(updatedUsers));
+  }
+
   getCustomers(): Customer[] {
     const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
     const projects = this.getLocalProjects();
