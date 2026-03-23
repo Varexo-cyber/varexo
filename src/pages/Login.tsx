@@ -200,24 +200,14 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="mt-6">
               <Link
                 to="/signup"
-                className="font-medium text-primary-400 hover:text-primary-300 text-center"
+                className="w-full flex justify-center py-2 px-4 border-2 border-primary-500 rounded-md shadow-sm text-sm font-bold text-primary-400 hover:bg-primary-500 hover:text-dark-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition"
               >
-                Maak account
+                Gratis Account Aanmaken
               </Link>
-              <span className="text-gray-500 text-center">|</span>
             </div>
-          </div>
-
-          {/* Demo credentials for development */}
-          <div className="mt-8 p-4 bg-dark-700 rounded-lg border border-dark-600">
-            <h3 className="text-sm font-semibold text-gray-300 mb-2">Demo toegang:</h3>
-            <p className="text-xs text-gray-400">
-              E-mail: demo@varexo.nl<br />
-              Wachtwoord: demo123
-            </p>
           </div>
         </div>
       </div>
