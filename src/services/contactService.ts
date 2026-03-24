@@ -6,6 +6,9 @@ export interface ContactForm {
   bericht: string;
   type: 'contact' | 'quote';
   package?: string;
+  telefoon?: string;
+  bedrijf?: string;
+  projectType?: string;
 }
 
 export interface ContactMessage {
@@ -15,6 +18,9 @@ export interface ContactMessage {
   bericht: string;
   type: string;
   status: string;
+  telefoon?: string;
+  bedrijf?: string;
+  projectType?: string;
   createdAt: string;
 }
 
@@ -67,6 +73,9 @@ const getLocalMessages = (): ContactMessage[] => {
     bericht: msg.bericht || '',
     type: msg.type || 'contact',
     status: msg.status || 'new',
+    telefoon: msg.telefoon || '',
+    bedrijf: msg.bedrijf || '',
+    projectType: msg.projectType || '',
     createdAt: msg.createdAt || new Date().toISOString()
   }));
 };

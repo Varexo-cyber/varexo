@@ -24,9 +24,19 @@ exports.handler = async (event) => {
         bericht TEXT NOT NULL,
         type VARCHAR(50) DEFAULT 'contact',
         status VARCHAR(50) DEFAULT 'new',
+        telefoon VARCHAR(50),
+        bedrijf VARCHAR(255),
+        project_type VARCHAR(100),
         created_at TIMESTAMP DEFAULT NOW()
       )
     `;
+
+    // Add columns if they don't exist (for existing tables)
+    try {
+      await sql`ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS telefoon VARCHAR(50)`;
+      await sql`ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS bedrijf VARCHAR(255)`;
+      await sql`ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS project_type VARCHAR(100)`;
+    } catch (e) { /* columns may already exist */ }
 
     // GET - Admin reads all messages
     if (event.httpMethod === 'GET') {
@@ -38,6 +48,9 @@ exports.handler = async (event) => {
         bericht: m.bericht,
         type: m.type,
         status: m.status,
+        telefoon: m.telefoon || '',
+        bedrijf: m.bedrijf || '',
+        projectType: m.project_type || '',
         createdAt: m.created_at
       }));
       return { statusCode: 200, headers, body: JSON.stringify(messages) };
@@ -46,11 +59,11 @@ exports.handler = async (event) => {
     // POST - Submit new contact message
     if (event.httpMethod === 'POST') {
       const body = JSON.parse(event.body);
-      const { naam, email, bericht, type } = body;
+      const { naam, email, bericht, type, telefoon, bedrijf, projectType } = body;
 
       const result = await sql`
-        INSERT INTO contact_messages (naam, email, bericht, type)
-        VALUES (${naam}, ${email}, ${bericht}, ${type || 'contact'})
+        INSERT INTO contact_messages (naam, email, bericht, type, telefoon, bedrijf, project_type)
+        VALUES (${naam}, ${email}, ${bericht}, ${type || 'contact'}, ${telefoon || null}, ${bedrijf || null}, ${projectType || null})
         RETURNING *
       `;
 
@@ -62,6 +75,9 @@ exports.handler = async (event) => {
         bericht: m.bericht,
         type: m.type,
         status: m.status,
+        telefoon: m.telefoon || '',
+        bedrijf: m.bedrijf || '',
+        projectType: m.project_type || '',
         createdAt: m.created_at
       })};
     }

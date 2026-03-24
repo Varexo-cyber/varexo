@@ -1579,6 +1579,26 @@ const AdminDashboard: React.FC = () => {
                             </div>
                           </div>
                         </div>
+                        {/* Extra details */}
+                        {(msg.projectType || msg.telefoon || msg.bedrijf) && (
+                          <div className="flex flex-wrap gap-3 mb-3">
+                            {msg.projectType && (
+                              <span className="px-2 py-1 text-xs rounded bg-primary-900/50 text-primary-300 border border-primary-700/50">
+                                {msg.projectType === 'website' ? 'Website' : msg.projectType === 'webshop' ? 'Webshop' : msg.projectType === 'social-media' ? 'Social Media' : msg.projectType === 'seo' ? 'SEO' : msg.projectType === 'maatwerk' ? 'Maatwerk' : msg.projectType === 'onderhoud' ? 'Onderhoud' : msg.projectType}
+                              </span>
+                            )}
+                            {msg.bedrijf && (
+                              <span className="px-2 py-1 text-xs rounded bg-dark-700 text-gray-300 border border-dark-600">
+                                🏢 {msg.bedrijf}
+                              </span>
+                            )}
+                            {msg.telefoon && (
+                              <span className="px-2 py-1 text-xs rounded bg-dark-700 text-gray-300 border border-dark-600">
+                                📞 {msg.telefoon}
+                              </span>
+                            )}
+                          </div>
+                        )}
                         <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{msg.bericht}</p>
 
                         {/* Delete Confirmation */}

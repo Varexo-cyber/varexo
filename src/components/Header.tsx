@@ -59,7 +59,7 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className={`bg-dark-950/80 backdrop-blur-md shadow-lg border-b border-dark-700/50 fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out md:translate-y-0 ${isHidden ? '-translate-y-full' : 'translate-y-0'}`}>
+    <header className={`bg-dark-950 shadow-lg border-b border-dark-700/50 fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out md:translate-y-0 ${isHidden ? '-translate-y-full' : 'translate-y-0'}`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <Link to="/" className="flex items-center">
@@ -150,7 +150,7 @@ const Header: React.FC = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-dark-700/50 py-4">
+          <div className="md:hidden border-t border-dark-700/50 py-4 bg-dark-950">
             <div className="flex flex-col space-y-3">
               <Link to="/" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Home</Link>
               <Link to="/over-ons" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Over ons</Link>
