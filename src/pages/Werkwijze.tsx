@@ -165,8 +165,9 @@ const Werkwijze: React.FC = () => {
             </p>
             <a 
               href="/contact" 
-              className="bg-primary-500 text-dark-900 px-8 py-3 rounded-lg font-bold hover:bg-primary-400 transition inline-block glow-emerald">
-              Start Project
+              className="bg-primary-500 text-dark-900 px-8 py-3 rounded-lg font-bold hover:bg-primary-400 transition inline-block glow-emerald"
+            >
+              Vraag Offerte Aan
             </a>
           </div>
         </div>

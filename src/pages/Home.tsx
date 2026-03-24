@@ -161,20 +161,20 @@ const Home: React.FC = () => {
           <AnimateOnScroll>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             <div className="text-center glass-card rounded-xl p-6">
-              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">50+</div>
-              <p className="text-gray-400 text-sm">Happy Clients</p>
+              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">10+</div>
+              <p className="text-gray-400 text-sm">Tevreden Klanten</p>
             </div>
             <div className="text-center glass-card rounded-xl p-6">
-              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">100+</div>
-              <p className="text-gray-400 text-sm">Projects Shipped</p>
+              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">10+</div>
+              <p className="text-gray-400 text-sm">Projecten</p>
             </div>
             <div className="text-center glass-card rounded-xl p-6">
-              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">99.9%</div>
+              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">99,99%</div>
               <p className="text-gray-400 text-sm">Uptime</p>
             </div>
             <div className="text-center glass-card rounded-xl p-6">
-              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">&lt;24h</div>
-              <p className="text-gray-400 text-sm">Response Time</p>
+              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">&gt;24h</div>
+              <p className="text-gray-400 text-sm">Support</p>
             </div>
           </div>
           </AnimateOnScroll>

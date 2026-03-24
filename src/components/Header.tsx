@@ -59,7 +59,7 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className={`bg-dark-950/80 backdrop-blur-md shadow-lg border-b border-dark-700/50 sticky top-0 z-50 transition-transform duration-300 ease-out md:transform-none ${isHidden ? '-translate-y-full' : 'translate-y-0'}`}>
+    <header className={`bg-dark-950/80 backdrop-blur-md shadow-lg border-b border-dark-700/50 fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out md:translate-y-0 ${isHidden ? '-translate-y-full' : 'translate-y-0'}`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <Link to="/" className="flex items-center">
@@ -69,7 +69,6 @@ const Header: React.FC = () => {
             <Link to="/" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Home</Link>
             <Link to="/over-ons" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Over ons</Link>
             <Link to="/diensten" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Diensten</Link>
-            <Link to="/portfolio" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Portfolio</Link>
             <Link to="/prijzen" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Prijzen</Link>
             <Link to="/werkwijze" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Werkwijze</Link>
             <Link to="/contact" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Contact</Link>
@@ -156,7 +155,6 @@ const Header: React.FC = () => {
               <Link to="/" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Home</Link>
               <Link to="/over-ons" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Over ons</Link>
               <Link to="/diensten" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Diensten</Link>
-              <Link to="/portfolio" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Portfolio</Link>
               <Link to="/prijzen" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Prijzen</Link>
               <Link to="/werkwijze" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Werkwijze</Link>
               <Link to="/contact" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Contact</Link>

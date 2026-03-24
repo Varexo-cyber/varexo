@@ -200,7 +200,7 @@ async function generateInvoicePDF(invoiceData) {
       .footer {
         background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
         padding: 30px 40px;
-        margin-top: 40px;
+        margin-top: 120px;
       }
       .footer-content {
         display: flex;

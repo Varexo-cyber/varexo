@@ -191,7 +191,7 @@ const Diensten: React.FC = () => {
               href="/contact" 
               className="bg-dark-900 text-primary-400 px-8 py-3 rounded-lg font-bold hover:bg-dark-800 transition inline-block glow-emerald"
             >
-              Vraag Advies
+              Vraag Offerte Aan
             </a>
           </div>
         </div>
