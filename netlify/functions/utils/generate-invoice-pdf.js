@@ -1,254 +1,385 @@
-const PDFDocument = require('pdfkit');
+async function generateInvoicePDF(invoiceData) {
+  console.log('PDF Generation - Starting for invoice:', invoiceData.invoiceNumber);
 
-function generateInvoicePDF(invoiceData) {
-  return new Promise((resolve, reject) => {
-    try {
-      console.log('PDF Generation (PDFKit) - Starting for invoice:', invoiceData.invoiceNumber);
+  const {
+    invoiceNumber, invoiceDate, customerName, customerCompany,
+    customerAddress, customerPostal, customerCity, customerEmail,
+    customerPhone, items, amount, dueDate
+  } = invoiceData;
 
-      const {
-        invoiceNumber, invoiceDate, customerName, customerCompany,
-        customerAddress, customerPostal, customerCity, customerEmail,
-        customerPhone, items, amount, dueDate
-      } = invoiceData;
+  // BTW calculation
+  const totalIncl = parseFloat(amount) || 0;
+  const subtotalExcl = totalIncl / 1.21;
+  const btwAmount = totalIncl - subtotalExcl;
 
-      // BTW calculation
-      const totalIncl = parseFloat(amount) || 0;
-      const subtotalExcl = totalIncl / 1.21;
-      const btwAmount = totalIncl - subtotalExcl;
+  // Format date
+  let dateStr = '';
+  if (invoiceDate) {
+    const d = new Date(invoiceDate);
+    dateStr = d.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } else {
+    dateStr = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
 
-      // Format date
-      let dateStr = '';
-      if (invoiceDate) {
-        const d = new Date(invoiceDate);
-        dateStr = d.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      } else {
-        dateStr = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  // Format due date
+  let dueDateStr = '';
+  if (dueDate) {
+    dueDateStr = new Date(dueDate).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } else {
+    dueDateStr = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  // Parse items
+  const parsedItems = typeof items === 'string' ? JSON.parse(items) : (items || []);
+
+  // Build items HTML rows
+  const itemsHTML = parsedItems.map(item => {
+    const qty = item.quantity || 1;
+    const price = parseFloat(item.price) || 0;
+    const total = parseFloat(item.total) || (price * qty);
+    return `<tr>
+      <td class="quantity">${qty}</td>
+      <td class="description">${item.description || ''}</td>
+      <td class="price">&euro;${price.toFixed(2)}</td>
+      <td class="total">&euro;${total.toFixed(2)}</td>
+    </tr>`;
+  }).join('');
+
+  // EXACT same HTML template as Dashboard.tsx generatePDF
+  const html = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Factuur ${invoiceNumber}</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { 
+        font-family: 'Inter', Arial, sans-serif; 
+        background: white;
+        padding: 0;
+        color: #333;
       }
-
-      // Format due date
-      let dueDateStr = '';
-      if (dueDate) {
-        dueDateStr = new Date(dueDate).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      } else {
-        dueDateStr = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      .invoice-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        position: relative;
       }
+      .header-section {
+        background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
+        padding: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .header-left h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #000;
+        margin-bottom: 30px;
+      }
+      .invoice-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .info-block h3 {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #000;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+      }
+      .info-block p {
+        font-size: 16px;
+        color: #000;
+      }
+      .logo-section {
+        text-align: right;
+      }
+      .company-info {
+        font-size: 12px;
+        color: #333;
+        line-height: 1.6;
+        text-align: right;
+      }
+      .customer-section {
+        padding: 30px 40px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .customer-details {
+        max-width: 300px;
+      }
+      .customer-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #000;
+        margin-bottom: 8px;
+      }
+      .customer-details p {
+        font-size: 13px;
+        color: #333;
+        line-height: 1.5;
+      }
+      .customer-email {
+        color: #0066cc;
+        text-decoration: underline;
+      }
+      .summary-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 2fr 1fr;
+        background: #f8f9fa;
+        margin: 0 40px;
+        padding: 15px 20px;
+        border: 1px solid #dee2e6;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #2c6e4f;
+      }
+      .summary-row span {
+        text-align: center;
+      }
+      .summary-row span:first-child {
+        text-align: left;
+      }
+      .summary-row span:last-child {
+        text-align: right;
+      }
+      .items-table {
+        margin: 0 40px;
+        border-collapse: collapse;
+        width: calc(100% - 80px);
+      }
+      .items-table th {
+        text-align: left;
+        padding: 15px 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #2c6e4f;
+        border-bottom: 2px solid #2c6e4f;
+      }
+      .items-table td {
+        padding: 20px;
+        font-size: 13px;
+        color: #333;
+        border-bottom: 1px solid #eee;
+      }
+      .items-table .quantity { text-align: center; width: 80px; }
+      .items-table .description { text-align: left; }
+      .items-table .price { text-align: right; width: 120px; }
+      .items-table .total { text-align: right; width: 120px; }
+      .totals-section {
+        margin: 30px 40px 0 40px;
+        padding-bottom: 40px;
+        display: flex;
+        justify-content: flex-end;
+      }
+      .totals-table {
+        width: 300px;
+      }
+      .totals-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 13px;
+        color: #333;
+      }
+      .totals-row.total {
+        font-weight: 600;
+        font-size: 16px;
+        border-top: 2px solid #333;
+        padding-top: 12px;
+        margin-top: 8px;
+      }
+      .footer {
+        background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
+        padding: 30px 40px;
+        margin-top: 40px;
+      }
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .footer-left {
+        font-size: 11px;
+        color: #333;
+      }
+      .footer-right {
+        text-align: right;
+        font-size: 12px;
+        color: #333;
+        line-height: 1.8;
+      }
+      .footer-right strong {
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="invoice-container">
+      <div class="header-section">
+        <div class="header-left">
+          <h1>FACTUUR</h1>
+          <div class="invoice-info">
+            <div class="info-block">
+              <h3>Datum</h3>
+              <p>${dateStr}</p>
+            </div>
+            <div class="info-block">
+              <h3>Factuurnummer</h3>
+              <p>${invoiceNumber}</p>
+            </div>
+          </div>
+        </div>
+        <div class="logo-section">
+          <svg width="180" height="80" viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="vLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#7cb8d4"/>
+                <stop offset="100%" style="stop-color:#4a9cc7"/>
+              </linearGradient>
+              <linearGradient id="vRight" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#1a3a5c"/>
+                <stop offset="100%" style="stop-color:#2a5a8c"/>
+              </linearGradient>
+              <linearGradient id="vCenter" x1="50%" y1="0%" x2="50%" y2="100%">
+                <stop offset="0%" style="stop-color:#5ba3cb"/>
+                <stop offset="100%" style="stop-color:#3d8ab8"/>
+              </linearGradient>
+              <linearGradient id="vLeftFacet" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#a8d4e6"/>
+                <stop offset="100%" style="stop-color:#6db5d4"/>
+              </linearGradient>
+              <linearGradient id="vRightFacet" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#1e4d7a"/>
+                <stop offset="100%" style="stop-color:#2a6a9e"/>
+              </linearGradient>
+            </defs>
+            <polygon points="15,15 65,105 50,105 5,30" fill="url(#vLeft)"/>
+            <polygon points="115,15 65,105 80,105 120,30" fill="url(#vRight)"/>
+            <polygon points="65,105 45,60 65,48 85,60" fill="url(#vCenter)" opacity="0.85"/>
+            <polygon points="15,15 48,15 65,48 45,60" fill="url(#vLeftFacet)" opacity="0.9"/>
+            <polygon points="115,15 82,15 65,48 85,60" fill="url(#vRightFacet)" opacity="0.9"/>
+            <text x="138" y="68" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="700" fill="#1a3050" letter-spacing="3">VAREXO</text>
+            <text x="140" y="88" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#5a9ec4" letter-spacing="2">ICT  •  WEBSITES  •  SOFTWARE</text>
+          </svg>
+          <div class="company-info">
+            <strong>Varexo</strong><br>
+            Regulierenstraat 10<br>
+            2694BA 's-Gravenzande<br>
+            +31 6 36075966<br>
+            Info@varexo.nl
+          </div>
+        </div>
+      </div>
 
-      // Parse items
-      const parsedItems = typeof items === 'string' ? JSON.parse(items) : (items || []);
+      <div class="customer-section">
+        <div class="customer-details">
+          <div class="customer-label">Factuur aan:</div>
+          <p>
+            ${customerCompany ? `<strong>${customerCompany}</strong><br>` : ''}
+            ${customerName || ''}<br>
+            ${customerAddress || ''}<br>
+            ${customerPostal || ''} ${customerCity || ''}<br>
+            ${customerPhone || ''}<br>
+            <span class="customer-email">${customerEmail || ''}</span>
+          </p>
+        </div>
+      </div>
 
-      // Create PDF document - no margins, we handle layout manually
-      const doc = new PDFDocument({ size: 'A4', margin: 0 });
-      const buffers = [];
+      <div class="summary-row">
+        <span>VAREXO</span>
+        <span>DIENSTVERLENING</span>
+        <span>BETALINGSVOORWAARDEN<br><small style="font-weight:400;font-size:11px;">Betaling binnen 14 dagen</small></span>
+        <span>${dueDateStr}</span>
+      </div>
 
-      doc.on('data', (chunk) => buffers.push(chunk));
-      doc.on('end', () => {
-        const pdfBuffer = Buffer.concat(buffers);
-        console.log('PDF Generation - Complete, size:', pdfBuffer.length);
-        resolve(pdfBuffer);
-      });
-      doc.on('error', reject);
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th class="quantity">Aantal</th>
+            <th class="description">Omschrijving</th>
+            <th class="price">Prijs per eenheid</th>
+            <th class="total">Regeltotaal</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemsHTML}
+        </tbody>
+      </table>
 
-      const pw = doc.page.width;   // 595.28
-      const ph = doc.page.height;  // 841.89
-      const mx = 40; // horizontal margin
-      const cw = pw - mx * 2; // content width
+      <div class="totals-section">
+        <div class="totals-table">
+          <div class="totals-row">
+            <span>Subtotaal (excl. BTW)</span>
+            <span>&euro;${subtotalExcl.toFixed(2)}</span>
+          </div>
+          <div class="totals-row">
+            <span>BTW 21%</span>
+            <span>&euro;${btwAmount.toFixed(2)}</span>
+          </div>
+          <div class="totals-row total">
+            <span>Totaal (incl. BTW)</span>
+            <span>&euro;${totalIncl.toFixed(2)}</span>
+          </div>
+          <div style="font-size:11px;color:#666;margin-top:6px;text-align:right;">Alle bedragen zijn inclusief 21% BTW</div>
+        </div>
+      </div>
 
-      // ========================================================
-      // HEADER - light green/blue gradient background
-      // ========================================================
-      // Simulate gradient with two overlapping rects
-      doc.rect(0, 0, pw, 140).fill('#c8e6d1');
-      doc.rect(pw * 0.4, 0, pw * 0.6, 140).fill('#b8e0e8');
-      // Blend overlap
-      doc.save();
-      doc.rect(pw * 0.3, 0, pw * 0.3, 140).fill('#c0e3dc');
-      doc.restore();
+      <div class="footer">
+        <div class="footer-content">
+          <div class="footer-left"></div>
+          <div class="footer-right">
+            <strong>Varexo</strong><br>
+            t.n.v. Mohammed Taher<br>
+            IBAN: NL75INGB0756428726<br>
+            BTW: 21% inbegrepen
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>`;
 
-      // "FACTUUR" title
-      doc.font('Helvetica-Bold').fontSize(32).fill('#000000');
-      doc.text('FACTUUR', mx, 30, { width: 300 });
+  // Render HTML to PDF using headless Chromium (works in serverless)
+  let browser = null;
+  try {
+    const chromium = require('@sparticuz/chromium');
+    const puppeteer = require('puppeteer-core');
 
-      // Date label + value
-      doc.font('Helvetica-Bold').fontSize(10).fill('#000000');
-      doc.text('DATUM', mx, 85);
-      doc.fontSize(14).text(dateStr, mx, 100);
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    });
 
-      // Invoice number label + value
-      doc.font('Helvetica-Bold').fontSize(10).fill('#000000');
-      doc.text('FACTUURNUMMER', mx + 140, 85);
-      doc.fontSize(14).text(invoiceNumber, mx + 140, 100);
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0' });
 
-      // Right side: Varexo logo area
-      const logoX = pw - 220;
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    });
 
-      // Draw V shape manually with triangles
-      // Left side of V (lighter blue)
-      doc.save();
-      doc.path('M ' + (logoX) + ' 25 L ' + (logoX + 28) + ' 80 L ' + (logoX + 20) + ' 80 L ' + (logoX - 3) + ' 35 Z')
-        .fill('#7cb8d4');
-      // Right side of V (dark blue)
-      doc.path('M ' + (logoX + 56) + ' 25 L ' + (logoX + 28) + ' 80 L ' + (logoX + 36) + ' 80 L ' + (logoX + 60) + ' 35 Z')
-        .fill('#1a3a5c');
-      // Center facet
-      doc.path('M ' + (logoX + 28) + ' 80 L ' + (logoX + 18) + ' 52 L ' + (logoX + 28) + ' 44 L ' + (logoX + 38) + ' 52 Z')
-        .fillOpacity(0.85).fill('#5ba3cb');
-      doc.fillOpacity(1);
-      // Left facet
-      doc.path('M ' + (logoX) + ' 25 L ' + (logoX + 19) + ' 25 L ' + (logoX + 28) + ' 44 L ' + (logoX + 18) + ' 52 Z')
-        .fillOpacity(0.9).fill('#a8d4e6');
-      doc.fillOpacity(1);
-      // Right facet
-      doc.path('M ' + (logoX + 56) + ' 25 L ' + (logoX + 37) + ' 25 L ' + (logoX + 28) + ' 44 L ' + (logoX + 38) + ' 52 Z')
-        .fillOpacity(0.9).fill('#1e4d7a');
-      doc.fillOpacity(1);
-      doc.restore();
-
-      // "VAREXO" text next to V
-      doc.font('Helvetica-Bold').fontSize(26).fill('#1a3050');
-      doc.text('VAREXO', logoX + 68, 38, { width: 150 });
-
-      // Subtitle
-      doc.font('Helvetica').fontSize(8).fill('#5a9ec4');
-      doc.text('ICT  •  WEBSITES  •  SOFTWARE', logoX + 70, 64, { width: 150, characterSpacing: 0.5 });
-
-      // Company info (right-aligned under logo)
-      const companyX = pw - 180;
-      doc.font('Helvetica-Bold').fontSize(10).fill('#333333');
-      doc.text('Varexo', companyX, 82, { width: 140, align: 'right' });
-      doc.font('Helvetica').fontSize(9).fill('#333333');
-      doc.text('Regulierenstraat 10', companyX, 94, { width: 140, align: 'right' });
-      doc.text('2694BA \'s-Gravenzande', companyX, 106, { width: 140, align: 'right' });
-      doc.text('+31 6 36075966', companyX, 118, { width: 140, align: 'right' });
-      doc.text('Info@varexo.nl', companyX, 130, { width: 140, align: 'right' });
-
-      // ========================================================
-      // CUSTOMER SECTION
-      // ========================================================
-      let y = 160;
-
-      doc.font('Helvetica-Bold').fontSize(9).fill('#000000');
-      doc.text('FACTUUR AAN:', mx, y);
-      y += 16;
-
-      doc.font('Helvetica').fontSize(11).fill('#333333');
-      if (customerCompany) { doc.font('Helvetica-Bold').text(customerCompany, mx, y); y += 15; }
-      doc.font('Helvetica');
-      if (customerName) { doc.text(customerName, mx, y); y += 15; }
-      if (customerAddress) { doc.text(customerAddress, mx, y); y += 15; }
-      const postalCity = `${customerPostal || ''} ${customerCity || ''}`.trim();
-      if (postalCity) { doc.text(postalCity, mx, y); y += 15; }
-      if (customerPhone) { doc.text(customerPhone, mx, y); y += 15; }
-      if (customerEmail) { doc.fill('#0066cc').text(customerEmail, mx, y); y += 15; }
-
-      // ========================================================
-      // SUMMARY ROW (gray bar with service info)
-      // ========================================================
-      y = Math.max(y + 10, 290);
-
-      doc.rect(mx, y, cw, 45).fill('#f8f9fa');
-      doc.rect(mx, y, cw, 45).strokeColor('#dee2e6').lineWidth(0.5).stroke();
-
-      const colW = cw / 4;
-      doc.font('Helvetica-Bold').fontSize(9).fill('#2c6e4f');
-      doc.text('VAREXO', mx + 8, y + 10, { width: colW - 10 });
-      doc.text('DIENSTVERLENING', mx + colW + 5, y + 10, { width: colW - 10 });
-      doc.font('Helvetica-Bold').fontSize(8).fill('#2c6e4f');
-      doc.text('BETALINGSVOORWAARDEN', mx + colW * 2 + 5, y + 7, { width: colW + 20 });
-      doc.font('Helvetica').fontSize(7).fill('#666666');
-      doc.text('Betaling binnen 14 dagen', mx + colW * 2 + 5, y + 20, { width: colW + 20 });
-      doc.font('Helvetica-Bold').fontSize(9).fill('#2c6e4f');
-      doc.text(dueDateStr, mx + colW * 3 + 5, y + 10, { width: colW - 15, align: 'right' });
-
-      // ========================================================
-      // ITEMS TABLE
-      // ========================================================
-      y += 50;
-
-      // Table header
-      doc.font('Helvetica-Bold').fontSize(9).fill('#2c6e4f');
-      doc.text('AANTAL', mx + 10, y, { width: 60, align: 'center' });
-      doc.text('OMSCHRIJVING', mx + 80, y, { width: 180 });
-      doc.text('PRIJS PER EENHEID', mx + 280, y, { width: 110, align: 'right' });
-      doc.text('REGELTOTAAL', mx + 400, y, { width: 110, align: 'right' });
-
-      y += 16;
-      doc.moveTo(mx, y).lineTo(mx + cw, y).strokeColor('#2c6e4f').lineWidth(1.5).stroke();
-      y += 12;
-
-      // Table rows
-      parsedItems.forEach((item) => {
-        const qty = item.quantity || 1;
-        const price = parseFloat(item.price) || 0;
-        const total = parseFloat(item.total) || (price * qty);
-
-        doc.font('Helvetica').fontSize(11).fill('#2c6e4f');
-        doc.text(String(qty), mx + 10, y, { width: 60, align: 'center' });
-        doc.fill('#333333');
-        doc.text(item.description || '', mx + 80, y, { width: 180 });
-        doc.text('\u20AC' + price.toFixed(2), mx + 280, y, { width: 110, align: 'right' });
-        doc.text('\u20AC' + total.toFixed(2), mx + 400, y, { width: 110, align: 'right' });
-
-        y += 22;
-        doc.moveTo(mx, y).lineTo(mx + cw, y).strokeColor('#eeeeee').lineWidth(0.5).stroke();
-        y += 10;
-      });
-
-      // ========================================================
-      // TOTALS
-      // ========================================================
-      y += 15;
-      const tLabelX = mx + 280;
-      const tValX = mx + 400;
-      const tValW = 110;
-
-      doc.font('Helvetica').fontSize(11).fill('#333333');
-      doc.text('Subtotaal (excl. BTW)', tLabelX, y, { width: 110 });
-      doc.text('\u20AC' + subtotalExcl.toFixed(2), tValX, y, { width: tValW, align: 'right' });
-      y += 20;
-
-      doc.text('BTW 21%', tLabelX, y, { width: 110 });
-      doc.text('\u20AC' + btwAmount.toFixed(2), tValX, y, { width: tValW, align: 'right' });
-      y += 20;
-
-      // Thick line
-      doc.moveTo(tLabelX, y).lineTo(tValX + tValW, y).strokeColor('#333333').lineWidth(1.5).stroke();
-      y += 10;
-
-      doc.font('Helvetica-Bold').fontSize(13).fill('#000000');
-      doc.text('Totaal (incl. BTW)', tLabelX, y, { width: 110 });
-      doc.text('\u20AC' + totalIncl.toFixed(2), tValX, y, { width: tValW, align: 'right' });
-      y += 18;
-
-      doc.font('Helvetica').fontSize(8).fill('#666666');
-      doc.text('Alle bedragen zijn inclusief 21% BTW', tLabelX, y, { width: 220, align: 'right' });
-
-      // ========================================================
-      // FOOTER - at bottom of page
-      // ========================================================
-      const footerH = 60;
-      const footerY = ph - footerH;
-
-      // Gradient-like footer bg
-      doc.rect(0, footerY, pw * 0.5, footerH).fill('#c8e6d1');
-      doc.rect(pw * 0.5, footerY, pw * 0.5, footerH).fill('#b8e0e8');
-      doc.rect(pw * 0.3, footerY, pw * 0.4, footerH).fill('#c0e3dc');
-
-      // Footer right: company payment info
-      doc.font('Helvetica-Bold').fontSize(10).fill('#333333');
-      doc.text('Varexo', pw - 220, footerY + 10, { width: 180, align: 'right' });
-      doc.font('Helvetica').fontSize(9).fill('#333333');
-      doc.text('t.n.v. Mohammed Taher', pw - 220, footerY + 23, { width: 180, align: 'right' });
-      doc.text('IBAN: NL75INGB0756428726', pw - 220, footerY + 35, { width: 180, align: 'right' });
-      doc.text('BTW: 21% inbegrepen', pw - 220, footerY + 47, { width: 180, align: 'right' });
-
-      // Finalize PDF
-      doc.end();
-
-    } catch (error) {
-      console.error('PDF Generation error:', error);
-      reject(error);
+    console.log('PDF Generation - Complete, size:', pdfBuffer.length);
+    return Buffer.from(pdfBuffer);
+  } catch (error) {
+    console.error('PDF Generation error:', error.message);
+    throw error;
+  } finally {
+    if (browser) {
+      await browser.close();
     }
-  });
+  }
 }
 
 module.exports = { generateInvoicePDF };
