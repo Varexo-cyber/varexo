@@ -19,7 +19,7 @@ const projects: Project[] = [
     title: 'Leegstand Meldpunt',
     category: 'Webapplicatie',
     description: 'Meldpunt voor het registreren en rapporteren van leegstaande panden. Gebruiksvriendelijke interface met kaartintegratie en automatische rapportage.',
-    image: `https://api.screenshotone.com/take?url=${encodeURIComponent('https://leegstandmeldpunt.nl/melden')}&width=800&height=600&format=jpg&device=desktop&scale=1&quality=80`,
+    image: 'https://via.placeholder.com/800x600/1e40af/ffffff?text=Leegstand+Meldpunt',
     technologies: ['React', 'Node.js', 'Maps API'],
     link: 'https://leegstandmeldpunt.nl/melden'
   },
@@ -28,7 +28,7 @@ const projects: Project[] = [
     title: 'Over Ons Pagina',
     category: 'Website',
     description: 'Professionele over ons pagina met bedrijfsinformatie, team en missie. Clean design met focus op gebruikservaring.',
-    image: `https://api.screenshotone.com/take?url=${encodeURIComponent('https://leegstandmeldpunt.nl/over-ons')}&width=800&height=600&format=jpg&device=desktop&scale=1&quality=80`,
+    image: 'https://via.placeholder.com/800x600/7c3aed/ffffff?text=Over+Ons',
     technologies: ['React', 'SEO', 'Content Management'],
     link: 'https://leegstandmeldpunt.nl/over-ons'
   },
@@ -37,7 +37,7 @@ const projects: Project[] = [
     title: 'Contact Pagina',
     category: 'Website',
     description: 'Moderne contact pagina met formulier, contactgegevens en locatie informatie. Geoptimaliseerd voor conversie.',
-    image: `https://api.screenshotone.com/take?url=${encodeURIComponent('https://leegstandmeldpunt.nl/contact')}&width=800&height=600&format=jpg&device=desktop&scale=1&quality=80`,
+    image: 'https://via.placeholder.com/800x600/059669/ffffff?text=Contact+Pagina',
     technologies: ['React', 'Forms', 'Maps Integration'],
     link: 'https://leegstandmeldpunt.nl/contact'
   }
