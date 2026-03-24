@@ -19,7 +19,7 @@ const projects: Project[] = [
     title: 'Leegstand Meldpunt',
     category: 'Webapplicatie',
     description: 'Meldpunt voor het registreren en rapporteren van leegstaande panden. Gebruiksvriendelijke interface met kaartintegratie en automatische rapportage.',
-    image: 'https://via.placeholder.com/800x600/1e40af/ffffff?text=Leegstand+Meldpunt',
+    image: 'https://picsum.photos/800/600?random=1',
     technologies: ['React', 'Node.js', 'Maps API'],
     link: 'https://leegstandmeldpunt.nl'
   }
@@ -59,6 +59,10 @@ const Portfolio: React.FC = () => {
                         src={project.image}
                         alt={project.title}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
                       />
                     ) : (
                       <div className="text-center">
