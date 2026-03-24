@@ -575,6 +575,14 @@ const CustomerDashboard: React.FC = () => {
                         </div>
                         <p className="text-gray-400 text-sm mb-3 line-clamp-2">{project.description}</p>
                         
+                        {/* Contact Phone */}
+                        <div className="flex items-center gap-2 mb-3 text-xs text-primary-400">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                          <a href="tel:+31636075966" className="hover:text-primary-300 transition">06-36075966</a>
+                        </div>
+                        
                         {/* Progress Bar */}
                         <div className="mb-3">
                           <div className="flex justify-between text-xs text-gray-400 mb-1">
@@ -701,6 +709,14 @@ const CustomerDashboard: React.FC = () => {
                 <div>
                   <h2 className="text-2xl font-bold text-white mb-2">{selectedProject.title}</h2>
                   <p className="text-gray-400">{selectedProject.description}</p>
+                  {/* Contact Phone */}
+                  <div className="flex items-center gap-2 mt-3 text-sm text-primary-400">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    <span>Vragen? Bel ons: </span>
+                    <a href="tel:+31636075966" className="font-semibold hover:text-primary-300 transition">06-36075966</a>
+                  </div>
                 </div>
                 <button onClick={closeProjectDetails} className="text-gray-400 hover:text-white">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -713,24 +729,24 @@ const CustomerDashboard: React.FC = () => {
               <div className="bg-dark-900 p-4 rounded-lg border border-dark-700 mb-6">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="text-lg font-semibold text-white">Voortgang</h3>
-                  <span className="text-2xl font-bold text-primary-400">{selectedProject.progress || 0}%</span>
+                  <span className="text-2xl font-bold text-primary-400">{selectedProject?.progress || 0}%</span>
                 </div>
                 <div className="w-full bg-dark-700 rounded-full h-3 mb-4">
                   <div 
-                    className={`${getProgressColor(selectedProject.progress || 0)} h-3 rounded-full transition-all duration-500`}
-                    style={{ width: `${selectedProject.progress || 0}%` }}
+                    className={`${getProgressColor(selectedProject?.progress || 0)} h-3 rounded-full transition-all duration-500`}
+                    style={{ width: `${selectedProject?.progress || 0}%` }}
                   ></div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                   <div className="bg-dark-800 p-3 rounded">
                     <div className="text-xs text-gray-400">Status</div>
                     <div className="text-sm font-medium text-white">
-                      {selectedProject.status === 'planning' ? 'Planning' :
-                       selectedProject.status === 'active' ? 'Actief' :
-                       selectedProject.status === 'completed' ? 'Voltooid' : 'Gepauzeerd'}
+                      {selectedProject?.status === 'planning' ? 'Planning' :
+                       selectedProject?.status === 'active' ? 'Actief' :
+                       selectedProject?.status === 'completed' ? 'Voltooid' : 'Gepauzeerd'}
                     </div>
                   </div>
-                  {selectedProject.deadline && (
+                  {selectedProject?.deadline && (
                     <div className="bg-dark-800 p-3 rounded">
                       <div className="text-xs text-gray-400">Deadline</div>
                       <div className="text-sm font-medium text-white">
@@ -738,7 +754,7 @@ const CustomerDashboard: React.FC = () => {
                       </div>
                     </div>
                   )}
-                  {selectedProject.budget && (
+                  {selectedProject?.budget && (
                     <div className="bg-dark-800 p-3 rounded">
                       <div className="text-xs text-gray-400">Budget</div>
                       <div className="text-sm font-medium text-white">€{selectedProject.budget.toFixed(2)}</div>

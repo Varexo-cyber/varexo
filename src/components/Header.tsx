@@ -48,6 +48,7 @@ const Header: React.FC = () => {
           <nav className="hidden md:flex items-center space-x-6">
             <Link to="/" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Home</Link>
             <Link to="/over-ons" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Over ons</Link>
+            <Link to="/portfolio" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Portfolio</Link>
             <Link to="/diensten" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Diensten</Link>
             <Link to="/prijzen" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Prijzen</Link>
             <Link to="/werkwijze" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Werkwijze</Link>
@@ -134,6 +135,7 @@ const Header: React.FC = () => {
             <div className="flex flex-col space-y-3">
               <Link to="/" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Home</Link>
               <Link to="/over-ons" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Over ons</Link>
+              <Link to="/portfolio" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Portfolio</Link>
               <Link to="/diensten" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Diensten</Link>
               <Link to="/prijzen" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Prijzen</Link>
               <Link to="/werkwijze" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Werkwijze</Link>
