@@ -59,7 +59,7 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className={`bg-dark-950 shadow-lg border-b border-dark-700/50 fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out md:translate-y-0 ${isHidden ? '-translate-y-full' : 'translate-y-0'}`}>
+    <header className={`bg-dark-950 shadow-lg border-b border-dark-700/50 fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out ${isHidden ? '-translate-y-full' : 'translate-y-0'}`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <Link to="/" className="flex items-center">
