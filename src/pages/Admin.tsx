@@ -342,6 +342,15 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleUpdateInvoiceStatus = async (invoiceId: string, status: 'paid' | 'sent' | 'overdue') => {
+    try {
+      await projectService.updateInvoiceAsync(invoiceId, { status });
+      loadData();
+    } catch (error) {
+      console.error('Error updating invoice status:', error);
+    }
+  };
+
   const handleAddLog = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedProjectForLogs) return;
@@ -1216,7 +1225,7 @@ const AdminDashboard: React.FC = () => {
                               </button>
 
                               {showInvoiceDropdown === invoice.id && (
-                                <div className="absolute right-0 mt-1 w-48 bg-dark-800 border border-dark-600 rounded-lg shadow-xl z-50 py-1">
+                                <div className="absolute right-0 mt-1 w-56 bg-dark-800 border border-dark-600 rounded-lg shadow-xl z-50 py-1">
                                   <button
                                     onClick={() => { openInvoiceDetails(invoice); setShowInvoiceDropdown(null); }}
                                     className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
@@ -1227,6 +1236,36 @@ const AdminDashboard: React.FC = () => {
                                     </svg>
                                     Bekijken
                                   </button>
+                                  <div className="border-t border-dark-600 my-1"></div>
+                                  <p className="px-4 py-1 text-xs text-gray-500 uppercase">Status wijzigen</p>
+                                  <button
+                                    onClick={() => { handleUpdateInvoiceStatus(invoice.id, 'paid'); setShowInvoiceDropdown(null); }}
+                                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${invoice.status === 'paid' ? 'bg-green-900/30 text-green-400' : 'text-gray-300 hover:bg-dark-700 hover:text-white'}`}
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    ✓ Betaald
+                                  </button>
+                                  <button
+                                    onClick={() => { handleUpdateInvoiceStatus(invoice.id, 'sent'); setShowInvoiceDropdown(null); }}
+                                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${invoice.status === 'sent' ? 'bg-blue-900/30 text-blue-400' : 'text-gray-300 hover:bg-dark-700 hover:text-white'}`}
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    ⏳ Openstaand
+                                  </button>
+                                  <button
+                                    onClick={() => { handleUpdateInvoiceStatus(invoice.id, 'overdue'); setShowInvoiceDropdown(null); }}
+                                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 ${invoice.status === 'overdue' ? 'bg-red-900/30 text-red-400' : 'text-gray-300 hover:bg-dark-700 hover:text-white'}`}
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                    ⚠ Te Laat
+                                  </button>
+                                  <div className="border-t border-dark-600 my-1"></div>
                                   <button
                                     onClick={() => { generatePDF(invoice); setShowInvoiceDropdown(null); }}
                                     className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"

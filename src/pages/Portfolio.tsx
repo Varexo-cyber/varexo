@@ -3,6 +3,68 @@ import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
 
+interface Project {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  image: string;
+  technologies: string[];
+  link?: string;
+}
+
+const projects: Project[] = [
+  {
+    id: '1',
+    title: 'Leegstand Meldpunt',
+    category: 'Webapplicatie',
+    description: 'Meldpunt voor het registreren en rapporteren van leegstaande panden. Gebruiksvriendelijke interface met kaartintegratie en automatische rapportage.',
+    image: '/portfolio/leegstandmeldpunt.jpg',
+    technologies: ['React', 'Node.js', 'Maps API'],
+    link: 'https://leegstandmeldpunt.nl'
+  },
+  {
+    id: '2',
+    title: 'E-commerce Platform',
+    category: 'Webshop',
+    description: 'Complete webshop met betaalintegratie, voorraadbeheer en klantenportal. Geoptimaliseerd voor conversie en mobiel gebruik.',
+    image: '/portfolio/ecommerce.jpg',
+    technologies: ['React', 'Stripe', 'PostgreSQL']
+  },
+  {
+    id: '3',
+    title: 'Zakelijke Website',
+    category: 'Website',
+    description: 'Professionele bedrijfswebsite met CMS, contactformulieren en SEO-optimalisatie. Snelle laadtijden en responsive design.',
+    image: '/portfolio/business.jpg',
+    technologies: ['React', 'SEO', 'Analytics']
+  },
+  {
+    id: '4',
+    title: 'Restaurant Bestelsysteem',
+    category: 'Webapplicatie',
+    description: 'Online bestelsysteem voor restaurant met realtime menu-updates en bezorgintegratie. Verhoogde omzet met 40%.',
+    image: '/portfolio/restaurant.jpg',
+    technologies: ['React', 'Socket.io', 'Payment API']
+  },
+  {
+    id: '5',
+    title: 'Dashboard Applicatie',
+    category: 'Maatwerk',
+    description: 'Custom analytics dashboard met datavisualisatie en exportfuncties. Real-time updates en gebruikersmanagement.',
+    image: '/portfolio/dashboard.jpg',
+    technologies: ['React', 'D3.js', 'REST API']
+  },
+  {
+    id: '6',
+    title: 'Portfolio Website',
+    category: 'Website',
+    description: 'Creatieve portfolio website voor fotograaf met galerij, lightbox en contactintegratie. Optimaliseerd voor beeldschermen.',
+    image: '/portfolio/photographer.jpg',
+    technologies: ['React', 'Gallery', 'Animations']
+  }
+];
+
 const Portfolio: React.FC = () => {
   return (
     <PageTransition>
@@ -16,51 +78,98 @@ const Portfolio: React.FC = () => {
       <div className="container mx-auto px-4">
         <AnimateOnScroll>
         <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">$ ls projects/</p>
-        <h1 className="text-4xl font-bold text-center mb-4 text-white">Portfolio</h1>
+        <h1 className="text-4xl font-bold text-center mb-4 text-white">Ons Portfolio</h1>
         <p className="text-xl text-center text-gray-400 mb-16 max-w-2xl mx-auto">
-          Bekijk onze recente projecten en successverhalen
+          Ontdek onze recente projecten en zie wat we voor jou kunnen betekenen
         </p>
         </AnimateOnScroll>
         
-        {/* Coming Soon Message */}
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="glass-card p-12 rounded-xl">
-            <div className="w-24 h-24 bg-primary-500/10 rounded-xl border border-primary-500/20 flex items-center justify-center mx-auto mb-6">
-              <svg className="w-12 h-12 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold mb-4 text-white">Portfolio in Ontwikkeling</h2>
-            <p className="text-gray-400 mb-8">
-              We werken momenteel aan het toevoegen van onze recente projecten. 
-              Binnenkort vind je hier een overzicht van onze werkzaamheden en successverhalen.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="glass-card card-hover p-6 rounded-xl">
-                <h3 className="font-semibold mb-2 text-white">E-commerce Websites</h3>
-                <p className="text-gray-400 text-sm">Complete webshops met betaalfunctionaliteit</p>
+        {/* Project Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          {projects.map((project, index) => (
+            <AnimateOnScroll key={project.id} delay={index * 100}>
+              <div className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/10">
+                {/* Image Container */}
+                <div className="relative h-56 overflow-hidden">
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center group-hover:scale-110 transition-transform duration-500"
+                  >
+                    {project.image.includes('.jpg') ? (
+                      <img 
+                        src={project.image} 
+                        alt={project.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div className="text-center">
+                        <svg className="w-16 h-16 text-white/30 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <span className="text-white/50 text-sm">{project.title}</span>
+                      </div>
+                    )}
+                  </div>
+                  {/* Overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                  
+                  {/* Category Badge */}
+                  <div className="absolute top-4 left-4">
+                    <span className="px-3 py-1 bg-primary-500/90 text-dark-900 text-xs font-bold rounded-full">
+                      {project.category}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
+                    {project.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+                    {project.description}
+                  </p>
+                  
+                  {/* Technologies */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.technologies.map((tech) => (
+                      <span 
+                        key={tech}
+                        className="px-2 py-1 bg-dark-700 text-primary-300 text-xs rounded border border-dark-600"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Action Button */}
+                  {project.link ? (
+                    <a 
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center text-primary-400 hover:text-primary-300 text-sm font-medium transition-colors"
+                    >
+                      Bekijk website
+                      <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </a>
+                  ) : (
+                    <span className="text-gray-500 text-sm">Intern project</span>
+                  )}
+                </div>
               </div>
-              <div className="glass-card card-hover p-6 rounded-xl">
-                <h3 className="font-semibold mb-2 text-white">Bedrijfswebsites</h3>
-                <p className="text-gray-400 text-sm">Professionele websites voor bedrijven</p>
-              </div>
-              <div className="glass-card card-hover p-6 rounded-xl">
-                <h3 className="font-semibold mb-2 text-white">Maatwerk Applicaties</h3>
-                <p className="text-gray-400 text-sm">Custom oplossingen voor specifieke behoeften</p>
-              </div>
-            </div>
-            <a 
-              href="/contact" 
-              className="bg-primary-500 text-dark-900 px-8 py-3 rounded-lg font-bold hover:bg-primary-400 transition inline-block glow-emerald">
-              Vraag naar Referenties
-            </a>
-          </div>
+            </AnimateOnScroll>
+          ))}
         </div>
 
         {/* Stats Section */}
-        <div className="mt-20">
+        <div className="mt-24">
           <h2 className="text-2xl font-bold text-center mb-12 text-white">Onze Resultaten</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             <div className="text-center">
               <div className="text-4xl font-bold text-primary-400 text-glow mb-2">50+</div>
               <p className="text-gray-400">Tevreden klanten</p>
@@ -70,8 +179,8 @@ const Portfolio: React.FC = () => {
               <p className="text-gray-400">Projecten opgeleverd</p>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 mb-2">5★</div>
-              <p className="text-gray-400">Gemiddelde review</p>
+              <div className="text-4xl font-bold text-primary-400 mb-2">99%</div>
+              <p className="text-gray-400">Uptime garantie</p>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-primary-400 text-glow mb-2">24h</div>
@@ -80,55 +189,18 @@ const Portfolio: React.FC = () => {
           </div>
         </div>
 
-        {/* Testimonials Preview */}
-        <div className="mt-20">
-          <h2 className="text-2xl font-bold text-center mb-12 text-white">Wat onze klanten zeggen</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="glass-card card-hover p-6 rounded-xl">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-dark-600 rounded-full mr-4"></div>
-                <div>
-                  <h4 className="font-semibold text-white">Jan Jansen</h4>
-                  <p className="text-gray-400 text-sm">Eigenaar, Jansen Installaties</p>
-                </div>
-              </div>
-              <div className="text-primary-400 mb-2">
-                ★★★★★
-              </div>
-              <p className="text-gray-300">
-                "Varexo heeft een prachtige website voor ons gebouwd. Professioneel, snel en betaalbaar!"
-              </p>
-            </div>
-            <div className="glass-card card-hover p-6 rounded-xl">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-dark-600 rounded-full mr-4"></div>
-                <div>
-                  <h4 className="font-semibold text-white">Maria de Vries</h4>
-                  <p className="text-gray-400 text-sm">Directeur, De Vries Coaching</p>
-                </div>
-              </div>
-              <div className="text-primary-400 mb-2">
-                ★★★★★
-              </div>
-              <p className="text-gray-300">
-                "Super tevreden met het resultaat. De communicatie was uitstekend en alles werd precies gebouwd zoals we wilden."
-              </p>
-            </div>
-            <div className="glass-card card-hover p-6 rounded-xl">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-dark-600 rounded-full mr-4"></div>
-                <div>
-                  <h4 className="font-semibold text-white">Ahmed El Amrani</h4>
-                  <p className="text-gray-400 text-sm">Eigenaar, El Amrani Restaurant</p>
-                </div>
-              </div>
-              <div className="text-primary-400 mb-2">
-                ★★★★★
-              </div>
-              <p className="text-gray-300">
-                "Onze online bestelsysteem werkt perfect. Klanten zijn erg tevreden en onze omzet is gestegen."
-              </p>
-            </div>
+        {/* CTA Section */}
+        <div className="mt-24 text-center">
+          <div className="glass-card p-12 rounded-xl max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4 text-white">Klaar voor jouw project?</h2>
+            <p className="text-gray-400 mb-8">
+              Laat ons jouw visie waarmaken. Van concept tot livegang, wij regelen alles.
+            </p>
+            <a 
+              href="/contact" 
+              className="bg-primary-500 text-dark-900 px-8 py-3 rounded-lg font-bold hover:bg-primary-400 transition inline-block glow-emerald">
+              Start jouw project
+            </a>
           </div>
         </div>
       </div>

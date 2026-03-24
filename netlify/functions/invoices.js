@@ -1,5 +1,5 @@
 const { neon } = require('@netlify/neon');
-const { sendNewInvoiceEmail } = require('./utils/send-email');
+const { sendNewInvoiceEmail, sendPaymentConfirmationEmail, sendOverdueReminderEmail } = require('./utils/send-email');
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -176,6 +176,18 @@ exports.handler = async (event) => {
       const id = path.replace('/', '');
       const { status, amount, dueDate, items } = body;
 
+      // Get current invoice to check status change
+      const currentInvoice = await sql`SELECT * FROM invoices WHERE id = ${parseInt(id)}`;
+      if (currentInvoice.length === 0) {
+        return { statusCode: 404, headers, body: JSON.stringify({ error: 'Factuur niet gevonden' }) };
+      }
+      const oldStatus = currentInvoice[0].status;
+      const customerEmail = currentInvoice[0].customer_email;
+      const customerName = currentInvoice[0].customer_name;
+      const invoiceNumber = currentInvoice[0].invoice_number;
+      const invoiceAmount = currentInvoice[0].amount;
+      const invoiceDueDate = currentInvoice[0].due_date;
+
       const result = await sql`
         UPDATE invoices SET
           status = COALESCE(${status || null}, status),
@@ -188,6 +200,19 @@ exports.handler = async (event) => {
 
       if (result.length === 0) {
         return { statusCode: 404, headers, body: JSON.stringify({ error: 'Factuur niet gevonden' }) };
+      }
+
+      // Send email notifications on status change
+      if (status && status !== oldStatus) {
+        try {
+          if (status === 'paid') {
+            await sendPaymentConfirmationEmail(customerEmail, customerName, invoiceNumber, invoiceAmount);
+          } else if (status === 'overdue') {
+            await sendOverdueReminderEmail(customerEmail, customerName, invoiceNumber, invoiceAmount, invoiceDueDate);
+          }
+        } catch (emailErr) {
+          console.log('Status change email failed:', emailErr.message);
+        }
       }
 
       const i = result[0];

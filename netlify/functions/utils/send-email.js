@@ -255,10 +255,68 @@ async function sendProgressUpdateEmail(customerEmail, customerName, projectTitle
   return sendEmail(customerEmail, `Voortgang: ${projectTitle} - ${progress}%`, 'Voortgang Bijgewerkt', content, 'Bekijk Voortgang', `${PORTAL_URL}/dashboard`);
 }
 
+async function sendPaymentConfirmationEmail(customerEmail, customerName, invoiceNumber, amount) {
+  const content = `
+    <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">
+      Beste ${customerName || 'klant'},
+    </p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">
+      Hartelijk dank! Wij hebben uw betaling succesvol ontvangen.
+    </p>
+    <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0 0 8px;color:#059669;font-size:16px;font-weight:600;">Factuur ${invoiceNumber}</p>
+      <p style="margin:0;color:#1a1a1a;font-size:24px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)}</p>
+      <p style="margin:8px 0 0;color:#10b981;font-size:14px;font-weight:600;">✓ BETAALD</p>
+    </div>
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">
+      Uw betaling is geregistreerd en de factuur is volledig afgehandeld.
+    </p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;">
+      Bekijk uw klantenportaal voor het overzicht van al uw facturen.
+    </p>
+  `;
+  return sendEmail(customerEmail, `Betaling ontvangen - Factuur ${invoiceNumber}`, 'Betaling Succesvol Ontvangen', content, 'Bekijk Klantenportaal', `${PORTAL_URL}/dashboard`);
+}
+
+async function sendOverdueReminderEmail(customerEmail, customerName, invoiceNumber, amount, dueDate) {
+  const dueDateFormatted = dueDate ? new Date(dueDate).toLocaleDateString('nl-NL') : 'Onbekend';
+  const daysOverdue = dueDate ? Math.ceil((new Date() - new Date(dueDate)) / (1000 * 60 * 60 * 24)) : 0;
+  
+  const content = `
+    <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">
+      Beste ${customerName || 'klant'},
+    </p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">
+      <strong style="color:#dc2626;">Uw factuur is te laat met betalen.</strong>
+    </p>
+    <div style="background:#fef2f2;border-left:4px solid #ef4444;padding:20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0 0 8px;color:#dc2626;font-size:16px;font-weight:600;">Factuur ${invoiceNumber}</p>
+      <p style="margin:0;color:#1a1a1a;font-size:24px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)}</p>
+      <p style="margin:8px 0 0;color:#dc2626;font-size:14px;font-weight:600;">⚠ TE LAAT - ${daysOverdue} dagen over datum</p>
+      <p style="margin:4px 0 0;color:#6b7280;font-size:13px;">Was vervallen op: ${dueDateFormatted}</p>
+    </div>
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">
+      <strong style="color:#dc2626;">Betaal nu nog om verdere maatregelen te voorkomen.</strong>
+    </p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">
+      U kunt betalen via bankoverschrijving naar:<br>
+      <strong style="color:#1a1a1a;">IBAN: NL75INGB0756428726</strong><br>
+      <strong style="color:#1a1a1a;">t.n.v. Mohammed Taher</strong><br>
+      <strong style="color:#1a1a1a;">Onder vermelding van: ${invoiceNumber}</strong>
+    </p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;">
+      Heeft u vragen? Neem contact met ons op via info@varexo.nl
+    </p>
+  `;
+  return sendEmail(customerEmail, `HERINNERING: Factuur ${invoiceNumber} is te laat`, '⚠ Factuur Te Laat - Actie Vereist', content, 'Nu Betalen', `${PORTAL_URL}/dashboard`);
+}
+
 module.exports = {
   sendNewProjectEmail,
   sendProjectDeletedEmail,
   sendNewInvoiceEmail,
   sendProjectUpdateEmail,
   sendProgressUpdateEmail,
+  sendPaymentConfirmationEmail,
+  sendOverdueReminderEmail,
 };
