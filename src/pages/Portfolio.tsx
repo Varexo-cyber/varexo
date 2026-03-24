@@ -94,13 +94,26 @@ const Portfolio: React.FC = () => {
                   <div 
                     className="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center group-hover:scale-110 transition-transform duration-500"
                   >
-                    {project.image.includes('.jpg') ? (
+                    {project.link ? (
                       <img 
-                        src={project.image} 
+                        src={`https://api.screenshotone.com/take?url=${encodeURIComponent(project.link)}&width=800&height=600&format=jpg&device=desktop&scale=1&quality=80`}
                         alt={project.title}
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
+                          // Fallback to gradient if screenshot fails
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `
+                              <div class="text-center">
+                                <svg class="w-16 h-16 text-white/30 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={1} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                <span class="text-white/50 text-sm">${project.title}</span>
+                              </div>
+                            `;
+                          }
                         }}
                       />
                     ) : (
@@ -171,19 +184,19 @@ const Portfolio: React.FC = () => {
           <h2 className="text-2xl font-bold text-center mb-12 text-white">Onze Resultaten</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 text-glow mb-2">50+</div>
+              <div className="text-4xl font-bold text-primary-400 mb-2">10+</div>
               <p className="text-gray-400">Tevreden klanten</p>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 text-glow mb-2">100+</div>
+              <div className="text-4xl font-bold text-primary-400 mb-2">10+</div>
               <p className="text-gray-400">Projecten opgeleverd</p>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 mb-2">99%</div>
+              <div className="text-4xl font-bold text-primary-400 mb-2">99.9%</div>
               <p className="text-gray-400">Uptime garantie</p>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 text-glow mb-2">24h</div>
+              <div className="text-4xl font-bold text-primary-400 mb-2">&lt;24h</div>
               <p className="text-gray-400">Reactietijd</p>
             </div>
           </div>
