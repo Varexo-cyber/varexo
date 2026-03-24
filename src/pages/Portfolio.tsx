@@ -40,54 +40,6 @@ const projects: Project[] = [
     image: `https://api.screenshotone.com/take?url=${encodeURIComponent('https://leegstandmeldpunt.nl/contact')}&width=800&height=600&format=jpg&device=desktop&scale=1&quality=80`,
     technologies: ['React', 'Forms', 'Maps Integration'],
     link: 'https://leegstandmeldpunt.nl/contact'
-  },
-  {
-    id: '4',
-    title: 'Portfolio Website',
-    category: 'Website',
-    description: 'Moderne portfolio website met animaties, dark mode en perfecte performance. Geoptimaliseerd voor alle apparaten.',
-    image: 'https://via.placeholder.com/800x600/0891b2/ffffff?text=Portfolio+Website',
-    technologies: ['React', 'Tailwind', 'Framer Motion']
-  },
-  {
-    id: '5',
-    title: 'Booking Systeem',
-    category: 'SaaS',
-    description: 'Reserveringssysteem voor diensten met kalenderintegratie, notificaties en betalingen. Volledig geautomatiseerd.',
-    image: 'https://via.placeholder.com/800x600/0d9488/ffffff?text=Booking+Systeem',
-    technologies: ['React', 'Calendar API', 'Stripe']
-  },
-  {
-    id: '6',
-    title: 'Social Media Dashboard',
-    category: 'Dashboard',
-    description: 'Analytics dashboard voor social media management met real-time data en automatische rapportage.',
-    image: 'https://via.placeholder.com/800x600/6366f1/ffffff?text=Social+Dashboard',
-    technologies: ['React', 'Charts.js', 'API']
-  },
-  {
-    id: '7',
-    title: 'LMS Platform',
-    category: 'E-learning',
-    description: 'Online leerplatform met videolessen, quizzen en voortgangstracking voor educatieve instellingen.',
-    image: 'https://via.placeholder.com/800x600/8b5cf6/ffffff?text=LMS+Platform',
-    technologies: ['React', 'Video.js', 'PostgreSQL']
-  },
-  {
-    id: '8',
-    title: 'Real Estate Portal',
-    category: 'Portal',
-    description: 'Vastgoed portal met geavanceerde zoekfuncties, virtuele tours en lead management.',
-    image: 'https://via.placeholder.com/800x600/f59e0b/ffffff?text=Real+Estate',
-    technologies: ['React', 'Maps API', 'CRM']
-  },
-  {
-    id: '9',
-    title: 'Fitness Tracker App',
-    category: 'App',
-    description: 'Mobiele fitness app met workout tracking, voeding logging en social features.',
-    image: 'https://via.placeholder.com/800x600/10b981/ffffff?text=Fitness+Tracker',
-    technologies: ['React Native', 'Firebase', 'Health API']
   }
 ];
 
