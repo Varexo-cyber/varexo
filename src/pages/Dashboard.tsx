@@ -458,12 +458,20 @@ const CustomerDashboard: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-dark-900 py-8">
+      <div className="min-h-screen bg-dark-900 pt-16 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-white">Klantportaal</h1>
-            <p className="text-gray-400 mt-1">Welkom terug, {user.displayName}</p>
+            <p className="text-gray-400 mt-1">
+              {(() => {
+                const hour = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' })).getHours();
+                if (hour >= 6 && hour < 12) return 'Goedemorgen';
+                if (hour >= 12 && hour < 18) return 'Goedemiddag';
+                if (hour >= 18 && hour < 23) return 'Goedenavond';
+                return 'Goedenacht';
+              })()}, {user.displayName} 👋
+            </p>
           </div>
 
           {/* Stats */}

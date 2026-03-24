@@ -8,7 +8,7 @@ const Header: React.FC = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
+  const [isHidden] = useState(false);
   const lastScrollY = useRef(0);
   const navigate = useNavigate();
 
@@ -20,27 +20,7 @@ const Header: React.FC = () => {
     return unsubscribe;
   }, []);
 
-  const handleScroll = useCallback(() => {
-    const currentScrollY = window.scrollY;
-    
-    if (window.innerWidth < 768) {
-      if (currentScrollY > lastScrollY.current && currentScrollY > 60) {
-        setIsHidden(true);
-        setMobileMenuOpen(false);
-      } else if (currentScrollY < lastScrollY.current) {
-        setIsHidden(false);
-      }
-    } else {
-      setIsHidden(false);
-    }
-    
-    lastScrollY.current = currentScrollY;
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+  // Scroll listener removed - navbar scrolls with page
 
   const handleLogout = async () => {
     await mockAuth.signOut();
@@ -59,7 +39,7 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className={`bg-dark-950 shadow-lg border-b border-dark-700/50 fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out ${isHidden ? '-translate-y-full' : 'translate-y-0'}`}>
+    <header className="bg-dark-950 shadow-lg border-b border-dark-700/50 relative z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <Link to="/" className="flex items-center">

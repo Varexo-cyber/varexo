@@ -51,7 +51,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-dark-900">
         <Header />
-        <main className="pt-[72px]">
+        <main>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/over-ons" element={<OverOns />} />
