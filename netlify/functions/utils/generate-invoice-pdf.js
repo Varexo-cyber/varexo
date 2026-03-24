@@ -145,18 +145,19 @@ function generateInvoicePDF(invoiceData) {
       // ========================================================
       y = Math.max(y + 10, 290);
 
-      doc.rect(mx, y, cw, 35).fill('#f8f9fa');
-      doc.rect(mx, y, cw, 35).strokeColor('#dee2e6').lineWidth(0.5).stroke();
+      doc.rect(mx, y, cw, 45).fill('#f8f9fa');
+      doc.rect(mx, y, cw, 45).strokeColor('#dee2e6').lineWidth(0.5).stroke();
 
       const colW = cw / 4;
       doc.font('Helvetica-Bold').fontSize(9).fill('#2c6e4f');
-      doc.text('VAREXO', mx + 8, y + 8, { width: colW - 10 });
-      doc.text('DIENSTVERLENING', mx + colW + 5, y + 8, { width: colW - 10 });
-      doc.text('BETALINGSVOORWAARDEN', mx + colW * 2 + 5, y + 5, { width: colW - 10 });
-      doc.font('Helvetica').fontSize(8).fill('#666666');
-      doc.text('BETALING BINNEN 14 DAGEN', mx + colW * 2 + 5, y + 18, { width: colW - 10 });
+      doc.text('VAREXO', mx + 8, y + 10, { width: colW - 10 });
+      doc.text('DIENSTVERLENING', mx + colW + 5, y + 10, { width: colW - 10 });
+      doc.font('Helvetica-Bold').fontSize(8).fill('#2c6e4f');
+      doc.text('BETALINGSVOORWAARDEN', mx + colW * 2 + 5, y + 7, { width: colW + 20 });
+      doc.font('Helvetica').fontSize(7).fill('#666666');
+      doc.text('Betaling binnen 14 dagen', mx + colW * 2 + 5, y + 20, { width: colW + 20 });
       doc.font('Helvetica-Bold').fontSize(9).fill('#2c6e4f');
-      doc.text(dueDateStr, mx + colW * 3 + 5, y + 8, { width: colW - 15, align: 'right' });
+      doc.text(dueDateStr, mx + colW * 3 + 5, y + 10, { width: colW - 15, align: 'right' });
 
       // ========================================================
       // ITEMS TABLE
