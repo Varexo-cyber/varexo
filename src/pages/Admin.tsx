@@ -394,7 +394,7 @@ const AdminDashboard: React.FC = () => {
         customerCity: invoiceForm.customerCity,
         customerPhone: invoiceForm.customerPhone,
         amount: items.reduce((sum, item) => sum + item.total, 0),
-        status: 'draft',
+        status: 'sent',
         dueDate: invoiceForm.dueDate,
         items
       });

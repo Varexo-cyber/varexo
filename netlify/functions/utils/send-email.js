@@ -26,47 +26,52 @@ function emailTemplate(title, content, ctaText, ctaUrl) {
     <body style="margin:0;padding:20px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f5f5f5;">
       <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:hidden;border:1px solid #e0e0e0;">
         
-        <!-- Header -->
-        <div style="background:linear-gradient(135deg,#ffffff 0%,#f8fffe 100%);padding:30px 40px;text-align:center;border-bottom:3px solid #10b981;">
-          <div style="max-width:140px;margin:0 auto 15px;">
-            <!-- Varexo Logo -->
-            <svg width="180" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="gradLeft" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#4fc3f7" />
-                  <stop offset="100%" stopColor="#29b6f6" />
-                </linearGradient>
-                <linearGradient id="gradRight" x1="100%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#1565c0" />
-                  <stop offset="100%" stopColor="#0d47a1" />
-                </linearGradient>
-                <linearGradient id="gradCenter" x1="50%" y1="0%" x2="50%" y2="100%">
-                  <stop offset="0%" stopColor="#81d4fa" />
-                  <stop offset="100%" stopColor="#42a5f5" />
-                </linearGradient>
-                <linearGradient id="gradLeftFacet" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#b3e5fc" />
-                  <stop offset="100%" stopColor="#4fc3f7" />
-                </linearGradient>
-                <linearGradient id="gradRightFacet" x1="100%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#1976d2" />
-                  <stop offset="100%" stopColor="#1565c0" />
-                </linearGradient>
-              </defs>
-              <!-- Left side of V - lighter -->
-              <polygon points="10,15 50,90 38,90 5,25" fill="url(#gradLeft)" />
-              <!-- Right side of V - darker -->
-              <polygon points="90,15 50,90 62,90 95,25" fill="url(#gradRight)" />
-              <!-- Center highlight -->
-              <polygon points="50,90 35,55 50,45 65,55" fill="url(#gradCenter)" opacity="0.8" />
-              <!-- Left facet -->
-              <polygon points="10,15 38,15 50,45 35,55" fill="url(#gradLeftFacet)" opacity="0.9" />
-              <!-- Right facet -->
-              <polygon points="90,15 62,15 50,45 65,55" fill="url(#gradRightFacet)" opacity="0.9" />
-            </svg>
-          </div>
-          <h1 style="color:#1a1a1a;font-size:24px;font-weight:600;margin:0;letter-spacing:1px;">${title}</h1>
-          <p style="color:#10b981;font-size:12px;margin:8px 0 0;letter-spacing:2px;text-transform:uppercase;">ICT • Websites • Software</p>
+        <!-- Header - Dark style like website navbar -->
+        <div style="background:#0f172a;padding:24px 40px;text-align:center;">
+          <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+            <tr>
+              <td style="vertical-align:middle;padding-right:12px;">
+                <svg width="36" height="36" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="gradLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#4fc3f7" />
+                      <stop offset="100%" stopColor="#29b6f6" />
+                    </linearGradient>
+                    <linearGradient id="gradRight" x1="100%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#1565c0" />
+                      <stop offset="100%" stopColor="#0d47a1" />
+                    </linearGradient>
+                    <linearGradient id="gradCenter" x1="50%" y1="0%" x2="50%" y2="100%">
+                      <stop offset="0%" stopColor="#81d4fa" />
+                      <stop offset="100%" stopColor="#42a5f5" />
+                    </linearGradient>
+                    <linearGradient id="gradLeftFacet" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#b3e5fc" />
+                      <stop offset="100%" stopColor="#4fc3f7" />
+                    </linearGradient>
+                    <linearGradient id="gradRightFacet" x1="100%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#1976d2" />
+                      <stop offset="100%" stopColor="#1565c0" />
+                    </linearGradient>
+                  </defs>
+                  <polygon points="10,15 50,90 38,90 5,25" fill="url(#gradLeft)" />
+                  <polygon points="90,15 50,90 62,90 95,25" fill="url(#gradRight)" />
+                  <polygon points="50,90 35,55 50,45 65,55" fill="url(#gradCenter)" opacity="0.8" />
+                  <polygon points="10,15 38,15 50,45 35,55" fill="url(#gradLeftFacet)" opacity="0.9" />
+                  <polygon points="90,15 62,15 50,45 65,55" fill="url(#gradRightFacet)" opacity="0.9" />
+                </svg>
+              </td>
+              <td style="vertical-align:middle;">
+                <span style="color:#ffffff;font-size:22px;font-weight:800;letter-spacing:2px;">VAREXO</span>
+              </td>
+            </tr>
+          </table>
+          <p style="color:#10b981;font-size:11px;margin:10px 0 0;letter-spacing:2.5px;text-transform:uppercase;">ICT &bull; Websites &bull; Software</p>
+        </div>
+        
+        <!-- Title bar -->
+        <div style="background:#ffffff;padding:24px 40px 0;text-align:center;border-bottom:none;">
+          <h1 style="color:#1a1a1a;font-size:22px;font-weight:600;margin:0;letter-spacing:0.5px;">${title}</h1>
         </div>
 
         <!-- Content -->

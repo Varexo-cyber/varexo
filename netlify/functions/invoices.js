@@ -120,7 +120,7 @@ exports.handler = async (event) => {
           VALUES (
             ${finalInvoiceNumber}, ${invoiceDate || null}, ${projectTitle}, ${customerEmail},
             ${customerName || null}, ${customerCompany || null}, ${customerAddress || null}, ${customerPostal || null}, ${customerCity || null}, ${customerPhone || null},
-            ${amount}, ${status || 'draft'}, ${dueDate}, ${JSON.stringify(items || [])}
+            ${amount}, ${status || 'sent'}, ${dueDate}, ${JSON.stringify(items || [])}
           )
           RETURNING *
         `;
@@ -128,7 +128,7 @@ exports.handler = async (event) => {
         // Fallback without new columns
         result = await sql`
           INSERT INTO invoices (invoice_number, project_title, customer_email, amount, status, due_date, items)
-          VALUES (${finalInvoiceNumber}, ${projectTitle}, ${customerEmail}, ${amount}, ${status || 'draft'}, ${dueDate}, ${JSON.stringify(items || [])})
+          VALUES (${finalInvoiceNumber}, ${projectTitle}, ${customerEmail}, ${amount}, ${status || 'sent'}, ${dueDate}, ${JSON.stringify(items || [])})
           RETURNING *
         `;
       }
@@ -139,6 +139,7 @@ exports.handler = async (event) => {
       try {
         await sendNewInvoiceEmail(customerEmail, customerName || '', finalInvoiceNumber, amount, {
           invoiceDate: invoiceDate || new Date().toISOString(),
+          dueDate: dueDate,
           customerName: customerName || '',
           customerCompany: customerCompany || '',
           customerAddress: customerAddress || '',
