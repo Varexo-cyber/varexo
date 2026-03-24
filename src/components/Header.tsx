@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { mockAuth, MockUser } from '../services/mockAuth';
 import VarexoLogo from './VarexoLogo';
@@ -9,7 +9,7 @@ const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollY = useRef(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,27 +20,27 @@ const Header: React.FC = () => {
     return unsubscribe;
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const isMobile = window.innerWidth < 768; // md breakpoint
-      
-      if (isMobile) {
-        if (currentScrollY > lastScrollY && currentScrollY > 80) {
-          // Scrolling down - hide header
-          setIsHidden(true);
-        } else {
-          // Scrolling up - show header
-          setIsHidden(false);
-        }
+  const handleScroll = useCallback(() => {
+    const currentScrollY = window.scrollY;
+    
+    if (window.innerWidth < 768) {
+      if (currentScrollY > lastScrollY.current && currentScrollY > 60) {
+        setIsHidden(true);
+        setMobileMenuOpen(false);
+      } else if (currentScrollY < lastScrollY.current) {
+        setIsHidden(false);
       }
-      
-      setLastScrollY(currentScrollY);
-    };
+    } else {
+      setIsHidden(false);
+    }
+    
+    lastScrollY.current = currentScrollY;
+  }, []);
 
+  useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, [handleScroll]);
 
   const handleLogout = async () => {
     await mockAuth.signOut();

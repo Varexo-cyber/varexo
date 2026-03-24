@@ -28,6 +28,7 @@ exports.handler = async (event) => {
       await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS customer_postal VARCHAR(20)`;
       await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS customer_city VARCHAR(100)`;
       await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS customer_phone VARCHAR(50)`;
+      await sql`ALTER TABLE invoices ALTER COLUMN status SET DEFAULT 'sent'`;
     } catch (e) { /* columns may already exist */ }
 
     // GET /invoices?nextNumber=true - Get next invoice number

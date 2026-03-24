@@ -74,7 +74,7 @@ exports.handler = async (event) => {
         project_title VARCHAR(255) NOT NULL,
         customer_email VARCHAR(255) NOT NULL REFERENCES users(email) ON DELETE CASCADE,
         amount DECIMAL(10,2) NOT NULL,
-        status VARCHAR(50) DEFAULT 'draft',
+        status VARCHAR(50) DEFAULT 'sent',
         due_date DATE NOT NULL,
         items JSONB DEFAULT '[]',
         created_at TIMESTAMP DEFAULT NOW()

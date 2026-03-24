@@ -31,6 +31,8 @@ const AdminDashboard: React.FC = () => {
   const [showInvoiceDropdown, setShowInvoiceDropdown] = useState<string | null>(null);
   const [showMessageDropdown, setShowMessageDropdown] = useState<string | null>(null);
   const [showMessageDeleteConfirm, setShowMessageDeleteConfirm] = useState<string | null>(null);
+  const [showRecurringDropdown, setShowRecurringDropdown] = useState<string | null>(null);
+  const [showRecurringDeleteConfirm, setShowRecurringDeleteConfirm] = useState<string | null>(null);
   const [contactMessages, setContactMessages] = useState<ContactMessage[]>([]);
   const [recurringInvoices, setRecurringInvoices] = useState<any[]>([]);
   const [showRecurringForm, setShowRecurringForm] = useState(false);
@@ -101,14 +103,15 @@ const AdminDashboard: React.FC = () => {
         setShowProjectDropdown(null);
         setShowInvoiceDropdown(null);
         setShowMessageDropdown(null);
+        setShowRecurringDropdown(null);
       }
     };
 
-    if (showCustomerDropdown || showProjectDropdown || showInvoiceDropdown || showMessageDropdown) {
+    if (showCustomerDropdown || showProjectDropdown || showInvoiceDropdown || showMessageDropdown || showRecurringDropdown) {
       document.addEventListener('click', handleClickOutside);
       return () => document.removeEventListener('click', handleClickOutside);
     }
-  }, [showCustomerDropdown, showProjectDropdown, showInvoiceDropdown, showMessageDropdown]);
+  }, [showCustomerDropdown, showProjectDropdown, showInvoiceDropdown, showMessageDropdown, showRecurringDropdown]);
 
   const loadData = async () => {
     try {
@@ -1339,20 +1342,85 @@ const AdminDashboard: React.FC = () => {
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                              <div className="flex space-x-3">
+                              <div className="relative dropdown-container">
                                 <button
-                                  onClick={() => handleToggleRecurring(ri.id, ri.active)}
-                                  className={`${ri.active ? 'text-yellow-400 hover:text-yellow-300' : 'text-green-400 hover:text-green-300'}`}
+                                  onClick={() => setShowRecurringDropdown(showRecurringDropdown === ri.id ? null : ri.id)}
+                                  className="text-gray-400 hover:text-white p-2 rounded hover:bg-dark-700"
                                 >
-                                  {ri.active ? 'Pauzeer' : 'Activeer'}
+                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                                  </svg>
                                 </button>
-                                <button
-                                  onClick={() => handleDeleteRecurring(ri.id)}
-                                  className="text-red-400 hover:text-red-300"
-                                >
-                                  Verwijder
-                                </button>
+
+                                {showRecurringDropdown === ri.id && (
+                                  <div className="absolute right-0 mt-1 w-48 bg-dark-800 border border-dark-600 rounded-lg shadow-xl z-50 py-1">
+                                    <button
+                                      onClick={() => { handleToggleRecurring(ri.id, ri.active); setShowRecurringDropdown(null); }}
+                                      className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
+                                    >
+                                      {ri.active ? (
+                                        <>
+                                          <svg className="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                          </svg>
+                                          Pauzeren
+                                        </>
+                                      ) : (
+                                        <>
+                                          <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                          </svg>
+                                          Activeren
+                                        </>
+                                      )}
+                                    </button>
+                                    <button
+                                      onClick={() => { setShowRecurringDropdown(null); /* TODO: edit form */ }}
+                                      className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                      </svg>
+                                      Bewerken
+                                    </button>
+                                    <div className="border-t border-dark-600 my-1"></div>
+                                    <button
+                                      onClick={() => { setShowRecurringDeleteConfirm(ri.id); setShowRecurringDropdown(null); }}
+                                      className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-dark-700 hover:text-red-300 flex items-center gap-2"
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                      </svg>
+                                      Verwijderen
+                                    </button>
+                                  </div>
+                                )}
                               </div>
+
+                              {/* Delete confirmation */}
+                              {showRecurringDeleteConfirm === ri.id && (
+                                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                  <div className="bg-dark-800 rounded-lg p-6 w-full max-w-sm border border-dark-700">
+                                    <h3 className="text-lg font-semibold text-white mb-2">Terugkerende factuur verwijderen?</h3>
+                                    <p className="text-gray-400 text-sm mb-4">Weet je zeker dat je deze terugkerende factuur wilt verwijderen? Dit kan niet ongedaan worden gemaakt.</p>
+                                    <div className="flex justify-end gap-3">
+                                      <button
+                                        onClick={() => setShowRecurringDeleteConfirm(null)}
+                                        className="px-4 py-2 text-gray-400 hover:text-white text-sm"
+                                      >
+                                        Annuleren
+                                      </button>
+                                      <button
+                                        onClick={() => { handleDeleteRecurring(ri.id); setShowRecurringDeleteConfirm(null); }}
+                                        className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-500"
+                                      >
+                                        Verwijderen
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                             </td>
                           </tr>
                         ))}
