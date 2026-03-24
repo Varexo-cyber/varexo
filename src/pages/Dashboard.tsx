@@ -21,6 +21,7 @@ const CustomerDashboard: React.FC = () => {
       if (currentUser) {
         setUser(currentUser);
         if (roleService.isAdmin(currentUser.email)) {
+          navigate('/admin');
           return;
         }
         loadCustomerData(currentUser.email);

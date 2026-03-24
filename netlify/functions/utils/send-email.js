@@ -27,20 +27,18 @@ function emailTemplate(title, content, ctaText, ctaUrl) {
       <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:hidden;border:1px solid #e0e0e0;">
         
         <!-- Header - Dark style like website navbar -->
-        <div style="background:#0f172a;padding:24px 40px;text-align:center;border-radius:12px 12px 0 0;">
+        <div style="background:#0f172a;padding:28px 40px;text-align:center;border-radius:12px 12px 0 0;">
           <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
             <tr>
-              <td style="vertical-align:middle;padding-right:4px;">
-                <div style="display:inline-block;width:38px;height:38px;background:linear-gradient(135deg,#4fc3f7 0%,#1565c0 100%);border-radius:8px;text-align:center;line-height:38px;">
-                  <span style="color:#ffffff;font-size:24px;font-weight:900;font-family:Arial,Helvetica,sans-serif;">V</span>
-                </div>
+              <td style="vertical-align:middle;padding-right:10px;">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwb2x5Z29uIHBvaW50cz0iMTAsMTUgNTAsOTAgMzgsOTAgNSwyNSIgZmlsbD0iIzRmYzNmNyIvPjxwb2x5Z29uIHBvaW50cz0iOTAsMTUgNTAsOTAgNjIsOTAgOTUsMjUiIGZpbGw9IiMxNTY1YzAiLz48cG9seWdvbiBwb2ludHM9IjUwLDkwIDM1LDU1IDUwLDQ1IDY1LDU1IiBmaWxsPSIjNDJhNWY1IiBvcGFjaXR5PSIwLjgiLz48cG9seWdvbiBwb2ludHM9IjEwLDE1IDM4LDE1IDUwLDQ1IDM1LDU1IiBmaWxsPSIjYjNlNWZjIiBvcGFjaXR5PSIwLjkiLz48cG9seWdvbiBwb2ludHM9IjkwLDE1IDYyLDE1IDUwLDQ1IDY1LDU1IiBmaWxsPSIjMTk3NmQyIiBvcGFjaXR5PSIwLjkiLz48L3N2Zz4=" alt="V" width="40" height="40" style="display:block;" />
               </td>
-              <td style="vertical-align:middle;padding-left:8px;">
-                <span style="color:#ffffff;font-size:22px;font-weight:800;letter-spacing:2px;font-family:Arial,Helvetica,sans-serif;">VAREXO</span>
+              <td style="vertical-align:middle;padding-left:2px;">
+                <span style="color:#ffffff;font-size:24px;font-weight:800;letter-spacing:2px;font-family:Arial,Helvetica,sans-serif;">VAREXO</span>
               </td>
             </tr>
           </table>
-          <p style="color:#10b981;font-size:11px;margin:10px 0 0;letter-spacing:2.5px;text-transform:uppercase;font-family:Arial,Helvetica,sans-serif;">ICT &bull; Websites &bull; Software</p>
+          <p style="color:#10b981;font-size:10px;margin:10px 0 0;letter-spacing:3px;text-transform:uppercase;font-family:Arial,Helvetica,sans-serif;">ICT &bull; WEBSITES &bull; SOFTWARE</p>
         </div>
         
         <!-- Title bar -->
@@ -126,7 +124,7 @@ async function sendNewProjectEmail(customerEmail, customerName, projectTitle) {
       Ga naar uw klantenportaal om de details te bekijken en de voortgang te volgen.
     </p>
   `;
-  return sendEmail(customerEmail, `Nieuw project: ${projectTitle}`, 'Nieuw Project Aangemaakt', content, 'Ga naar uw Klantenportaal', `${PORTAL_URL}/login`);
+  return sendEmail(customerEmail, `Nieuw project: ${projectTitle}`, 'Nieuw Project Aangemaakt', content, 'Ga naar uw Klantenportaal', `${PORTAL_URL}/dashboard`);
 }
 
 async function sendProjectDeletedEmail(customerEmail, customerName, projectTitle) {
@@ -210,7 +208,7 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
     'Nieuwe Factuur',
     content,
     'Bekijk Klantenportaal',
-    `${PORTAL_URL}/login`,
+    `${PORTAL_URL}/dashboard`,
     attachments
   );
 }
@@ -242,7 +240,7 @@ async function sendProjectUpdateEmail(customerEmail, customerName, projectTitle,
       Ga naar uw klantenportaal om alle details en de voortgang te bekijken.
     </p>
   `;
-  return sendEmail(customerEmail, `Update: ${projectTitle} - ${updateTitle}`, 'Project Update', content, 'Bekijk Voortgang', `${PORTAL_URL}/login`);
+  return sendEmail(customerEmail, `Update: ${projectTitle} - ${updateTitle}`, 'Project Update', content, 'Bekijk Voortgang', `${PORTAL_URL}/dashboard`);
 }
 
 async function sendProgressUpdateEmail(customerEmail, customerName, projectTitle, progress) {
@@ -264,7 +262,7 @@ async function sendProgressUpdateEmail(customerEmail, customerName, projectTitle
       Ga naar uw klantenportaal voor meer details.
     </p>
   `;
-  return sendEmail(customerEmail, `Voortgang: ${projectTitle} - ${progress}%`, 'Voortgang Bijgewerkt', content, 'Bekijk Voortgang', `${PORTAL_URL}/login`);
+  return sendEmail(customerEmail, `Voortgang: ${projectTitle} - ${progress}%`, 'Voortgang Bijgewerkt', content, 'Bekijk Voortgang', `${PORTAL_URL}/dashboard`);
 }
 
 module.exports = {

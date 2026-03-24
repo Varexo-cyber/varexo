@@ -30,7 +30,7 @@ const Prijzen: React.FC = () => {
             <div className="mb-6">
               <div className="text-3xl font-bold text-primary-400 text-glow">€399.99</div>
               <div className="text-sm text-gray-400">eenmalig</div>
-              <div className="text-lg font-semibold text-primary-300 mt-2">€59.99/maand</div>
+              <div className="text-lg font-semibold text-white mt-2">€69.99/maand</div>
               <div className="text-xs text-gray-400">24/7 uptime garantie</div>
             </div>
             <ul className="space-y-3 mb-8">
@@ -102,7 +102,7 @@ const Prijzen: React.FC = () => {
             <div className="mb-6">
               <div className="text-3xl font-bold mb-2">€799.99</div>
               <div className="text-sm text-primary-200">eenmalig</div>
-              <div className="text-lg font-semibold text-primary-100 mt-2">€54.99/maand</div>
+              <div className="text-lg font-semibold text-white mt-2">€59.99/maand</div>
               <div className="text-xs text-primary-200">0.01s laadtijd garantie</div>
             </div>
             <ul className="space-y-3 mb-8">
@@ -170,7 +170,7 @@ const Prijzen: React.FC = () => {
             <div className="mb-6">
               <div className="text-3xl font-bold text-primary-400 text-glow">€1199.99</div>
               <div className="text-sm text-gray-400">eenmalig</div>
-              <div className="text-lg font-semibold text-primary-300 mt-2">€39.99/maand</div>
+              <div className="text-lg font-semibold text-white mt-2">€49.99/maand</div>
               <div className="text-xs text-gray-400">all-inclusive onderhoud</div>
             </div>
             <ul className="space-y-3 mb-8">
