@@ -19,7 +19,7 @@ const projects: Project[] = [
     title: 'Leegstand Meldpunt',
     category: 'Webapplicatie',
     description: 'Meldpunt voor het registreren en rapporteren van leegstaande panden. Gebruiksvriendelijke interface met kaartintegratie en automatische rapportage.',
-    image: '/portfolio/leegstandmeldpunt.jpg',
+    image: 'https://via.placeholder.com/800x600/1e40af/ffffff?text=Leegstand+Meldpunt',
     technologies: ['React', 'Node.js', 'Maps API'],
     link: 'https://leegstandmeldpunt.nl'
   },
@@ -28,7 +28,7 @@ const projects: Project[] = [
     title: 'E-commerce Platform',
     category: 'Webshop',
     description: 'Complete webshop met betaalintegratie, voorraadbeheer en klantenportal. Geoptimaliseerd voor conversie en mobiel gebruik.',
-    image: '/portfolio/ecommerce.jpg',
+    image: 'https://via.placeholder.com/800x600/059669/ffffff?text=E-commerce+Platform',
     technologies: ['React', 'Stripe', 'PostgreSQL']
   },
   {
@@ -36,7 +36,7 @@ const projects: Project[] = [
     title: 'Zakelijke Website',
     category: 'Website',
     description: 'Professionele bedrijfswebsite met CMS, contactformulieren en SEO-optimalisatie. Snelle laadtijden en responsive design.',
-    image: '/portfolio/business.jpg',
+    image: 'https://via.placeholder.com/800x600/7c3aed/ffffff?text=Zakelijke+Website',
     technologies: ['React', 'SEO', 'Analytics']
   },
   {
@@ -44,24 +44,24 @@ const projects: Project[] = [
     title: 'Restaurant Bestelsysteem',
     category: 'Webapplicatie',
     description: 'Online bestelsysteem voor restaurant met realtime menu-updates en bezorgintegratie. Verhoogde omzet met 40%.',
-    image: '/portfolio/restaurant.jpg',
+    image: 'https://via.placeholder.com/800x600/dc2626/ffffff?text=Restaurant+Bestelsysteem',
     technologies: ['React', 'Socket.io', 'Payment API']
   },
   {
     id: '5',
-    title: 'Dashboard Applicatie',
-    category: 'Maatwerk',
-    description: 'Custom analytics dashboard met datavisualisatie en exportfuncties. Real-time updates en gebruikersmanagement.',
-    image: '/portfolio/dashboard.jpg',
-    technologies: ['React', 'D3.js', 'REST API']
+    title: 'Portfolio Website',
+    category: 'Website',
+    description: 'Moderne portfolio website met animaties, dark mode en perfecte performance. Geoptimaliseerd voor alle apparaten.',
+    image: 'https://via.placeholder.com/800x600/0891b2/ffffff?text=Portfolio+Website',
+    technologies: ['React', 'Tailwind', 'Framer Motion']
   },
   {
     id: '6',
-    title: 'Portfolio Website',
-    category: 'Website',
-    description: 'Creatieve portfolio website voor fotograaf met galerij, lightbox en contactintegratie. Optimaliseerd voor beeldschermen.',
-    image: '/portfolio/photographer.jpg',
-    technologies: ['React', 'Gallery', 'Animations']
+    title: 'Booking Systeem',
+    category: 'Webapplicatie',
+    description: 'Reserveringssysteem voor diensten met kalenderintegratie, notificaties en betalingen. Volledig geautomatiseerd.',
+    image: 'https://via.placeholder.com/800x600/0d9488/ffffff?text=Booking+Systeem',
+    technologies: ['React', 'Calendar API', 'Stripe']
   }
 ];
 
@@ -96,7 +96,7 @@ const Portfolio: React.FC = () => {
                   >
                     {project.link ? (
                       <img 
-                        src={`https://api.screenshotone.com/take?url=${encodeURIComponent(project.link)}&width=800&height=600&format=jpg&device=desktop&scale=1&quality=80`}
+                        src={project.image}
                         alt={project.title}
                         className="w-full h-full object-cover"
                         onError={(e) => {
@@ -180,23 +180,23 @@ const Portfolio: React.FC = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="mt-24">
+        <div className="mt-48">
           <h2 className="text-2xl font-bold text-center mb-12 text-white">Onze Resultaten</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 mb-2">10+</div>
+              <div className="text-4xl font-bold text-primary-400 text-glow mb-2">10+</div>
               <p className="text-gray-400">Tevreden klanten</p>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 mb-2">10+</div>
+              <div className="text-4xl font-bold text-primary-400 text-glow mb-2">10+</div>
               <p className="text-gray-400">Projecten opgeleverd</p>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 mb-2">99.9%</div>
+              <div className="text-4xl font-bold text-primary-400 text-glow mb-2">99.9%</div>
               <p className="text-gray-400">Uptime garantie</p>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 mb-2">&lt;24h</div>
+              <div className="text-4xl font-bold text-primary-400 text-glow mb-2">&lt;24h</div>
               <p className="text-gray-400">Reactietijd</p>
             </div>
           </div>
