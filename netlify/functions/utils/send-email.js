@@ -28,17 +28,7 @@ function emailTemplate(title, content, ctaText, ctaUrl) {
         
         <!-- Header - Dark style like website navbar -->
         <div style="background:#0f172a;padding:28px 40px;text-align:center;border-radius:12px 12px 0 0;">
-          <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
-            <tr>
-              <td style="vertical-align:middle;padding-right:10px;">
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwb2x5Z29uIHBvaW50cz0iMTAsMTUgNTAsOTAgMzgsOTAgNSwyNSIgZmlsbD0iIzRmYzNmNyIvPjxwb2x5Z29uIHBvaW50cz0iOTAsMTUgNTAsOTAgNjIsOTAgOTUsMjUiIGZpbGw9IiMxNTY1YzAiLz48cG9seWdvbiBwb2ludHM9IjUwLDkwIDM1LDU1IDUwLDQ1IDY1LDU1IiBmaWxsPSIjNDJhNWY1IiBvcGFjaXR5PSIwLjgiLz48cG9seWdvbiBwb2ludHM9IjEwLDE1IDM4LDE1IDUwLDQ1IDM1LDU1IiBmaWxsPSIjYjNlNWZjIiBvcGFjaXR5PSIwLjkiLz48cG9seWdvbiBwb2ludHM9IjkwLDE1IDYyLDE1IDUwLDQ1IDY1LDU1IiBmaWxsPSIjMTk3NmQyIiBvcGFjaXR5PSIwLjkiLz48L3N2Zz4=" alt="V" width="40" height="40" style="display:block;" />
-              </td>
-              <td style="vertical-align:middle;padding-left:2px;">
-                <span style="color:#ffffff;font-size:24px;font-weight:800;letter-spacing:2px;font-family:Arial,Helvetica,sans-serif;">VAREXO</span>
-              </td>
-            </tr>
-          </table>
-          <p style="color:#10b981;font-size:10px;margin:10px 0 0;letter-spacing:3px;text-transform:uppercase;font-family:Arial,Helvetica,sans-serif;">ICT &bull; WEBSITES &bull; SOFTWARE</p>
+          <img src="${PORTAL_URL}/varexo-logo.svg" alt="VAREXO - ICT • Websites • Software" width="180" height="50" style="display:block;margin:0 auto;" />
         </div>
         
         <!-- Title bar -->

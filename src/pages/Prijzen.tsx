@@ -30,54 +30,54 @@ const Prijzen: React.FC = () => {
             <div className="mb-6">
               <div className="text-3xl font-bold text-primary-400 text-glow">€399.99</div>
               <div className="text-sm text-gray-400">eenmalig</div>
-              <div className="text-lg font-semibold text-white mt-2">€69.99/maand</div>
+              <div className="text-lg font-semibold text-primary-400 mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>€69.99/maand</div>
               <div className="text-xs text-gray-400">24/7 uptime garantie</div>
             </div>
-            <ul className="space-y-3 mb-8">
+            <ul className="space-y-3 mb-8 text-gray-200">
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Complete website (1-3 pagina's)
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Responsive design
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Contactformulier
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Google Maps integratie
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Social media links
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Basis SEO optimalisatie
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Updates binnen 24 uur
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 24/7 uptime garantie
@@ -102,7 +102,7 @@ const Prijzen: React.FC = () => {
             <div className="mb-6">
               <div className="text-3xl font-bold mb-2">€799.99</div>
               <div className="text-sm text-primary-200">eenmalig</div>
-              <div className="text-lg font-semibold text-white mt-2">€59.99/maand</div>
+              <div className="text-lg font-semibold text-white mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>€59.99/maand</div>
               <div className="text-xs text-primary-200">0.01s laadtijd garantie</div>
             </div>
             <ul className="space-y-3 mb-8">
@@ -170,60 +170,60 @@ const Prijzen: React.FC = () => {
             <div className="mb-6">
               <div className="text-3xl font-bold text-primary-400 text-glow">€1199.99</div>
               <div className="text-sm text-gray-400">eenmalig</div>
-              <div className="text-lg font-semibold text-white mt-2">€49.99/maand</div>
+              <div className="text-lg font-semibold text-primary-400 mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>€49.99/maand</div>
               <div className="text-xs text-gray-400">all-inclusive onderhoud</div>
             </div>
-            <ul className="space-y-3 mb-8">
+            <ul className="space-y-3 mb-8 text-gray-200">
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Alles uit Pro pakket
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Maatwerk website (10+ pagina's)
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 All-inclusive onderhoud
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Logo ontwerp
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Snelle levering
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Geavanceerde SEO
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Marketing strategie
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Updates binnen 6 uur
               </li>
               <li className="flex items-center">
-                <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 24/7 uptime garantie
