@@ -28,7 +28,7 @@ const Prijzen: React.FC = () => {
             <h3 className="text-2xl font-bold mb-2 text-white">Basic</h3>
             <p className="text-xs font-mono text-gray-500 mb-3">{'// starter-complete'}</p>
             <div className="mb-6">
-              <div className="text-3xl font-bold text-primary-400 text-glow">€399.99</div>
+              <div className="text-3xl font-bold text-primary-400 text-glow">€499.99</div>
               <div className="text-sm text-gray-400">eenmalig</div>
               <div className="text-lg font-semibold text-primary-400 mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>€69.99/maand</div>
               <div className="text-xs text-gray-400">24/7 uptime garantie</div>
