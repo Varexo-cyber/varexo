@@ -19,36 +19,30 @@ const projects: Project[] = [
     title: 'Leegstand Meldpunt',
     category: 'Webapplicatie',
     description: 'Meldpunt voor het registreren en rapporteren van leegstaande panden. Gebruiksvriendelijke interface met kaartintegratie en automatische rapportage.',
-    image: 'https://via.placeholder.com/800x600/1e40af/ffffff?text=Leegstand+Meldpunt',
+    image: `https://api.screenshotone.com/take?url=${encodeURIComponent('https://leegstandmeldpunt.nl/melden')}&width=800&height=600&format=jpg&device=desktop&scale=1&quality=80`,
     technologies: ['React', 'Node.js', 'Maps API'],
-    link: 'https://leegstandmeldpunt.nl'
+    link: 'https://leegstandmeldpunt.nl/melden'
   },
   {
     id: '2',
-    title: 'E-commerce Platform',
-    category: 'Webshop',
-    description: 'Complete webshop met betaalintegratie, voorraadbeheer en klantenportal. Geoptimaliseerd voor conversie en mobiel gebruik.',
-    image: 'https://via.placeholder.com/800x600/059669/ffffff?text=E-commerce+Platform',
-    technologies: ['React', 'Stripe', 'PostgreSQL']
+    title: 'Over Ons Pagina',
+    category: 'Website',
+    description: 'Professionele over ons pagina met bedrijfsinformatie, team en missie. Clean design met focus op gebruikservaring.',
+    image: `https://api.screenshotone.com/take?url=${encodeURIComponent('https://leegstandmeldpunt.nl/over-ons')}&width=800&height=600&format=jpg&device=desktop&scale=1&quality=80`,
+    technologies: ['React', 'SEO', 'Content Management'],
+    link: 'https://leegstandmeldpunt.nl/over-ons'
   },
   {
     id: '3',
-    title: 'Zakelijke Website',
+    title: 'Contact Pagina',
     category: 'Website',
-    description: 'Professionele bedrijfswebsite met CMS, contactformulieren en SEO-optimalisatie. Snelle laadtijden en responsive design.',
-    image: 'https://via.placeholder.com/800x600/7c3aed/ffffff?text=Zakelijke+Website',
-    technologies: ['React', 'SEO', 'Analytics']
+    description: 'Moderne contact pagina met formulier, contactgegevens en locatie informatie. Geoptimaliseerd voor conversie.',
+    image: `https://api.screenshotone.com/take?url=${encodeURIComponent('https://leegstandmeldpunt.nl/contact')}&width=800&height=600&format=jpg&device=desktop&scale=1&quality=80`,
+    technologies: ['React', 'Forms', 'Maps Integration'],
+    link: 'https://leegstandmeldpunt.nl/contact'
   },
   {
     id: '4',
-    title: 'Restaurant Bestelsysteem',
-    category: 'Webapplicatie',
-    description: 'Online bestelsysteem voor restaurant met realtime menu-updates en bezorgintegratie. Verhoogde omzet met 40%.',
-    image: 'https://via.placeholder.com/800x600/dc2626/ffffff?text=Restaurant+Bestelsysteem',
-    technologies: ['React', 'Socket.io', 'Payment API']
-  },
-  {
-    id: '5',
     title: 'Portfolio Website',
     category: 'Website',
     description: 'Moderne portfolio website met animaties, dark mode en perfecte performance. Geoptimaliseerd voor alle apparaten.',
@@ -56,12 +50,44 @@ const projects: Project[] = [
     technologies: ['React', 'Tailwind', 'Framer Motion']
   },
   {
-    id: '6',
+    id: '5',
     title: 'Booking Systeem',
-    category: 'Webapplicatie',
+    category: 'SaaS',
     description: 'Reserveringssysteem voor diensten met kalenderintegratie, notificaties en betalingen. Volledig geautomatiseerd.',
     image: 'https://via.placeholder.com/800x600/0d9488/ffffff?text=Booking+Systeem',
     technologies: ['React', 'Calendar API', 'Stripe']
+  },
+  {
+    id: '6',
+    title: 'Social Media Dashboard',
+    category: 'Dashboard',
+    description: 'Analytics dashboard voor social media management met real-time data en automatische rapportage.',
+    image: 'https://via.placeholder.com/800x600/6366f1/ffffff?text=Social+Dashboard',
+    technologies: ['React', 'Charts.js', 'API']
+  },
+  {
+    id: '7',
+    title: 'LMS Platform',
+    category: 'E-learning',
+    description: 'Online leerplatform met videolessen, quizzen en voortgangstracking voor educatieve instellingen.',
+    image: 'https://via.placeholder.com/800x600/8b5cf6/ffffff?text=LMS+Platform',
+    technologies: ['React', 'Video.js', 'PostgreSQL']
+  },
+  {
+    id: '8',
+    title: 'Real Estate Portal',
+    category: 'Portal',
+    description: 'Vastgoed portal met geavanceerde zoekfuncties, virtuele tours en lead management.',
+    image: 'https://via.placeholder.com/800x600/f59e0b/ffffff?text=Real+Estate',
+    technologies: ['React', 'Maps API', 'CRM']
+  },
+  {
+    id: '9',
+    title: 'Fitness Tracker App',
+    category: 'App',
+    description: 'Mobiele fitness app met workout tracking, voeding logging en social features.',
+    image: 'https://via.placeholder.com/800x600/10b981/ffffff?text=Fitness+Tracker',
+    technologies: ['React Native', 'Firebase', 'Health API']
   }
 ];
 
@@ -79,7 +105,7 @@ const Portfolio: React.FC = () => {
         <AnimateOnScroll>
         <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">$ ls projects/</p>
         <h1 className="text-4xl font-bold text-center mb-4 text-white">Ons Portfolio</h1>
-        <p className="text-xl text-center text-gray-400 mb-16 max-w-2xl mx-auto">
+        <p className="text-xl text-center text-gray-400 mb-8 max-w-2xl mx-auto">
           Ontdek onze recente projecten en zie wat we voor jou kunnen betekenen
         </p>
         </AnimateOnScroll>
