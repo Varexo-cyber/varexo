@@ -19,7 +19,7 @@ const projects: Project[] = [
     title: 'Leegstand Meldpunt',
     category: 'Webapplicatie',
     description: 'Meldpunt voor het registreren en rapporteren van leegstaande panden. Gebruiksvriendelijke interface met kaartintegratie en automatische rapportage.',
-    image: 'https://picsum.photos/800/600?random=1',
+    image: `https://api.thum.io/get/width/800/crop/600/noanimate/https://leegstandmeldpunt.nl`,
     technologies: ['React', 'Node.js', 'Maps API'],
     link: 'https://leegstandmeldpunt.nl'
   }
