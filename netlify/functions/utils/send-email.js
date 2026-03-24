@@ -28,7 +28,7 @@ function emailTemplate(title, content, ctaText, ctaUrl) {
         
         <!-- Header - Dark style like website navbar -->
         <div style="background:#0f172a;padding:28px 40px;text-align:center;border-radius:12px 12px 0 0;">
-          <img src="${PORTAL_URL}/varexo-logo.svg" alt="VAREXO - ICT • Websites • Software" width="180" height="50" style="display:block;margin:0 auto;" />
+          <img src="${PORTAL_URL}/varexo-logo.svg" alt="VAREXO - ICT • Websites • Software" width="260" height="65" style="display:block;margin:0 auto;" />
         </div>
         
         <!-- Title bar -->

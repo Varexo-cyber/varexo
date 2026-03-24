@@ -1,9 +1,9 @@
-<svg width="180" height="50" viewBox="0 0 180 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <polygon points="5,7 25,45 19,45 2,12" fill="#4fc3f7"/>
-  <polygon points="45,7 25,45 31,45 48,12" fill="#1565c0"/>
-  <polygon points="25,45 17,27 25,22 33,27" fill="#42a5f5" opacity="0.8"/>
-  <polygon points="5,7 19,7 25,22 17,27" fill="#b3e5fc" opacity="0.9"/>
-  <polygon points="45,7 31,7 25,22 33,27" fill="#1976d2" opacity="0.9"/>
-  <text x="55" y="30" fill="#ffffff" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="800" letter-spacing="2">VAREXO</text>
-  <text x="55" y="44" fill="#10b981" font-family="Arial,Helvetica,sans-serif" font-size="7" letter-spacing="2.5" text-transform="uppercase">ICT • WEBSITES • SOFTWARE</text>
+<svg width="260" height="65" viewBox="0 0 260 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="6,8 30,57 22,57 2,15" fill="#4fc3f7"/>
+  <polygon points="54,8 30,57 38,57 58,15" fill="#1565c0"/>
+  <polygon points="30,57 20,33 30,27 40,33" fill="#42a5f5" opacity="0.8"/>
+  <polygon points="6,8 22,8 30,27 20,33" fill="#b3e5fc" opacity="0.9"/>
+  <polygon points="54,8 38,8 30,27 40,33" fill="#1976d2" opacity="0.9"/>
+  <text x="70" y="40" fill="#ffffff" font-family="Arial,Helvetica,sans-serif" font-size="32" font-weight="900" letter-spacing="3">VAREXO</text>
+  <text x="71" y="56" fill="#10b981" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="600" letter-spacing="3">ICT • WEBSITES • SOFTWARE</text>
 </svg>
