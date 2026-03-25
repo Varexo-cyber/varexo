@@ -796,8 +796,9 @@ const AdminDashboard: React.FC = () => {
               font-family: 'Inter', Arial, sans-serif; 
               background: linear-gradient(135deg, #d4edda 0%, #a8d8ea 50%, #d4edda 100%);
               min-height: 100vh;
-              padding: 60px;
+              padding: 40px;
               color: #333;
+              margin: 0;
             }
             .invoice-container {
               max-width: 800px;
@@ -808,7 +809,7 @@ const AdminDashboard: React.FC = () => {
             }
             .header-section {
               background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
-              padding: 40px;
+              padding: 30px;
               display: flex;
               justify-content: space-between;
               align-items: flex-start;
@@ -850,7 +851,7 @@ const AdminDashboard: React.FC = () => {
               text-align: right;
             }
             .customer-section {
-              padding: 30px 40px;
+              padding: 20px 30px;
               display: flex;
               justify-content: space-between;
             }
@@ -877,8 +878,8 @@ const AdminDashboard: React.FC = () => {
               display: grid;
               grid-template-columns: 1fr 1fr 2fr 1fr;
               background: #f8f9fa;
-              margin: 0 40px;
-              padding: 15px 20px;
+              margin: 0 30px;
+              padding: 12px 15px;
               border: 1px solid #dee2e6;
               font-size: 12px;
               font-weight: 600;
@@ -895,13 +896,13 @@ const AdminDashboard: React.FC = () => {
               text-align: right;
             }
             .items-table {
-              margin: 0 40px;
+              margin: 0 30px;
               border-collapse: collapse;
-              width: calc(100% - 80px);
+              width: calc(100% - 60px);
             }
             .items-table th {
               text-align: left;
-              padding: 15px 20px;
+              padding: 12px 15px;
               font-size: 12px;
               font-weight: 600;
               text-transform: uppercase;
@@ -909,7 +910,7 @@ const AdminDashboard: React.FC = () => {
               border-bottom: 2px solid #2c6e4f;
             }
             .items-table td {
-              padding: 20px;
+              padding: 12px 15px;
               font-size: 13px;
               color: #333;
               border-bottom: 1px solid #eee;
@@ -919,8 +920,8 @@ const AdminDashboard: React.FC = () => {
             .items-table .price { text-align: right; width: 120px; }
             .items-table .total { text-align: right; width: 120px; }
             .totals-section {
-              margin: 30px 40px 0 40px;
-              padding-bottom: 40px;
+              margin: 20px 30px 0 30px;
+              padding-bottom: 20px;
               display: flex;
               justify-content: flex-end;
             }
@@ -943,8 +944,8 @@ const AdminDashboard: React.FC = () => {
             }
             .footer {
               background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
-              padding: 30px 40px;
-              margin-top: 40px;
+              padding: 20px 30px;
+              margin-top: 20px;
             }
             .footer-content {
               display: flex;
@@ -965,8 +966,49 @@ const AdminDashboard: React.FC = () => {
               font-weight: 600;
             }
             @media print {
-              body { background: white; padding: 0; }
-              .invoice-container { box-shadow: none; }
+              @page {
+                size: A4;
+                margin: 0;
+              }
+              body { 
+                background: white; 
+                padding: 20px; 
+                min-height: auto;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+              .invoice-container { 
+                box-shadow: none; 
+                max-width: 100%;
+                min-height: calc(100vh - 40px);
+                display: flex;
+                flex-direction: column;
+              }
+              .footer {
+                margin-top: auto;
+                page-break-inside: avoid;
+              }
+              .header-section {
+                padding: 25px 30px;
+              }
+              .customer-section {
+                padding: 20px 30px;
+              }
+              .summary-row {
+                margin: 0 30px;
+                padding: 12px 15px;
+              }
+              .items-table {
+                margin: 0 30px;
+                width: calc(100% - 60px);
+              }
+              .items-table th, .items-table td {
+                padding: 12px 15px;
+              }
+              .totals-section {
+                margin: 20px 30px 0 30px;
+                padding-bottom: 20px;
+              }
             }
           </style>
         </head>
@@ -2237,7 +2279,7 @@ const AdminDashboard: React.FC = () => {
                         setSurchargeForm({
                           description: '',
                           amount: '',
-                          type: 'business',
+                          type: 'personal',
                           frequency: 'monthly',
                           category: '',
                           surchargeDate: new Date().toISOString().split('T')[0]
@@ -2246,14 +2288,14 @@ const AdminDashboard: React.FC = () => {
                       }}
                       className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
                     >
-                      + Nieuwe Toeslag
+                      + Nieuwe Inkomst/Toeslag
                     </button>
                   </div>
                   
                   {surcharges.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                      <p>Geen toeslagen gevonden.</p>
-                      <p className="text-sm mt-1">Voeg toeslagen toe zoals BTW, heffingen, etc.</p>
+                      <p>Geen inkomsten/toeslagen gevonden.</p>
+                      <p className="text-sm mt-1">Voeg hier je persoonlijke inkomsten toe zoals DUO, zorgtoeslag, huurtoeslag, etc.</p>
                     </div>
                   ) : (
                     <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-dark-600 scrollbar-track-dark-800">
@@ -2285,8 +2327,8 @@ const AdminDashboard: React.FC = () => {
                               </p>
                             </div>
                             <div className="text-right">
-                              <p className="text-xl font-bold text-orange-400">+€{parseFloat(surcharge.amount).toFixed(2)}</p>
-                              <div className="flex gap-2 mt-2">
+                              <p className="text-xl font-bold text-primary-400">+€{parseFloat(surcharge.amount).toFixed(2)}</p>
+                              <div className="flex gap-2 mt-2 justify-end">
                                 <button
                                   onClick={() => openEditSurcharge(surcharge)}
                                   className="text-gray-400 hover:text-white text-xs"
@@ -2316,9 +2358,11 @@ const AdminDashboard: React.FC = () => {
                   
                   {(() => {
                     const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0);
+                    const totalSurcharges = surcharges.reduce((sum, s) => sum + parseFloat(s.amount), 0);
                     const businessCosts = expenses.filter(e => e.type === 'business').reduce((sum, e) => sum + parseFloat(e.amount), 0);
                     const personalCosts = expenses.filter(e => e.type === 'personal').reduce((sum, e) => sum + parseFloat(e.amount), 0);
-                    const netProfit = totalRevenue - businessCosts;
+                    const totalIncome = totalRevenue + totalSurcharges;
+                    const netProfit = totalIncome - businessCosts;
                     const afterPersonal = netProfit - personalCosts;
                     
                     return (
@@ -2328,10 +2372,18 @@ const AdminDashboard: React.FC = () => {
                           <span className="text-green-400 font-medium text-lg">+ €{totalRevenue.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center py-3 border-b border-dark-700">
+                          <span className="text-gray-400">Persoonlijke inkomsten/toeslagen</span>
+                          <span className="text-primary-400 font-medium text-lg">+ €{totalSurcharges.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-dark-700 bg-dark-900/50 rounded px-3">
+                          <span className="text-white font-semibold">Totale Inkomsten</span>
+                          <span className="text-green-400 font-bold text-lg">€{totalIncome.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-dark-700">
                           <span className="text-gray-400">Bedrijfskosten</span>
                           <span className="text-red-400 font-medium text-lg">- €{businessCosts.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between items-center py-3 border-b border-dark-700 bg-dark-900/50 rounded">
+                        <div className="flex justify-between items-center py-3 border-b border-dark-700 bg-dark-900/50 rounded px-3">
                           <span className="text-white font-semibold">Bruto Winst (voor privékosten)</span>
                           <span className={`font-bold text-lg ${netProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                             €{netProfit.toFixed(2)}
@@ -2979,12 +3031,12 @@ const AdminDashboard: React.FC = () => {
                           onChange={(e) => setNewLogForm(prev => ({ ...prev, logType: e.target.value as any }))}
                           className="px-3 py-2 bg-dark-800 border border-dark-600 rounded-lg text-white"
                         >
-                          <option value="update">📝 Update</option>
-                          <option value="milestone">🎯 Mijlpaal</option>
-                          <option value="feature">✨ Nieuwe functie</option>
-                          <option value="bugfix">🐛 Bugfix</option>
-                          <option value="design">🎨 Design</option>
-                          <option value="deployment">🚀 Deployment</option>
+                          <option value="update">Update</option>
+                          <option value="milestone">Mijlpaal</option>
+                          <option value="feature">Nieuwe functie</option>
+                          <option value="bugfix">Bugfix</option>
+                          <option value="design">Design</option>
+                          <option value="deployment">Deployment</option>
                         </select>
                         <button
                           type="submit"
@@ -3008,12 +3060,32 @@ const AdminDashboard: React.FC = () => {
                         {projectLogs.map((log) => (
                           <div key={log.id} className="bg-dark-900 p-3 rounded-lg border border-dark-700">
                             <div className="flex items-start gap-3">
-                              <span className="text-xl">
-                                {log.logType === 'milestone' ? '🎯' :
-                                 log.logType === 'feature' ? '✨' :
-                                 log.logType === 'bugfix' ? '🐛' :
-                                 log.logType === 'design' ? '🎨' :
-                                 log.logType === 'deployment' ? '🚀' : '📝'}
+                              <span className="text-primary-400">
+                                {log.logType === 'milestone' ? (
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                ) : log.logType === 'feature' ? (
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                                  </svg>
+                                ) : log.logType === 'bugfix' ? (
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                  </svg>
+                                ) : log.logType === 'design' ? (
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                                  </svg>
+                                ) : log.logType === 'deployment' ? (
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                  </svg>
+                                ) : (
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                  </svg>
+                                )}
                               </span>
                               <div className="flex-1">
                                 <div className="flex justify-between items-start">
@@ -3163,7 +3235,7 @@ const AdminDashboard: React.FC = () => {
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
               <div className="bg-dark-800 rounded-lg p-6 w-full max-w-md border border-dark-700">
                 <h3 className="text-xl font-semibold text-white mb-4">
-                  {editingSurcharge ? 'Toeslag Bewerken' : 'Nieuwe Toeslag'}
+                  {editingSurcharge ? 'Inkomst/Toeslag Bewerken' : 'Nieuwe Inkomst/Toeslag'}
                 </h3>
                 <form onSubmit={editingSurcharge ? handleUpdateSurcharge : handleCreateSurcharge}>
                   <div className="space-y-4">
@@ -3174,7 +3246,7 @@ const AdminDashboard: React.FC = () => {
                         value={surchargeForm.description}
                         onChange={(e) => setSurchargeForm(prev => ({ ...prev, description: e.target.value }))}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
-                        placeholder="Bijv. BTW, Heffingen, Belastingen, etc."
+                        placeholder="Bijv. DUO, Zorgtoeslag, Huurtoeslag, etc."
                         required
                       />
                     </div>
@@ -3200,8 +3272,7 @@ const AdminDashboard: React.FC = () => {
                           onChange={(e) => setSurchargeForm(prev => ({ ...prev, type: e.target.value as 'business' | 'personal' }))}
                           className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                         >
-                          <option value="business">Bedrijfskosten</option>
-                          <option value="personal">Privékosten</option>
+                          <option value="personal">Persoonlijk</option>
                         </select>
                       </div>
                       <div>
@@ -3225,7 +3296,7 @@ const AdminDashboard: React.FC = () => {
                         value={surchargeForm.category}
                         onChange={(e) => setSurchargeForm(prev => ({ ...prev, category: e.target.value }))}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
-                        placeholder="Bijv. BTW 21%, Inkomstenbelasting, etc."
+                        placeholder="Bijv. DUO, Zorgtoeslag, Kinderbijslag, etc."
                       />
                     </div>
 
@@ -3250,7 +3321,7 @@ const AdminDashboard: React.FC = () => {
                         setSurchargeForm({
                           description: '',
                           amount: '',
-                          type: 'business',
+                          type: 'personal',
                           frequency: 'monthly',
                           category: '',
                           surchargeDate: new Date().toISOString().split('T')[0]

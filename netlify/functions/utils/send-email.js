@@ -288,7 +288,7 @@ async function sendPaymentConfirmationEmail(customerEmail, customerName, invoice
     <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:20px;border-radius:0 8px 8px 0;margin:20px 0;">
       <p style="margin:0 0 8px;color:#059669;font-size:16px;font-weight:600;">Factuur ${invoiceNumber}</p>
       <p style="margin:0;color:#1a1a1a;font-size:24px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)}</p>
-      <p style="margin:8px 0 0;color:#10b981;font-size:14px;font-weight:600;">✓ BETAALD</p>
+      <p style="margin:8px 0 0;color:#10b981;font-size:14px;font-weight:600;">[BETAALD]</p>
     </div>
     <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">
       Uw betaling is geregistreerd en de factuur is volledig afgehandeld.
@@ -314,7 +314,7 @@ async function sendOverdueReminderEmail(customerEmail, customerName, invoiceNumb
     <div style="background:#fef2f2;border-left:4px solid #ef4444;padding:20px;border-radius:0 8px 8px 0;margin:20px 0;">
       <p style="margin:0 0 8px;color:#dc2626;font-size:16px;font-weight:600;">Factuur ${invoiceNumber}</p>
       <p style="margin:0;color:#1a1a1a;font-size:24px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)}</p>
-      <p style="margin:8px 0 0;color:#dc2626;font-size:14px;font-weight:600;">⚠ TE LAAT - ${daysOverdue} dagen over datum</p>
+      <p style="margin:8px 0 0;color:#dc2626;font-size:14px;font-weight:600;">[TE LAAT] - ${daysOverdue} dagen over datum</p>
       <p style="margin:4px 0 0;color:#6b7280;font-size:13px;">Was vervallen op: ${dueDateFormatted}</p>
     </div>
     <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">
@@ -330,7 +330,7 @@ async function sendOverdueReminderEmail(customerEmail, customerName, invoiceNumb
       Heeft u vragen? Neem contact met ons op via info@varexo.nl
     </p>
   `;
-  return sendEmail(customerEmail, `HERINNERING: Factuur ${invoiceNumber} is te laat`, '⚠ Factuur Te Laat - Actie Vereist', content, 'Nu Betalen', `${PORTAL_URL}/dashboard`);
+  return sendEmail(customerEmail, `HERINNERING: Factuur ${invoiceNumber} is te laat`, '[ACTIE VEREIST] Factuur Te Laat', content, 'Nu Betalen', `${PORTAL_URL}/dashboard`);
 }
 
 module.exports = {

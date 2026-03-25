@@ -28,7 +28,8 @@ const Prijzen: React.FC = () => {
             <h3 className="text-2xl font-bold mb-2 text-white">Basic</h3>
             <p className="text-xs font-mono text-gray-500 mb-3">{'// starter-complete'}</p>
             <div className="mb-6">
-              <div className="text-3xl font-bold text-primary-400 text-glow">€69.99</div>
+              <div className="text-xl font-bold text-gray-300">€599.99 <span className="text-sm font-normal">eenmalig</span></div>
+              <div className="text-3xl font-bold text-primary-400 text-glow mt-2">€69.99</div>
               <div className="text-sm text-gray-400">per maand</div>
               <div className="text-lg font-semibold text-primary-400 mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>of €799.99/jaar</div>
               <div className="text-xs text-gray-400">24/7 uptime garantie</div>
@@ -100,7 +101,8 @@ const Prijzen: React.FC = () => {
             <h3 className="text-2xl font-bold mb-2">Pro</h3>
             <p className="text-xs font-mono text-primary-200 mb-3">{'// speed-optimized'}</p>
             <div className="mb-6">
-              <div className="text-3xl font-bold mb-2">€59.99</div>
+              <div className="text-xl font-bold text-primary-200">€899.99 <span className="text-sm font-normal">eenmalig</span></div>
+              <div className="text-3xl font-bold mb-2 mt-2">€59.99</div>
               <div className="text-sm text-primary-200">per maand</div>
               <div className="text-lg font-semibold text-white mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>of €699.99/jaar</div>
               <div className="text-xs text-primary-200">0.01s laadtijd garantie</div>
@@ -168,9 +170,10 @@ const Prijzen: React.FC = () => {
             <h3 className="text-2xl font-bold mb-2 text-white">Premium</h3>
             <p className="text-xs font-mono text-gray-500 mb-3">{'// all-inclusive'}</p>
             <div className="mb-6">
-              <div className="text-3xl font-bold text-primary-400 text-glow">€599.99</div>
-              <div className="text-sm text-gray-400">per jaar</div>
-              <div className="text-lg font-semibold text-primary-400 mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>inclusief onderhoud</div>
+              <div className="text-xl font-bold text-gray-300">€1299.99 <span className="text-sm font-normal">eenmalig</span></div>
+              <div className="text-3xl font-bold text-primary-400 text-glow mt-2">€49.99</div>
+              <div className="text-sm text-gray-400">per maand</div>
+              <div className="text-lg font-semibold text-primary-400 mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>of €499.99/jaar</div>
               <div className="text-xs text-gray-400">all-inclusive</div>
             </div>
             <ul className="space-y-3 mb-8 text-gray-200">

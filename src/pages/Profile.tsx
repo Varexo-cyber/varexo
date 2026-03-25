@@ -257,21 +257,25 @@ const Profile: React.FC = () => {
 
                     {/* Email Notifications Toggle */}
                     <div className="md:col-span-2">
-                      <label className="flex items-center gap-3 cursor-pointer">
-                        <div className="relative">
-                          <input
-                            type="checkbox"
-                            checked={emailNotifications}
-                            onChange={(e) => setEmailNotifications(e.target.checked)}
-                            className="sr-only peer"
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setEmailNotifications(!emailNotifications)}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+                            emailNotifications ? 'bg-primary-500' : 'bg-dark-600'
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              emailNotifications ? 'translate-x-6' : 'translate-x-1'
+                            }`}
                           />
-                          <div className="w-11 h-6 bg-dark-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
-                        </div>
+                        </button>
                         <div>
                           <span className="text-sm font-medium text-gray-300">E-mail notificaties ontvangen</span>
                           <p className="text-xs text-gray-500">Ontvang automatische e-mails over facturen, updates en belangrijke meldingen</p>
                         </div>
-                      </label>
+                      </div>
                     </div>
                   </div>
 
