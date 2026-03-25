@@ -158,9 +158,18 @@ const AdminDashboard: React.FC = () => {
     // Load expenses
     try {
       const res = await fetch('/.netlify/functions/expenses');
+      if (!res.ok) {
+        console.error('Expenses fetch failed:', res.status, await res.text());
+        setExpenses([]);
+        return;
+      }
       const ex = await res.json();
+      console.log('Expenses loaded:', ex);
       setExpenses(Array.isArray(ex) ? ex : []);
-    } catch (e) { console.log('No expenses yet'); }
+    } catch (e) { 
+      console.error('Error loading expenses:', e);
+      setExpenses([]);
+    }
   };
 
   const handleCreateProject = async (e: React.FormEvent) => {
@@ -372,7 +381,7 @@ const AdminDashboard: React.FC = () => {
   const handleCreateExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await fetch('/.netlify/functions/expenses', {
+      const response = await fetch('/.netlify/functions/expenses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -384,6 +393,15 @@ const AdminDashboard: React.FC = () => {
           expense_date: expenseForm.expenseDate
         }),
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create expense');
+      }
+      
+      const result = await response.json();
+      console.log('Expense created:', result);
+      
       setShowExpenseForm(false);
       setExpenseForm({
         description: '',
@@ -393,9 +411,11 @@ const AdminDashboard: React.FC = () => {
         category: '',
         expenseDate: new Date().toISOString().split('T')[0]
       });
-      loadData();
+      await loadData();
+      alert('Kosten succesvol toegevoegd!');
     } catch (error) {
       console.error('Error creating expense:', error);
+      alert('Fout bij toevoegen kosten: ' + (error as Error).message);
     }
   };
 
@@ -403,7 +423,7 @@ const AdminDashboard: React.FC = () => {
     e.preventDefault();
     if (!editingExpense) return;
     try {
-      await fetch(`/.netlify/functions/expenses/${editingExpense.id}`, {
+      const response = await fetch(`/.netlify/functions/expenses/${editingExpense.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -415,6 +435,12 @@ const AdminDashboard: React.FC = () => {
           expense_date: expenseForm.expenseDate
         }),
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update expense');
+      }
+      
       setShowExpenseForm(false);
       setEditingExpense(null);
       setExpenseForm({
@@ -425,9 +451,11 @@ const AdminDashboard: React.FC = () => {
         category: '',
         expenseDate: new Date().toISOString().split('T')[0]
       });
-      loadData();
+      await loadData();
+      alert('Kosten succesvol bijgewerkt!');
     } catch (error) {
       console.error('Error updating expense:', error);
+      alert('Fout bij bijwerken kosten: ' + (error as Error).message);
     }
   };
 

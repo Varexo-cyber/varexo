@@ -78,7 +78,7 @@ const Portfolio: React.FC = () => {
                   
                   {/* Category Badge */}
                   <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-primary-500/90 text-white text-xs font-bold rounded-full shadow-lg shadow-primary-500/50 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]">
+                    <span className="px-4 py-1.5 bg-primary-500 text-dark-900 text-xs font-extrabold rounded-full border-2 border-primary-400 glow-badge">
                       {project.category}
                     </span>
                   </div>
