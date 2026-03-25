@@ -79,6 +79,14 @@ const Profile: React.FC = () => {
       };
       localStorage.setItem('varexo_profile_' + user?.email, JSON.stringify(extendedProfile));
 
+      // Also sync emailNotifications to varexo_users so Admin can see it
+      const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
+      const userIndex = users.findIndex((u: any) => u.email === user?.email);
+      if (userIndex !== -1) {
+        users[userIndex].emailNotifications = emailNotifications;
+        localStorage.setItem('varexo_users', JSON.stringify(users));
+      }
+
       setMessage('Profiel succesvol bijgewerkt!');
       setTimeout(() => setMessage(''), 3000);
     } catch (err: any) {
