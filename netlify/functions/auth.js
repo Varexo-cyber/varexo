@@ -12,7 +12,14 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers, body: '' };
   }
 
-  const sql = neon();
+  let sql;
+  try {
+    sql = neon();
+    console.log('Database connection established');
+  } catch (error) {
+    console.error('Database connection failed:', error);
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Database connection failed' }) };
+  }
   const rawPath = event.path || '';
   const path = rawPath.replace('/.netlify/functions/auth', '').replace('/api/auth', '') || '/';
   const body = event.body ? JSON.parse(event.body) : {};
