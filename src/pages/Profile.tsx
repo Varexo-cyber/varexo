@@ -49,7 +49,7 @@ const Profile: React.FC = () => {
         setCompany(profileData.company || '');
         setAddress(profileData.address || '');
         setCity(profileData.city || '');
-        setEmailNotifications(profileData.emailNotifications !== false);
+        setEmailNotifications(profileData.emailNotifications ?? true);
       } else {
         navigate('/login');
       }
@@ -85,6 +85,13 @@ const Profile: React.FC = () => {
       if (userIndex !== -1) {
         users[userIndex].emailNotifications = emailNotifications;
         localStorage.setItem('varexo_users', JSON.stringify(users));
+      }
+
+      // Also update the main user object in localStorage
+      const currentUser = mockAuth.getCurrentUser();
+      if (currentUser) {
+        const updatedUser = { ...currentUser, emailNotifications };
+        localStorage.setItem('varexo_user', JSON.stringify(updatedUser));
       }
 
       setMessage('Profiel succesvol bijgewerkt!');
