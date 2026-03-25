@@ -17,6 +17,13 @@ exports.handler = async (event) => {
   const path = rawPath.replace('/.netlify/functions/auth', '').replace('/api/auth', '') || '/';
   const body = event.body ? JSON.parse(event.body) : {};
 
+  console.log('=== AUTH REQUEST ===');
+  console.log('Method:', event.httpMethod);
+  console.log('Path:', rawPath);
+  console.log('Clean Path:', path);
+  console.log('Body:', body);
+  console.log('==================');
+
   // Debug endpoint
   if (event.httpMethod === 'GET' && (path === '/debug' || path === '/debug/')) {
     return {
@@ -209,7 +216,14 @@ exports.handler = async (event) => {
     return { statusCode: 404, headers, body: JSON.stringify({ error: 'Route niet gevonden' }) };
 
   } catch (error) {
-    console.error('Auth error:', error);
+    console.error('Auth error details:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+      detail: error.detail,
+      where: error.where,
+      constraint: error.constraint
+    });
     return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server error: ' + error.message }) };
   }
 };
