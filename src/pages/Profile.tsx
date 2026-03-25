@@ -83,7 +83,9 @@ const Profile: React.FC = () => {
       const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
       const userIndex = users.findIndex((u: any) => u.email === user?.email);
       if (userIndex !== -1) {
+        console.log('Profile.tsx - Before update:', users[userIndex]);
         users[userIndex].emailNotifications = emailNotifications;
+        console.log('Profile.tsx - After update:', users[userIndex]);
         localStorage.setItem('varexo_users', JSON.stringify(users));
       }
 

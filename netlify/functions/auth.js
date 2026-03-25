@@ -148,24 +148,33 @@ exports.handler = async (event) => {
 
     // PUT /auth/profile - Update profile
     if (event.httpMethod === 'PUT' && path === '/profile') {
-      const { email, displayName, phone, company, emailNotifications } = body;
+      try {
+        const { email, displayName, phone, company, emailNotifications } = body;
+        
+        console.log('Profile update request:', { email, displayName, phone, company, emailNotifications });
 
-      const result = await sql`
-        UPDATE users SET
-          display_name = COALESCE(${displayName || null}, display_name),
-          phone = COALESCE(${phone || null}, phone),
-          company = COALESCE(${company || null}, company),
-          email_notifications = COALESCE(${emailNotifications !== undefined ? emailNotifications : null}, email_notifications),
-          updated_at = NOW()
-        WHERE email = ${email}
-        RETURNING email, display_name, photo_url, provider, phone, company, email_notifications
-      `;
+        const result = await sql`
+          UPDATE users SET
+            display_name = COALESCE(${displayName || null}, display_name),
+            phone = COALESCE(${phone || null}, phone),
+            company = COALESCE(${company || null}, company),
+            email_notifications = COALESCE(${emailNotifications !== undefined ? emailNotifications : null}, email_notifications),
+            updated_at = NOW()
+          WHERE email = ${email}
+          RETURNING email, display_name, photo_url, provider, phone, company, email_notifications
+        `;
 
-      if (result.length === 0) {
-        return { statusCode: 404, headers, body: JSON.stringify({ error: 'Gebruiker niet gevonden.' }) };
+        console.log('Profile update result:', result);
+
+        if (result.length === 0) {
+          return { statusCode: 404, headers, body: JSON.stringify({ error: 'Gebruiker niet gevonden.' }) };
+        }
+
+        return { statusCode: 200, headers, body: JSON.stringify(result[0]) };
+      } catch (error) {
+        console.error('Profile update error:', error);
+        return { statusCode: 500, headers, body: JSON.stringify({ error: 'Profile update failed: ' + error.message }) };
       }
-
-      return { statusCode: 200, headers, body: JSON.stringify(result[0]) };
     }
 
     // PUT /auth/password - Change password (works for both manual and merged accounts)

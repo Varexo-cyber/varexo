@@ -331,6 +331,10 @@ class ProjectService {
     const projects = this.getLocalProjects();
     const invoices = this.getLocalInvoices();
 
+    // Debug logging
+    console.log('getCustomers - varexo_users data:', users);
+    console.log('getCustomers - emailNotifications values:', users.map((u: any) => ({ email: u.email, emailNotifications: u.emailNotifications })));
+
     return users.map((user: any) => ({
       email: user.email,
       displayName: user.displayName,
