@@ -169,7 +169,7 @@ const Home: React.FC = () => {
               <p className="text-gray-400 text-sm">Projecten</p>
             </div>
             <div className="text-center glass-card rounded-xl p-6">
-              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">99,99%</div>
+              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">99,9%</div>
               <p className="text-gray-400 text-sm">Uptime</p>
             </div>
             <div className="text-center glass-card rounded-xl p-6">

@@ -476,7 +476,49 @@ const CustomerDashboard: React.FC = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            {/* Subscription Card */}
+            <div className="bg-dark-800 p-6 rounded-lg border border-dark-700">
+              <div className="flex items-center">
+                <div className="p-3 bg-blue-900 rounded-lg">
+                  <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-400">Abonnement</p>
+                  <div className="flex flex-col">
+                    {(() => {
+                      const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
+                      const currentUser = users.find((u: any) => u.email === user?.email);
+                      const subscription = currentUser?.subscription;
+                      const hasSocialMedia = currentUser?.hasSocialMedia;
+                      
+                      if (!subscription) {
+                        return <span className="text-sm text-gray-500">Geen abonnement</span>;
+                      }
+                      
+                      return (
+                        <>
+                          <span className={`text-sm font-bold ${
+                            subscription === 'basic' ? 'text-gray-300' :
+                            subscription === 'pro' ? 'text-primary-400' :
+                            'text-yellow-400'
+                          }`}>
+                            {subscription === 'basic' ? 'Basic' :
+                             subscription === 'pro' ? 'Pro' : 'Premium'}
+                          </span>
+                          {hasSocialMedia && (
+                            <span className="text-xs text-purple-400">+ Social Media</span>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="bg-dark-800 p-6 rounded-lg border border-dark-700">
               <div className="flex items-center">
                 <div className="p-3 bg-primary-900 rounded-lg">

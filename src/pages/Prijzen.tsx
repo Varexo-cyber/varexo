@@ -28,9 +28,9 @@ const Prijzen: React.FC = () => {
             <h3 className="text-2xl font-bold mb-2 text-white">Basic</h3>
             <p className="text-xs font-mono text-gray-500 mb-3">{'// starter-complete'}</p>
             <div className="mb-6">
-              <div className="text-3xl font-bold text-primary-400 text-glow">€499.99</div>
-              <div className="text-sm text-gray-400">eenmalig</div>
-              <div className="text-lg font-semibold text-primary-400 mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>€69.99/maand</div>
+              <div className="text-3xl font-bold text-primary-400 text-glow">€69.99</div>
+              <div className="text-sm text-gray-400">per maand</div>
+              <div className="text-lg font-semibold text-primary-400 mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>of €799.99/jaar</div>
               <div className="text-xs text-gray-400">24/7 uptime garantie</div>
             </div>
             <ul className="space-y-3 mb-8 text-gray-200">
@@ -100,9 +100,9 @@ const Prijzen: React.FC = () => {
             <h3 className="text-2xl font-bold mb-2">Pro</h3>
             <p className="text-xs font-mono text-primary-200 mb-3">{'// speed-optimized'}</p>
             <div className="mb-6">
-              <div className="text-3xl font-bold mb-2">€799.99</div>
-              <div className="text-sm text-primary-200">eenmalig</div>
-              <div className="text-lg font-semibold text-white mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>€59.99/maand</div>
+              <div className="text-3xl font-bold mb-2">€59.99</div>
+              <div className="text-sm text-primary-200">per maand</div>
+              <div className="text-lg font-semibold text-white mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>of €699.99/jaar</div>
               <div className="text-xs text-primary-200">0.01s laadtijd garantie</div>
             </div>
             <ul className="space-y-3 mb-8">
@@ -168,10 +168,10 @@ const Prijzen: React.FC = () => {
             <h3 className="text-2xl font-bold mb-2 text-white">Premium</h3>
             <p className="text-xs font-mono text-gray-500 mb-3">{'// all-inclusive'}</p>
             <div className="mb-6">
-              <div className="text-3xl font-bold text-primary-400 text-glow">€1199.99</div>
-              <div className="text-sm text-gray-400">eenmalig</div>
-              <div className="text-lg font-semibold text-primary-400 mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>€49.99/maand</div>
-              <div className="text-xs text-gray-400">all-inclusive onderhoud</div>
+              <div className="text-3xl font-bold text-primary-400 text-glow">€599.99</div>
+              <div className="text-sm text-gray-400">per jaar</div>
+              <div className="text-lg font-semibold text-primary-400 mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>inclusief onderhoud</div>
+              <div className="text-xs text-gray-400">all-inclusive</div>
             </div>
             <ul className="space-y-3 mb-8 text-gray-200">
               <li className="flex items-center">
@@ -298,7 +298,7 @@ const Prijzen: React.FC = () => {
                 </ul>
               </div>
               <div className="text-center md:text-right mt-6 md:mt-0">
-                <div className="text-3xl font-bold text-primary-400 mb-2">€99.99</div>
+                <div className="text-3xl font-bold text-primary-400 mb-2">€149.99</div>
                 <div className="text-sm text-gray-400">per maand</div>
                 <div className="text-xs text-gray-500 mt-2">excl. advertentiebudget</div>
               </div>

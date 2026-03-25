@@ -9,6 +9,7 @@ interface UserProfile extends MockUser {
   company?: string;
   address?: string;
   city?: string;
+  emailNotifications?: boolean;
 }
 
 const Profile: React.FC = () => {
@@ -25,6 +26,7 @@ const Profile: React.FC = () => {
   const [company, setCompany] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
+  const [emailNotifications, setEmailNotifications] = useState(true);
 
   // Password change states
   const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -47,6 +49,7 @@ const Profile: React.FC = () => {
         setCompany(profileData.company || '');
         setAddress(profileData.address || '');
         setCity(profileData.city || '');
+        setEmailNotifications(profileData.emailNotifications !== false);
       } else {
         navigate('/login');
       }
@@ -71,7 +74,8 @@ const Profile: React.FC = () => {
         phone,
         company,
         address,
-        city
+        city,
+        emailNotifications
       };
       localStorage.setItem('varexo_profile_' + user?.email, JSON.stringify(extendedProfile));
 
@@ -249,6 +253,25 @@ const Profile: React.FC = () => {
                         placeholder="Amsterdam"
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                    </div>
+
+                    {/* Email Notifications Toggle */}
+                    <div className="md:col-span-2">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <div className="relative">
+                          <input
+                            type="checkbox"
+                            checked={emailNotifications}
+                            onChange={(e) => setEmailNotifications(e.target.checked)}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-dark-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                        </div>
+                        <div>
+                          <span className="text-sm font-medium text-gray-300">E-mail notificaties ontvangen</span>
+                          <p className="text-xs text-gray-500">Ontvang automatische e-mails over facturen, updates en belangrijke meldingen</p>
+                        </div>
+                      </label>
                     </div>
                   </div>
 

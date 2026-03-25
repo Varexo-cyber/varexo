@@ -26,6 +26,11 @@ const AdminDashboard: React.FC = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [showCustomerDeleteConfirm, setShowCustomerDeleteConfirm] = useState<string | null>(null);
   const [showCustomerDropdown, setShowCustomerDropdown] = useState<string | null>(null);
+  const [editingCustomerSubscription, setEditingCustomerSubscription] = useState<string | null>(null);
+  const [subscriptionForm, setSubscriptionForm] = useState<{
+    subscription: 'basic' | 'pro' | 'premium' | '';
+    hasSocialMedia: boolean;
+  }>({ subscription: '', hasSocialMedia: false });
   const [showInvoiceDeleteConfirm, setShowInvoiceDeleteConfirm] = useState<string | null>(null);
   const [showProjectDropdown, setShowProjectDropdown] = useState<string | null>(null);
   const [showInvoiceDropdown, setShowInvoiceDropdown] = useState<string | null>(null);
@@ -49,6 +54,20 @@ const AdminDashboard: React.FC = () => {
   });
   const [editingExpense, setEditingExpense] = useState<any | null>(null);
   const [toast, setToast] = useState<{message: string; type: 'success' | 'error'} | null>(null);
+  
+  // Surcharges state
+  const [surcharges, setSurcharges] = useState<any[]>([]);
+  const [showSurchargeForm, setShowSurchargeForm] = useState(false);
+  const [surchargeForm, setSurchargeForm] = useState({
+    description: '',
+    amount: '',
+    type: 'business' as 'business' | 'personal',
+    frequency: 'monthly' as 'monthly' | 'one-time' | 'yearly',
+    category: '',
+    surchargeDate: new Date().toISOString().split('T')[0]
+  });
+  const [editingSurcharge, setEditingSurcharge] = useState<any | null>(null);
+  
   const [recurringForm, setRecurringForm] = useState({
     customerEmail: '',
     description: '',
@@ -170,6 +189,21 @@ const AdminDashboard: React.FC = () => {
     } catch (e) { 
       console.error('Error loading expenses:', e);
       setExpenses([]);
+    }
+    // Load surcharges
+    try {
+      const res = await fetch('/.netlify/functions/surcharges');
+      if (!res.ok) {
+        console.error('Surcharges fetch failed:', res.status, await res.text());
+        setSurcharges([]);
+        return;
+      }
+      const sc = await res.json();
+      console.log('Surcharges loaded:', sc);
+      setSurcharges(Array.isArray(sc) ? sc : []);
+    } catch (e) { 
+      console.error('Error loading surcharges:', e);
+      setSurcharges([]);
     }
   };
 
@@ -359,6 +393,36 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleUpdateCustomerSubscription = async (email: string) => {
+    try {
+      // Update user in localStorage
+      const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
+      const userIndex = users.findIndex((u: any) => u.email === email);
+      if (userIndex !== -1) {
+        users[userIndex] = {
+          ...users[userIndex],
+          subscription: subscriptionForm.subscription || null,
+          hasSocialMedia: subscriptionForm.hasSocialMedia
+        };
+        localStorage.setItem('varexo_users', JSON.stringify(users));
+      }
+      
+      setEditingCustomerSubscription(null);
+      loadData();
+    } catch (error) {
+      console.error('Error updating subscription:', error);
+    }
+  };
+
+  const openEditSubscription = (customer: Customer) => {
+    setEditingCustomerSubscription(customer.email);
+    setSubscriptionForm({
+      subscription: customer.subscription || '',
+      hasSocialMedia: customer.hasSocialMedia || false
+    });
+    setShowCustomerDropdown(null);
+  };
+
   const handleDeleteInvoice = async (invoiceId: string) => {
     try {
       await projectService.deleteInvoiceAsync(invoiceId);
@@ -484,6 +548,114 @@ const AdminDashboard: React.FC = () => {
       expenseDate: expense.expense_date ? expense.expense_date.substring(0, 10) : new Date().toISOString().split('T')[0]
     });
     setShowExpenseForm(true);
+  };
+
+  // Surcharge handlers
+  const handleCreateSurcharge = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/.netlify/functions/surcharges', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          description: surchargeForm.description,
+          amount: parseFloat(surchargeForm.amount),
+          type: surchargeForm.type,
+          frequency: surchargeForm.frequency,
+          category: surchargeForm.category,
+          surcharge_date: surchargeForm.surchargeDate
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create surcharge');
+      }
+      
+      const result = await response.json();
+      console.log('Surcharge created:', result);
+      
+      setShowSurchargeForm(false);
+      setSurchargeForm({
+        description: '',
+        amount: '',
+        type: 'business',
+        frequency: 'monthly',
+        category: '',
+        surchargeDate: new Date().toISOString().split('T')[0]
+      });
+      await loadData();
+      setToast({ message: 'Toeslag succesvol toegevoegd!', type: 'success' });
+      setTimeout(() => setToast(null), 3000);
+    } catch (error) {
+      console.error('Error creating surcharge:', error);
+      setToast({ message: 'Fout bij toevoegen toeslag: ' + (error as Error).message, type: 'error' });
+      setTimeout(() => setToast(null), 5000);
+    }
+  };
+
+  const handleUpdateSurcharge = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingSurcharge) return;
+    try {
+      const response = await fetch(`/.netlify/functions/surcharges/${editingSurcharge.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          description: surchargeForm.description,
+          amount: parseFloat(surchargeForm.amount),
+          type: surchargeForm.type,
+          frequency: surchargeForm.frequency,
+          category: surchargeForm.category,
+          surcharge_date: surchargeForm.surchargeDate
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update surcharge');
+      }
+      
+      setShowSurchargeForm(false);
+      setEditingSurcharge(null);
+      setSurchargeForm({
+        description: '',
+        amount: '',
+        type: 'business',
+        frequency: 'monthly',
+        category: '',
+        surchargeDate: new Date().toISOString().split('T')[0]
+      });
+      await loadData();
+      setToast({ message: 'Toeslag succesvol bijgewerkt!', type: 'success' });
+      setTimeout(() => setToast(null), 3000);
+    } catch (error) {
+      console.error('Error updating surcharge:', error);
+      setToast({ message: 'Fout bij bijwerken toeslag: ' + (error as Error).message, type: 'error' });
+      setTimeout(() => setToast(null), 5000);
+    }
+  };
+
+  const handleDeleteSurcharge = async (id: string) => {
+    try {
+      await fetch(`/.netlify/functions/surcharges/${id}`, { method: 'DELETE' });
+      loadData();
+    } catch (error) {
+      console.error('Error deleting surcharge:', error);
+    }
+  };
+
+  const openEditSurcharge = (surcharge: any) => {
+    setEditingSurcharge(surcharge);
+    setSurchargeForm({
+      description: surcharge.description,
+      amount: surcharge.amount.toString(),
+      type: surcharge.type,
+      frequency: surcharge.frequency,
+      category: surcharge.category || '',
+      surchargeDate: surcharge.surcharge_date ? surcharge.surcharge_date.substring(0, 10) : new Date().toISOString().split('T')[0]
+    });
+    setShowSurchargeForm(true);
   };
 
   const handleAddLog = async (e: React.FormEvent) => {
@@ -1085,8 +1257,10 @@ const AdminDashboard: React.FC = () => {
                       <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Klant</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Bedrijf</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Abonnement</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Projecten</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Facturen</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">E-mail</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Acties</th>
                       </tr>
                     </thead>
@@ -1103,10 +1277,48 @@ const AdminDashboard: React.FC = () => {
                             {customer.company || '-'}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                            <div className="flex flex-col gap-1">
+                              {customer.subscription ? (
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                  customer.subscription === 'basic' ? 'bg-gray-700 text-gray-300' :
+                                  customer.subscription === 'pro' ? 'bg-primary-900/50 text-primary-400' :
+                                  'bg-yellow-900/50 text-yellow-400'
+                                }`}>
+                                  {customer.subscription === 'basic' ? 'Basic' :
+                                   customer.subscription === 'pro' ? 'Pro' : 'Premium'}
+                                </span>
+                              ) : (
+                                <span className="text-gray-500">-</span>
+                              )}
+                              {customer.hasSocialMedia && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-900/50 text-purple-400">
+                                  + Social Media
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                             {customer.projectCount}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                             {customer.invoiceCount}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                            {customer.emailNotifications === false ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-900/50 text-red-400 rounded-full text-xs">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                </svg>
+                                Uit
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-900/50 text-green-400 rounded-full text-xs">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                Aan
+                              </span>
+                            )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div className="relative dropdown-container">
@@ -1149,6 +1361,15 @@ const AdminDashboard: React.FC = () => {
                                   </button>
                                   <div className="border-t border-dark-600"></div>
                                   <button
+                                    onClick={() => openEditSubscription(customer)}
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Abonnement bewerken
+                                  </button>
+                                  <button
                                     onClick={() => {
                                       setShowCustomerDeleteConfirm(customer.email);
                                       setShowCustomerDropdown(null);
@@ -1168,7 +1389,7 @@ const AdminDashboard: React.FC = () => {
                           {/* Customer Delete Confirmation */}
                           {showCustomerDeleteConfirm === customer.email && (
                             <tr>
-                              <td colSpan={5} className="px-6 py-4">
+                              <td colSpan={6} className="px-6 py-4">
                                 <div className="p-3 bg-red-900/30 border border-red-700 rounded-lg">
                                   <p className="text-red-300 text-sm mb-2">
                                     Weet je zeker dat je klant <strong>{customer.displayName}</strong> wilt verwijderen? 
@@ -1878,7 +2099,7 @@ const AdminDashboard: React.FC = () => {
                         <p className="text-gray-500 text-sm mt-1">Voeg bedrijfs- en privékosten toe om je winst te berekenen</p>
                       </div>
                     ) : (
-                      <div className="space-y-3">
+                      <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-dark-600 scrollbar-track-dark-800">
                         {expenses.map((expense) => (
                           <div key={expense.id} className="bg-dark-900 p-4 rounded-lg border border-dark-700">
                             <div className="flex justify-between items-start">
@@ -2002,6 +2223,89 @@ const AdminDashboard: React.FC = () => {
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Surcharges Section */}
+              <div className="bg-dark-800 rounded-lg border border-dark-700">
+                <div className="p-6">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-semibold text-white">Toeslagenoverzicht</h2>
+                    <button
+                      onClick={() => {
+                        setEditingSurcharge(null);
+                        setSurchargeForm({
+                          description: '',
+                          amount: '',
+                          type: 'business',
+                          frequency: 'monthly',
+                          category: '',
+                          surchargeDate: new Date().toISOString().split('T')[0]
+                        });
+                        setShowSurchargeForm(true);
+                      }}
+                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
+                    >
+                      + Nieuwe Toeslag
+                    </button>
+                  </div>
+                  
+                  {surcharges.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <p>Geen toeslagen gevonden.</p>
+                      <p className="text-sm mt-1">Voeg toeslagen toe zoals BTW, heffingen, etc.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-dark-600 scrollbar-track-dark-800">
+                      {surcharges.map((surcharge) => (
+                        <div key={surcharge.id} className="bg-dark-900 p-4 rounded-lg border border-dark-700">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className="text-white font-medium">{surcharge.description}</h3>
+                                <span className={`px-2 py-0.5 text-xs rounded-full ${
+                                  surcharge.type === 'business' ? 'bg-blue-900 text-blue-300' : 'bg-purple-900 text-purple-300'
+                                }`}>
+                                  {surcharge.type === 'business' ? 'Bedrijf' : 'Privé'}
+                                </span>
+                                <span className={`px-2 py-0.5 text-xs rounded-full ${
+                                  surcharge.frequency === 'monthly' ? 'bg-green-900 text-green-300' : 
+                                  surcharge.frequency === 'yearly' ? 'bg-blue-900 text-blue-300' :
+                                  'bg-orange-900 text-orange-300'
+                                }`}>
+                                  {surcharge.frequency === 'monthly' ? 'Maandelijks' : 
+                                   surcharge.frequency === 'yearly' ? 'Jaarlijks' : 'Eenmalig'}
+                                </span>
+                              </div>
+                              {surcharge.category && (
+                                <p className="text-gray-500 text-xs mb-1">{surcharge.category}</p>
+                              )}
+                              <p className="text-gray-400 text-sm">
+                                {surcharge.surcharge_date ? new Date(surcharge.surcharge_date).toLocaleDateString('nl-NL') : 'Geen datum'}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-xl font-bold text-orange-400">+€{parseFloat(surcharge.amount).toFixed(2)}</p>
+                              <div className="flex gap-2 mt-2">
+                                <button
+                                  onClick={() => openEditSurcharge(surcharge)}
+                                  className="text-gray-400 hover:text-white text-xs"
+                                >
+                                  Bewerken
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteSurcharge(surcharge.id)}
+                                  className="text-red-400 hover:text-red-300 text-xs"
+                                >
+                                  Verwijderen
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -2853,6 +3157,173 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
           )}
+
+          {/* Surcharge Form Modal */}
+          {showSurchargeForm && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-dark-800 rounded-lg p-6 w-full max-w-md border border-dark-700">
+                <h3 className="text-xl font-semibold text-white mb-4">
+                  {editingSurcharge ? 'Toeslag Bewerken' : 'Nieuwe Toeslag'}
+                </h3>
+                <form onSubmit={editingSurcharge ? handleUpdateSurcharge : handleCreateSurcharge}>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Omschrijving</label>
+                      <input
+                        type="text"
+                        value={surchargeForm.description}
+                        onChange={(e) => setSurchargeForm(prev => ({ ...prev, description: e.target.value }))}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        placeholder="Bijv. BTW, Heffingen, Belastingen, etc."
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Bedrag (€)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={surchargeForm.amount}
+                        onChange={(e) => setSurchargeForm(prev => ({ ...prev, amount: e.target.value }))}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        placeholder="0.00"
+                        required
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Type</label>
+                        <select
+                          value={surchargeForm.type}
+                          onChange={(e) => setSurchargeForm(prev => ({ ...prev, type: e.target.value as 'business' | 'personal' }))}
+                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        >
+                          <option value="business">Bedrijfskosten</option>
+                          <option value="personal">Privékosten</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Frequentie</label>
+                        <select
+                          value={surchargeForm.frequency}
+                          onChange={(e) => setSurchargeForm(prev => ({ ...prev, frequency: e.target.value as 'monthly' | 'one-time' | 'yearly' }))}
+                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        >
+                          <option value="monthly">Maandelijks</option>
+                          <option value="yearly">Jaarlijks</option>
+                          <option value="one-time">Eenmalig</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Categorie (optioneel)</label>
+                      <input
+                        type="text"
+                        value={surchargeForm.category}
+                        onChange={(e) => setSurchargeForm(prev => ({ ...prev, category: e.target.value }))}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        placeholder="Bijv. BTW 21%, Inkomstenbelasting, etc."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Datum</label>
+                      <input
+                        type="date"
+                        value={surchargeForm.surchargeDate}
+                        onChange={(e) => setSurchargeForm(prev => ({ ...prev, surchargeDate: e.target.value }))}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end space-x-3 mt-6">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowSurchargeForm(false);
+                        setEditingSurcharge(null);
+                        setSurchargeForm({
+                          description: '',
+                          amount: '',
+                          type: 'business',
+                          frequency: 'monthly',
+                          category: '',
+                          surchargeDate: new Date().toISOString().split('T')[0]
+                        });
+                      }}
+                      className="px-4 py-2 text-gray-400 hover:text-white"
+                    >
+                      Annuleren
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
+                    >
+                      {editingSurcharge ? 'Opslaan' : 'Toevoegen'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+          {/* Subscription Edit Modal */}
+          {editingCustomerSubscription && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-dark-800 rounded-lg p-6 w-full max-w-md border border-dark-700">
+                <h3 className="text-xl font-semibold text-white mb-4">Abonnement Bewerken</h3>
+                <form onSubmit={(e) => { e.preventDefault(); handleUpdateCustomerSubscription(editingCustomerSubscription); }}>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Pakket</label>
+                      <select
+                        value={subscriptionForm.subscription}
+                        onChange={(e) => setSubscriptionForm(prev => ({ ...prev, subscription: e.target.value as any }))}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                      >
+                        <option value="">Geen abonnement</option>
+                        <option value="basic">Basic (€69.99/maand)</option>
+                        <option value="pro">Pro (€59.99/maand)</option>
+                        <option value="premium">Premium (€599.99/jaar)</option>
+                      </select>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="socialMedia"
+                        checked={subscriptionForm.hasSocialMedia}
+                        onChange={(e) => setSubscriptionForm(prev => ({ ...prev, hasSocialMedia: e.target.checked }))}
+                        className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
+                      />
+                      <label htmlFor="socialMedia" className="text-sm text-gray-300">
+                        Social Media Management (+€149.99/maand)
+                      </label>
+                    </div>
+                  </div>
+                  <div className="flex justify-end space-x-3 mt-6">
+                    <button
+                      type="button"
+                      onClick={() => setEditingCustomerSubscription(null)}
+                      className="px-4 py-2 text-gray-400 hover:text-white"
+                    >
+                      Annuleren
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
+                    >
+                      Opslaan
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
           {/* Toast Notification */}
           {toast && (
             <div className={`fixed top-20 right-4 z-50 px-6 py-4 rounded-lg shadow-lg border transform transition-all duration-300 ${

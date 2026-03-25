@@ -60,6 +60,9 @@ export interface Customer {
   createdAt: string;
   projectCount: number;
   invoiceCount: number;
+  emailNotifications?: boolean;
+  subscription?: 'basic' | 'pro' | 'premium' | null;
+  hasSocialMedia?: boolean;
 }
 
 class ProjectService {
@@ -296,6 +299,9 @@ class ProjectService {
       displayName: user.displayName,
       phone: user.phone,
       company: user.company,
+      emailNotifications: user.emailNotifications,
+      subscription: user.subscription,
+      hasSocialMedia: user.hasSocialMedia,
       createdAt: user.createdAt || new Date().toISOString(),
       projectCount: projects.filter(p => p.customerEmail === user.email).length,
       invoiceCount: invoices.filter(i => i.customerEmail === user.email).length
@@ -330,6 +336,9 @@ class ProjectService {
       displayName: user.displayName,
       phone: user.phone,
       company: user.company,
+      emailNotifications: user.emailNotifications,
+      subscription: user.subscription,
+      hasSocialMedia: user.hasSocialMedia,
       createdAt: user.createdAt || new Date().toISOString(),
       projectCount: projects.filter(p => p.customerEmail === user.email).length,
       invoiceCount: invoices.filter(i => i.customerEmail === user.email).length

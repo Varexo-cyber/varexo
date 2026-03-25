@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { neon } = require('@netlify/neon');
 
 const PORTAL_URL = process.env.PORTAL_URL || 'https://varexo.nl';
 
@@ -12,6 +13,20 @@ function createTransporter() {
       pass: process.env.SMTP_PASS,
     },
   });
+}
+
+// Check if user has email notifications enabled
+async function shouldSendEmail(email) {
+  try {
+    const sql = neon();
+    const result = await sql`SELECT email_notifications FROM users WHERE email = ${email}`;
+    if (result.length === 0) return false;
+    // Default to TRUE if not set
+    return result[0].email_notifications !== false;
+  } catch (error) {
+    console.error('Error checking email preference:', error);
+    return true; // Default to sending if can't check
+  }
 }
 
 function emailTemplate(title, content, ctaText, ctaUrl) {
@@ -68,6 +83,13 @@ function emailTemplate(title, content, ctaText, ctaUrl) {
 }
 
 async function sendEmail(to, subject, title, content, ctaText, ctaUrl, attachments) {
+  // Check if user wants to receive emails
+  const shouldSend = await shouldSendEmail(to);
+  if (!shouldSend) {
+    console.log(`Email skipped: ${to} has disabled notifications`);
+    return false;
+  }
+  
   // Skip if SMTP not configured
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
     console.log('Email skipped: SMTP not configured');

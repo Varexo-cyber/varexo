@@ -37,11 +37,11 @@ exports.handler = async (event) => {
         return { statusCode: 400, headers, body: JSON.stringify({ error: 'Email is al geregistreerd.' }) };
       }
 
-      // Create user
+      // Create user with email_notifications default TRUE
       const result = await sql`
-        INSERT INTO users (email, display_name, password_hash, provider)
-        VALUES (${email}, ${displayName}, ${password}, 'email')
-        RETURNING email, display_name, photo_url, provider
+        INSERT INTO users (email, display_name, password_hash, provider, email_notifications)
+        VALUES (${email}, ${displayName}, ${password}, 'email', TRUE)
+        RETURNING email, display_name, photo_url, provider, email_notifications
       `;
 
       const user = {
@@ -58,13 +58,80 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'POST' && path === '/login') {
       const { email, password } = body;
 
+      // Get user by email (check both password_hash for manual users OR allow if no password set yet)
       const result = await sql`
-        SELECT email, display_name, photo_url, provider, is_admin
-        FROM users WHERE email = ${email} AND password_hash = ${password}
+        SELECT email, display_name, photo_url, provider, is_admin, password_hash
+        FROM users WHERE email = ${email}
       `;
 
       if (result.length === 0) {
         return { statusCode: 401, headers, body: JSON.stringify({ error: 'Onjuist e-mailadres of wachtwoord.' }) };
+      }
+
+      const user = result[0];
+      
+      // Check if user has password set
+      if (!user.password_hash) {
+        return { 
+          statusCode: 401, 
+          headers, 
+          body: JSON.stringify({ 
+            error: 'Dit account heeft geen wachtwoord. Log in met Google of stel eerst een wachtwoord in via "Wachtwoord vergeten".' 
+          }) 
+        };
+      }
+
+      // Verify password
+      if (user.password_hash !== password) {
+        return { statusCode: 401, headers, body: JSON.stringify({ error: 'Onjuist e-mailadres of wachtwoord.' }) };
+      }
+
+      return { 
+        statusCode: 200, 
+        headers, 
+        body: JSON.stringify({
+          email: user.email,
+          displayName: user.display_name,
+          photoURL: user.photo_url,
+          provider: user.provider,
+          isAdmin: user.is_admin,
+          emailNotifications: user.email_notifications
+        }) 
+      };
+    }
+
+    // POST /auth/google - Save/update Google user (MERGE with existing account if exists)
+    if (event.httpMethod === 'POST' && path === '/google') {
+      const { email, displayName, photoURL } = body;
+
+      // Check if user exists with password (manual account)
+      const existing = await sql`
+        SELECT email, password_hash, provider FROM users WHERE email = ${email}
+      `;
+
+      let result;
+      if (existing.length > 0 && existing[0].password_hash) {
+        // User has manual account - MERGE: keep password, update photo and name
+        result = await sql`
+          UPDATE users SET
+            display_name = ${displayName},
+            photo_url = COALESCE(${photoURL || null}, users.photo_url),
+            provider = 'both',
+            updated_at = NOW()
+          WHERE email = ${email}
+          RETURNING email, display_name, photo_url, provider, is_admin
+        `;
+      } else {
+        // New user or Google-only user
+        result = await sql`
+          INSERT INTO users (email, display_name, photo_url, provider)
+          VALUES (${email}, ${displayName}, ${photoURL || null}, 'google')
+          ON CONFLICT (email) DO UPDATE SET
+            display_name = ${displayName},
+            photo_url = COALESCE(${photoURL || null}, users.photo_url),
+            updated_at = NOW()
+          RETURNING email, display_name, photo_url, provider, is_admin
+        `;
       }
 
       const user = {
@@ -72,32 +139,8 @@ exports.handler = async (event) => {
         displayName: result[0].display_name,
         photoURL: result[0].photo_url,
         provider: result[0].provider,
-        isAdmin: result[0].is_admin
-      };
-
-      return { statusCode: 200, headers, body: JSON.stringify(user) };
-    }
-
-    // POST /auth/google - Save/update Google user
-    if (event.httpMethod === 'POST' && path === '/google') {
-      const { email, displayName, photoURL } = body;
-
-      const result = await sql`
-        INSERT INTO users (email, display_name, photo_url, provider)
-        VALUES (${email}, ${displayName}, ${photoURL || null}, 'google')
-        ON CONFLICT (email) DO UPDATE SET
-          display_name = ${displayName},
-          photo_url = COALESCE(${photoURL || null}, users.photo_url),
-          updated_at = NOW()
-        RETURNING email, display_name, photo_url, provider, is_admin
-      `;
-
-      const user = {
-        email: result[0].email,
-        displayName: result[0].display_name,
-        photoURL: result[0].photo_url,
-        provider: result[0].provider,
-        isAdmin: result[0].is_admin
+        isAdmin: result[0].is_admin,
+        emailNotifications: result[0].email_notifications
       };
 
       return { statusCode: 200, headers, body: JSON.stringify(user) };
@@ -105,16 +148,17 @@ exports.handler = async (event) => {
 
     // PUT /auth/profile - Update profile
     if (event.httpMethod === 'PUT' && path === '/profile') {
-      const { email, displayName, phone, company } = body;
+      const { email, displayName, phone, company, emailNotifications } = body;
 
       const result = await sql`
         UPDATE users SET
           display_name = COALESCE(${displayName || null}, display_name),
           phone = COALESCE(${phone || null}, phone),
           company = COALESCE(${company || null}, company),
+          email_notifications = COALESCE(${emailNotifications !== undefined ? emailNotifications : null}, email_notifications),
           updated_at = NOW()
         WHERE email = ${email}
-        RETURNING email, display_name, photo_url, provider, phone, company
+        RETURNING email, display_name, photo_url, provider, phone, company, email_notifications
       `;
 
       if (result.length === 0) {
@@ -124,19 +168,31 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify(result[0]) };
     }
 
-    // PUT /auth/password - Change password
+    // PUT /auth/password - Change password (works for both manual and merged accounts)
     if (event.httpMethod === 'PUT' && path === '/password') {
       const { email, currentPassword, newPassword } = body;
 
-      const check = await sql`
-        SELECT id FROM users WHERE email = ${email} AND password_hash = ${currentPassword}
+      // Check user exists
+      const user = await sql`
+        SELECT id, password_hash, provider FROM users WHERE email = ${email}
       `;
 
-      if (check.length === 0) {
+      if (user.length === 0) {
+        return { statusCode: 404, headers, body: JSON.stringify({ error: 'Gebruiker niet gevonden.' }) };
+      }
+
+      // If user has no password yet (Google-only), allow setting new password without current
+      if (user[0].password_hash && user[0].password_hash !== currentPassword) {
         return { statusCode: 401, headers, body: JSON.stringify({ error: 'Huidig wachtwoord is onjuist.' }) };
       }
 
-      await sql`UPDATE users SET password_hash = ${newPassword}, updated_at = NOW() WHERE email = ${email}`;
+      await sql`
+        UPDATE users 
+        SET password_hash = ${newPassword}, 
+            provider = COALESCE(NULLIF(provider, 'google'), 'both'),
+            updated_at = NOW() 
+        WHERE email = ${email}
+      `;
 
       return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
     }

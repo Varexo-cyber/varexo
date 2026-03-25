@@ -63,6 +63,9 @@ const Footer: React.FC = () => {
           <p className="text-gray-600 text-xs font-mono">
             &lt;/&gt; with <span className="text-primary-500">&#9829;</span> by Varexo
           </p>
+          <p className="text-gray-500 text-xs">
+            Medemogelijk gemaakt door <a href="https://varexo.nl" target="_blank" rel="noopener noreferrer" className="text-primary-400 hover:text-primary-300 hover-underline">Varexo</a>
+          </p>
         </div>
       </div>
     </footer>

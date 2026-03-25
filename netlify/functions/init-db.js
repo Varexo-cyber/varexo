@@ -21,6 +21,7 @@ exports.handler = async (event) => {
         phone VARCHAR(50),
         company VARCHAR(255),
         is_admin BOOLEAN DEFAULT FALSE,
+        email_notifications BOOLEAN DEFAULT TRUE,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       )
