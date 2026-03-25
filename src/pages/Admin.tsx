@@ -10,7 +10,7 @@ import PageTransition from '../components/PageTransition';
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'customers' | 'projects' | 'invoices' | 'recurring' | 'messages'>('customers');
+  const [activeTab, setActiveTab] = useState<'customers' | 'projects' | 'invoices' | 'recurring' | 'messages' | 'finance'>('customers');
   
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -37,6 +37,17 @@ const AdminDashboard: React.FC = () => {
   const [recurringInvoices, setRecurringInvoices] = useState<any[]>([]);
   const [showRecurringForm, setShowRecurringForm] = useState(false);
   const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
+  const [expenses, setExpenses] = useState<any[]>([]);
+  const [showExpenseForm, setShowExpenseForm] = useState(false);
+  const [expenseForm, setExpenseForm] = useState({
+    description: '',
+    amount: '',
+    type: 'business' as 'business' | 'personal',
+    frequency: 'monthly' as 'monthly' | 'one-time',
+    category: '',
+    expenseDate: new Date().toISOString().split('T')[0]
+  });
+  const [editingExpense, setEditingExpense] = useState<any | null>(null);
   const [recurringForm, setRecurringForm] = useState({
     customerEmail: '',
     description: '',
@@ -144,6 +155,12 @@ const AdminDashboard: React.FC = () => {
       const ri = await res.json();
       setRecurringInvoices(Array.isArray(ri) ? ri : []);
     } catch (e) { console.log('No recurring invoices yet'); }
+    // Load expenses
+    try {
+      const res = await fetch('/.netlify/functions/expenses');
+      const ex = await res.json();
+      setExpenses(Array.isArray(ex) ? ex : []);
+    } catch (e) { console.log('No expenses yet'); }
   };
 
   const handleCreateProject = async (e: React.FormEvent) => {
@@ -349,6 +366,91 @@ const AdminDashboard: React.FC = () => {
     } catch (error) {
       console.error('Error updating invoice status:', error);
     }
+  };
+
+  // Expense handlers
+  const handleCreateExpense = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await fetch('/.netlify/functions/expenses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          description: expenseForm.description,
+          amount: parseFloat(expenseForm.amount),
+          type: expenseForm.type,
+          frequency: expenseForm.frequency,
+          category: expenseForm.category,
+          expense_date: expenseForm.expenseDate
+        }),
+      });
+      setShowExpenseForm(false);
+      setExpenseForm({
+        description: '',
+        amount: '',
+        type: 'business',
+        frequency: 'monthly',
+        category: '',
+        expenseDate: new Date().toISOString().split('T')[0]
+      });
+      loadData();
+    } catch (error) {
+      console.error('Error creating expense:', error);
+    }
+  };
+
+  const handleUpdateExpense = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingExpense) return;
+    try {
+      await fetch(`/.netlify/functions/expenses/${editingExpense.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          description: expenseForm.description,
+          amount: parseFloat(expenseForm.amount),
+          type: expenseForm.type,
+          frequency: expenseForm.frequency,
+          category: expenseForm.category,
+          expense_date: expenseForm.expenseDate
+        }),
+      });
+      setShowExpenseForm(false);
+      setEditingExpense(null);
+      setExpenseForm({
+        description: '',
+        amount: '',
+        type: 'business',
+        frequency: 'monthly',
+        category: '',
+        expenseDate: new Date().toISOString().split('T')[0]
+      });
+      loadData();
+    } catch (error) {
+      console.error('Error updating expense:', error);
+    }
+  };
+
+  const handleDeleteExpense = async (id: string) => {
+    try {
+      await fetch(`/.netlify/functions/expenses/${id}`, { method: 'DELETE' });
+      loadData();
+    } catch (error) {
+      console.error('Error deleting expense:', error);
+    }
+  };
+
+  const openEditExpense = (expense: any) => {
+    setEditingExpense(expense);
+    setExpenseForm({
+      description: expense.description,
+      amount: expense.amount.toString(),
+      type: expense.type,
+      frequency: expense.frequency,
+      category: expense.category || '',
+      expenseDate: expense.expense_date ? expense.expense_date.substring(0, 10) : new Date().toISOString().split('T')[0]
+    });
+    setShowExpenseForm(true);
   };
 
   const handleAddLog = async (e: React.FormEvent) => {
@@ -923,6 +1025,16 @@ const AdminDashboard: React.FC = () => {
                 }`}
               >
                 Berichten ({contactMessages.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('finance')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'finance'
+                    ? 'border-primary-500 text-primary-400'
+                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                Kosten/Omzet/Winst
               </button>
             </nav>
           </div>
@@ -1664,6 +1776,235 @@ const AdminDashboard: React.FC = () => {
             </div>
           )}
 
+          {activeTab === 'finance' && (
+            <div className="space-y-6">
+              {/* Financial Overview Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                  <p className="text-gray-400 text-sm">Totale Omzet</p>
+                  <p className="text-2xl font-bold text-green-400">
+                    €{invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0).toFixed(2)}
+                  </p>
+                </div>
+                <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                  <p className="text-gray-400 text-sm">Bedrijfskosten</p>
+                  <p className="text-2xl font-bold text-red-400">
+                    €{expenses.filter(e => e.type === 'business').reduce((sum, e) => sum + parseFloat(e.amount), 0).toFixed(2)}
+                  </p>
+                </div>
+                <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                  <p className="text-gray-400 text-sm">Privékosten</p>
+                  <p className="text-2xl font-bold text-yellow-400">
+                    €{expenses.filter(e => e.type === 'personal').reduce((sum, e) => sum + parseFloat(e.amount), 0).toFixed(2)}
+                  </p>
+                </div>
+                <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                  <p className="text-gray-400 text-sm">Netto Winst</p>
+                  <p className={`text-2xl font-bold ${
+                    (invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0) - 
+                     expenses.filter(e => e.type === 'business').reduce((sum, e) => sum + parseFloat(e.amount), 0)) >= 0 
+                      ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    €{(invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0) - 
+                       expenses.filter(e => e.type === 'business').reduce((sum, e) => sum + parseFloat(e.amount), 0)).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Expenses Section */}
+                <div className="bg-dark-800 rounded-lg border border-dark-700">
+                  <div className="p-6">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-xl font-semibold text-white">Kostenoverzicht</h2>
+                      <button
+                        onClick={() => {
+                          setEditingExpense(null);
+                          setExpenseForm({
+                            description: '',
+                            amount: '',
+                            type: 'business',
+                            frequency: 'monthly',
+                            category: '',
+                            expenseDate: new Date().toISOString().split('T')[0]
+                          });
+                          setShowExpenseForm(true);
+                        }}
+                        className="bg-primary-500 text-dark-900 px-4 py-2 rounded-lg font-medium hover:bg-primary-400 text-sm"
+                      >
+                        + Nieuwe Kosten
+                      </button>
+                    </div>
+
+                    {expenses.length === 0 ? (
+                      <div className="text-center py-12">
+                        <svg className="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a1 1 0 11-2 0 1 1 0 012 0z" />
+                        </svg>
+                        <p className="text-gray-400">Nog geen kosten toegevoegd</p>
+                        <p className="text-gray-500 text-sm mt-1">Voeg bedrijfs- en privékosten toe om je winst te berekenen</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {expenses.map((expense) => (
+                          <div key={expense.id} className="bg-dark-900 p-4 rounded-lg border border-dark-700">
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h3 className="text-white font-medium">{expense.description}</h3>
+                                  <span className={`px-2 py-0.5 text-xs rounded-full ${
+                                    expense.type === 'business' ? 'bg-blue-900 text-blue-300' : 'bg-purple-900 text-purple-300'
+                                  }`}>
+                                    {expense.type === 'business' ? 'Bedrijf' : 'Privé'}
+                                  </span>
+                                  <span className={`px-2 py-0.5 text-xs rounded-full ${
+                                    expense.frequency === 'monthly' ? 'bg-green-900 text-green-300' : 'bg-orange-900 text-orange-300'
+                                  }`}>
+                                    {expense.frequency === 'monthly' ? 'Maandelijks' : 'Eenmalig'}
+                                  </span>
+                                </div>
+                                {expense.category && (
+                                  <p className="text-gray-500 text-xs mb-1">{expense.category}</p>
+                                )}
+                                <p className="text-gray-400 text-sm">
+                                  {expense.expense_date ? new Date(expense.expense_date).toLocaleDateString('nl-NL') : 'Geen datum'}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-xl font-bold text-red-400">-€{parseFloat(expense.amount).toFixed(2)}</p>
+                                <div className="flex gap-2 mt-2">
+                                  <button
+                                    onClick={() => openEditExpense(expense)}
+                                    className="text-gray-400 hover:text-white text-xs"
+                                  >
+                                    Bewerken
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteExpense(expense.id)}
+                                    className="text-red-400 hover:text-red-300 text-xs"
+                                  >
+                                    Verwijderen
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Cost Summary by Category */}
+                <div className="bg-dark-800 rounded-lg border border-dark-700">
+                  <div className="p-6">
+                    <h2 className="text-xl font-semibold text-white mb-6">Kosten per Categorie</h2>
+                    
+                    {/* Business Costs Summary */}
+                    <div className="mb-6">
+                      <h3 className="text-sm font-semibold text-blue-400 uppercase mb-3">Bedrijfskosten</h3>
+                      <div className="space-y-2">
+                        {(() => {
+                          const businessExpenses = expenses.filter(e => e.type === 'business');
+                          const monthlyBusiness = businessExpenses.filter(e => e.frequency === 'monthly').reduce((sum, e) => sum + parseFloat(e.amount), 0);
+                          const oneTimeBusiness = businessExpenses.filter(e => e.frequency === 'one-time').reduce((sum, e) => sum + parseFloat(e.amount), 0);
+                          return (
+                            <>
+                              <div className="flex justify-between items-center py-2 border-b border-dark-700">
+                                <span className="text-gray-400">Maandelijkse kosten</span>
+                                <span className="text-white font-medium">€{monthlyBusiness.toFixed(2)}/maand</span>
+                              </div>
+                              <div className="flex justify-between items-center py-2 border-b border-dark-700">
+                                <span className="text-gray-400">Eenmalige kosten</span>
+                                <span className="text-white font-medium">€{oneTimeBusiness.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between items-center py-2">
+                                <span className="text-white font-semibold">Totaal bedrijfskosten</span>
+                                <span className="text-red-400 font-bold">€{(monthlyBusiness + oneTimeBusiness).toFixed(2)}</span>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
+
+                    {/* Personal Costs Summary */}
+                    <div>
+                      <h3 className="text-sm font-semibold text-purple-400 uppercase mb-3">Privékosten</h3>
+                      <div className="space-y-2">
+                        {(() => {
+                          const personalExpenses = expenses.filter(e => e.type === 'personal');
+                          const monthlyPersonal = personalExpenses.filter(e => e.frequency === 'monthly').reduce((sum, e) => sum + parseFloat(e.amount), 0);
+                          const oneTimePersonal = personalExpenses.filter(e => e.frequency === 'one-time').reduce((sum, e) => sum + parseFloat(e.amount), 0);
+                          return (
+                            <>
+                              <div className="flex justify-between items-center py-2 border-b border-dark-700">
+                                <span className="text-gray-400">Maandelijkse kosten</span>
+                                <span className="text-white font-medium">€{monthlyPersonal.toFixed(2)}/maand</span>
+                              </div>
+                              <div className="flex justify-between items-center py-2 border-b border-dark-700">
+                                <span className="text-gray-400">Eenmalige kosten</span>
+                                <span className="text-white font-medium">€{oneTimePersonal.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between items-center py-2">
+                                <span className="text-white font-semibold">Totaal privékosten</span>
+                                <span className="text-yellow-400 font-bold">€{(monthlyPersonal + oneTimePersonal).toFixed(2)}</span>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Profit/Loss Calculation */}
+              <div className="bg-dark-800 rounded-lg border border-dark-700">
+                <div className="p-6">
+                  <h2 className="text-xl font-semibold text-white mb-6">Winst & Verlies Berekening</h2>
+                  
+                  {(() => {
+                    const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0);
+                    const businessCosts = expenses.filter(e => e.type === 'business').reduce((sum, e) => sum + parseFloat(e.amount), 0);
+                    const personalCosts = expenses.filter(e => e.type === 'personal').reduce((sum, e) => sum + parseFloat(e.amount), 0);
+                    const netProfit = totalRevenue - businessCosts;
+                    const afterPersonal = netProfit - personalCosts;
+                    
+                    return (
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center py-3 border-b border-dark-700">
+                          <span className="text-gray-400">Totale Omzet (betaalde facturen)</span>
+                          <span className="text-green-400 font-medium text-lg">+ €{totalRevenue.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-dark-700">
+                          <span className="text-gray-400">Bedrijfskosten</span>
+                          <span className="text-red-400 font-medium text-lg">- €{businessCosts.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-dark-700 bg-dark-900/50 rounded">
+                          <span className="text-white font-semibold">Bruto Winst (voor privékosten)</span>
+                          <span className={`font-bold text-lg ${netProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            €{netProfit.toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-dark-700">
+                          <span className="text-gray-400">Privékosten</span>
+                          <span className="text-yellow-400 font-medium text-lg">- €{personalCosts.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-4 bg-primary-900/20 rounded-lg px-4">
+                          <span className="text-white font-bold text-lg">Netto Winst (zakelijk)</span>
+                          <span className={`font-bold text-2xl ${afterPersonal >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            €{afterPersonal.toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Project Form Modal */}
           {showProjectForm && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -2353,6 +2694,118 @@ const AdminDashboard: React.FC = () => {
             </div>
           )}
 
+          {/* Expense Form Modal */}
+          {showExpenseForm && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-dark-800 rounded-lg p-6 w-full max-w-md border border-dark-700">
+                <h3 className="text-xl font-semibold text-white mb-4">
+                  {editingExpense ? 'Kosten Bewerken' : 'Nieuwe Kosten'}
+                </h3>
+                <form onSubmit={editingExpense ? handleUpdateExpense : handleCreateExpense}>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Omschrijving</label>
+                      <input
+                        type="text"
+                        value={expenseForm.description}
+                        onChange={(e) => setExpenseForm(prev => ({ ...prev, description: e.target.value }))}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        placeholder="Bijv. Huur kantoor, Software licentie, etc."
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Bedrag (€)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={expenseForm.amount}
+                        onChange={(e) => setExpenseForm(prev => ({ ...prev, amount: e.target.value }))}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        placeholder="0.00"
+                        required
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Type</label>
+                        <select
+                          value={expenseForm.type}
+                          onChange={(e) => setExpenseForm(prev => ({ ...prev, type: e.target.value as 'business' | 'personal' }))}
+                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        >
+                          <option value="business">Bedrijfskosten</option>
+                          <option value="personal">Privékosten</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Frequentie</label>
+                        <select
+                          value={expenseForm.frequency}
+                          onChange={(e) => setExpenseForm(prev => ({ ...prev, frequency: e.target.value as 'monthly' | 'one-time' }))}
+                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        >
+                          <option value="monthly">Maandelijks</option>
+                          <option value="one-time">Eenmalig</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Categorie (optioneel)</label>
+                      <input
+                        type="text"
+                        value={expenseForm.category}
+                        onChange={(e) => setExpenseForm(prev => ({ ...prev, category: e.target.value }))}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        placeholder="Bijv. Vaste lasten, Marketing, Reiskosten"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Datum</label>
+                      <input
+                        type="date"
+                        value={expenseForm.expenseDate}
+                        onChange={(e) => setExpenseForm(prev => ({ ...prev, expenseDate: e.target.value }))}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end space-x-3 mt-6">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowExpenseForm(false);
+                        setEditingExpense(null);
+                        setExpenseForm({
+                          description: '',
+                          amount: '',
+                          type: 'business',
+                          frequency: 'monthly',
+                          category: '',
+                          expenseDate: new Date().toISOString().split('T')[0]
+                        });
+                      }}
+                      className="px-4 py-2 text-gray-400 hover:text-white"
+                    >
+                      Annuleren
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
+                    >
+                      {editingExpense ? 'Opslaan' : 'Toevoegen'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </PageTransition>
