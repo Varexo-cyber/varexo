@@ -15,6 +15,21 @@ exports.handler = async (event, context) => {
   const sql = neon();
 
   try {
+    // Auto-migrate: Create expenses table if it doesn't exist
+    await sql`
+      CREATE TABLE IF NOT EXISTS expenses (
+        id SERIAL PRIMARY KEY,
+        description VARCHAR(255) NOT NULL,
+        amount DECIMAL(10,2) NOT NULL,
+        type VARCHAR(50) NOT NULL CHECK (type IN ('business', 'personal')),
+        frequency VARCHAR(50) NOT NULL CHECK (frequency IN ('monthly', 'one-time', 'yearly')),
+        category VARCHAR(100),
+        expense_date DATE DEFAULT NOW(),
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
     // GET /expenses - List all expenses
     if (event.httpMethod === 'GET') {
       const expenses = await sql`
