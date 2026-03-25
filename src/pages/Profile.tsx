@@ -66,8 +66,8 @@ const Profile: React.FC = () => {
     setSaving(true);
 
     try {
-      // Update basic profile in auth
-      await mockAuth.updateProfile({ displayName });
+      // Update profile in auth with emailNotifications
+      await mockAuth.updateProfile({ displayName, emailNotifications });
 
       // Save extended profile data
       const extendedProfile = {

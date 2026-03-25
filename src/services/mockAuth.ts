@@ -10,6 +10,7 @@ export interface MockUser {
   photoURL?: string;
   provider?: 'email' | 'google';
   isAdmin?: boolean;
+  emailNotifications?: boolean;
 }
 
 interface StoredUser {
