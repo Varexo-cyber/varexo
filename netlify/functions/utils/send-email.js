@@ -18,16 +18,15 @@ function createTransporter() {
 // Check if user has email notifications enabled
 async function shouldSendEmail(email) {
   try {
-    // First try database
-    const sql = neon();
+    // Use simplified connection string
+    const dbUrl = process.env.DATABASE_URL.replace('&channel_binding=require', '');
+    const sql = neon(dbUrl);
     const result = await sql`SELECT email_notifications FROM users WHERE email = ${email}`;
     if (result.length === 0) return false;
     return result[0].email_notifications !== false;
   } catch (error) {
-    console.error('Database check failed, checking localStorage fallback not available in server function:', error);
-    // Server functions can't access localStorage, so default to true for now
-    // TODO: Fix database connection to properly check email notifications
-    return true;
+    console.error('Database check failed:', error);
+    return true; // Default to sending if can't check
   }
 }
 

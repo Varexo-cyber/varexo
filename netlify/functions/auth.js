@@ -14,11 +14,13 @@ exports.handler = async (event) => {
 
   let sql;
   try {
-    sql = neon();
+    // Try with simplified connection string
+    const dbUrl = process.env.DATABASE_URL.replace('&channel_binding=require', '');
+    sql = neon(dbUrl);
     console.log('Database connection established');
   } catch (error) {
     console.error('Database connection failed:', error);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Database connection failed' }) };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Database connection failed: ' + error.message }) };
   }
   const rawPath = event.path || '';
   const path = rawPath.replace('/.netlify/functions/auth', '').replace('/api/auth', '') || '/';
@@ -33,11 +35,32 @@ exports.handler = async (event) => {
 
   // Debug endpoint
   if (event.httpMethod === 'GET' && (path === '/debug' || path === '/debug/')) {
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ rawPath, path, method: event.httpMethod })
-    };
+    try {
+      const testResult = await sql`SELECT COUNT(*) as count FROM users`;
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ 
+          rawPath, 
+          path, 
+          method: event.httpMethod,
+          databaseConnected: true,
+          userCount: testResult[0].count
+        })
+      };
+    } catch (dbError) {
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ 
+          rawPath, 
+          path, 
+          method: event.httpMethod,
+          databaseConnected: false,
+          error: dbError.message
+        })
+      };
+    }
   }
 
   try {
