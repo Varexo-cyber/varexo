@@ -186,9 +186,15 @@ exports.handler = async (event) => {
     // PUT /auth/profile - Update profile
     if (event.httpMethod === 'PUT' && path === '/profile') {
       try {
+        console.log('=== PROFILE UPDATE DEBUG ===');
+        console.log('Raw event body:', event.body);
+        console.log('Parsed body:', body);
+        console.log('Body keys:', Object.keys(body));
+        
         const { email, displayName, phone, company, emailNotifications } = body;
         
-        console.log('Profile update request:', { email, displayName, phone, company, emailNotifications });
+        console.log('Extracted values:', { email, displayName, phone, company, emailNotifications });
+        console.log('============================');
 
         const result = await sql`
           UPDATE users SET
