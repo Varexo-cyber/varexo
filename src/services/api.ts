@@ -3,6 +3,8 @@ const API_BASE = '/.netlify/functions';
 
 async function apiCall(endpoint: string, options: RequestInit = {}) {
   const url = `${API_BASE}${endpoint}`;
+  console.log(`API Call: ${options.method || 'GET'} ${url}`);
+  
   const response = await fetch(url, {
     ...options,
     headers: {
@@ -11,12 +13,14 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
     },
   });
 
-  const data = await response.json();
-
   if (!response.ok) {
-    throw new Error(data.error || 'Er is iets misgegaan');
+    const errorText = await response.text();
+    console.error(`API Error: ${response.status} ${response.statusText} for ${url}`);
+    console.error('Error response:', errorText);
+    throw new Error(`API Error: ${response.status} - ${errorText}`);
   }
 
+  const data = await response.json();
   return data;
 }
 
@@ -29,9 +33,9 @@ export const authAPI = {
     apiCall('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
 
   googleLogin: (email: string, displayName: string, photoURL?: string) =>
-    apiCall('/google-auth', { method: 'POST', body: JSON.stringify({ email, displayName, photoURL }) }),
+    apiCall('/auth/google', { method: 'POST', body: JSON.stringify({ email, displayName, photoURL }) }),
 
-  updateProfile: (email: string, updates: { displayName?: string; phone?: string; company?: string }) =>
+  updateProfile: (email: string, updates: { displayName?: string; phone?: string; company?: string; emailNotifications?: boolean }) =>
     apiCall('/auth/profile', { method: 'PUT', body: JSON.stringify({ email, ...updates }) }),
 
   changePassword: (email: string, currentPassword: string, newPassword: string) =>
