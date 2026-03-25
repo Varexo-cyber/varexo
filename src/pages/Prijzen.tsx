@@ -28,11 +28,13 @@ const Prijzen: React.FC = () => {
             <h3 className="text-2xl font-bold mb-2 text-white">Basic</h3>
             <p className="text-xs font-mono text-gray-500 mb-3">{'// starter-complete'}</p>
             <div className="mb-6">
-              <div className="text-xl font-bold text-gray-300">€599.99 <span className="text-sm font-normal">eenmalig</span></div>
-              <div className="text-3xl font-bold text-primary-400 text-glow mt-2">€69.99</div>
-              <div className="text-sm text-gray-400">per maand</div>
-              <div className="text-lg font-semibold text-primary-400 mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>of €799.99/jaar</div>
-              <div className="text-xs text-gray-400">24/7 uptime garantie</div>
+              <div className="text-4xl font-bold text-primary-400 text-glow">€599.99</div>
+              <div className="text-sm text-gray-400">eenmalig</div>
+              <div className="mt-4 pt-4 border-t border-dark-600">
+                <div className="text-xl font-bold text-white">€69.99 <span className="text-sm font-normal text-gray-400">/maand</span></div>
+                <div className="text-lg font-semibold text-primary-400 mt-1">of €799.99/jaar</div>
+              </div>
+              <div className="text-xs text-gray-400 mt-2">24/7 uptime garantie</div>
             </div>
             <ul className="space-y-3 mb-8 text-gray-200">
               <li className="flex items-center">
@@ -101,11 +103,13 @@ const Prijzen: React.FC = () => {
             <h3 className="text-2xl font-bold mb-2">Pro</h3>
             <p className="text-xs font-mono text-primary-200 mb-3">{'// speed-optimized'}</p>
             <div className="mb-6">
-              <div className="text-xl font-bold text-primary-200">€899.99 <span className="text-sm font-normal">eenmalig</span></div>
-              <div className="text-3xl font-bold mb-2 mt-2">€59.99</div>
-              <div className="text-sm text-primary-200">per maand</div>
-              <div className="text-lg font-semibold text-white mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>of €699.99/jaar</div>
-              <div className="text-xs text-primary-200">0.01s laadtijd garantie</div>
+              <div className="text-4xl font-bold text-white" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>€899.99</div>
+              <div className="text-sm text-primary-200">eenmalig</div>
+              <div className="mt-4 pt-4 border-t border-primary-500/30">
+                <div className="text-xl font-bold text-white">€59.99 <span className="text-sm font-normal text-primary-200">/maand</span></div>
+                <div className="text-lg font-semibold text-white mt-1" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>of €699.99/jaar</div>
+              </div>
+              <div className="text-xs text-primary-200 mt-2">0.01s laadtijd garantie</div>
             </div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-center">
@@ -170,11 +174,13 @@ const Prijzen: React.FC = () => {
             <h3 className="text-2xl font-bold mb-2 text-white">Premium</h3>
             <p className="text-xs font-mono text-gray-500 mb-3">{'// all-inclusive'}</p>
             <div className="mb-6">
-              <div className="text-xl font-bold text-gray-300">€1299.99 <span className="text-sm font-normal">eenmalig</span></div>
-              <div className="text-3xl font-bold text-primary-400 text-glow mt-2">€49.99</div>
-              <div className="text-sm text-gray-400">per maand</div>
-              <div className="text-lg font-semibold text-primary-400 mt-2" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>of €499.99/jaar</div>
-              <div className="text-xs text-gray-400">all-inclusive</div>
+              <div className="text-4xl font-bold text-primary-400 text-glow">€1299.99</div>
+              <div className="text-sm text-gray-400">eenmalig</div>
+              <div className="mt-4 pt-4 border-t border-dark-600">
+                <div className="text-xl font-bold text-white">€49.99 <span className="text-sm font-normal text-gray-400">/maand</span></div>
+                <div className="text-lg font-semibold text-primary-400 mt-1">of €499.99/jaar</div>
+              </div>
+              <div className="text-xs text-gray-400 mt-2">all-inclusive</div>
             </div>
             <ul className="space-y-3 mb-8 text-gray-200">
               <li className="flex items-center">
