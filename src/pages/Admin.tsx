@@ -43,7 +43,7 @@ const AdminDashboard: React.FC = () => {
     description: '',
     amount: '',
     type: 'business' as 'business' | 'personal',
-    frequency: 'monthly' as 'monthly' | 'one-time',
+    frequency: 'monthly' as 'monthly' | 'one-time' | 'yearly',
     category: '',
     expenseDate: new Date().toISOString().split('T')[0]
   });
@@ -1858,9 +1858,12 @@ const AdminDashboard: React.FC = () => {
                                     {expense.type === 'business' ? 'Bedrijf' : 'Privé'}
                                   </span>
                                   <span className={`px-2 py-0.5 text-xs rounded-full ${
-                                    expense.frequency === 'monthly' ? 'bg-green-900 text-green-300' : 'bg-orange-900 text-orange-300'
+                                    expense.frequency === 'monthly' ? 'bg-green-900 text-green-300' : 
+                                    expense.frequency === 'yearly' ? 'bg-blue-900 text-blue-300' :
+                                    'bg-orange-900 text-orange-300'
                                   }`}>
-                                    {expense.frequency === 'monthly' ? 'Maandelijks' : 'Eenmalig'}
+                                    {expense.frequency === 'monthly' ? 'Maandelijks' : 
+                                     expense.frequency === 'yearly' ? 'Jaarlijks' : 'Eenmalig'}
                                   </span>
                                 </div>
                                 {expense.category && (
@@ -1907,6 +1910,7 @@ const AdminDashboard: React.FC = () => {
                         {(() => {
                           const businessExpenses = expenses.filter(e => e.type === 'business');
                           const monthlyBusiness = businessExpenses.filter(e => e.frequency === 'monthly').reduce((sum, e) => sum + parseFloat(e.amount), 0);
+                          const yearlyBusiness = businessExpenses.filter(e => e.frequency === 'yearly').reduce((sum, e) => sum + parseFloat(e.amount), 0);
                           const oneTimeBusiness = businessExpenses.filter(e => e.frequency === 'one-time').reduce((sum, e) => sum + parseFloat(e.amount), 0);
                           return (
                             <>
@@ -1915,12 +1919,16 @@ const AdminDashboard: React.FC = () => {
                                 <span className="text-white font-medium">€{monthlyBusiness.toFixed(2)}/maand</span>
                               </div>
                               <div className="flex justify-between items-center py-2 border-b border-dark-700">
+                                <span className="text-gray-400">Jaarlijkse kosten</span>
+                                <span className="text-white font-medium">€{yearlyBusiness.toFixed(2)}/jaar</span>
+                              </div>
+                              <div className="flex justify-between items-center py-2 border-b border-dark-700">
                                 <span className="text-gray-400">Eenmalige kosten</span>
                                 <span className="text-white font-medium">€{oneTimeBusiness.toFixed(2)}</span>
                               </div>
                               <div className="flex justify-between items-center py-2">
                                 <span className="text-white font-semibold">Totaal bedrijfskosten</span>
-                                <span className="text-red-400 font-bold">€{(monthlyBusiness + oneTimeBusiness).toFixed(2)}</span>
+                                <span className="text-red-400 font-bold">€{(monthlyBusiness + yearlyBusiness + oneTimeBusiness).toFixed(2)}</span>
                               </div>
                             </>
                           );
@@ -1935,6 +1943,7 @@ const AdminDashboard: React.FC = () => {
                         {(() => {
                           const personalExpenses = expenses.filter(e => e.type === 'personal');
                           const monthlyPersonal = personalExpenses.filter(e => e.frequency === 'monthly').reduce((sum, e) => sum + parseFloat(e.amount), 0);
+                          const yearlyPersonal = personalExpenses.filter(e => e.frequency === 'yearly').reduce((sum, e) => sum + parseFloat(e.amount), 0);
                           const oneTimePersonal = personalExpenses.filter(e => e.frequency === 'one-time').reduce((sum, e) => sum + parseFloat(e.amount), 0);
                           return (
                             <>
@@ -1943,12 +1952,16 @@ const AdminDashboard: React.FC = () => {
                                 <span className="text-white font-medium">€{monthlyPersonal.toFixed(2)}/maand</span>
                               </div>
                               <div className="flex justify-between items-center py-2 border-b border-dark-700">
+                                <span className="text-gray-400">Jaarlijkse kosten</span>
+                                <span className="text-white font-medium">€{yearlyPersonal.toFixed(2)}/jaar</span>
+                              </div>
+                              <div className="flex justify-between items-center py-2 border-b border-dark-700">
                                 <span className="text-gray-400">Eenmalige kosten</span>
                                 <span className="text-white font-medium">€{oneTimePersonal.toFixed(2)}</span>
                               </div>
                               <div className="flex justify-between items-center py-2">
                                 <span className="text-white font-semibold">Totaal privékosten</span>
-                                <span className="text-yellow-400 font-bold">€{(monthlyPersonal + oneTimePersonal).toFixed(2)}</span>
+                                <span className="text-yellow-400 font-bold">€{(monthlyPersonal + yearlyPersonal + oneTimePersonal).toFixed(2)}</span>
                               </div>
                             </>
                           );
@@ -2744,10 +2757,11 @@ const AdminDashboard: React.FC = () => {
                         <label className="block text-sm font-medium text-gray-300 mb-1">Frequentie</label>
                         <select
                           value={expenseForm.frequency}
-                          onChange={(e) => setExpenseForm(prev => ({ ...prev, frequency: e.target.value as 'monthly' | 'one-time' }))}
+                          onChange={(e) => setExpenseForm(prev => ({ ...prev, frequency: e.target.value as 'monthly' | 'one-time' | 'yearly' }))}
                           className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                         >
                           <option value="monthly">Maandelijks</option>
+                          <option value="yearly">Jaarlijks</option>
                           <option value="one-time">Eenmalig</option>
                         </select>
                       </div>

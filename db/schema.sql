@@ -80,9 +80,13 @@ CREATE TABLE IF NOT EXISTS expenses (
   description VARCHAR(255) NOT NULL,
   amount DECIMAL(10,2) NOT NULL,
   type VARCHAR(50) NOT NULL CHECK (type IN ('business', 'personal')),
-  frequency VARCHAR(50) NOT NULL CHECK (frequency IN ('monthly', 'one-time')),
+  frequency VARCHAR(50) NOT NULL CHECK (frequency IN ('monthly', 'one-time', 'yearly')),
   category VARCHAR(100),
   expense_date DATE DEFAULT NOW(),
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
+
+-- Migration: Update frequency column to allow yearly for existing tables
+ALTER TABLE expenses DROP CONSTRAINT IF EXISTS expenses_frequency_check;
+ALTER TABLE expenses ADD CONSTRAINT expenses_frequency_check CHECK (frequency IN ('monthly', 'one-time', 'yearly'));
