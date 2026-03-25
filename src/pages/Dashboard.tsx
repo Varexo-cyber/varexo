@@ -7,7 +7,6 @@ import PageTransition from '../components/PageTransition';
 
 const CustomerDashboard: React.FC = () => {
   const [user, setUser] = useState<MockUser | null>(null);
-  const [emailNotifications, setEmailNotifications] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<'projects' | 'invoices'>('projects');
   const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
@@ -21,12 +20,6 @@ const CustomerDashboard: React.FC = () => {
     const unsubscribe = mockAuth.onAuthChanged((currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        // Load email notification preference
-        const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
-        const currentUserData = users.find((u: any) => u.email === currentUser.email);
-        if (currentUserData && currentUserData.emailNotifications !== undefined) {
-          setEmailNotifications(currentUserData.emailNotifications);
-        }
         if (roleService.isAdmin(currentUser.email)) {
           navigate('/admin');
           return;
@@ -104,21 +97,6 @@ const CustomerDashboard: React.FC = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
         );
-    }
-  };
-
-  const handleToggleEmailNotifications = () => {
-    if (!user) return;
-    
-    const newValue = !emailNotifications;
-    setEmailNotifications(newValue);
-    
-    // Update in localStorage
-    const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
-    const userIndex = users.findIndex((u: any) => u.email === user.email);
-    if (userIndex !== -1) {
-      users[userIndex].emailNotifications = newValue;
-      localStorage.setItem('varexo_users', JSON.stringify(users));
     }
   };
 
@@ -557,7 +535,7 @@ const CustomerDashboard: React.FC = () => {
       <div className="min-h-screen bg-dark-900 pt-16 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="mb-8">
             <div>
               <h1 className="text-3xl font-bold text-white">Klantportaal</h1>
               <p className="text-gray-400 mt-1">
@@ -569,26 +547,6 @@ const CustomerDashboard: React.FC = () => {
                   return 'Goedenacht';
                 })()}, {user.displayName} 👋
               </p>
-            </div>
-            
-            {/* Email Notifications Toggle */}
-            <div className="flex items-center gap-3 bg-dark-800 px-4 py-2 rounded-lg border border-dark-700">
-              <span className="text-sm text-gray-400">E-mail notificaties</span>
-              <button
-                onClick={handleToggleEmailNotifications}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                  emailNotifications ? 'bg-primary-500' : 'bg-gray-600'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    emailNotifications ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-              <span className={`text-xs ${emailNotifications ? 'text-primary-400' : 'text-gray-500'}`}>
-                {emailNotifications ? 'Aan' : 'Uit'}
-              </span>
             </div>
           </div>
 

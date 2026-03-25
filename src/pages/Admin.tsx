@@ -158,13 +158,15 @@ const AdminDashboard: React.FC = () => {
       setProjects(p);
       setInvoices(i);
       setStats(s);
-      console.log('Customers loaded:', c.map(cust => ({ email: cust.email, emailNotifications: cust.emailNotifications })));
+      console.log('Customers loaded from API:', c.map(cust => ({ email: cust.email, emailNotifications: cust.emailNotifications })));
     } catch (err) {
       console.warn('API failed, using localStorage fallback:', err);
-      setCustomers(projectService.getCustomers());
+      const localCustomers = projectService.getCustomers();
+      setCustomers(localCustomers);
       setProjects(projectService.getAllProjects());
       setInvoices(projectService.getAllInvoices());
       setStats(projectService.getStats());
+      console.log('Customers loaded from localStorage:', localCustomers.map(cust => ({ email: cust.email, emailNotifications: cust.emailNotifications })));
     }
     // Load contact messages separately (won't fail if table doesn't exist yet)
     try {
