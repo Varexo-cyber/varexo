@@ -48,6 +48,7 @@ const AdminDashboard: React.FC = () => {
     expenseDate: new Date().toISOString().split('T')[0]
   });
   const [editingExpense, setEditingExpense] = useState<any | null>(null);
+  const [toast, setToast] = useState<{message: string; type: 'success' | 'error'} | null>(null);
   const [recurringForm, setRecurringForm] = useState({
     customerEmail: '',
     description: '',
@@ -412,10 +413,12 @@ const AdminDashboard: React.FC = () => {
         expenseDate: new Date().toISOString().split('T')[0]
       });
       await loadData();
-      alert('Kosten succesvol toegevoegd!');
+      setToast({ message: 'Kosten succesvol toegevoegd!', type: 'success' });
+      setTimeout(() => setToast(null), 3000);
     } catch (error) {
       console.error('Error creating expense:', error);
-      alert('Fout bij toevoegen kosten: ' + (error as Error).message);
+      setToast({ message: 'Fout bij toevoegen kosten: ' + (error as Error).message, type: 'error' });
+      setTimeout(() => setToast(null), 5000);
     }
   };
 
@@ -452,10 +455,12 @@ const AdminDashboard: React.FC = () => {
         expenseDate: new Date().toISOString().split('T')[0]
       });
       await loadData();
-      alert('Kosten succesvol bijgewerkt!');
+      setToast({ message: 'Kosten succesvol bijgewerkt!', type: 'success' });
+      setTimeout(() => setToast(null), 3000);
     } catch (error) {
       console.error('Error updating expense:', error);
-      alert('Fout bij bijwerken kosten: ' + (error as Error).message);
+      setToast({ message: 'Fout bij bijwerken kosten: ' + (error as Error).message, type: 'error' });
+      setTimeout(() => setToast(null), 5000);
     }
   };
 
@@ -2845,6 +2850,35 @@ const AdminDashboard: React.FC = () => {
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          )}
+          {/* Toast Notification */}
+          {toast && (
+            <div className={`fixed top-20 right-4 z-50 px-6 py-4 rounded-lg shadow-lg border transform transition-all duration-300 ${
+              toast.type === 'success' 
+                ? 'bg-dark-800 border-primary-500 text-primary-400' 
+                : 'bg-dark-800 border-red-500 text-red-400'
+            }`}>
+              <div className="flex items-center gap-3">
+                {toast.type === 'success' ? (
+                  <svg className="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                )}
+                <span className="font-medium">{toast.message}</span>
+                <button 
+                  onClick={() => setToast(null)}
+                  className="ml-2 text-gray-400 hover:text-white"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
             </div>
           )}
