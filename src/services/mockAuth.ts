@@ -17,6 +17,7 @@ interface StoredUser {
   email: string;
   password: string;
   displayName: string;
+  emailNotifications?: boolean;
 }
 
 // Fallback: Get all registered users from localStorage
@@ -171,7 +172,8 @@ export const mockAuth = {
     if (userIndex >= 0) {
       users[userIndex] = {
         ...users[userIndex],
-        displayName: updates.displayName || users[userIndex].displayName
+        displayName: updates.displayName || users[userIndex].displayName,
+        emailNotifications: updates.emailNotifications !== undefined ? updates.emailNotifications : users[userIndex].emailNotifications
       };
       saveUsers(users);
     }
