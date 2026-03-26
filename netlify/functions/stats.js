@@ -12,7 +12,9 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers, body: '' };
   }
 
-  const sql = neon();
+  // FIX: Force fresh connection every time
+  const dbUrl = process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL;
+  const sql = neon(dbUrl);
 
   try {
     if (event.httpMethod === 'GET') {
@@ -20,20 +22,26 @@ exports.handler = async (event) => {
       const allUsers = await sql`SELECT email, display_name, created_at, email_notifications, is_admin, deleted_at FROM users`;
       const customerCount = allUsers.filter(u => u.is_admin === false && u.deleted_at === null).length;
       
-      const projects = await sql`SELECT COUNT(*) as count FROM projects`;
-      const activeProjects = await sql`SELECT COUNT(*) as count FROM projects WHERE status = 'active'`;
+      // FIX: Get ALL projects and filter in JS
+      const allProjects = await sql`SELECT * FROM projects`;
+      const projectsCount = allProjects.length;
+      const activeProjectsCount = allProjects.filter(p => p.status === 'active').length;
       
-      const revenue = await sql`SELECT COALESCE(SUM(amount), 0) as total FROM invoices WHERE status != 'draft'`;
-      const pendingInvoices = await sql`SELECT COUNT(*) as count FROM invoices WHERE status = 'sent'`;
-      const overdueInvoices = await sql`SELECT COUNT(*) as count FROM invoices WHERE status = 'overdue'`;
+      // FIX: Get ALL invoices and filter in JS  
+      const allInvoices = await sql`SELECT * FROM invoices`;
+      const revenue = allInvoices
+        .filter(i => i.status !== 'draft')
+        .reduce((sum, i) => sum + parseFloat(i.amount || 0), 0);
+      const pendingCount = allInvoices.filter(i => i.status === 'sent').length;
+      const overdueCount = allInvoices.filter(i => i.status === 'overdue').length;
 
       return { statusCode: 200, headers, body: JSON.stringify({
         totalCustomers: customerCount,
-        totalProjects: parseInt(projects[0].count),
-        activeProjects: parseInt(activeProjects[0].count),
-        totalRevenue: parseFloat(revenue[0].total),
-        pendingInvoices: parseInt(pendingInvoices[0].count),
-        overdueInvoices: parseInt(overdueInvoices[0].count)
+        totalProjects: projectsCount,
+        activeProjects: activeProjectsCount,
+        totalRevenue: revenue,
+        pendingInvoices: pendingCount,
+        overdueInvoices: overdueCount
       })};
     }
 
