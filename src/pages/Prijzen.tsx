@@ -334,6 +334,34 @@ const Prijzen: React.FC = () => {
             Vraag Advies
           </a>
         </div>
+
+        {/* Custom Budget Section */}
+        <div className="glass-card p-8 rounded-xl max-w-4xl mx-auto mt-16 border border-primary-500/30 glow-emerald">
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="flex-shrink-0">
+              <div className="w-16 h-16 bg-primary-900/50 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <h3 className="text-xl font-bold text-white mb-2">Werken binnen uw budget</h3>
+              <p className="text-gray-400 mb-4">
+                Heeft u een specifiek budget in gedachten? Wij denken graag met u mee en passen onze diensten aan zodat ze binnen uw financiële mogelijkheden passen. Alles is bespreekbaar - van aangepaste pakketten tot gefaseerde oplevering.
+              </p>
+              <a 
+                href="/contact" 
+                className="inline-flex items-center gap-2 bg-primary-500 text-dark-900 px-6 py-3 rounded-lg font-semibold hover:bg-primary-400 transition glow-emerald"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Neem contact op
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     </PageTransition>

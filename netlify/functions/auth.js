@@ -206,7 +206,10 @@ exports.handler = async (event) => {
             display_name = COALESCE(${displayName || null}, display_name),
             phone = COALESCE(${phone || null}, phone),
             company = COALESCE(${company || null}, company),
-            email_notifications = COALESCE(${emailNotifications !== undefined ? emailNotifications : null}, email_notifications),
+            email_notifications = CASE 
+              WHEN ${emailNotifications !== undefined} THEN ${emailNotifications}
+              ELSE email_notifications 
+            END,
             updated_at = NOW()
           WHERE email = ${email}
           RETURNING email, display_name, photo_url, provider, phone, company, email_notifications
@@ -241,7 +244,16 @@ exports.handler = async (event) => {
           }
         }
 
-        return { statusCode: 200, headers, body: JSON.stringify(result[0]) };
+        return { statusCode: 200, headers, body: JSON.stringify({
+          email: result[0].email,
+          display_name: result[0].display_name,
+          photo_url: result[0].photo_url,
+          provider: result[0].provider,
+          phone: result[0].phone,
+          company: result[0].company,
+          email_notifications: result[0].email_notifications,
+          emailNotifications: result[0].email_notifications
+        }) };
       } catch (error) {
         console.error('Profile update error:', error);
         return { statusCode: 500, headers, body: JSON.stringify({ error: 'Profile update failed: ' + error.message }) };
