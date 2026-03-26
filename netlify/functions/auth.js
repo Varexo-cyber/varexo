@@ -141,22 +141,24 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'POST' && path === '/google') {
       const { email, displayName, photoURL } = body;
 
-      // Check if user exists - handle missing deleted_at column
+      // Check if user exists with deleted_at
       let existing;
       let deletedAt = null;
       try {
         existing = await sql`
-          SELECT email, password_hash, provider, deleted_at FROM users WHERE email = ${email}
+          SELECT email, password_hash, provider, deleted_at, is_admin, email_notifications 
+          FROM users WHERE email = ${email}
         `;
         deletedAt = existing.length > 0 ? existing[0].deleted_at : null;
       } catch (e) {
         // deleted_at column might not exist yet
         existing = await sql`
-          SELECT email, password_hash, provider FROM users WHERE email = ${email}
+          SELECT email, password_hash, provider, is_admin, email_notifications 
+          FROM users WHERE email = ${email}
         `;
       }
 
-      // BLOCK deleted users - they must create a NEW account
+      // BLOCK deleted users
       if (deletedAt) {
         return { 
           statusCode: 403, 
@@ -168,26 +170,26 @@ exports.handler = async (event) => {
       }
 
       let result;
-      if (existing.length > 0 && existing[0].password_hash) {
-        // User has manual account - MERGE: keep password, update photo and name
+      
+      if (existing.length > 0) {
+        // User exists and is not deleted - UPDATE profile
         result = await sql`
           UPDATE users SET
             display_name = ${displayName},
             photo_url = COALESCE(${photoURL || null}, users.photo_url),
-            provider = 'both',
+            provider = CASE 
+              WHEN provider = 'email' THEN 'both'
+              ELSE provider 
+            END,
             updated_at = NOW()
-          WHERE email = ${email}
+          WHERE email = ${email} AND deleted_at IS NULL
           RETURNING email, display_name, photo_url, provider, is_admin, email_notifications
         `;
       } else {
-        // New user or Google-only user
+        // New user - INSERT
         result = await sql`
           INSERT INTO users (email, display_name, photo_url, provider, email_notifications, is_admin)
           VALUES (${email}, ${displayName}, ${photoURL || null}, 'google', TRUE, FALSE)
-          ON CONFLICT (email) DO UPDATE SET
-            display_name = ${displayName},
-            photo_url = COALESCE(${photoURL || null}, users.photo_url),
-            updated_at = NOW()
           RETURNING email, display_name, photo_url, provider, is_admin, email_notifications
         `;
       }
