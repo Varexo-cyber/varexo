@@ -8,71 +8,64 @@ const headers = {
 };
 
 exports.handler = async (event) => {
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
-  }
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Type': 'application/json'
+  };
 
   const sql = neon();
-  const path = event.path.replace('/.netlify/functions/customers', '').replace('/api/customers', '');
+
+  console.log('=== CUSTOMERS API ===');
+  console.log('Method:', event.httpMethod);
+  console.log('Path:', event.path);
 
   try {
-    // Ensure email_notifications and deleted_at columns exist
-    try {
-      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS email_notifications BOOLEAN DEFAULT TRUE`;
-      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP`;
-    } catch (e) {
-      console.log('Column may already exist:', e.message);
-    }
-
-    // GET /customers - Get all non-deleted customers
+    // GET /customers
     if (event.httpMethod === 'GET') {
-      const result = await sql`
-        SELECT 
-          u.email,
-          u.display_name,
-          u.created_at,
-          COALESCE(u.email_notifications, true) as email_notifications
-        FROM users u
-        WHERE u.is_admin = FALSE AND u.deleted_at IS NULL
-        ORDER BY u.created_at DESC
+      console.log('Fetching all non-deleted customers...');
+      
+      const users = await sql`
+        SELECT email, display_name, created_at, email_notifications
+        FROM users 
+        WHERE is_admin = FALSE AND deleted_at IS NULL
+        ORDER BY created_at DESC
       `;
+      
+      console.log('Users found in DB:', users.length);
+      console.log('User emails:', users.map(u => u.email));
 
-      // Get project and invoice counts separately
-      const customers = await Promise.all(result.map(async (c) => {
-        const projectResult = await sql`SELECT COUNT(*) as count FROM projects WHERE customer_email = ${c.email}`;
-        const invoiceResult = await sql`SELECT COUNT(*) as count FROM invoices WHERE customer_email = ${c.email}`;
-        
-        return {
-          email: c.email,
-          displayName: c.display_name,
-          phone: null,
-          company: null,
-          emailNotifications: c.email_notifications,
-          subscription: null,
-          hasSocialMedia: false,
-          createdAt: c.created_at,
-          projectCount: parseInt(projectResult[0].count),
-          invoiceCount: parseInt(invoiceResult[0].count)
-        };
+      const customers = users.map(u => ({
+        email: u.email,
+        displayName: u.display_name,
+        phone: null,
+        company: null,
+        emailNotifications: u.email_notifications !== false,
+        subscription: null,
+        hasSocialMedia: false,
+        createdAt: u.created_at,
+        projectCount: 0,
+        invoiceCount: 0
       }));
 
+      console.log('Returning customers count:', customers.length);
       return { statusCode: 200, headers, body: JSON.stringify(customers) };
     }
 
-    // DELETE /customers/:email - Soft delete customer (mark as deleted)
-    if (event.httpMethod === 'DELETE' && path) {
+    // DELETE /customers/:email
+    if (event.httpMethod === 'DELETE') {
+      const path = event.path.replace('/.netlify/functions/customers', '').replace('/api/customers', '');
       const email = path.replace('/', '');
+      console.log('Soft deleting:', email);
       
-      // Soft delete - mark user as deleted instead of actually deleting
       await sql`UPDATE users SET deleted_at = NOW() WHERE email = ${email}`;
       
-      return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Klant verwijderd' }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
     }
 
-    return { statusCode: 404, headers, body: JSON.stringify({ error: 'Route niet gevonden' }) };
+    return { statusCode: 404, headers, body: JSON.stringify({ error: 'Not found' }) };
 
   } catch (error) {
-    console.error('Customers error:', error);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server error: ' + error.message }) };
+    console.error('ERROR:', error);
+    return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   }
 };
