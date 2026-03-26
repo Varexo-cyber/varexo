@@ -15,31 +15,29 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'GET') {
       console.log('Fetching ALL users from database...');
       
-      // Get ALL users, filter manually
+      // Get ALL users, both active and deleted
       const allUsers = await sql`SELECT email, display_name, created_at, email_notifications, is_admin, deleted_at FROM users`;
       
       console.log('Total users in DB:', allUsers.length);
-      console.log('All emails:', allUsers.map(u => ({ email: u.email, is_admin: u.is_admin, deleted: u.deleted_at })));
       
-      // Filter manually
-      const validUsers = allUsers.filter(u => u.is_admin === false && u.deleted_at === null);
-      
-      console.log('Valid customers:', validUsers.length);
-      console.log('Valid emails:', validUsers.map(u => u.email));
+      // Filter and map - include deleted with marker
+      const customers = allUsers
+        .filter(u => u.is_admin === false) // Exclude admins only
+        .map(u => ({
+          email: u.email,
+          displayName: u.deleted_at ? `${u.display_name} (NIET VERWIJDEREN ACCOUNT)` : u.display_name,
+          phone: null,
+          company: null,
+          emailNotifications: u.email_notifications !== false,
+          subscription: null,
+          hasSocialMedia: false,
+          createdAt: u.created_at,
+          projectCount: 0,
+          invoiceCount: 0,
+          isDeleted: !!u.deleted_at // Flag for frontend
+        }));
 
-      const customers = validUsers.map(u => ({
-        email: u.email,
-        displayName: u.display_name,
-        phone: null,
-        company: null,
-        emailNotifications: u.email_notifications !== false,
-        subscription: null,
-        hasSocialMedia: false,
-        createdAt: u.created_at,
-        projectCount: 0,
-        invoiceCount: 0
-      }));
-
+      console.log('Returning customers:', customers.length);
       return { statusCode: 200, headers, body: JSON.stringify(customers) };
     }
 

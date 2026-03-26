@@ -16,22 +16,19 @@ exports.handler = async (event) => {
 
   try {
     if (event.httpMethod === 'GET') {
-      const customers = await sql`SELECT COUNT(*) as count FROM users WHERE is_admin = FALSE AND deleted_at IS NULL`;
+      // FIX: Get all users and count manually like customers.js
+      const allUsers = await sql`SELECT is_admin, deleted_at FROM users`;
+      const customerCount = allUsers.filter(u => u.is_admin === false && u.deleted_at === null).length;
+      
       const projects = await sql`SELECT COUNT(*) as count FROM projects`;
       const activeProjects = await sql`SELECT COUNT(*) as count FROM projects WHERE status = 'active'`;
-      
-      // Debug: check all invoices and their statuses
-      const allInvoices = await sql`SELECT id, amount, status FROM invoices`;
-      console.log('All invoices:', allInvoices);
       
       const revenue = await sql`SELECT COALESCE(SUM(amount), 0) as total FROM invoices WHERE status != 'draft'`;
       const pendingInvoices = await sql`SELECT COUNT(*) as count FROM invoices WHERE status = 'sent'`;
       const overdueInvoices = await sql`SELECT COUNT(*) as count FROM invoices WHERE status = 'overdue'`;
-      
-      console.log('Revenue calculation:', revenue[0].total);
 
       return { statusCode: 200, headers, body: JSON.stringify({
-        totalCustomers: parseInt(customers[0].count),
+        totalCustomers: customerCount,
         totalProjects: parseInt(projects[0].count),
         activeProjects: parseInt(activeProjects[0].count),
         totalRevenue: parseFloat(revenue[0].total),
