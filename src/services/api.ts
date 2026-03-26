@@ -40,6 +40,9 @@ export const authAPI = {
   googleLogin: (email: string, displayName: string, photoURL?: string) =>
     apiCall('/auth/google', { method: 'POST', body: JSON.stringify({ email, displayName, photoURL }) }),
 
+  googleSignup: (email: string, displayName: string, photoURL?: string) =>
+    apiCall('/auth/google-signup', { method: 'POST', body: JSON.stringify({ email, displayName, photoURL }) }),
+
   updateProfile: (email: string, updates: { displayName?: string; phone?: string; company?: string; emailNotifications?: boolean }) =>
     apiCall('/auth/profile', { method: 'PUT', body: JSON.stringify({ email, ...updates }) }),
 

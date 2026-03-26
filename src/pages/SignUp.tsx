@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { mockAuth } from '../services/mockAuth';
 import { googleAuthService, GoogleUser } from '../services/googleAuth';
+import { authAPI } from '../services/api';
 import PageTransition from '../components/PageTransition';
 
 const SignUp: React.FC = () => {
@@ -55,8 +56,18 @@ const SignUp: React.FC = () => {
     try {
       const googleUser: GoogleUser = await googleAuthService.signIn();
       
-      // Save Google user to database + localStorage
-      await mockAuth.saveGoogleUser(googleUser.email, googleUser.displayName, googleUser.photoURL);
+      // Use googleSignup API (creates new account)
+      const dbUser = await authAPI.googleSignup(googleUser.email, googleUser.displayName, googleUser.photoURL);
+      
+      // Save to localStorage
+      const savedUser = {
+        email: dbUser.email,
+        displayName: dbUser.displayName,
+        photoURL: dbUser.photoURL,
+        provider: 'google',
+        isAdmin: dbUser.isAdmin
+      };
+      localStorage.setItem('varexo_user', JSON.stringify(savedUser));
       
       navigate('/dashboard');
     } catch (error: any) {

@@ -7,6 +7,8 @@ declare global {
 
 const GOOGLE_CLIENT_ID = '944648879731-5ghdr7fhmqgikg1bjd22q20k011flujl.apps.googleusercontent.com';
 
+let isInitialized = false;
+
 export interface GoogleUser {
   email: string;
   displayName: string;
@@ -19,19 +21,38 @@ export const googleAuthService = {
   // Initialize Google Sign-In
   initialize: (): Promise<void> => {
     return new Promise((resolve, reject) => {
+      // Prevent multiple initializations
+      if (isInitialized) {
+        resolve();
+        return;
+      }
+
+      // Check if script already exists
+      const existingScript = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+      if (existingScript) {
+        isInitialized = true;
+        resolve();
+        return;
+      }
+
       // Load Google Identity Services script
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
       script.onload = () => {
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: (response: any) => {
-            // This callback will be handled by the signIn function
-            console.log('Google auth initialized');
-          },
-          auto_select: false,
-          cancel_on_tap_outside: true,
-        });
+        if (!isInitialized) {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: (response: any) => {
+              // This callback will be handled by the signIn function
+              console.log('Google auth initialized');
+            },
+            auto_select: false,
+            cancel_on_tap_outside: true,
+          });
+          isInitialized = true;
+        }
         resolve();
       };
       script.onerror = reject;

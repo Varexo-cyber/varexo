@@ -137,7 +137,50 @@ exports.handler = async (event) => {
       };
     }
 
-    // POST /auth/google - Save/update Google user
+    // POST /auth/google-signup - Create NEW Google user (signup only)
+    if (event.httpMethod === 'POST' && path === '/google-signup') {
+      const { email, displayName, photoURL } = body;
+
+      // Check if user already exists
+      const existing = await sql`
+        SELECT email, deleted_at FROM users WHERE email = ${email}
+      `;
+
+      if (existing.length > 0 && !existing[0].deleted_at) {
+        return { 
+          statusCode: 409, 
+          headers, 
+          body: JSON.stringify({ 
+            error: 'Account bestaat al. Log in via "Inloggen".' 
+          }) 
+        };
+      }
+
+      // Create new user with is_admin = FALSE
+      const result = await sql`
+        INSERT INTO users (email, display_name, photo_url, provider, email_notifications, is_admin)
+        VALUES (${email}, ${displayName}, ${photoURL || null}, 'google', TRUE, FALSE)
+        ON CONFLICT (email) DO UPDATE SET
+          display_name = ${displayName},
+          photo_url = COALESCE(${photoURL || null}, users.photo_url),
+          deleted_at = NULL,
+          updated_at = NOW()
+        RETURNING email, display_name, photo_url, provider, is_admin, email_notifications
+      `;
+
+      const user = {
+        email: result[0].email,
+        displayName: result[0].display_name,
+        photoURL: result[0].photo_url,
+        provider: result[0].provider,
+        isAdmin: result[0].is_admin,
+        emailNotifications: result[0].email_notifications
+      };
+
+      return { statusCode: 200, headers, body: JSON.stringify(user) };
+    }
+
+    // POST /auth/google - LOGIN only (no signup)
     if (event.httpMethod === 'POST' && path === '/google') {
       const { email, displayName, photoURL } = body;
 
@@ -151,7 +194,6 @@ exports.handler = async (event) => {
         `;
         deletedAt = existing.length > 0 ? existing[0].deleted_at : null;
       } catch (e) {
-        // deleted_at column might not exist yet
         existing = await sql`
           SELECT email, password_hash, provider, is_admin, email_notifications 
           FROM users WHERE email = ${email}
@@ -164,35 +206,35 @@ exports.handler = async (event) => {
           statusCode: 403, 
           headers, 
           body: JSON.stringify({ 
-            error: 'Dit account is verwijderd. Vraag de admin om een nieuw account voor je aan te maken of gebruik een ander e-mailadres.' 
+            error: 'Dit account is verwijderd. Vraag de admin om een nieuw account voor je aan te maken.' 
           }) 
         };
       }
 
-      let result;
-      
-      if (existing.length > 0) {
-        // User exists and is not deleted - UPDATE profile
-        result = await sql`
-          UPDATE users SET
-            display_name = ${displayName},
-            photo_url = COALESCE(${photoURL || null}, users.photo_url),
-            provider = CASE 
-              WHEN provider = 'email' THEN 'both'
-              ELSE provider 
-            END,
-            updated_at = NOW()
-          WHERE email = ${email} AND deleted_at IS NULL
-          RETURNING email, display_name, photo_url, provider, is_admin, email_notifications
-        `;
-      } else {
-        // New user - INSERT
-        result = await sql`
-          INSERT INTO users (email, display_name, photo_url, provider, email_notifications, is_admin)
-          VALUES (${email}, ${displayName}, ${photoURL || null}, 'google', TRUE, FALSE)
-          RETURNING email, display_name, photo_url, provider, is_admin, email_notifications
-        `;
+      // BLOCK new users - must signup first
+      if (existing.length === 0) {
+        return { 
+          statusCode: 404, 
+          headers, 
+          body: JSON.stringify({ 
+            error: 'Account bestaat niet. Maak eerst een account aan via "Gratis Account Aanmaken".' 
+          }) 
+        };
       }
+
+      // User exists - UPDATE profile
+      const result = await sql`
+        UPDATE users SET
+          display_name = ${displayName},
+          photo_url = COALESCE(${photoURL || null}, users.photo_url),
+          provider = CASE 
+            WHEN provider = 'email' THEN 'both'
+            ELSE provider 
+          END,
+          updated_at = NOW()
+        WHERE email = ${email} AND deleted_at IS NULL
+        RETURNING email, display_name, photo_url, provider, is_admin, email_notifications
+      `;
 
       const user = {
         email: result[0].email,

@@ -110,8 +110,9 @@ export const mockAuth = {
       return savedUser;
     } catch (apiErr) {
       console.error('Google API save failed:', apiErr);
-      // If account is deleted, don't allow fallback
+      // If account is deleted, don't allow fallback and clean up localStorage
       if ((apiErr as Error).message.includes('verwijderd')) {
+        localStorage.removeItem(STORAGE_KEY); // Clean up!
         throw new Error((apiErr as Error).message);
       }
       // Fallback: save to localStorage only for other errors

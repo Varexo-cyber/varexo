@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mockAuth } from '../services/mockAuth';
 import { googleAuthService, GoogleUser } from '../services/googleAuth';
+import { authAPI } from '../services/api';
 import { Link } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
 
@@ -43,13 +44,30 @@ const Login: React.FC = () => {
     try {
       const googleUser: GoogleUser = await googleAuthService.signIn();
       
-      // Save Google user to database + localStorage
-      await mockAuth.saveGoogleUser(googleUser.email, googleUser.displayName, googleUser.photoURL);
+      // Use googleLogin API (login only, no signup)
+      const dbUser = await authAPI.googleLogin(googleUser.email, googleUser.displayName, googleUser.photoURL);
+      
+      // Save to localStorage
+      const savedUser = {
+        email: dbUser.email,
+        displayName: dbUser.displayName,
+        photoURL: dbUser.photoURL,
+        provider: 'google',
+        isAdmin: dbUser.isAdmin
+      };
+      localStorage.setItem('varexo_user', JSON.stringify(savedUser));
       
       navigate('/dashboard');
     } catch (error: any) {
       console.error('Google login error:', error);
-      setError(error.message || 'Google login mislukt. Probeer het opnieuw.');
+      // Check if error is about deleted account or non-existing account
+      if (error.message?.includes('verwijderd')) {
+        setError('Dit account is verwijderd. Vraag de admin om een nieuw account voor je aan te maken.');
+      } else if (error.message?.includes('bestaat niet')) {
+        setError('Account bestaat niet. Maak eerst een account aan via "Gratis Account Aanmaken".');
+      } else {
+        setError(error.message || 'Google login mislukt. Probeer het opnieuw.');
+      }
     } finally {
       setGoogleLoading(false);
     }
