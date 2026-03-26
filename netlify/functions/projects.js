@@ -1,5 +1,5 @@
 const { neon } = require('@netlify/neon');
-const { sendNewProjectEmail, sendProjectDeletedEmail, sendProgressUpdateEmail } = require('./utils/send-email');
+const { sendNewProjectEmail, sendProjectDeletedEmail, sendProjectUpdateEmail } = require('./utils/send-email');
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -164,6 +164,14 @@ exports.handler = async (event) => {
       }
 
       const p = result[0];
+      
+      // Send email notification for project update
+      try {
+        await sendProjectUpdateEmail(p.customer_email, '', p.title, status || p.status);
+      } catch (e) { 
+        console.log('Email skip:', e.message); 
+      }
+      
       return { statusCode: 200, headers, body: JSON.stringify({
         id: p.id.toString(),
         title: p.title,
