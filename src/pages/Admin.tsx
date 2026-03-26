@@ -174,11 +174,27 @@ const AdminDashboard: React.FC = () => {
         projectService.getAllInvoicesAsync(),
         projectService.getStatsAsync()
       ]);
-      setCustomers(c);
+      console.log('Raw customers from API:', c);
+      console.log('Raw stats from API:', s);
+      
+      // EMERGENCY FIX: If API returns empty but stats say there are customers, use localStorage
+      if ((!c || c.length === 0) && s && s.totalCustomers > 0) {
+        console.warn('API returned empty customers but stats show', s.totalCustomers, 'customers. Using localStorage...');
+        const localCustomers = projectService.getCustomers();
+        if (localCustomers && localCustomers.length > 0) {
+          console.log('Found customers in localStorage:', localCustomers);
+          setCustomers(localCustomers);
+        } else {
+          console.error('No customers in API or localStorage!');
+          setCustomers([]);
+        }
+      } else {
+        setCustomers(c);
+      }
+      
       setProjects(p);
       setInvoices(i);
       setStats(s);
-      console.log('Customers loaded from API:', c.map(cust => ({ email: cust.email, emailNotifications: cust.emailNotifications })));
     } catch (err) {
       console.warn('API failed, using localStorage fallback:', err);
       const localCustomers = projectService.getCustomers();
@@ -186,7 +202,7 @@ const AdminDashboard: React.FC = () => {
       setProjects(projectService.getAllProjects());
       setInvoices(projectService.getAllInvoices());
       setStats(projectService.getStats());
-      console.log('Customers loaded from localStorage:', localCustomers.map(cust => ({ email: cust.email, emailNotifications: cust.emailNotifications })));
+      console.log('Customers loaded from localStorage:', localCustomers);
     } finally {
       setIsRefreshing(false);
     }
