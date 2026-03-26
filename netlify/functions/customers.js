@@ -1,52 +1,38 @@
 const { neon } = require('@netlify/neon');
 
-const headers = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'GET, DELETE, OPTIONS',
-  'Content-Type': 'application/json'
-};
-
 exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Type': 'application/json'
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json'
   };
 
-  const sql = neon();
-
-  console.log('=== CUSTOMERS API ===');
-  console.log('Method:', event.httpMethod);
-  console.log('Path:', event.path);
-
   try {
-    // GET /customers
-    if (event.httpMethod === 'GET') {
-      console.log('Fetching all non-deleted customers...');
-      
-      // FORCE FRESH DATA - no cache
-      const users = await sql`
-        SELECT * FROM (
-          SELECT 
-            email,
-            display_name,
-            created_at,
-            COALESCE(email_notifications, true) as email_notifications
-          FROM users 
-          WHERE is_admin = FALSE AND deleted_at IS NULL
-        ) as fresh_users
-        ORDER BY created_at DESC
-      `;
-      
-      console.log('Users found in DB:', users.length);
-      console.log('User emails:', users.map(u => u.email));
+    // ALWAYS create fresh connection - no caching
+    const dbUrl = process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL;
+    const sql = neon(dbUrl);
 
-      const customers = users.map(u => ({
+    if (event.httpMethod === 'GET') {
+      console.log('Fetching ALL users from database...');
+      
+      // Get ALL users, filter manually
+      const allUsers = await sql`SELECT email, display_name, created_at, email_notifications, is_admin, deleted_at FROM users`;
+      
+      console.log('Total users in DB:', allUsers.length);
+      console.log('All emails:', allUsers.map(u => ({ email: u.email, is_admin: u.is_admin, deleted: u.deleted_at })));
+      
+      // Filter manually
+      const validUsers = allUsers.filter(u => u.is_admin === false && u.deleted_at === null);
+      
+      console.log('Valid customers:', validUsers.length);
+      console.log('Valid emails:', validUsers.map(u => u.email));
+
+      const customers = validUsers.map(u => ({
         email: u.email,
         displayName: u.display_name,
         phone: null,
         company: null,
-        emailNotifications: u.email_notifications,
+        emailNotifications: u.email_notifications !== false,
         subscription: null,
         hasSocialMedia: false,
         createdAt: u.created_at,
@@ -54,25 +40,20 @@ exports.handler = async (event) => {
         invoiceCount: 0
       }));
 
-      console.log('Returning customers count:', customers.length);
       return { statusCode: 200, headers, body: JSON.stringify(customers) };
     }
 
-    // DELETE /customers/:email
     if (event.httpMethod === 'DELETE') {
       const path = event.path.replace('/.netlify/functions/customers', '').replace('/api/customers', '');
       const email = path.replace('/', '');
-      console.log('Soft deleting:', email);
-      
       await sql`UPDATE users SET deleted_at = NOW() WHERE email = ${email}`;
-      
       return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
     }
 
     return { statusCode: 404, headers, body: JSON.stringify({ error: 'Not found' }) };
 
   } catch (error) {
-    console.error('ERROR:', error);
+    console.error('Error:', error);
     return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   }
 };
