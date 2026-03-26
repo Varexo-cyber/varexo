@@ -22,30 +22,25 @@ exports.handler = async (event) => {
         SELECT 
           u.email,
           u.display_name,
-          u.phone,
-          u.company,
-          u.email_notifications,
           u.created_at,
-          u.subscription,
-          u.has_social_media,
           COUNT(DISTINCT p.id) as project_count,
           COUNT(DISTINCT i.id) as invoice_count
         FROM users u
         LEFT JOIN projects p ON u.email = p.customer_email
         LEFT JOIN invoices i ON u.email = i.customer_email
         WHERE u.is_admin = FALSE
-        GROUP BY u.email, u.display_name, u.phone, u.company, u.email_notifications, u.created_at, u.subscription, u.has_social_media
+        GROUP BY u.email, u.display_name, u.created_at
         ORDER BY u.created_at DESC
       `;
 
       const customers = result.map(c => ({
         email: c.email,
         displayName: c.display_name,
-        phone: c.phone,
-        company: c.company,
-        emailNotifications: c.email_notifications,
-        subscription: c.subscription,
-        hasSocialMedia: c.has_social_media,
+        phone: null,
+        company: null,
+        emailNotifications: true,
+        subscription: null,
+        hasSocialMedia: false,
         createdAt: c.created_at,
         projectCount: parseInt(c.project_count),
         invoiceCount: parseInt(c.invoice_count)
