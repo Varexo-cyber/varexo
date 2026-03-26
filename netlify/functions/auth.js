@@ -143,8 +143,17 @@ exports.handler = async (event) => {
 
       // Check if user exists with password (manual account)
       const existing = await sql`
-        SELECT email, password_hash, provider FROM users WHERE email = ${email}
+        SELECT email, password_hash, provider, deleted_at FROM users WHERE email = ${email}
       `;
+
+      // Check if user was deleted (soft delete)
+      if (existing.length > 0 && existing[0].deleted_at) {
+        return { 
+          statusCode: 403, 
+          headers, 
+          body: JSON.stringify({ error: 'Dit account is verwijderd. Neem contact op met Varexo voor meer informatie.' }) 
+        };
+      }
 
       let result;
       if (existing.length > 0 && existing[0].password_hash) {
@@ -156,18 +165,18 @@ exports.handler = async (event) => {
             provider = 'both',
             updated_at = NOW()
           WHERE email = ${email}
-          RETURNING email, display_name, photo_url, provider, is_admin
+          RETURNING email, display_name, photo_url, provider, is_admin, email_notifications
         `;
       } else {
         // New user or Google-only user
         result = await sql`
-          INSERT INTO users (email, display_name, photo_url, provider)
-          VALUES (${email}, ${displayName}, ${photoURL || null}, 'google')
+          INSERT INTO users (email, display_name, photo_url, provider, email_notifications)
+          VALUES (${email}, ${displayName}, ${photoURL || null}, 'google', TRUE)
           ON CONFLICT (email) DO UPDATE SET
             display_name = ${displayName},
             photo_url = COALESCE(${photoURL || null}, users.photo_url),
             updated_at = NOW()
-          RETURNING email, display_name, photo_url, provider, is_admin
+          RETURNING email, display_name, photo_url, provider, is_admin, email_notifications
         `;
       }
 

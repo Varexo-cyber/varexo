@@ -16,14 +16,15 @@ exports.handler = async (event) => {
   const path = event.path.replace('/.netlify/functions/customers', '').replace('/api/customers', '');
 
   try {
-    // Ensure email_notifications column exists
+    // Ensure email_notifications and deleted_at columns exist
     try {
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS email_notifications BOOLEAN DEFAULT TRUE`;
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP`;
     } catch (e) {
       console.log('Column may already exist:', e.message);
     }
 
-    // GET /customers - Get all customers with project/invoice counts
+    // GET /customers - Get all non-deleted customers with project/invoice counts
     if (event.httpMethod === 'GET') {
       const result = await sql`
         SELECT 
@@ -36,7 +37,7 @@ exports.handler = async (event) => {
         FROM users u
         LEFT JOIN projects p ON u.email = p.customer_email
         LEFT JOIN invoices i ON u.email = i.customer_email
-        WHERE u.is_admin = FALSE
+        WHERE u.is_admin = FALSE AND u.deleted_at IS NULL
         GROUP BY u.email, u.display_name, u.created_at, u.email_notifications
         ORDER BY u.created_at DESC
       `;
@@ -57,15 +58,12 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify(customers) };
     }
 
-    // DELETE /customers/:email - Delete customer
+    // DELETE /customers/:email - Soft delete customer (mark as deleted)
     if (event.httpMethod === 'DELETE' && path) {
       const email = path.replace('/', '');
       
-      // Delete customer's projects, invoices, and user record
-      await sql`DELETE FROM project_logs WHERE project_id IN (SELECT id FROM projects WHERE customer_email = ${email})`;
-      await sql`DELETE FROM projects WHERE customer_email = ${email}`;
-      await sql`DELETE FROM invoices WHERE customer_email = ${email}`;
-      await sql`DELETE FROM users WHERE email = ${email}`;
+      // Soft delete - mark user as deleted instead of actually deleting
+      await sql`UPDATE users SET deleted_at = NOW() WHERE email = ${email}`;
       
       return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Klant verwijderd' }) };
     }
