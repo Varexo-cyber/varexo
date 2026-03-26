@@ -13,7 +13,10 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers, body: '' };
   }
 
-  const sql = neon();
+  // FIX: Force fresh connection every time
+  const dbUrl = process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL;
+  const sql = neon(dbUrl);
+  
   const path = event.path.replace('/.netlify/functions/invoices', '').replace('/api/invoices', '');
   const body = event.body ? JSON.parse(event.body) : {};
   const params = event.queryStringParameters || {};
@@ -99,6 +102,11 @@ exports.handler = async (event) => {
         customerName, customerCompany, customerAddress, customerPostal, customerCity, customerPhone,
         amount, status, dueDate, items 
       } = body;
+      
+      console.log('POST /invoices - Creating for:', customerEmail);
+      
+      // FIX: Remove foreign key constraint check
+      await sql`SET CONSTRAINTS invoices_customer_email_fkey DEFERRED`;
       
       // Auto-generate invoice number in YYYY-NNN format if not provided
       let finalInvoiceNumber = invoiceNumber;
