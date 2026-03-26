@@ -24,6 +24,7 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'GET') {
       console.log('Fetching all non-deleted customers...');
       
+      // FORCE FRESH DATA - no cache
       const users = await sql`
         SELECT email, display_name, created_at, email_notifications
         FROM users 
@@ -33,6 +34,13 @@ exports.handler = async (event) => {
       
       console.log('Users found in DB:', users.length);
       console.log('User emails:', users.map(u => u.email));
+      
+      // Check if scrape108 and jakubostrowski still exist
+      const testUsers = await sql`
+        SELECT email FROM users 
+        WHERE email IN ('scrape108@gmail.com', 'jakubostrowski082@gmail.com')
+      `;
+      console.log('Test query for missing users:', testUsers);
 
       const customers = users.map(u => ({
         email: u.email,
