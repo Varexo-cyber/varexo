@@ -79,6 +79,24 @@ const AdminDashboard: React.FC = () => {
   const [selectedProjectForLogs, setSelectedProjectForLogs] = useState<Project | null>(null);
   const [projectLogs, setProjectLogs] = useState<ProjectLog[]>([]);
   
+  // Loading states
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isDeletingProject, setIsDeletingProject] = useState<string | null>(null);
+  const [isDeletingCustomer, setIsDeletingCustomer] = useState<string | null>(null);
+  const [isDeletingInvoice, setIsDeletingInvoice] = useState<string | null>(null);
+  const [isAddingLog, setIsAddingLog] = useState(false);
+  const [isLoadingLogs, setIsLoadingLogs] = useState(false);
+  const [isCreatingExpense, setIsCreatingExpense] = useState(false);
+  const [isUpdatingExpense, setIsUpdatingExpense] = useState(false);
+  const [isDeletingExpense, setIsDeletingExpense] = useState<string | null>(null);
+  const [isCreatingSurcharge, setIsCreatingSurcharge] = useState(false);
+  const [isUpdatingSurcharge, setIsUpdatingSurcharge] = useState(false);
+  const [isDeletingSurcharge, setIsDeletingSurcharge] = useState<string | null>(null);
+  const [isDeletingMessage, setIsDeletingMessage] = useState<string | null>(null);
+  const [isCreatingRecurring, setIsCreatingRecurring] = useState(false);
+  const [isDeletingRecurring, setIsDeletingRecurring] = useState<string | null>(null);
+  const [isUpdatingInvoiceStatus, setIsUpdatingInvoiceStatus] = useState<string | null>(null);
+  
   // Invoice details modal
   const [showInvoiceDetails, setShowInvoiceDetails] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
@@ -94,7 +112,8 @@ const AdminDashboard: React.FC = () => {
     status: 'planning' as 'planning' | 'active' | 'completed' | 'paused',
     deadline: '',
     budget: '',
-    progress: 0
+    progress: 0,
+    websiteUrl: ''
   });
 
   const [invoiceForm, setInvoiceForm] = useState({
@@ -146,6 +165,7 @@ const AdminDashboard: React.FC = () => {
   }, [showCustomerDropdown, showProjectDropdown, showInvoiceDropdown, showMessageDropdown, showRecurringDropdown]);
 
   const loadData = async () => {
+    setIsRefreshing(true);
     console.log('=== ADMIN DATA RELOAD ===');
     try {
       const [c, p, i, s] = await Promise.all([
@@ -167,6 +187,8 @@ const AdminDashboard: React.FC = () => {
       setInvoices(projectService.getAllInvoices());
       setStats(projectService.getStats());
       console.log('Customers loaded from localStorage:', localCustomers.map(cust => ({ email: cust.email, emailNotifications: cust.emailNotifications })));
+    } finally {
+      setIsRefreshing(false);
     }
     // Load contact messages separately (won't fail if table doesn't exist yet)
     try {
@@ -222,13 +244,14 @@ const AdminDashboard: React.FC = () => {
         status: projectForm.status,
         customerEmail: selectedCustomer,
         deadline: projectForm.deadline || undefined,
-        budget: projectForm.budget ? parseFloat(projectForm.budget) : undefined
+        budget: projectForm.budget ? parseFloat(projectForm.budget) : undefined,
+        websiteUrl: projectForm.websiteUrl || undefined
       });
 
       setShowProjectForm(false);
-      setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '', progress: 0 });
+      setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '', progress: 0, websiteUrl: '' });
       setSelectedCustomer('');
-      loadData();
+      await loadData();
     } catch (error) {
       console.error('Error creating project:', error);
     }
@@ -245,13 +268,14 @@ const AdminDashboard: React.FC = () => {
         status: projectForm.status,
         deadline: projectForm.deadline || undefined,
         budget: projectForm.budget ? parseFloat(projectForm.budget) : undefined,
-        progress: projectForm.progress
+        progress: projectForm.progress,
+        websiteUrl: projectForm.websiteUrl || undefined
       });
 
       setShowEditProjectForm(false);
       setEditingProject(null);
-      setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '', progress: 0 });
-      loadData();
+      setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '', progress: 0, websiteUrl: '' });
+      await loadData();
     } catch (error) {
       console.error('Error updating project:', error);
     }
@@ -265,18 +289,22 @@ const AdminDashboard: React.FC = () => {
       status: project.status,
       deadline: project.deadline ? project.deadline.substring(0, 10) : '',
       budget: project.budget?.toString() || '',
-      progress: project.progress || 0
+      progress: project.progress || 0,
+      websiteUrl: project.websiteUrl || ''
     });
     setShowEditProjectForm(true);
   };
 
   const openProjectLogs = async (project: Project) => {
     setSelectedProjectForLogs(project);
+    setIsLoadingLogs(true);
     try {
       const logs = await projectService.getProjectLogsAsync(project.id);
       setProjectLogs(logs);
     } catch {
       setProjectLogs(projectService.getProjectLogs(project.id));
+    } finally {
+      setIsLoadingLogs(false);
     }
     setShowProjectLogs(true);
   };
@@ -316,6 +344,7 @@ const AdminDashboard: React.FC = () => {
 
   const handleCreateRecurring = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsCreatingRecurring(true);
     try {
       await fetch('/.netlify/functions/recurring-invoices', {
         method: 'POST',
@@ -333,6 +362,8 @@ const AdminDashboard: React.FC = () => {
       loadData();
     } catch (error) {
       console.error('Error creating recurring invoice:', error);
+    } finally {
+      setIsCreatingRecurring(false);
     }
   };
 
@@ -350,15 +381,19 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleDeleteRecurring = async (id: string) => {
+    setIsDeletingRecurring(id);
     try {
       await fetch(`/.netlify/functions/recurring-invoices/${id}`, { method: 'DELETE' });
       loadData();
     } catch (error) {
       console.error('Error deleting recurring invoice:', error);
+    } finally {
+      setIsDeletingRecurring(null);
     }
   };
 
   const handleDeleteMessage = async (id: string) => {
+    setIsDeletingMessage(id);
     try {
       const result = await deleteContactMessage(id);
       if (result.success) {
@@ -374,26 +409,34 @@ const AdminDashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Error deleting message:', error);
+    } finally {
+      setIsDeletingMessage(null);
     }
   };
 
   const handleDeleteProject = async (projectId: string) => {
+    setIsDeletingProject(projectId);
     try {
       await projectService.deleteProjectAsync(projectId);
       setShowDeleteConfirm(null);
-      loadData();
+      await loadData();
     } catch (error) {
       console.error('Error deleting project:', error);
+    } finally {
+      setIsDeletingProject(null);
     }
   };
 
   const handleDeleteCustomer = async (email: string) => {
+    setIsDeletingCustomer(email);
     try {
       await projectService.deleteCustomerAsync(email);
       setShowCustomerDeleteConfirm(null);
-      loadData();
+      await loadData();
     } catch (error) {
       console.error('Error deleting customer:', error);
+    } finally {
+      setIsDeletingCustomer(null);
     }
   };
 
@@ -428,27 +471,34 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleDeleteInvoice = async (invoiceId: string) => {
+    setIsDeletingInvoice(invoiceId);
     try {
       await projectService.deleteInvoiceAsync(invoiceId);
       setShowInvoiceDeleteConfirm(null);
-      loadData();
+      await loadData();
     } catch (error) {
       console.error('Error deleting invoice:', error);
+    } finally {
+      setIsDeletingInvoice(null);
     }
   };
 
   const handleUpdateInvoiceStatus = async (invoiceId: string, status: 'paid' | 'sent' | 'overdue') => {
+    setIsUpdatingInvoiceStatus(invoiceId);
     try {
       await projectService.updateInvoiceAsync(invoiceId, { status });
       loadData();
     } catch (error) {
       console.error('Error updating invoice status:', error);
+    } finally {
+      setIsUpdatingInvoiceStatus(null);
     }
   };
 
   // Expense handlers
   const handleCreateExpense = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsCreatingExpense(true);
     try {
       const response = await fetch('/.netlify/functions/expenses', {
         method: 'POST',
@@ -487,12 +537,15 @@ const AdminDashboard: React.FC = () => {
       console.error('Error creating expense:', error);
       setToast({ message: 'Fout bij toevoegen kosten: ' + (error as Error).message, type: 'error' });
       setTimeout(() => setToast(null), 5000);
+    } finally {
+      setIsCreatingExpense(false);
     }
   };
 
   const handleUpdateExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingExpense) return;
+    setIsUpdatingExpense(true);
     try {
       const response = await fetch(`/.netlify/functions/expenses/${editingExpense.id}`, {
         method: 'PUT',
@@ -529,15 +582,20 @@ const AdminDashboard: React.FC = () => {
       console.error('Error updating expense:', error);
       setToast({ message: 'Fout bij bijwerken kosten: ' + (error as Error).message, type: 'error' });
       setTimeout(() => setToast(null), 5000);
+    } finally {
+      setIsUpdatingExpense(false);
     }
   };
 
   const handleDeleteExpense = async (id: string) => {
+    setIsDeletingExpense(id);
     try {
       await fetch(`/.netlify/functions/expenses/${id}`, { method: 'DELETE' });
       loadData();
     } catch (error) {
       console.error('Error deleting expense:', error);
+    } finally {
+      setIsDeletingExpense(null);
     }
   };
 
@@ -557,6 +615,7 @@ const AdminDashboard: React.FC = () => {
   // Surcharge handlers
   const handleCreateSurcharge = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsCreatingSurcharge(true);
     try {
       const response = await fetch('/.netlify/functions/surcharges', {
         method: 'POST',
@@ -595,12 +654,15 @@ const AdminDashboard: React.FC = () => {
       console.error('Error creating surcharge:', error);
       setToast({ message: 'Fout bij toevoegen toeslag: ' + (error as Error).message, type: 'error' });
       setTimeout(() => setToast(null), 5000);
+    } finally {
+      setIsCreatingSurcharge(false);
     }
   };
 
   const handleUpdateSurcharge = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingSurcharge) return;
+    setIsUpdatingSurcharge(true);
     try {
       const response = await fetch(`/.netlify/functions/surcharges/${editingSurcharge.id}`, {
         method: 'PUT',
@@ -637,15 +699,20 @@ const AdminDashboard: React.FC = () => {
       console.error('Error updating surcharge:', error);
       setToast({ message: 'Fout bij bijwerken toeslag: ' + (error as Error).message, type: 'error' });
       setTimeout(() => setToast(null), 5000);
+    } finally {
+      setIsUpdatingSurcharge(false);
     }
   };
 
   const handleDeleteSurcharge = async (id: string) => {
+    setIsDeletingSurcharge(id);
     try {
       await fetch(`/.netlify/functions/surcharges/${id}`, { method: 'DELETE' });
       loadData();
     } catch (error) {
       console.error('Error deleting surcharge:', error);
+    } finally {
+      setIsDeletingSurcharge(null);
     }
   };
 
@@ -666,6 +733,7 @@ const AdminDashboard: React.FC = () => {
     e.preventDefault();
     if (!selectedProjectForLogs) return;
 
+    setIsAddingLog(true);
     try {
       await projectService.addProjectLogAsync({
         projectId: selectedProjectForLogs.id,
@@ -682,6 +750,8 @@ const AdminDashboard: React.FC = () => {
       setProjectLogs(logs);
     } catch (error) {
       console.error('Error adding log:', error);
+    } finally {
+      setIsAddingLog(false);
     }
   };
 
@@ -1298,12 +1368,13 @@ const AdminDashboard: React.FC = () => {
                   <h2 className="text-xl font-semibold text-white">Klanten</h2>
                   <button
                     onClick={loadData}
-                    className="bg-dark-700 text-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-dark-600 text-sm flex items-center gap-2"
+                    disabled={isRefreshing}
+                    className="bg-dark-700 text-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-dark-600 text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    Verversen
+                    {isRefreshing ? 'Bezig met verversen...' : 'Verversen'}
                   </button>
                 </div>
                 <div className="overflow-x-auto">
@@ -1453,13 +1524,15 @@ const AdminDashboard: React.FC = () => {
                                   <div className="flex space-x-2">
                                     <button
                                       onClick={() => handleDeleteCustomer(customer.email)}
-                                      className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500"
+                                      disabled={isDeletingCustomer === customer.email}
+                                      className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                      Ja, verwijderen
+                                      {isDeletingCustomer === customer.email ? 'Bezig met verwijderen...' : 'Ja, verwijderen'}
                                     </button>
                                     <button
                                       onClick={() => setShowCustomerDeleteConfirm(null)}
-                                      className="px-3 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600"
+                                      disabled={isDeletingCustomer === customer.email}
+                                      className="px-3 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600 disabled:opacity-50"
                                     >
                                       Annuleren
                                     </button>
@@ -1531,6 +1604,19 @@ const AdminDashboard: React.FC = () => {
 
                           {showProjectDropdown === project.id && (
                             <div className="absolute right-0 mt-1 w-48 bg-dark-800 border border-dark-600 rounded-lg shadow-xl z-50 py-1">
+                              {project.websiteUrl && (
+                                <a
+                                  href={project.websiteUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="w-full text-left px-4 py-2 text-sm text-primary-400 hover:bg-dark-700 hover:text-primary-300 flex items-center gap-2"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                  </svg>
+                                  Website Bekijken
+                                </a>
+                              )}
                               <button
                                 onClick={() => { openProjectLogs(project); setShowProjectDropdown(null); }}
                                 className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
@@ -1571,13 +1657,15 @@ const AdminDashboard: React.FC = () => {
                           <div className="flex space-x-2">
                             <button
                               onClick={() => handleDeleteProject(project.id)}
-                              className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500"
+                              disabled={isDeletingProject === project.id}
+                              className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              Ja, verwijderen
+                              {isDeletingProject === project.id ? 'Bezig met verwijderen...' : 'Ja, verwijderen'}
                             </button>
                             <button
                               onClick={() => setShowDeleteConfirm(null)}
-                              className="px-3 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600"
+                              disabled={isDeletingProject === project.id}
+                              className="px-3 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600 disabled:opacity-50"
                             >
                               Annuleren
                             </button>
@@ -1663,21 +1751,48 @@ const AdminDashboard: React.FC = () => {
                                   <p className="px-3 py-0.5 text-xs text-gray-500 uppercase">Status</p>
                                   <button
                                     onClick={() => { handleUpdateInvoiceStatus(invoice.id, 'paid'); setShowInvoiceDropdown(null); }}
-                                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 ${invoice.status === 'paid' ? 'bg-green-900/30 text-green-400' : 'text-gray-300 hover:bg-dark-700 hover:text-white'}`}
+                                    disabled={isUpdatingInvoiceStatus === invoice.id}
+                                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 ${invoice.status === 'paid' ? 'bg-green-900/30 text-green-400' : 'text-gray-300 hover:bg-dark-700 hover:text-white'} disabled:opacity-50 disabled:cursor-not-allowed`}
                                   >
-                                    ✓ Betaald
+                                    {isUpdatingInvoiceStatus === invoice.id ? (
+                                      <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                      </svg>
+                                    ) : (
+                                      '✓'
+                                    )}
+                                    Betaald
                                   </button>
                                   <button
                                     onClick={() => { handleUpdateInvoiceStatus(invoice.id, 'sent'); setShowInvoiceDropdown(null); }}
-                                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 ${invoice.status === 'sent' ? 'bg-blue-900/30 text-blue-400' : 'text-gray-300 hover:bg-dark-700 hover:text-white'}`}
+                                    disabled={isUpdatingInvoiceStatus === invoice.id}
+                                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 ${invoice.status === 'sent' ? 'bg-blue-900/30 text-blue-400' : 'text-gray-300 hover:bg-dark-700 hover:text-white'} disabled:opacity-50 disabled:cursor-not-allowed`}
                                   >
-                                    ⏳ Open
+                                    {isUpdatingInvoiceStatus === invoice.id ? (
+                                      <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                      </svg>
+                                    ) : (
+                                      '⏳'
+                                    )}
+                                    Open
                                   </button>
                                   <button
                                     onClick={() => { handleUpdateInvoiceStatus(invoice.id, 'overdue'); setShowInvoiceDropdown(null); }}
-                                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 ${invoice.status === 'overdue' ? 'bg-red-900/30 text-red-400' : 'text-gray-300 hover:bg-dark-700 hover:text-white'}`}
+                                    disabled={isUpdatingInvoiceStatus === invoice.id}
+                                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 ${invoice.status === 'overdue' ? 'bg-red-900/30 text-red-400' : 'text-gray-300 hover:bg-dark-700 hover:text-white'} disabled:opacity-50 disabled:cursor-not-allowed`}
                                   >
-                                    ⚠ Te laat
+                                    {isUpdatingInvoiceStatus === invoice.id ? (
+                                      <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                      </svg>
+                                    ) : (
+                                      '⚠'
+                                    )}
+                                    Te laat
                                   </button>
                                   <div className="border-t border-dark-600 my-0.5"></div>
                                   <button
@@ -1716,13 +1831,15 @@ const AdminDashboard: React.FC = () => {
                                 <div className="flex space-x-2">
                                   <button
                                     onClick={() => handleDeleteInvoice(invoice.id)}
-                                    className="px-2.5 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500"
+                                    disabled={isDeletingInvoice === invoice.id}
+                                    className="px-2.5 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                   >
-                                    Ja, verwijderen
+                                    {isDeletingInvoice === invoice.id ? 'Bezig met verwijderen...' : 'Ja, verwijderen'}
                                   </button>
                                   <button
                                     onClick={() => setShowInvoiceDeleteConfirm(null)}
-                                    className="px-2.5 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600"
+                                    disabled={isDeletingInvoice === invoice.id}
+                                    className="px-2.5 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600 disabled:opacity-50"
                                   >
                                     Annuleren
                                   </button>
@@ -1869,9 +1986,20 @@ const AdminDashboard: React.FC = () => {
                                       </button>
                                       <button
                                         onClick={() => { handleDeleteRecurring(ri.id); setShowRecurringDeleteConfirm(null); }}
-                                        className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-500"
+                                        disabled={isDeletingRecurring === ri.id}
+                                        className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                       >
-                                        Verwijderen
+                                        {isDeletingRecurring === ri.id ? (
+                                          <>
+                                            <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Bezig...
+                                          </>
+                                        ) : (
+                                          'Verwijderen'
+                                        )}
                                       </button>
                                     </div>
                                   </div>
@@ -1960,8 +2088,18 @@ const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex space-x-3 mt-6">
-                    <button type="submit" className="flex-1 bg-primary-500 text-dark-900 py-2 rounded-lg font-medium hover:bg-primary-400">
-                      Aanmaken
+                    <button type="submit" disabled={isCreatingRecurring} className="flex-1 bg-primary-500 text-dark-900 py-2 rounded-lg font-medium hover:bg-primary-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                      {isCreatingRecurring ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4 text-dark-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Bezig met aanmaken...
+                        </>
+                      ) : (
+                        'Aanmaken'
+                      )}
                     </button>
                     <button type="button" onClick={() => setShowRecurringForm(false)} className="flex-1 bg-dark-700 text-gray-300 py-2 rounded-lg font-medium hover:bg-dark-600">
                       Annuleren
@@ -2064,9 +2202,20 @@ const AdminDashboard: React.FC = () => {
                             <div className="flex space-x-2">
                               <button
                                 onClick={() => handleDeleteMessage(msg.id)}
-                                className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500"
+                                disabled={isDeletingMessage === msg.id}
+                                className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                               >
-                                Ja, verwijderen
+                                {isDeletingMessage === msg.id ? (
+                                  <>
+                                    <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Bezig...
+                                  </>
+                                ) : (
+                                  'Ja, verwijderen'
+                                )}
                               </button>
                               <button
                                 onClick={() => setShowMessageDeleteConfirm(null)}
@@ -2193,9 +2342,20 @@ const AdminDashboard: React.FC = () => {
                                   </button>
                                   <button
                                     onClick={() => handleDeleteExpense(expense.id)}
-                                    className="text-red-400 hover:text-red-300 text-xs"
+                                    disabled={isDeletingExpense === expense.id}
+                                    className="text-red-400 hover:text-red-300 text-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                                   >
-                                    Verwijderen
+                                    {isDeletingExpense === expense.id ? (
+                                      <>
+                                        <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Bezig...
+                                      </>
+                                    ) : (
+                                      'Verwijderen'
+                                    )}
                                   </button>
                                 </div>
                               </div>
@@ -2350,9 +2510,20 @@ const AdminDashboard: React.FC = () => {
                                 </button>
                                 <button
                                   onClick={() => handleDeleteSurcharge(surcharge.id)}
-                                  className="text-red-400 hover:text-red-300 text-xs"
+                                  disabled={isDeletingSurcharge === surcharge.id}
+                                  className="text-red-400 hover:text-red-300 text-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                                 >
-                                  Verwijderen
+                                  {isDeletingSurcharge === surcharge.id ? (
+                                    <>
+                                      <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                      </svg>
+                                      Bezig...
+                                    </>
+                                  ) : (
+                                    'Verwijderen'
+                                  )}
                                 </button>
                               </div>
                             </div>
@@ -2494,6 +2665,16 @@ const AdminDashboard: React.FC = () => {
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                       />
                     </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Website URL <span className="text-gray-500 text-xs">(optioneel)</span></label>
+                      <input
+                        type="url"
+                        value={projectForm.websiteUrl}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, websiteUrl: e.target.value }))}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        placeholder="https://leegstandmeldpunt.nl"
+                      />
+                    </div>
                   </div>
                   <div className="flex justify-end space-x-3 mt-6">
                     <button
@@ -2596,6 +2777,16 @@ const AdminDashboard: React.FC = () => {
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                       />
                     </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">Website URL <span className="text-gray-500 text-xs">(optioneel)</span></label>
+                      <input
+                        type="url"
+                        value={projectForm.websiteUrl}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, websiteUrl: e.target.value }))}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        placeholder="https://leegstandmeldpunt.nl"
+                      />
+                    </div>
                   </div>
                   <div className="flex justify-end space-x-3 mt-6">
                     <button
@@ -2603,7 +2794,7 @@ const AdminDashboard: React.FC = () => {
                       onClick={() => {
                         setShowEditProjectForm(false);
                         setEditingProject(null);
-                        setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '', progress: 0 });
+                        setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '', progress: 0, websiteUrl: '' });
                       }}
                       className="px-4 py-2 text-gray-400 hover:text-white"
                     >
@@ -3053,9 +3244,20 @@ const AdminDashboard: React.FC = () => {
                         </select>
                         <button
                           type="submit"
-                          className="flex-1 px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
+                          disabled={isAddingLog}
+                          className="flex-1 px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
-                          Toevoegen
+                          {isAddingLog ? (
+                            <>
+                              <svg className="animate-spin h-4 w-4 text-dark-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              Bezig met toevoegen...
+                            </>
+                          ) : (
+                            'Toevoegen'
+                          )}
                         </button>
                       </div>
                     </div>
@@ -3064,7 +3266,15 @@ const AdminDashboard: React.FC = () => {
                   {/* Logs List */}
                   <div>
                     <h4 className="text-sm font-semibold text-gray-400 uppercase mb-3">Updates & Logs</h4>
-                    {projectLogs.length === 0 ? (
+                    {isLoadingLogs ? (
+                      <div className="text-center py-8 bg-dark-900 rounded-lg border border-dark-700">
+                        <svg className="animate-spin h-6 w-6 text-primary-500 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p className="text-gray-400">Bezig met laden...</p>
+                      </div>
+                    ) : projectLogs.length === 0 ? (
                       <div className="text-center py-8 bg-dark-900 rounded-lg border border-dark-700">
                         <p className="text-gray-400">Nog geen updates voor dit project.</p>
                       </div>
@@ -3233,9 +3443,20 @@ const AdminDashboard: React.FC = () => {
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
+                      disabled={isCreatingExpense || isUpdatingExpense}
+                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                      {editingExpense ? 'Opslaan' : 'Toevoegen'}
+                      {(isCreatingExpense || isUpdatingExpense) ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4 text-dark-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          {editingExpense ? 'Bezig met bijwerken...' : 'Bezig met aanmaken...'}
+                        </>
+                      ) : (
+                        editingExpense ? 'Opslaan' : 'Toevoegen'
+                      )}
                     </button>
                   </div>
                 </form>
@@ -3346,9 +3567,20 @@ const AdminDashboard: React.FC = () => {
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
+                      disabled={isCreatingSurcharge || isUpdatingSurcharge}
+                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                      {editingSurcharge ? 'Opslaan' : 'Toevoegen'}
+                      {(isCreatingSurcharge || isUpdatingSurcharge) ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4 text-dark-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          {editingSurcharge ? 'Bezig met bijwerken...' : 'Bezig met aanmaken...'}
+                        </>
+                      ) : (
+                        editingSurcharge ? 'Opslaan' : 'Toevoegen'
+                      )}
                     </button>
                   </div>
                 </form>

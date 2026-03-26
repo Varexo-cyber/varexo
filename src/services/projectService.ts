@@ -24,6 +24,7 @@ export interface Project {
   budget?: number;
   progress?: number;
   features?: string[];
+  websiteUrl?: string;
 }
 
 export interface Invoice {
@@ -265,8 +266,20 @@ class ProjectService {
   // Customer management
   async getCustomersAsync(): Promise<Customer[]> {
     try {
-      return await customersAPI.getAll();
-    } catch {
+      const customers = await customersAPI.getAll();
+      // Sync to localStorage for consistency
+      const existingUsers = JSON.parse(localStorage.getItem('varexo_users') || '[]');
+      const otherUsers = existingUsers.filter((u: any) => !customers.some((c: Customer) => c.email === u.email));
+      const mergedUsers = [...otherUsers, ...customers.map((c: Customer) => ({
+        ...c,
+        password: existingUsers.find((u: any) => u.email === c.email)?.password || 'google',
+        isAdmin: c.email === 'info@varexo.nl'
+      }))];
+      localStorage.setItem('varexo_users', JSON.stringify(mergedUsers));
+      console.log('getCustomersAsync - synced from API:', customers.map((c: Customer) => ({ email: c.email, emailNotifications: c.emailNotifications })));
+      return customers;
+    } catch (err) {
+      console.warn('API failed, using localStorage fallback:', err);
       return this.getCustomers();
     }
   }

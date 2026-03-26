@@ -19,10 +19,11 @@ exports.handler = async (event) => {
   const params = event.queryStringParameters || {};
 
   try {
-    // Auto-migrate: add progress column if missing
+    // Auto-migrate: add progress and website_url columns if missing
     try {
       await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS progress INTEGER DEFAULT 0`;
-    } catch (e) { /* column may already exist */ }
+      await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS website_url TEXT`;
+    } catch (e) { /* columns may already exist */ }
 
     // GET /projects?email=... - Get projects for customer
     // GET /projects?all=true - Get all projects (admin)
@@ -45,6 +46,7 @@ exports.handler = async (event) => {
         deadline: p.deadline,
         budget: p.budget ? parseFloat(p.budget) : undefined,
         progress: p.progress || 0,
+        websiteUrl: p.website_url,
         createdAt: p.created_at,
         updatedAt: p.updated_at
       }));
@@ -54,17 +56,17 @@ exports.handler = async (event) => {
 
     // POST /projects - Create project
     if (event.httpMethod === 'POST') {
-      const { title, description, status, customerEmail, deadline, budget } = body;
+      const { title, description, status, customerEmail, deadline, budget, websiteUrl } = body;
 
       let result;
       try {
         result = await sql`
-          INSERT INTO projects (title, description, status, customer_email, deadline, budget, progress)
-          VALUES (${title}, ${description || ''}, ${status || 'planning'}, ${customerEmail}, ${deadline || null}, ${budget || null}, ${body.progress || 0})
+          INSERT INTO projects (title, description, status, customer_email, deadline, budget, progress, website_url)
+          VALUES (${title}, ${description || ''}, ${status || 'planning'}, ${customerEmail}, ${deadline || null}, ${budget || null}, ${body.progress || 0}, ${websiteUrl || null})
           RETURNING *
         `;
       } catch (colErr) {
-        // Fallback without progress column
+        // Fallback without new columns
         result = await sql`
           INSERT INTO projects (title, description, status, customer_email, deadline, budget)
           VALUES (${title}, ${description || ''}, ${status || 'planning'}, ${customerEmail}, ${deadline || null}, ${budget || null})
@@ -82,6 +84,7 @@ exports.handler = async (event) => {
         deadline: p.deadline,
         budget: p.budget ? parseFloat(p.budget) : undefined,
         progress: p.progress || 0,
+        websiteUrl: p.website_url,
         createdAt: p.created_at,
         updatedAt: p.updated_at
       };
@@ -95,7 +98,7 @@ exports.handler = async (event) => {
     // PUT /projects/:id - Update project
     if (event.httpMethod === 'PUT') {
       const id = path.replace('/', '');
-      const { title, description, status, deadline, budget, progress } = body;
+      const { title, description, status, deadline, budget, progress, websiteUrl } = body;
 
       let result;
       try {
@@ -107,6 +110,7 @@ exports.handler = async (event) => {
             deadline = COALESCE(${deadline || null}, deadline),
             budget = COALESCE(${budget || null}, budget),
             progress = COALESCE(${typeof progress === 'number' ? progress : null}, progress, 0),
+            website_url = COALESCE(${websiteUrl || null}, website_url),
             updated_at = NOW()
           WHERE id = ${parseInt(id)}
           RETURNING *
@@ -139,6 +143,7 @@ exports.handler = async (event) => {
         deadline: p.deadline,
         budget: p.budget ? parseFloat(p.budget) : undefined,
         progress: p.progress || 0,
+        websiteUrl: p.website_url,
         createdAt: p.created_at,
         updatedAt: p.updated_at
       })};
