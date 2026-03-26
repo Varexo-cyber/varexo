@@ -15,14 +15,15 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'GET') {
       console.log('Fetching ALL users from database...');
       
-      // Get ALL users, both active and deleted
+      // FIX: Get all users and count manually
       const allUsers = await sql`SELECT email, display_name, created_at, email_notifications, is_admin, deleted_at FROM users`;
+      const customerCount = allUsers.filter(u => u.is_admin === false).length;
       
       console.log('Total users in DB:', allUsers.length);
       
-      // Filter and map - include deleted with marker
+      // FIX: Show ALL non-admin users with marker for deleted ones
       const customers = allUsers
-        .filter(u => u.is_admin === false) // Exclude admins only
+        .filter(u => u.is_admin === false)
         .map(u => ({
           email: u.email,
           displayName: u.deleted_at ? `${u.display_name} (NIET VERWIJDEREN ACCOUNT)` : u.display_name,
@@ -34,7 +35,7 @@ exports.handler = async (event) => {
           createdAt: u.created_at,
           projectCount: 0,
           invoiceCount: 0,
-          isDeleted: !!u.deleted_at // Flag for frontend
+          isDeleted: !!u.deleted_at
         }));
 
       console.log('Returning customers:', customers.length);
