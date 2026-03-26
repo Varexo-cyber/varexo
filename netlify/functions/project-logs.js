@@ -13,7 +13,10 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers, body: '' };
   }
 
-  const sql = neon();
+  // FIX: Force fresh connection every time
+  const dbUrl = process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL;
+  const sql = neon(dbUrl);
+  
   const path = event.path.replace('/.netlify/functions/project-logs', '').replace('/api/project-logs', '');
   const body = event.body ? JSON.parse(event.body) : {};
   const params = event.queryStringParameters || {};
