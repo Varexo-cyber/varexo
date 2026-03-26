@@ -16,8 +16,8 @@ exports.handler = async (event) => {
 
   try {
     if (event.httpMethod === 'GET') {
-      // FIX: Get all users and count manually like customers.js
-      const allUsers = await sql`SELECT is_admin, deleted_at FROM users`;
+      // FIX: Get all users with all fields like customers.js
+      const allUsers = await sql`SELECT email, display_name, created_at, email_notifications, is_admin, deleted_at FROM users`;
       const customerCount = allUsers.filter(u => u.is_admin === false && u.deleted_at === null).length;
       
       const projects = await sql`SELECT COUNT(*) as count FROM projects`;

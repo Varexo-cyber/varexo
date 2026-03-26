@@ -28,11 +28,12 @@ exports.handler = async (event) => {
     // GET /projects?email=... - Get projects for customer
     // GET /projects?all=true - Get all projects (admin)
     if (event.httpMethod === 'GET') {
-      console.log('Fetching projects...', params);
+      console.log('PROJECTS API - Fetching all projects...');
       
       // FIX: Get ALL projects first to bypass caching
       const allProjects = await sql`SELECT * FROM projects ORDER BY created_at DESC`;
-      console.log('Total projects from DB:', allProjects.length);
+      console.log('PROJECTS API - Total from DB:', allProjects.length);
+      console.log('PROJECTS API - All emails:', allProjects.map(p => p.customer_email));
       
       let result;
       if (params.all === 'true') {
@@ -40,7 +41,7 @@ exports.handler = async (event) => {
       } else if (params.email) {
         // Filter in JavaScript to bypass query caching
         result = allProjects.filter(p => p.customer_email === params.email);
-        console.log('Filtered for', params.email, ':', result.length);
+        console.log('PROJECTS API - Filtered for', params.email, ':', result.length);
       } else {
         return { statusCode: 400, headers, body: JSON.stringify({ error: 'Email parameter vereist' }) };
       }
@@ -65,6 +66,8 @@ exports.handler = async (event) => {
     // POST /projects - Create project
     if (event.httpMethod === 'POST') {
       const { title, description, status, customerEmail, deadline, budget, websiteUrl } = body;
+      
+      console.log('POST /projects - Creating:', { title, customerEmail, status });
 
       let result;
       try {
@@ -73,13 +76,21 @@ exports.handler = async (event) => {
           VALUES (${title}, ${description || ''}, ${status || 'planning'}, ${customerEmail}, ${deadline || null}, ${budget || null}, ${body.progress || 0}, ${websiteUrl || null})
           RETURNING *
         `;
+        console.log('POST /projects - Success:', result[0]);
       } catch (colErr) {
+        console.error('POST /projects - First insert failed:', colErr.message);
         // Fallback without new columns
-        result = await sql`
-          INSERT INTO projects (title, description, status, customer_email, deadline, budget)
-          VALUES (${title}, ${description || ''}, ${status || 'planning'}, ${customerEmail}, ${deadline || null}, ${budget || null})
-          RETURNING *
-        `;
+        try {
+          result = await sql`
+            INSERT INTO projects (title, description, status, customer_email, deadline, budget)
+            VALUES (${title}, ${description || ''}, ${status || 'planning'}, ${customerEmail}, ${deadline || null}, ${budget || null})
+            RETURNING *
+          `;
+          console.log('POST /projects - Fallback success:', result[0]);
+        } catch (err2) {
+          console.error('POST /projects - Fallback also failed:', err2.message);
+          throw err2;
+        }
       }
 
       const p = result[0];
