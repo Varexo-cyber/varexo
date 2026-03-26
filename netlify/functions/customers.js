@@ -26,28 +26,27 @@ exports.handler = async (event) => {
       
       // FORCE FRESH DATA - no cache
       const users = await sql`
-        SELECT email, display_name, created_at, email_notifications
-        FROM users 
-        WHERE is_admin = FALSE AND deleted_at IS NULL
+        SELECT * FROM (
+          SELECT 
+            email,
+            display_name,
+            created_at,
+            COALESCE(email_notifications, true) as email_notifications
+          FROM users 
+          WHERE is_admin = FALSE AND deleted_at IS NULL
+        ) as fresh_users
         ORDER BY created_at DESC
       `;
       
       console.log('Users found in DB:', users.length);
       console.log('User emails:', users.map(u => u.email));
-      
-      // Check if scrape108 and jakubostrowski still exist
-      const testUsers = await sql`
-        SELECT email FROM users 
-        WHERE email IN ('scrape108@gmail.com', 'jakubostrowski082@gmail.com')
-      `;
-      console.log('Test query for missing users:', testUsers);
 
       const customers = users.map(u => ({
         email: u.email,
         displayName: u.display_name,
         phone: null,
         company: null,
-        emailNotifications: u.email_notifications !== false,
+        emailNotifications: u.email_notifications,
         subscription: null,
         hasSocialMedia: false,
         createdAt: u.created_at,
