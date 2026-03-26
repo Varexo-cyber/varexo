@@ -24,35 +24,36 @@ exports.handler = async (event) => {
       console.log('Column may already exist:', e.message);
     }
 
-    // GET /customers - Get all non-deleted customers with project/invoice counts
+    // GET /customers - Get all non-deleted customers
     if (event.httpMethod === 'GET') {
       const result = await sql`
         SELECT 
           u.email,
           u.display_name,
           u.created_at,
-          COALESCE(u.email_notifications, true) as email_notifications,
-          COUNT(DISTINCT p.id) as project_count,
-          COUNT(DISTINCT i.id) as invoice_count
+          COALESCE(u.email_notifications, true) as email_notifications
         FROM users u
-        LEFT JOIN projects p ON u.email = p.customer_email
-        LEFT JOIN invoices i ON u.email = i.customer_email
         WHERE u.is_admin = FALSE AND u.deleted_at IS NULL
-        GROUP BY u.email, u.display_name, u.created_at, u.email_notifications
         ORDER BY u.created_at DESC
       `;
 
-      const customers = result.map(c => ({
-        email: c.email,
-        displayName: c.display_name,
-        phone: null,
-        company: null,
-        emailNotifications: c.email_notifications,
-        subscription: null,
-        hasSocialMedia: false,
-        createdAt: c.created_at,
-        projectCount: parseInt(c.project_count),
-        invoiceCount: parseInt(c.invoice_count)
+      // Get project and invoice counts separately
+      const customers = await Promise.all(result.map(async (c) => {
+        const projectResult = await sql`SELECT COUNT(*) as count FROM projects WHERE customer_email = ${c.email}`;
+        const invoiceResult = await sql`SELECT COUNT(*) as count FROM invoices WHERE customer_email = ${c.email}`;
+        
+        return {
+          email: c.email,
+          displayName: c.display_name,
+          phone: null,
+          company: null,
+          emailNotifications: c.email_notifications,
+          subscription: null,
+          hasSocialMedia: false,
+          createdAt: c.created_at,
+          projectCount: parseInt(projectResult[0].count),
+          invoiceCount: parseInt(invoiceResult[0].count)
+        };
       }));
 
       return { statusCode: 200, headers, body: JSON.stringify(customers) };
