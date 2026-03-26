@@ -110,8 +110,11 @@ export const mockAuth = {
       return savedUser;
     } catch (apiErr) {
       console.error('Google API save failed:', apiErr);
-      alert('Google login DB save failed: ' + (apiErr as Error).message);
-      // Fallback: save to localStorage only
+      // If account is deleted, don't allow fallback
+      if ((apiErr as Error).message.includes('verwijderd')) {
+        throw new Error((apiErr as Error).message);
+      }
+      // Fallback: save to localStorage only for other errors
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
       return user;
     }
