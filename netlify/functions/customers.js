@@ -15,9 +15,8 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'GET') {
       console.log('Fetching ALL users from database...');
       
-      // FIX: Count only non-deleted customers
-      const allUsers = await sql`SELECT is_admin, deleted_at FROM users`;
-      const customerCount = allUsers.filter(u => u.is_admin === false && u.deleted_at === null).length;
+      // FIX: Get all users with all required fields
+      const allUsers = await sql`SELECT email, display_name, created_at, email_notifications, is_admin, deleted_at FROM users`;
       
       console.log('Total users in DB:', allUsers.length);
       
