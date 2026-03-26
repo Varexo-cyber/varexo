@@ -53,11 +53,19 @@ exports.handler = async (event) => {
 
     // GET /invoices?email=... or ?all=true
     if (event.httpMethod === 'GET') {
+      console.log('Fetching invoices...', params);
+      
+      // FIX: Get ALL invoices first to bypass caching
+      const allInvoices = await sql`SELECT * FROM invoices ORDER BY created_at DESC`;
+      console.log('Total invoices from DB:', allInvoices.length);
+      
       let result;
       if (params.all === 'true') {
-        result = await sql`SELECT * FROM invoices ORDER BY created_at DESC`;
+        result = allInvoices;
       } else if (params.email) {
-        result = await sql`SELECT * FROM invoices WHERE customer_email = ${params.email} ORDER BY created_at DESC`;
+        // Filter in JavaScript to bypass query caching
+        result = allInvoices.filter(i => i.customer_email === params.email);
+        console.log('Filtered for', params.email, ':', result.length);
       } else {
         return { statusCode: 400, headers, body: JSON.stringify({ error: 'Email parameter vereist' }) };
       }

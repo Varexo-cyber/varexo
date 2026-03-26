@@ -206,7 +206,7 @@ exports.handler = async (event) => {
           statusCode: 403, 
           headers, 
           body: JSON.stringify({ 
-            error: 'Dit account is verwijderd. Vraag de admin om een nieuw account voor je aan te maken.' 
+            error: 'Dit account is verwijderd. Registreer een nieuw account via "Gratis Account Aanmaken" hieronder.' 
           }) 
         };
       }

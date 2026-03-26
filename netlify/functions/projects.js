@@ -28,11 +28,19 @@ exports.handler = async (event) => {
     // GET /projects?email=... - Get projects for customer
     // GET /projects?all=true - Get all projects (admin)
     if (event.httpMethod === 'GET') {
+      console.log('Fetching projects...', params);
+      
+      // FIX: Get ALL projects first to bypass caching
+      const allProjects = await sql`SELECT * FROM projects ORDER BY created_at DESC`;
+      console.log('Total projects from DB:', allProjects.length);
+      
       let result;
       if (params.all === 'true') {
-        result = await sql`SELECT * FROM projects ORDER BY created_at DESC`;
+        result = allProjects;
       } else if (params.email) {
-        result = await sql`SELECT * FROM projects WHERE customer_email = ${params.email} ORDER BY created_at DESC`;
+        // Filter in JavaScript to bypass query caching
+        result = allProjects.filter(p => p.customer_email === params.email);
+        console.log('Filtered for', params.email, ':', result.length);
       } else {
         return { statusCode: 400, headers, body: JSON.stringify({ error: 'Email parameter vereist' }) };
       }
