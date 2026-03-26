@@ -2,13 +2,17 @@
 const API_BASE = '/.netlify/functions';
 
 async function apiCall(endpoint: string, options: RequestInit = {}) {
-  const url = `${API_BASE}${endpoint}`;
+  // Add cache-busting timestamp for GET requests
+  const cacheBuster = options.method === 'GET' || !options.method ? `?_t=${Date.now()}` : '';
+  const url = `${API_BASE}${endpoint}${cacheBuster}`;
   console.log(`API Call: ${options.method || 'GET'} ${url}`);
   
   const response = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
       ...options.headers,
     },
   });

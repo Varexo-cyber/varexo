@@ -38,8 +38,9 @@ function emailTemplate(title, content, ctaText, ctaUrl) {
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>${title}</title>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     </head>
-    <body style="margin:0;padding:20px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f5f5f5;">
+    <body style="margin:0;padding:20px;font-family:'Poppins','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f5f5f5;">
       <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:hidden;border:1px solid #e0e0e0;">
         
         <!-- Header - Dark style like website navbar -->
@@ -48,8 +49,8 @@ function emailTemplate(title, content, ctaText, ctaUrl) {
         </div>
         
         <!-- Title bar -->
-        <div style="background:#ffffff;padding:24px 40px 0;text-align:center;border-bottom:none;">
-          <h1 style="color:#1a1a1a;font-size:22px;font-weight:600;margin:0;letter-spacing:0.5px;">${title}</h1>
+        <div style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%);padding:32px 40px;text-align:center;border-bottom:3px solid #10b981;">
+          <h1 style="color:#10b981;font-size:26px;font-weight:800;margin:0;letter-spacing:0.5px;text-transform:uppercase;text-shadow:0 0 20px rgba(16,185,129,0.4), 0 0 40px rgba(16,185,129,0.2);">${title}</h1>
         </div>
 
         <!-- Content -->
@@ -386,7 +387,33 @@ async function sendEmailNotificationsDisabledEmail(customerEmail, customerName) 
       Om dit te wijzigen, gaat u naar <strong>Profiel beheren</strong> in uw klantenportaal:
     </p>
   `;
-  return sendEmail(customerEmail, 'E-mailnotificaties uitgeschakeld', 'Jammer om u te zien vertrekken...', content, 'Notificaties weer inschakelen', `${PORTAL_URL}/profile`);
+  
+  // ALWAYS send this email - bypass the shouldSendEmail check
+  // This is the LAST email the user will receive
+  const title = 'Jammer om u te zien vertrekken...';
+  const subject = 'E-mailnotificaties uitgeschakeld';
+  
+  // Skip if SMTP not configured
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.log('Email skipped: SMTP not configured');
+    return false;
+  }
+
+  try {
+    const transporter = createTransporter();
+    const mailOptions = {
+      from: `"Varexo" <${process.env.SMTP_USER}>`,
+      to: customerEmail,
+      subject,
+      html: emailTemplate(title, content, 'Notificaties weer inschakelen', `${PORTAL_URL}/profile`),
+    };
+    await transporter.sendMail(mailOptions);
+    console.log(`DISABLED notification email sent to ${customerEmail}: ${subject}`);
+    return true;
+  } catch (error) {
+    console.error('Email error:', error.message);
+    return false;
+  }
 }
 
 module.exports = {
