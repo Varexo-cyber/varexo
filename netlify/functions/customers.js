@@ -15,18 +15,18 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'GET') {
       console.log('Fetching ALL users from database...');
       
-      // FIX: Get all users and count manually
-      const allUsers = await sql`SELECT email, display_name, created_at, email_notifications, is_admin, deleted_at FROM users`;
-      const customerCount = allUsers.filter(u => u.is_admin === false).length;
+      // FIX: Count only non-deleted customers
+      const allUsers = await sql`SELECT is_admin, deleted_at FROM users`;
+      const customerCount = allUsers.filter(u => u.is_admin === false && u.deleted_at === null).length;
       
       console.log('Total users in DB:', allUsers.length);
       
-      // FIX: Show ALL non-admin users with marker for deleted ones
+      // FIX: Show only non-deleted non-admin users
       const customers = allUsers
-        .filter(u => u.is_admin === false)
+        .filter(u => u.is_admin === false && u.deleted_at === null)
         .map(u => ({
           email: u.email,
-          displayName: u.deleted_at ? `${u.display_name} (NIET VERWIJDEREN ACCOUNT)` : u.display_name,
+          displayName: u.display_name,
           phone: null,
           company: null,
           emailNotifications: u.email_notifications !== false,
@@ -34,8 +34,7 @@ exports.handler = async (event) => {
           hasSocialMedia: false,
           createdAt: u.created_at,
           projectCount: 0,
-          invoiceCount: 0,
-          isDeleted: !!u.deleted_at
+          invoiceCount: 0
         }));
 
       console.log('Returning customers:', customers.length);
