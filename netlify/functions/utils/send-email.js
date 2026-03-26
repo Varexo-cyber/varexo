@@ -334,6 +334,61 @@ async function sendOverdueReminderEmail(customerEmail, customerName, invoiceNumb
   return sendEmail(customerEmail, `HERINNERING: Factuur ${invoiceNumber} is te laat`, '[ACTIE VEREIST] Factuur Te Laat', content, 'Nu Betalen', `${PORTAL_URL}/dashboard`);
 }
 
+// Email notification toggle confirmations
+async function sendEmailNotificationsEnabledEmail(customerEmail, customerName) {
+  const content = `
+    <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">
+      Beste ${customerName || 'klant'},
+    </p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">
+      <strong style="color:#059669;">U heeft succesvol uw e-mailnotificaties aangezet!</strong> 🎉
+    </p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">
+      Vanaf nu ontvangt u automatisch berichten over:
+    </p>
+    <ul style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;padding-left:24px;">
+      <li>Nieuwe facturen en betalingsherinneringen</li>
+      <li>Project updates en mijlpalen</li>
+      <li>Belangrijke mededelingen over uw account</li>
+      <li>Status wijzigingen van uw projecten</li>
+    </ul>
+    <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0;color:#059669;font-size:15px;font-weight:500;">
+        💡 <strong>Tip:</strong> U kunt uw notificatievoorkeuren altijd wijzigen in uw profiel instellingen.
+      </p>
+    </div>
+  `;
+  return sendEmail(customerEmail, 'E-mailnotificaties ingeschakeld', 'U ontvangt nu weer e-mailnotificaties', content, 'Ga naar uw Profiel', `${PORTAL_URL}/profile`);
+}
+
+async function sendEmailNotificationsDisabledEmail(customerEmail, customerName) {
+  const content = `
+    <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">
+      Beste ${customerName || 'klant'},
+    </p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">
+      U heeft uw e-mailnotificaties <strong style="color:#dc2626;">uitgeschakeld</strong>.
+    </p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">
+      <strong>Wat betekent dit?</strong>
+    </p>
+    <ul style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;padding-left:24px;">
+      <li>U ontvangt <strong>geen</strong> automatische e-mails over facturen meer</li>
+      <li>U ontvangt <strong>geen</strong> project updates via e-mail</li>
+      <li>Belangrijke meldingen worden alleen in uw klantenportaal getoond</li>
+    </ul>
+    <div style="background:#fef2f2;border-left:4px solid #ef4444;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0;color:#dc2626;font-size:15px;font-weight:500;">
+        ⚠️ <strong>Let op:</strong> We raden aan om notificaties aan te houden zodat u niets mist!
+      </p>
+    </div>
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-top:24px;">
+      Om dit te wijzigen, gaat u naar <strong>Profiel beheren</strong> in uw klantenportaal:
+    </p>
+  `;
+  return sendEmail(customerEmail, 'E-mailnotificaties uitgeschakeld', 'Jammer om u te zien vertrekken...', content, 'Notificaties weer inschakelen', `${PORTAL_URL}/profile`);
+}
+
 module.exports = {
   sendNewProjectEmail,
   sendProjectDeletedEmail,
@@ -342,4 +397,6 @@ module.exports = {
   sendProgressUpdateEmail,
   sendPaymentConfirmationEmail,
   sendOverdueReminderEmail,
+  sendEmailNotificationsEnabledEmail,
+  sendEmailNotificationsDisabledEmail,
 };

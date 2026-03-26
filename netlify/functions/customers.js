@@ -16,6 +16,13 @@ exports.handler = async (event) => {
   const path = event.path.replace('/.netlify/functions/customers', '').replace('/api/customers', '');
 
   try {
+    // Ensure email_notifications column exists
+    try {
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS email_notifications BOOLEAN DEFAULT TRUE`;
+    } catch (e) {
+      console.log('Column may already exist:', e.message);
+    }
+
     // GET /customers - Get all customers with project/invoice counts
     if (event.httpMethod === 'GET') {
       const result = await sql`
@@ -23,13 +30,14 @@ exports.handler = async (event) => {
           u.email,
           u.display_name,
           u.created_at,
+          COALESCE(u.email_notifications, true) as email_notifications,
           COUNT(DISTINCT p.id) as project_count,
           COUNT(DISTINCT i.id) as invoice_count
         FROM users u
         LEFT JOIN projects p ON u.email = p.customer_email
         LEFT JOIN invoices i ON u.email = i.customer_email
         WHERE u.is_admin = FALSE
-        GROUP BY u.email, u.display_name, u.created_at
+        GROUP BY u.email, u.display_name, u.created_at, u.email_notifications
         ORDER BY u.created_at DESC
       `;
 
@@ -38,7 +46,7 @@ exports.handler = async (event) => {
         displayName: c.display_name,
         phone: null,
         company: null,
-        emailNotifications: true,
+        emailNotifications: c.email_notifications,
         subscription: null,
         hasSocialMedia: false,
         createdAt: c.created_at,

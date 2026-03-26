@@ -196,6 +196,11 @@ exports.handler = async (event) => {
         console.log('Extracted values:', { email, displayName, phone, company, emailNotifications });
         console.log('============================');
 
+        // Get current user state before update to check if emailNotifications changed
+        const currentUser = await sql`SELECT email_notifications, display_name FROM users WHERE email = ${email}`;
+        const oldEmailNotifications = currentUser.length > 0 ? currentUser[0].email_notifications : true;
+        const userDisplayName = currentUser.length > 0 ? currentUser[0].display_name : '';
+
         const result = await sql`
           UPDATE users SET
             display_name = COALESCE(${displayName || null}, display_name),
@@ -211,6 +216,29 @@ exports.handler = async (event) => {
 
         if (result.length === 0) {
           return { statusCode: 404, headers, body: JSON.stringify({ error: 'Gebruiker niet gevonden.' }) };
+        }
+
+        // Send confirmation email if emailNotifications changed
+        if (emailNotifications !== undefined && emailNotifications !== oldEmailNotifications) {
+          try {
+            const { 
+              sendEmailNotificationsEnabledEmail, 
+              sendEmailNotificationsDisabledEmail 
+            } = require('./utils/send-email');
+            
+            if (emailNotifications === true) {
+              // Send "enabled" confirmation email
+              await sendEmailNotificationsEnabledEmail(email, userDisplayName || displayName);
+              console.log('Sent email notifications enabled confirmation to:', email);
+            } else if (emailNotifications === false) {
+              // Send "disabled" confirmation email - this will be the LAST email they receive
+              await sendEmailNotificationsDisabledEmail(email, userDisplayName || displayName);
+              console.log('Sent email notifications disabled confirmation to:', email);
+            }
+          } catch (emailError) {
+            // Log error but don't fail the profile update
+            console.error('Failed to send notification email:', emailError);
+          }
         }
 
         return { statusCode: 200, headers, body: JSON.stringify(result[0]) };
