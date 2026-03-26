@@ -141,10 +141,18 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'POST' && path === '/google') {
       const { email, displayName, photoURL } = body;
 
-      // Check if user exists with password (manual account)
-      const existing = await sql`
-        SELECT email, password_hash, provider, deleted_at FROM users WHERE email = ${email}
-      `;
+      // Check if user exists with password (manual account) - handle missing deleted_at column
+      let existing;
+      try {
+        existing = await sql`
+          SELECT email, password_hash, provider, deleted_at FROM users WHERE email = ${email}
+        `;
+      } catch (e) {
+        // deleted_at column might not exist yet, fallback to query without it
+        existing = await sql`
+          SELECT email, password_hash, provider FROM users WHERE email = ${email}
+        `;
+      }
 
       // Check if user was deleted (soft delete)
       if (existing.length > 0 && existing[0].deleted_at) {

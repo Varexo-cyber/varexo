@@ -87,6 +87,15 @@ CREATE TABLE IF NOT EXISTS expenses (
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Migration: Add email_notifications column to users table
+ALTER TABLE users ADD COLUMN IF NOT EXISTS email_notifications BOOLEAN DEFAULT TRUE;
+
+-- Migration: Add deleted_at column for soft delete
+ALTER TABLE users ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP;
+
+-- Migration: Update existing users
+UPDATE users SET email_notifications = TRUE WHERE email_notifications IS NULL;
+
 -- Migration: Update frequency column to allow yearly for existing tables
 ALTER TABLE expenses DROP CONSTRAINT IF EXISTS expenses_frequency_check;
 ALTER TABLE expenses ADD CONSTRAINT expenses_frequency_check CHECK (frequency IN ('monthly', 'one-time', 'yearly'));
