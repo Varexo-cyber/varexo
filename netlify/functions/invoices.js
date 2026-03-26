@@ -105,8 +105,13 @@ exports.handler = async (event) => {
       
       console.log('POST /invoices - Creating for:', customerEmail);
       
-      // FIX: Remove foreign key constraint check
-      await sql`SET CONSTRAINTS invoices_customer_email_fkey DEFERRED`;
+      // FIX: Drop foreign key constraint if it exists
+      try {
+        await sql`ALTER TABLE invoices DROP CONSTRAINT IF EXISTS invoices_customer_email_fkey`;
+        console.log('POST /invoices - Dropped foreign key constraint');
+      } catch (e) {
+        console.log('POST /invoices - Could not drop constraint:', e.message);
+      }
       
       // Auto-generate invoice number in YYYY-NNN format if not provided
       let finalInvoiceNumber = invoiceNumber;

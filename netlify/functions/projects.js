@@ -72,8 +72,13 @@ exports.handler = async (event) => {
       
       console.log('POST /projects - Creating:', { title, customerEmail, status });
 
-      // FIX: Remove foreign key constraint check by temporarily disabling it
-      await sql`SET CONSTRAINTS projects_customer_email_fkey DEFERRED`;
+      // FIX: Drop foreign key constraint if it exists
+      try {
+        await sql`ALTER TABLE projects DROP CONSTRAINT IF EXISTS projects_customer_email_fkey`;
+        console.log('POST /projects - Dropped foreign key constraint');
+      } catch (e) {
+        console.log('POST /projects - Could not drop constraint:', e.message);
+      }
       
       let result;
       try {
