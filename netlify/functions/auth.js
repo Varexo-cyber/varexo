@@ -182,8 +182,8 @@ exports.handler = async (event) => {
       } else {
         // New user or Google-only user
         result = await sql`
-          INSERT INTO users (email, display_name, photo_url, provider, email_notifications)
-          VALUES (${email}, ${displayName}, ${photoURL || null}, 'google', TRUE)
+          INSERT INTO users (email, display_name, photo_url, provider, email_notifications, is_admin)
+          VALUES (${email}, ${displayName}, ${photoURL || null}, 'google', TRUE, FALSE)
           ON CONFLICT (email) DO UPDATE SET
             display_name = ${displayName},
             photo_url = COALESCE(${photoURL || null}, users.photo_url),
