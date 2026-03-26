@@ -16,7 +16,7 @@ exports.handler = async (event) => {
 
   try {
     if (event.httpMethod === 'GET') {
-      const customers = await sql`SELECT COUNT(*) as count FROM users WHERE is_admin = FALSE`;
+      const customers = await sql`SELECT COUNT(*) as count FROM users WHERE is_admin = FALSE AND deleted_at IS NULL`;
       const projects = await sql`SELECT COUNT(*) as count FROM projects`;
       const activeProjects = await sql`SELECT COUNT(*) as count FROM projects WHERE status = 'active'`;
       

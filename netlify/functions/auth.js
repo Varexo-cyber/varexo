@@ -137,29 +137,33 @@ exports.handler = async (event) => {
       };
     }
 
-    // POST /auth/google - Save/update Google user (MERGE with existing account if exists)
+    // POST /auth/google - Save/update Google user
     if (event.httpMethod === 'POST' && path === '/google') {
       const { email, displayName, photoURL } = body;
 
-      // Check if user exists with password (manual account) - handle missing deleted_at column
+      // Check if user exists - handle missing deleted_at column
       let existing;
+      let deletedAt = null;
       try {
         existing = await sql`
           SELECT email, password_hash, provider, deleted_at FROM users WHERE email = ${email}
         `;
+        deletedAt = existing.length > 0 ? existing[0].deleted_at : null;
       } catch (e) {
-        // deleted_at column might not exist yet, fallback to query without it
+        // deleted_at column might not exist yet
         existing = await sql`
           SELECT email, password_hash, provider FROM users WHERE email = ${email}
         `;
       }
 
-      // Check if user was deleted (soft delete)
-      if (existing.length > 0 && existing[0].deleted_at) {
+      // BLOCK deleted users - they must create a NEW account
+      if (deletedAt) {
         return { 
           statusCode: 403, 
           headers, 
-          body: JSON.stringify({ error: 'Dit account is verwijderd. Neem contact op met Varexo voor meer informatie.' }) 
+          body: JSON.stringify({ 
+            error: 'Dit account is verwijderd. Vraag de admin om een nieuw account voor je aan te maken of gebruik een ander e-mailadres.' 
+          }) 
         };
       }
 
