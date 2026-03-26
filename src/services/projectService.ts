@@ -267,17 +267,25 @@ class ProjectService {
   async getCustomersAsync(): Promise<Customer[]> {
     try {
       const customers = await customersAPI.getAll();
-      // Sync to localStorage for consistency
-      const existingUsers = JSON.parse(localStorage.getItem('varexo_users') || '[]');
-      const otherUsers = existingUsers.filter((u: any) => !customers.some((c: Customer) => c.email === u.email));
-      const mergedUsers = [...otherUsers, ...customers.map((c: Customer) => ({
-        ...c,
-        password: existingUsers.find((u: any) => u.email === c.email)?.password || 'google',
-        isAdmin: c.email === 'info@varexo.nl'
-      }))];
-      localStorage.setItem('varexo_users', JSON.stringify(mergedUsers));
-      console.log('getCustomersAsync - synced from API:', customers.map((c: Customer) => ({ email: c.email, emailNotifications: c.emailNotifications })));
-      return customers;
+      
+      // Only sync to localStorage if API returned actual data
+      // This prevents localStorage from being wiped when API returns empty array
+      if (customers && customers.length > 0) {
+        // Sync to localStorage for consistency
+        const existingUsers = JSON.parse(localStorage.getItem('varexo_users') || '[]');
+        const otherUsers = existingUsers.filter((u: any) => !customers.some((c: Customer) => c.email === u.email));
+        const mergedUsers = [...otherUsers, ...customers.map((c: Customer) => ({
+          ...c,
+          password: existingUsers.find((u: any) => u.email === c.email)?.password || 'google',
+          isAdmin: c.email === 'info@varexo.nl'
+        }))];
+        localStorage.setItem('varexo_users', JSON.stringify(mergedUsers));
+        console.log('getCustomersAsync - synced from API:', customers.map((c: Customer) => ({ email: c.email, emailNotifications: c.emailNotifications })));
+        return customers;
+      } else {
+        console.warn('API returned empty customers array, using localStorage fallback');
+        return this.getCustomers();
+      }
     } catch (err) {
       console.warn('API failed, using localStorage fallback:', err);
       return this.getCustomers();
