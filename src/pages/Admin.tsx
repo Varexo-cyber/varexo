@@ -1572,7 +1572,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-semibold text-white">Projecten</h2>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-20">
                   {projects.map((project) => (
                     <div key={project.id} className="bg-dark-900 p-4 rounded-lg border border-dark-700">
                       <h3 className="text-lg font-medium text-white mb-2">{project.title}</h3>
