@@ -1,4 +1,5 @@
 const { neon } = require('@netlify/neon');
+const { sendPasswordResetEmail } = require('./utils/send-email');
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -206,7 +207,7 @@ exports.handler = async (event) => {
           statusCode: 403, 
           headers, 
           body: JSON.stringify({ 
-            error: 'Dit account is verwijderd. Registreer een nieuw account via "Gratis Account Aanmaken" hieronder.' 
+            error: 'Dit account is verwijderd. Vraag de admin om een nieuw account voor je aan te maken.' 
           }) 
         };
       }
@@ -217,7 +218,7 @@ exports.handler = async (event) => {
           statusCode: 404, 
           headers, 
           body: JSON.stringify({ 
-            error: 'Account bestaat niet. Maak eerst een account aan via "Gratis Account Aanmaken".' 
+            error: 'Je account bestaat niet. Klik hieronder om een nieuw account aan te maken.' 
           }) 
         };
       }
@@ -323,6 +324,85 @@ exports.handler = async (event) => {
         console.error('Profile update error:', error);
         return { statusCode: 500, headers, body: JSON.stringify({ error: 'Profile update failed: ' + error.message }) };
       }
+    }
+
+    // POST /auth/forgot-password - Request password reset
+    if (event.httpMethod === 'POST' && path === '/forgot-password') {
+      const { email } = body;
+      
+      // Check if user exists
+      const user = await sql`
+        SELECT id, email, display_name FROM users WHERE email = ${email} AND deleted_at IS NULL
+      `;
+      
+      if (user.length === 0) {
+        // Don't reveal if email exists or not (security)
+        return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Als dit email adres bestaat, ontvang je een reset link.' }) };
+      }
+      
+      // Generate reset token (random 32 char string)
+      const crypto = require('crypto');
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+      
+      // Store token in database
+      await sql`
+        INSERT INTO password_reset_tokens (user_id, token, expires_at, used)
+        VALUES (${user[0].id}, ${resetToken}, ${expiresAt.toISOString()}, false)
+      `;
+      
+      // Send reset email
+      const resetUrl = `${process.env.SITE_URL || 'https://varexo.nl'}/reset-password?token=${resetToken}`;
+      await sendPasswordResetEmail(user[0].email, user[0].display_name || 'Klant', resetUrl);
+      
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Reset instructies verstuurd naar je email.' }) };
+    }
+
+    // POST /auth/reset-password - Reset password with token
+    if (event.httpMethod === 'POST' && path === '/reset-password') {
+      const { token, newPassword } = body;
+      
+      if (!token || !newPassword || newPassword.length < 6) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: 'Token en wachtwoord (minimaal 6 tekens) zijn verplicht.' }) };
+      }
+      
+      // Find valid token
+      const tokenData = await sql`
+        SELECT t.id, t.user_id, t.expires_at, t.used, u.email
+        FROM password_reset_tokens t
+        JOIN users u ON t.user_id = u.id
+        WHERE t.token = ${token}
+      `;
+      
+      if (tokenData.length === 0) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: 'Ongeldige of verlopen reset token.' }) };
+      }
+      
+      const resetData = tokenData[0];
+      
+      // Check if token is used or expired
+      if (resetData.used) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: 'Deze reset link is al gebruikt.' }) };
+      }
+      
+      if (new Date(resetData.expires_at) < new Date()) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: 'Deze reset link is verlopen.' }) };
+      }
+      
+      // Update password
+      await sql`
+        UPDATE users 
+        SET password_hash = ${newPassword}, 
+            updated_at = NOW() 
+        WHERE id = ${resetData.user_id}
+      `;
+      
+      // Mark token as used
+      await sql`
+        UPDATE password_reset_tokens SET used = true WHERE id = ${resetData.id}
+      `;
+      
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Wachtwoord succesvol gewijzigd.' }) };
     }
 
     // PUT /auth/password - Change password (works for both manual and merged accounts)

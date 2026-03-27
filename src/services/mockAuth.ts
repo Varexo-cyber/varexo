@@ -213,6 +213,27 @@ export const mockAuth = {
 
     users[userIndex].password = newPassword;
     saveUsers(users);
+  },
+
+  // Forgot password - request reset link
+  forgotPassword: async (email: string): Promise<void> => {
+    try {
+      await authAPI.forgotPassword(email);
+      return;
+    } catch (apiError: any) {
+      // Always show success to prevent email enumeration
+      console.warn('API unavailable for forgot password');
+    }
+  },
+
+  // Reset password with token
+  resetPassword: async (token: string, newPassword: string): Promise<void> => {
+    try {
+      await authAPI.resetPassword(token, newPassword);
+      return;
+    } catch (apiError: any) {
+      throw new Error(apiError.message || 'Wachtwoord resetten mislukt. Probeer het opnieuw.');
+    }
   }
 };
 

@@ -48,6 +48,13 @@ export const authAPI = {
 
   changePassword: (email: string, currentPassword: string, newPassword: string) =>
     apiCall('/auth/password', { method: 'PUT', body: JSON.stringify({ email, currentPassword, newPassword }) }),
+
+  // Password reset
+  forgotPassword: (email: string) =>
+    apiCall('/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) }),
+
+  resetPassword: (token: string, newPassword: string) =>
+    apiCall('/auth/reset-password', { method: 'POST', body: JSON.stringify({ token, newPassword }) }),
 };
 
 // Projects API

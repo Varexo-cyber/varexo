@@ -68,14 +68,46 @@ function emailTemplate(title, content, ctaText, ctaUrl) {
         ` : ''}
 
         <!-- Footer -->
-        <div style="background:#f8f9fa;padding:24px 40px;border-top:1px solid #e9ecef;">
-          <p style="margin:0;color:#6c757d;font-size:13px;line-height:1.6;text-align:center;">
-            <strong style="color:#10b981;">Varexo</strong><br>
-            Regulierenstraat 10, 2694BA 's-Gravenzande<br>
-            <a href="mailto:info@varexo.nl" style="color:#10b981;text-decoration:none;">info@varexo.nl</a>
-          </p>
-          <p style="margin:12px 0 0;color:#adb5bd;font-size:11px;text-align:center;">
+        <div style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);padding:32px 40px;border-top:3px solid #10b981;">
+          <!-- Company Info -->
+          <div style="text-align:center;margin-bottom:20px;">
+            <p style="margin:0 0 8px;color:#10b981;font-size:18px;font-weight:700;letter-spacing:1px;">VAREXO</p>
+            <p style="margin:0;color:#94a3b8;font-size:14px;font-weight:500;">Mohammed Taher</p>
+            <p style="margin:4px 0 0;color:#64748b;font-size:12px;">Webdesign, Webshops & Social Media</p>
+          </div>
+          
+          <!-- Contact Details -->
+          <div style="background:rgba(16,185,129,0.1);border-radius:12px;padding:16px;margin-bottom:20px;border:1px solid rgba(16,185,129,0.2);">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="padding:6px 0;color:#94a3b8;font-size:13px;width:50%;">📍 Regulierenstraat 10</td>
+                <td style="padding:6px 0;color:#94a3b8;font-size:13px;width:50%;">📞 <a href="tel:+31636075966" style="color:#10b981;text-decoration:none;">+31 6 36075966</a></td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;color:#94a3b8;font-size:13px;">2694BA 's-Gravenzande</td>
+                <td style="padding:6px 0;color:#94a3b8;font-size:13px;">✉️ <a href="mailto:info@varexo.nl" style="color:#10b981;text-decoration:none;">info@varexo.nl</a></td>
+              </tr>
+            </table>
+          </div>
+          
+          <!-- Legal Info -->
+          <div style="text-align:center;margin-bottom:16px;">
+            <p style="margin:0;color:#64748b;font-size:11px;line-height:1.6;">
+              KvK: [Later Invullen] | BTW: [Later Invullen]
+            </p>
+          </div>
+          
+          <!-- Divider -->
+          <div style="border-top:1px solid #334155;margin:16px 0;"></div>
+          
+          <!-- Auto Message Notice -->
+          <p style="margin:0;color:#475569;font-size:11px;text-align:center;font-style:italic;">
             Dit is een automatisch bericht vanuit het Varexo klantenportaal.
+          </p>
+          
+          <!-- Copyright -->
+          <p style="margin:12px 0 0;color:#334155;font-size:10px;text-align:center;">
+            © 2026 Varexo. Alle rechten voorbehouden.
           </p>
         </div>
       </div>
@@ -416,6 +448,59 @@ async function sendEmailNotificationsDisabledEmail(customerEmail, customerName) 
   }
 }
 
+// Send password reset email
+async function sendPasswordResetEmail(customerEmail, displayName, resetUrl) {
+  try {
+    const transporter = createTransporter();
+    const { SITE_URL, PORTAL_URL } = getUrls();
+    
+    const subject = '🔐 Wachtwoord reset aanvraag - Varexo';
+    const title = 'Wachtwoord vergeten?';
+    const content = `
+      <p style="font-size:16px;color:#e2e8f0;margin-bottom:24px;">Hallo ${displayName},</p>
+      
+      <p style="font-size:15px;color:#94a3b8;margin-bottom:24px;line-height:1.6;">
+        Je hebt een wachtwoord reset aangevraagd voor je Varexo account. Klik op de onderstaande knop om een nieuw wachtwoord in te stellen:
+      </p>
+      
+      <div style="text-align:center;margin:32px 0;">
+        <a href="${resetUrl}" style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#ffffff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;display:inline-block;box-shadow:0 4px 14px rgba(16,185,129,0.3);">
+          Wachtwoord resetten
+        </a>
+      </div>
+      
+      <p style="font-size:13px;color:#64748b;margin-top:24px;line-height:1.6;">
+        Of kopieer deze link naar je browser:<br>
+        <a href="${resetUrl}" style="color:#10b981;word-break:break-all;">${resetUrl}</a>
+      </p>
+      
+      <div style="background:rgba(245,158,11,0.1);border-left:4px solid #f59e0b;padding:16px;margin-top:24px;border-radius:4px;">
+        <p style="margin:0;color:#fbbf24;font-size:13px;">
+          <strong>⚠️ Belangrijk:</strong> Deze link is 24 uur geldig en kan maar één keer gebruikt worden.
+        </p>
+      </div>
+      
+      <p style="font-size:13px;color:#64748b;margin-top:24px;">
+        Heb jij dit niet aangevraagd? Dan kan je deze email negeren. Je wachtwoord blijft dan ongewijzigd.
+      </p>
+    `;
+    
+    const mailOptions = {
+      from: `"Varexo" <${process.env.EMAIL_USER}>`,
+      to: customerEmail,
+      subject: subject,
+      html: emailTemplate(title, content, 'Naar Varexo', SITE_URL),
+    };
+    
+    await transporter.sendMail(mailOptions);
+    console.log(`Password reset email sent to ${customerEmail}`);
+    return true;
+  } catch (error) {
+    console.error('Password reset email error:', error.message);
+    return false;
+  }
+}
+
 module.exports = {
   sendNewProjectEmail,
   sendProjectDeletedEmail,
@@ -426,4 +511,5 @@ module.exports = {
   sendOverdueReminderEmail,
   sendEmailNotificationsEnabledEmail,
   sendEmailNotificationsDisabledEmail,
+  sendPasswordResetEmail,
 };
