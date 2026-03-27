@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import { LanguageProvider } from './contexts/LanguageContext';
 import { mockAuth } from './services/mockAuth';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -50,6 +51,7 @@ function App() {
 
   return (
     <HelmetProvider>
+    <LanguageProvider>
     <Router>
       <div className="min-h-screen bg-dark-900">
         <Header />
@@ -79,6 +81,7 @@ function App() {
         <WhatsAppButton />
       </div>
     </Router>
+    </LanguageProvider>
     </HelmetProvider>
   );
 }

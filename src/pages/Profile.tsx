@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { mockAuth, MockUser } from '../services/mockAuth';
 import PageTransition from '../components/PageTransition';
+import { useLanguage } from '../contexts/LanguageContext';
 
 // Extended user profile interface
 interface UserProfile extends MockUser {
@@ -10,9 +11,11 @@ interface UserProfile extends MockUser {
   address?: string;
   city?: string;
   emailNotifications?: boolean;
+  emailLanguage?: 'nl' | 'en';
 }
 
 const Profile: React.FC = () => {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,6 +30,7 @@ const Profile: React.FC = () => {
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [emailNotifications, setEmailNotifications] = useState(true);
+  const [emailLanguage, setEmailLanguage] = useState<'nl' | 'en'>('nl');
 
   // Password change states
   const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -50,6 +54,7 @@ const Profile: React.FC = () => {
         setAddress(profileData.address || '');
         setCity(profileData.city || '');
         setEmailNotifications(profileData.emailNotifications ?? true);
+        setEmailLanguage(profileData.emailLanguage || 'nl');
       } else {
         navigate('/login');
       }
@@ -66,8 +71,8 @@ const Profile: React.FC = () => {
     setSaving(true);
 
     try {
-      // Update profile in auth with emailNotifications
-      await mockAuth.updateProfile({ displayName, emailNotifications });
+      // Update profile in auth with emailNotifications and emailLanguage
+      await mockAuth.updateProfile({ displayName, emailNotifications, emailLanguage });
 
       // Save extended profile data
       const extendedProfile = {
@@ -75,7 +80,8 @@ const Profile: React.FC = () => {
         company,
         address,
         city,
-        emailNotifications
+        emailNotifications,
+        emailLanguage
       };
       localStorage.setItem('varexo_profile_' + user?.email, JSON.stringify(extendedProfile));
 
@@ -85,6 +91,7 @@ const Profile: React.FC = () => {
       if (userIndex !== -1) {
         console.log('Profile.tsx - Before update:', users[userIndex]);
         users[userIndex].emailNotifications = emailNotifications;
+        users[userIndex].emailLanguage = emailLanguage;
         console.log('Profile.tsx - After update:', users[userIndex]);
         localStorage.setItem('varexo_users', JSON.stringify(users));
       }
@@ -92,11 +99,11 @@ const Profile: React.FC = () => {
       // Also update the main user object in localStorage
       const currentUser = mockAuth.getCurrentUser();
       if (currentUser) {
-        const updatedUser = { ...currentUser, emailNotifications };
+        const updatedUser = { ...currentUser, emailNotifications, emailLanguage };
         localStorage.setItem('varexo_user', JSON.stringify(updatedUser));
       }
 
-      setMessage('Profiel succesvol bijgewerkt!');
+      setMessage(t('settings.saved'));
       setTimeout(() => setMessage(''), 3000);
     } catch (err: any) {
       setError(err.message || 'Er is iets misgegaan. Probeer het opnieuw.');
@@ -289,10 +296,44 @@ const Profile: React.FC = () => {
                           />
                         </button>
                         <div>
-                          <span className="text-sm font-medium text-gray-300">E-mail notificaties ontvangen</span>
-                          <p className="text-xs text-gray-500">Ontvang automatische e-mails over facturen, updates en belangrijke meldingen</p>
+                          <span className="text-sm font-medium text-gray-300">{t('settings.emailNotifications')}</span>
+                          <p className="text-xs text-gray-500">{t('settings.emailNotifications.desc')}</p>
                         </div>
                       </div>
+                    </div>
+
+                    {/* Email Language Selector */}
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        {t('email.language.title')}
+                      </label>
+                      <div className="flex gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setEmailLanguage('nl')}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition ${
+                            emailLanguage === 'nl'
+                              ? 'bg-primary-500/20 border-primary-500 text-primary-400'
+                              : 'bg-dark-700 border-dark-600 text-gray-400 hover:text-white'
+                          }`}
+                        >
+                          <span className="text-lg">🇳🇱</span>
+                          <span>{t('email.language.nl')}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEmailLanguage('en')}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition ${
+                            emailLanguage === 'en'
+                              ? 'bg-primary-500/20 border-primary-500 text-primary-400'
+                              : 'bg-dark-700 border-dark-600 text-gray-400 hover:text-white'
+                          }`}
+                        >
+                          <span className="text-lg">🇬🇧</span>
+                          <span>{t('email.language.en')}</span>
+                        </button>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">{t('email.language.desc')}</p>
                     </div>
                   </div>
 

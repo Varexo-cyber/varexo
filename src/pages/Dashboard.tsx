@@ -4,8 +4,10 @@ import { mockAuth, MockUser } from '../services/mockAuth';
 import { roleService } from '../services/roleService';
 import { projectService, Project, Invoice, ProjectLog } from '../services/projectService';
 import PageTransition from '../components/PageTransition';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const CustomerDashboard: React.FC = () => {
+  const { t } = useLanguage();
   const [user, setUser] = useState<MockUser | null>(null);
   const [activeTab, setActiveTab] = useState<'projects' | 'invoices'>('projects');
   const navigate = useNavigate();
@@ -101,13 +103,14 @@ const CustomerDashboard: React.FC = () => {
   };
 
   const getLogTypeLabel = (type: string) => {
+    const { t } = useLanguage();
     switch (type) {
-      case 'milestone': return 'Mijlpaal';
-      case 'feature': return 'Nieuwe functie';
-      case 'bugfix': return 'Bugfix';
-      case 'design': return 'Design';
-      case 'deployment': return 'Deployment';
-      default: return 'Update';
+      case 'milestone': return t('log.milestone') || 'Mijlpaal';
+      case 'feature': return t('log.feature') || 'Nieuwe functie';
+      case 'bugfix': return t('log.bugfix') || 'Bugfix';
+      case 'design': return t('log.design') || 'Design';
+      case 'deployment': return t('log.deployment') || 'Deployment';
+      default: return t('log.update') || 'Update';
     }
   };
 
@@ -537,15 +540,24 @@ const CustomerDashboard: React.FC = () => {
           {/* Header */}
           <div className="mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-white">Klantportaal</h1>
+              <h1 className="text-3xl font-bold text-white">{t('dashboard.title')}</h1>
               <p className="text-gray-400 mt-1">
                 {(() => {
                   const hour = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' })).getHours();
-                  if (hour >= 6 && hour < 12) return 'Goedemorgen';
-                  if (hour >= 12 && hour < 18) return 'Goedemiddag';
-                  if (hour >= 18 && hour < 23) return 'Goedenavond';
-                  return 'Goedenacht';
-                })()}, {user.displayName} 👋
+                  let greeting = '';
+                  if (t('language') === 'nl') {
+                    if (hour >= 6 && hour < 12) greeting = 'Goedemorgen';
+                    else if (hour >= 12 && hour < 18) greeting = 'Goedemiddag';
+                    else if (hour >= 18 && hour < 23) greeting = 'Goedenavond';
+                    else greeting = 'Goedenacht';
+                  } else {
+                    if (hour >= 6 && hour < 12) greeting = 'Good morning';
+                    else if (hour >= 12 && hour < 18) greeting = 'Good afternoon';
+                    else if (hour >= 18 && hour < 23) greeting = 'Good evening';
+                    else greeting = 'Good night';
+                  }
+                  return `${greeting}, ${user.displayName} 👋`;
+                })()}
               </p>
             </div>
           </div>
@@ -561,7 +573,7 @@ const CustomerDashboard: React.FC = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-400">Abonnement</p>
+                  <p className="text-sm font-medium text-gray-400">{t('dashboard.subscription') || 'Abonnement'}</p>
                   <div className="flex flex-col">
                     {(() => {
                       const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
@@ -570,7 +582,7 @@ const CustomerDashboard: React.FC = () => {
                       const hasSocialMedia = currentUser?.hasSocialMedia;
                       
                       if (!subscription) {
-                        return <span className="text-sm text-gray-500">Geen abonnement</span>;
+                        return <span className="text-sm text-gray-500">{t('dashboard.noSubscription') || 'Geen abonnement'}</span>;
                       }
                       
                       return (
@@ -602,7 +614,7 @@ const CustomerDashboard: React.FC = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-400">Actieve Projecten</p>
+                  <p className="text-sm font-medium text-gray-400">{t('dashboard.activeProjects') || 'Actieve Projecten'}</p>
                   <p className="text-2xl font-bold text-white">{projects.filter(p => p.status === 'active').length}</p>
                 </div>
               </div>
@@ -616,7 +628,7 @@ const CustomerDashboard: React.FC = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-400">Voltooide Projecten</p>
+                  <p className="text-sm font-medium text-gray-400">{t('dashboard.completedProjects') || 'Voltooide Projecten'}</p>
                   <p className="text-2xl font-bold text-white">{projects.filter(p => p.status === 'completed').length}</p>
                 </div>
               </div>
@@ -630,7 +642,7 @@ const CustomerDashboard: React.FC = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-400">Openstaande Facturen</p>
+                  <p className="text-sm font-medium text-gray-400">{t('dashboard.pendingInvoices') || 'Openstaande Facturen'}</p>
                   <p className="text-2xl font-bold text-white">{invoices.filter(i => i.status === 'sent').length}</p>
                 </div>
               </div>
@@ -648,7 +660,7 @@ const CustomerDashboard: React.FC = () => {
                     : 'border-transparent text-gray-400 hover:text-gray-300'
                 }`}
               >
-                Projecten ({projects.length})
+                {t('dashboard.projects')} ({projects.length})
               </button>
               <button
                 onClick={() => setActiveTab('invoices')}
@@ -658,7 +670,7 @@ const CustomerDashboard: React.FC = () => {
                     : 'border-transparent text-gray-400 hover:text-gray-300'
                 }`}
               >
-                Facturen ({invoices.length})
+                {t('dashboard.invoices')} ({invoices.length})
               </button>
             </nav>
           </div>
@@ -667,14 +679,14 @@ const CustomerDashboard: React.FC = () => {
           {activeTab === 'projects' && (
             <div className="bg-dark-800 rounded-lg border border-dark-700">
               <div className="p-6">
-                <h2 className="text-xl font-semibold text-white mb-4">Mijn Projecten</h2>
+                <h2 className="text-xl font-semibold text-white mb-4">{t('dashboard.projects')}</h2>
                 {projects.length === 0 ? (
                   <div className="text-center py-12">
                     <svg className="w-12 h-12 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
-                    <p className="text-gray-400">Geen projecten gevonden</p>
-                    <p className="text-gray-500 text-sm mt-2">De admin zal projecten voor je aanmaken</p>
+                    <p className="text-gray-400">{t('dashboard.noProjects')}</p>
+                    <p className="text-gray-500 text-sm mt-2">{t('dashboard.adminWillCreate') || 'De admin zal projecten voor je aanmaken'}</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
@@ -703,7 +715,7 @@ const CustomerDashboard: React.FC = () => {
                         {/* Progress Bar */}
                         <div className="mb-3">
                           <div className="flex justify-between text-xs text-gray-400 mb-1">
-                            <span>Voortgang</span>
+                            <span>{t('common.progress') || 'Voortgang'}</span>
                             <span>{project.progress || 0}%</span>
                           </div>
                           <div className="w-full bg-dark-700 rounded-full h-2">

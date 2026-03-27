@@ -449,51 +449,79 @@ async function sendEmailNotificationsDisabledEmail(customerEmail, customerName) 
 }
 
 // Send password reset email
-async function sendPasswordResetEmail(customerEmail, displayName, resetUrl) {
+async function sendPasswordResetEmail(customerEmail, displayName, resetUrl, language = 'nl') {
   try {
     const transporter = createTransporter();
     const { SITE_URL, PORTAL_URL } = getUrls();
     
-    const subject = '🔐 Wachtwoord reset aanvraag - Varexo';
-    const title = 'Wachtwoord vergeten?';
-    const content = `
-      <p style="font-size:16px;color:#e2e8f0;margin-bottom:24px;">Hallo ${displayName},</p>
+    // Bilingual content
+    const content = {
+      nl: {
+        subject: '🔐 Wachtwoord reset aanvraag - Varexo',
+        title: 'Wachtwoord vergeten?',
+        greeting: `Hallo ${displayName},`,
+        intro: 'Je hebt een wachtwoord reset aangevraagd voor je Varexo account. Klik op de onderstaande knop om een nieuw wachtwoord in te stellen:',
+        button: 'Wachtwoord resetten',
+        copyLink: 'Of kopieer deze link naar je browser:',
+        warning: '⚠️ Belangrijk:',
+        warningText: 'Deze link is 24 uur geldig en kan maar één keer gebruikt worden.',
+        notRequested: 'Heb jij dit niet aangevraagd? Dan kan je deze email negeren. Je wachtwoord blijft dan ongewijzigd.',
+        footerLink: 'Naar Varexo'
+      },
+      en: {
+        subject: '🔐 Password reset request - Varexo',
+        title: 'Forgot your password?',
+        greeting: `Hello ${displayName},`,
+        intro: 'You have requested a password reset for your Varexo account. Click the button below to set a new password:',
+        button: 'Reset Password',
+        copyLink: 'Or copy this link to your browser:',
+        warning: '⚠️ Important:',
+        warningText: 'This link is valid for 24 hours and can only be used once.',
+        notRequested: "Didn't request this? You can ignore this email. Your password will remain unchanged.",
+        footerLink: 'Go to Varexo'
+      }
+    };
+    
+    const lang = content[language] || content.nl;
+    
+    const emailContent = `
+      <p style="font-size:16px;color:#e2e8f0;margin-bottom:24px;">${lang.greeting}</p>
       
       <p style="font-size:15px;color:#94a3b8;margin-bottom:24px;line-height:1.6;">
-        Je hebt een wachtwoord reset aangevraagd voor je Varexo account. Klik op de onderstaande knop om een nieuw wachtwoord in te stellen:
+        ${lang.intro}
       </p>
       
       <div style="text-align:center;margin:32px 0;">
         <a href="${resetUrl}" style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#ffffff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;display:inline-block;box-shadow:0 4px 14px rgba(16,185,129,0.3);">
-          Wachtwoord resetten
+          ${lang.button}
         </a>
       </div>
       
       <p style="font-size:13px;color:#64748b;margin-top:24px;line-height:1.6;">
-        Of kopieer deze link naar je browser:<br>
+        ${lang.copyLink}<br>
         <a href="${resetUrl}" style="color:#10b981;word-break:break-all;">${resetUrl}</a>
       </p>
       
       <div style="background:rgba(245,158,11,0.1);border-left:4px solid #f59e0b;padding:16px;margin-top:24px;border-radius:4px;">
         <p style="margin:0;color:#fbbf24;font-size:13px;">
-          <strong>⚠️ Belangrijk:</strong> Deze link is 24 uur geldig en kan maar één keer gebruikt worden.
+          <strong>${lang.warning}</strong> ${lang.warningText}
         </p>
       </div>
       
       <p style="font-size:13px;color:#64748b;margin-top:24px;">
-        Heb jij dit niet aangevraagd? Dan kan je deze email negeren. Je wachtwoord blijft dan ongewijzigd.
+        ${lang.notRequested}
       </p>
     `;
     
     const mailOptions = {
       from: `"Varexo" <${process.env.EMAIL_USER}>`,
       to: customerEmail,
-      subject: subject,
-      html: emailTemplate(title, content, 'Naar Varexo', SITE_URL),
+      subject: lang.subject,
+      html: emailTemplate(lang.title, emailContent, lang.footerLink, SITE_URL),
     };
     
     await transporter.sendMail(mailOptions);
-    console.log(`Password reset email sent to ${customerEmail}`);
+    console.log(`Password reset email sent to ${customerEmail} in ${language}`);
     return true;
   } catch (error) {
     console.error('Password reset email error:', error.message);

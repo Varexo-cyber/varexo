@@ -1,26 +1,25 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { mockAuth, MockUser } from '../services/mockAuth';
 import VarexoLogo from './VarexoLogo';
+import { LanguageSwitcher } from './LanguageSwitcher';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Header: React.FC = () => {
+  const { t } = useLanguage();
   const [user, setUser] = useState<MockUser | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [isHidden] = useState(false);
-  const lastScrollY = useRef(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = mockAuth.onAuthChanged((currentUser) => {
       setUser(currentUser);
-      setImageError(false); // Reset error when user changes
+      setImageError(false);
     });
     return unsubscribe;
   }, []);
-
-  // Scroll listener removed - navbar scrolls with page
 
   const handleLogout = async () => {
     await mockAuth.signOut();
@@ -29,14 +28,8 @@ const Header: React.FC = () => {
   };
 
   const handleImageError = () => {
-    console.log('Image error - showing fallback');
     setImageError(true);
   };
-
-  // Debug logging
-  if (user) {
-    console.log('Debug - photoURL:', user.photoURL, 'imageError:', imageError);
-  }
 
   return (
     <header className="bg-dark-950 shadow-lg border-b border-dark-700/50 relative z-50">
@@ -46,13 +39,16 @@ const Header: React.FC = () => {
             <VarexoLogo size={36} showText />
           </Link>
           <nav className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Home</Link>
-            <Link to="/over-ons" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Over ons</Link>
+            <Link to="/" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.home')}</Link>
+            <Link to="/over-ons" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.about') || 'Over ons'}</Link>
             <Link to="/portfolio" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Portfolio</Link>
-            <Link to="/diensten" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Diensten</Link>
-            <Link to="/prijzen" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Prijzen</Link>
-            <Link to="/werkwijze" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Werkwijze</Link>
-            <Link to="/contact" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Contact</Link>
+            <Link to="/diensten" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.services')}</Link>
+            <Link to="/prijzen" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.pricing')}</Link>
+            <Link to="/werkwijze" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.process') || 'Werkwijze'}</Link>
+            <Link to="/contact" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.contact')}</Link>
+            
+            {/* Language Switcher */}
+            <LanguageSwitcher />
             
             {user ? (
               <div className="relative">
@@ -86,32 +82,34 @@ const Header: React.FC = () => {
                       className="block px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white"
                       onClick={() => setShowDropdown(false)}
                     >
-                      Dashboard
+                      {t('nav.dashboard')}
                     </Link>
                     <Link
                       to="/profile"
                       className="block px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white"
                       onClick={() => setShowDropdown(false)}
                     >
-                      Profiel beheren
+                      {t('settings.profile')}
                     </Link>
                     <div className="border-t border-dark-700 my-1"></div>
                     <button
                       onClick={handleLogout}
                       className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-dark-700 hover:text-red-300"
                     >
-                      Uitloggen
+                      {t('nav.logout')}
                     </button>
                   </div>
                 )}
               </div>
             ) : (
               <Link to="/login" className="bg-primary-500 text-dark-900 px-4 py-2 rounded-lg font-bold hover:bg-primary-400 transition glow-emerald text-sm">
-                Klant Login
+                {t('nav.login')}
               </Link>
             )}
           </nav>
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-2">
+            {/* Mobile Language Switcher */}
+            <LanguageSwitcher />
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-gray-300 hover:text-primary-400 transition"
@@ -154,13 +152,13 @@ const Header: React.FC = () => {
                       )}
                       <span className="text-white text-sm font-medium">{user.displayName}</span>
                     </div>
-                    <Link to="/dashboard" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
-                    <Link to="/profile" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Profiel beheren</Link>
+                    <Link to="/dashboard" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>{t('nav.dashboard')}</Link>
+                    <Link to="/profile" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>{t('settings.profile')}</Link>
                     <button
                       onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
                       className="text-left text-red-400 hover:text-red-300 transition text-sm font-medium px-2 py-1"
                     >
-                      Uitloggen
+                      {t('nav.logout')}
                     </button>
                   </div>
                 ) : (
@@ -169,7 +167,7 @@ const Header: React.FC = () => {
                     className="block bg-primary-500 text-dark-900 px-4 py-2 rounded-lg font-bold hover:bg-primary-400 transition text-sm text-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Klant Login
+                    {t('nav.login')}
                   </Link>
                 )}
               </div>

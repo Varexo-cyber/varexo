@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import VarexoLogo from './VarexoLogo';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Footer: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-dark-950 text-white py-12 border-t border-dark-700/50 relative">
       <div className="absolute inset-0 tech-grid opacity-30 pointer-events-none"></div>
@@ -13,31 +16,31 @@ const Footer: React.FC = () => {
               <VarexoLogo size={32} showText />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Full-stack webdevelopment studio. Wij bouwen snelle, schaalbare en professionele websites voor ondernemers.
+              Full-stack webdevelopment studio. {t('language') === 'nl' ? 'Wij bouwen snelle, schaalbare en professionele websites voor ondernemers.' : 'We build fast, scalable and professional websites for entrepreneurs.'}
             </p>
             <div className="mt-4 inline-block px-3 py-1 rounded border border-dark-600 bg-dark-800/50">
               <code className="text-xs text-primary-400 font-mono">v2.0 — Built with React + TS</code>
             </div>
           </div>
           <div>
-            <h4 className="text-sm font-bold mb-4 uppercase tracking-wider text-gray-300">Navigatie</h4>
+            <h4 className="text-sm font-bold mb-4 uppercase tracking-wider text-gray-300">{t('footer.navigation')}</h4>
             <ul className="space-y-2">
-              <li><Link to="/diensten" className="text-gray-400 hover:text-primary-400 text-sm transition hover-underline">Diensten</Link></li>
-              <li><Link to="/prijzen" className="text-gray-400 hover:text-primary-400 text-sm transition hover-underline">Prijzen</Link></li>
-              <li><Link to="/werkwijze" className="text-gray-400 hover:text-primary-400 text-sm transition hover-underline">Werkwijze</Link></li>
-                            <li><Link to="/contact" className="text-gray-400 hover:text-primary-400 text-sm transition hover-underline">Contact</Link></li>
+              <li><Link to="/diensten" className="text-gray-400 hover:text-primary-400 text-sm transition hover-underline">{t('nav.services')}</Link></li>
+              <li><Link to="/prijzen" className="text-gray-400 hover:text-primary-400 text-sm transition hover-underline">{t('nav.pricing')}</Link></li>
+              <li><Link to="/werkwijze" className="text-gray-400 hover:text-primary-400 text-sm transition hover-underline">{t('nav.process') || 'Werkwijze'}</Link></li>
+              <li><Link to="/contact" className="text-gray-400 hover:text-primary-400 text-sm transition hover-underline">{t('nav.contact')}</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-sm font-bold mb-4 uppercase tracking-wider text-gray-300">Juridisch</h4>
+            <h4 className="text-sm font-bold mb-4 uppercase tracking-wider text-gray-300">{t('footer.legal')}</h4>
             <ul className="space-y-2">
               <li><Link to="/privacy-policy" className="text-gray-400 hover:text-primary-400 text-sm transition hover-underline">Privacy Policy</Link></li>
-              <li><Link to="/algemene-voorwaarden" className="text-gray-400 hover:text-primary-400 text-sm transition hover-underline">Algemene Voorwaarden</Link></li>
+              <li><Link to="/algemene-voorwaarden" className="text-gray-400 hover:text-primary-400 text-sm transition hover-underline">{t('language') === 'nl' ? 'Algemene Voorwaarden' : 'Terms & Conditions'}</Link></li>
               <li><Link to="/cookie-policy" className="text-gray-400 hover:text-primary-400 text-sm transition hover-underline">Cookie Policy</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-sm font-bold mb-4 uppercase tracking-wider text-gray-300">Contact</h4>
+            <h4 className="text-sm font-bold mb-4 uppercase tracking-wider text-gray-300">{t('footer.contact')}</h4>
             <div className="space-y-3">
               <a href="mailto:info@varexo.nl" className="flex items-center gap-2 text-gray-400 hover:text-primary-400 text-sm transition">
                 <svg className="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,12 +62,12 @@ const Footer: React.FC = () => {
           </div>
         </div>
         <div className="mt-10 pt-6 border-t border-dark-700/50 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-500 text-xs">&copy; {new Date().getFullYear()} Varexo. Alle rechten voorbehouden.</p>
+          <p className="text-gray-500 text-xs">&copy; {new Date().getFullYear()} Varexo. {t('footer.rights')}</p>
           <p className="text-gray-600 text-xs font-mono">
             &lt;/&gt; with <span className="text-primary-500">&#9829;</span> by Varexo
           </p>
           <p className="text-gray-500 text-xs">
-            Medemogelijk gemaakt door <a href="https://varexo.nl" target="_blank" rel="noopener noreferrer" className="text-primary-400 hover:text-primary-300 hover-underline">Varexo</a>
+            {t('language') === 'nl' ? 'Medemogelijk gemaakt door' : 'Powered by'} <a href="https://varexo.nl" target="_blank" rel="noopener noreferrer" className="text-primary-400 hover:text-primary-300 hover-underline">Varexo</a>
           </p>
         </div>
       </div>

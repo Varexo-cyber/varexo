@@ -330,32 +330,60 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'POST' && path === '/forgot-password') {
       const { email } = body;
       
-      // Check if user exists
-      const user = await sql`
-        SELECT id, email, display_name FROM users WHERE email = ${email} AND deleted_at IS NULL
-      `;
+      console.log('=== FORGOT PASSWORD REQUEST ===');
+      console.log('Email:', email);
       
-      if (user.length === 0) {
-        // Don't reveal if email exists or not (security)
-        return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Als dit email adres bestaat, ontvang je een reset link.' }) };
+      try {
+        // Check if user exists
+        const user = await sql`
+          SELECT id, email, display_name, email_language FROM users WHERE email = ${email} AND deleted_at IS NULL
+        `;
+        
+        console.log('User found:', user.length > 0 ? 'YES' : 'NO');
+        
+        if (user.length === 0) {
+          console.log('User not found, returning generic success message');
+          return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Als dit email adres bestaat, ontvang je een reset link.' }) };
+        }
+        
+        // Generate reset token (random 32 char string)
+        const crypto = require('crypto');
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+        
+        console.log('Generated token:', resetToken.substring(0, 10) + '...');
+        
+        // Store token in database
+        await sql`
+          INSERT INTO password_reset_tokens (user_id, token, expires_at, used)
+          VALUES (${user[0].id}, ${resetToken}, ${expiresAt.toISOString()}, false)
+        `;
+        
+        console.log('Token stored in database');
+        
+        // Send reset email with language preference
+        const resetUrl = `${process.env.SITE_URL || 'https://varexo.nl'}/reset-password?token=${resetToken}`;
+        console.log('Reset URL:', resetUrl);
+        
+        // Get user's language preference (default to 'nl')
+        const userLanguage = user[0].email_language || 'nl';
+        console.log('User language:', userLanguage);
+        
+        try {
+          await sendPasswordResetEmail(user[0].email, user[0].display_name || 'Klant', resetUrl, userLanguage);
+          console.log('Email sent successfully!');
+        } catch (emailError) {
+          console.error('EMAIL SEND ERROR:', emailError);
+          console.error('Email error message:', emailError.message);
+          // Still return success to user, but log the error
+          return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Reset instructies verstuurd naar je email.' }) };
+        }
+        
+        return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Reset instructies verstuurd naar je email.' }) };
+      } catch (error) {
+        console.error('FORGOT PASSWORD ERROR:', error);
+        return { statusCode: 500, headers, body: JSON.stringify({ error: 'Er is een fout opgetreden. Probeer het later opnieuw.' }) };
       }
-      
-      // Generate reset token (random 32 char string)
-      const crypto = require('crypto');
-      const resetToken = crypto.randomBytes(32).toString('hex');
-      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-      
-      // Store token in database
-      await sql`
-        INSERT INTO password_reset_tokens (user_id, token, expires_at, used)
-        VALUES (${user[0].id}, ${resetToken}, ${expiresAt.toISOString()}, false)
-      `;
-      
-      // Send reset email
-      const resetUrl = `${process.env.SITE_URL || 'https://varexo.nl'}/reset-password?token=${resetToken}`;
-      await sendPasswordResetEmail(user[0].email, user[0].display_name || 'Klant', resetUrl);
-      
-      return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Reset instructies verstuurd naar je email.' }) };
     }
 
     // POST /auth/reset-password - Reset password with token

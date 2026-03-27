@@ -11,6 +11,7 @@ export interface MockUser {
   provider?: 'email' | 'google';
   isAdmin?: boolean;
   emailNotifications?: boolean;
+  emailLanguage?: 'nl' | 'en';
 }
 
 interface StoredUser {

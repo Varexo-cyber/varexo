@@ -6,8 +6,10 @@ import { projectService, Customer, Project, Invoice, ProjectLog } from '../servi
 import { invoicesAPI } from '../services/api';
 import { getContactMessages, deleteContactMessage, ContactMessage } from '../services/contactService';
 import PageTransition from '../components/PageTransition';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const AdminDashboard: React.FC = () => {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'customers' | 'projects' | 'invoices' | 'recurring' | 'messages' | 'finance'>('customers');
@@ -1321,7 +1323,7 @@ const AdminDashboard: React.FC = () => {
                     : 'border-transparent text-gray-400 hover:text-gray-300'
                 }`}
               >
-                Klanten ({customers.length})
+                {t('admin.customers')} ({customers.length})
               </button>
               <button
                 onClick={() => setActiveTab('projects')}
@@ -1331,7 +1333,7 @@ const AdminDashboard: React.FC = () => {
                     : 'border-transparent text-gray-400 hover:text-gray-300'
                 }`}
               >
-                Projecten ({projects.length})
+                {t('admin.projects')} ({projects.length})
               </button>
               <button
                 onClick={() => setActiveTab('invoices')}
@@ -1341,7 +1343,7 @@ const AdminDashboard: React.FC = () => {
                     : 'border-transparent text-gray-400 hover:text-gray-300'
                 }`}
               >
-                Facturen ({invoices.length})
+                {t('admin.invoices')} ({invoices.length})
               </button>
               <button
                 onClick={() => setActiveTab('recurring')}
@@ -1351,7 +1353,7 @@ const AdminDashboard: React.FC = () => {
                     : 'border-transparent text-gray-400 hover:text-gray-300'
                 }`}
               >
-                Terugkerend ({recurringInvoices.length})
+                {t('language') === 'nl' ? 'Terugkerend' : 'Recurring'} ({recurringInvoices.length})
               </button>
               <button
                 onClick={() => setActiveTab('messages')}
@@ -1361,7 +1363,7 @@ const AdminDashboard: React.FC = () => {
                     : 'border-transparent text-gray-400 hover:text-gray-300'
                 }`}
               >
-                Berichten ({contactMessages.length})
+                {t('admin.messages')} ({contactMessages.length})
               </button>
               <button
                 onClick={() => setActiveTab('finance')}
@@ -1371,7 +1373,7 @@ const AdminDashboard: React.FC = () => {
                     : 'border-transparent text-gray-400 hover:text-gray-300'
                 }`}
               >
-                Kosten/Omzet/Winst
+                {t('admin.finance')}
               </button>
             </nav>
           </div>
@@ -1381,7 +1383,7 @@ const AdminDashboard: React.FC = () => {
             <div className="bg-dark-800 rounded-lg border border-dark-700">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-white">Klanten</h2>
+                  <h2 className="text-xl font-semibold text-white">{t('admin.customers')}</h2>
                   <button
                     onClick={loadData}
                     disabled={isRefreshing}
@@ -1390,20 +1392,20 @@ const AdminDashboard: React.FC = () => {
                     <svg className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    {isRefreshing ? 'Bezig met verversen...' : 'Verversen'}
+                    {isRefreshing ? t('common.loading') : (t('common.refresh') || 'Verversen')}
                   </button>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-dark-700">
                     <thead>
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Klant</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Bedrijf</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Abonnement</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Projecten</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Facturen</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">E-mail</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Acties</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.customer')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.company')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.subscription')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.projects')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.invoices')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('auth.email')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.actions')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-dark-700">
@@ -1434,7 +1436,7 @@ const AdminDashboard: React.FC = () => {
                               )}
                               {customer.hasSocialMedia && (
                                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-900/50 text-purple-400">
-                                  + Social Media
+                                  + {t('admin.socialMedia')}
                                 </span>
                               )}
                             </div>
@@ -1451,14 +1453,14 @@ const AdminDashboard: React.FC = () => {
                                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                                 </svg>
-                                Uit
+                                {t('common.off')}
                               </span>
                             ) : (
                               <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-900/50 text-green-400 rounded-full text-xs">
                                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
-                                Aan
+                                {t('common.on')}
                               </span>
                             )}
                           </td>
@@ -1487,7 +1489,7 @@ const AdminDashboard: React.FC = () => {
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                     </svg>
-                                    Nieuw Project
+                                    Nieuw {t('admin.project')}
                                   </button>
                                   <button
                                     onClick={() => {
@@ -1499,7 +1501,7 @@ const AdminDashboard: React.FC = () => {
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
-                                    Nieuwe Factuur
+                                    Nieuwe {t('admin.invoice')}
                                   </button>
                                   <div className="border-t border-dark-600"></div>
                                   <button
@@ -1509,7 +1511,7 @@ const AdminDashboard: React.FC = () => {
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    Abonnement bewerken
+                                    {t('admin.editSubscription')}
                                   </button>
                                   <button
                                     onClick={() => {
@@ -1521,7 +1523,7 @@ const AdminDashboard: React.FC = () => {
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
-                                    Klant Verwijderen
+                                    {t('admin.deleteCustomer')}
                                   </button>
                                 </div>
                               )}
@@ -1534,8 +1536,9 @@ const AdminDashboard: React.FC = () => {
                               <td colSpan={6} className="px-6 py-4">
                                 <div className="p-3 bg-red-900/30 border border-red-700 rounded-lg">
                                   <p className="text-red-300 text-sm mb-2">
-                                    Weet je zeker dat je klant <strong>{customer.displayName}</strong> wilt verwijderen? 
-                                    Dit verwijdert ook alle projecten en facturen van deze klant.
+                                    {t('language') === 'nl' 
+                                      ? `Weet je zeker dat je klant ${customer.displayName} wilt verwijderen? Dit verwijdert ook alle projecten en facturen.`
+                                      : `Are you sure you want to delete customer ${customer.displayName}? This will also delete all projects and invoices.`}
                                   </p>
                                   <div className="flex space-x-2">
                                     <button
@@ -1543,14 +1546,14 @@ const AdminDashboard: React.FC = () => {
                                       disabled={isDeletingCustomer === customer.email}
                                       className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                      {isDeletingCustomer === customer.email ? 'Bezig met verwijderen...' : 'Ja, verwijderen'}
+                                      {isDeletingCustomer === customer.email ? t('common.deleting') : t('common.delete')}
                                     </button>
                                     <button
                                       onClick={() => setShowCustomerDeleteConfirm(null)}
                                       disabled={isDeletingCustomer === customer.email}
                                       className="px-3 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600 disabled:opacity-50"
                                     >
-                                      Annuleren
+                                      {t('common.cancel')}
                                     </button>
                                   </div>
                                 </div>
@@ -1570,9 +1573,10 @@ const AdminDashboard: React.FC = () => {
             <div className="bg-dark-800 rounded-lg border border-dark-700">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-white">Projecten</h2>
+                  <h2 className="text-xl font-semibold text-white">{t('admin.projects')}</h2>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-20">
+                <div className="max-h-[600px] overflow-y-auto pr-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-20">
                   {projects.map((project) => (
                     <div key={project.id} className="bg-dark-900 p-4 rounded-lg border border-dark-700">
                       <h3 className="text-lg font-medium text-white mb-2">{project.title}</h3>
@@ -1581,7 +1585,7 @@ const AdminDashboard: React.FC = () => {
                       {/* Progress Bar */}
                       <div className="mb-3">
                         <div className="flex justify-between text-xs text-gray-400 mb-1">
-                          <span>Voortgang</span>
+                          <span>{t('common.progress') || 'Voortgang'}</span>
                           <span>{project.progress || 0}%</span>
                         </div>
                         <div className="w-full bg-dark-700 rounded-full h-2">
@@ -1630,7 +1634,7 @@ const AdminDashboard: React.FC = () => {
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                   </svg>
-                                  Website Bekijken
+                                  Website {t('admin.view')}
                                 </a>
                               )}
                               <button
@@ -1640,7 +1644,7 @@ const AdminDashboard: React.FC = () => {
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                 </svg>
-                                Logs Bekijken
+                                Logs {t('admin.view')}
                               </button>
                               <button
                                 onClick={() => { openEditProject(project); setShowProjectDropdown(null); }}
@@ -1669,14 +1673,14 @@ const AdminDashboard: React.FC = () => {
                       {/* Delete Confirmation */}
                       {showDeleteConfirm === project.id && (
                         <div className="mt-3 p-3 bg-red-900/30 border border-red-700 rounded-lg">
-                          <p className="text-red-300 text-sm mb-2">Weet je zeker dat je dit project wilt verwijderen?</p>
+                          <p className="text-red-300 text-sm mb-2">{t('admin.confirmDeleteProject')}</p>
                           <div className="flex space-x-2">
                             <button
                               onClick={() => handleDeleteProject(project.id)}
                               disabled={isDeletingProject === project.id}
                               className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              {isDeletingProject === project.id ? 'Bezig met verwijderen...' : 'Ja, verwijderen'}
+                              {isDeletingProject === project.id ? t('common.deleting') : t('common.delete')}
                             </button>
                             <button
                               onClick={() => setShowDeleteConfirm(null)}
@@ -1690,6 +1694,7 @@ const AdminDashboard: React.FC = () => {
                       )}
                     </div>
                   ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1699,17 +1704,17 @@ const AdminDashboard: React.FC = () => {
         <div className="bg-dark-800 rounded-lg border border-dark-700">
               <div className="p-4">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-semibold text-white">Facturen</h2>
+                  <h2 className="text-lg font-semibold text-white">{t('admin.invoices')}</h2>
                 </div>
                 <div className="overflow-x-auto -mx-2">
                   <table className="min-w-full divide-y divide-dark-700">
                     <thead>
                       <tr>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Factuur</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Klant</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Bedrag</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-10">Acties</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.invoice')}</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.customer')}</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.amount')}</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('common.status')}</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-10">{t('admin.actions')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-dark-700">
@@ -1735,9 +1740,9 @@ const AdminDashboard: React.FC = () => {
                               invoice.status === 'overdue' ? 'bg-red-900 text-red-300' :
                               'bg-gray-900 text-gray-300'
                             }`}>
-                              {invoice.status === 'paid' ? 'Betaald' : 
-                               invoice.status === 'sent' ? 'Open' : 
-                               invoice.status === 'overdue' ? 'Te laat' : invoice.status}
+                              {invoice.status === 'paid' ? t('common.paid') : 
+                               invoice.status === 'sent' ? t('common.open') : 
+                               invoice.status === 'overdue' ? t('common.overdue') : invoice.status}
                             </span>
                           </td>
                           <td className="px-3 py-2.5 whitespace-nowrap text-sm font-medium">
@@ -1761,10 +1766,10 @@ const AdminDashboard: React.FC = () => {
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                     </svg>
-                                    Bekijken
+                                    {t('common.view')}
                                   </button>
                                   <div className="border-t border-dark-600 my-0.5"></div>
-                                  <p className="px-3 py-0.5 text-xs text-gray-500 uppercase">Status</p>
+                                  <p className="px-3 py-0.5 text-xs text-gray-500 uppercase">{t('common.status')}</p>
                                   <button
                                     onClick={() => { handleUpdateInvoiceStatus(invoice.id, 'paid'); setShowInvoiceDropdown(null); }}
                                     disabled={isUpdatingInvoiceStatus === invoice.id}
@@ -1778,7 +1783,7 @@ const AdminDashboard: React.FC = () => {
                                     ) : (
                                       '✓'
                                     )}
-                                    Betaald
+                                    {t('common.paid')}
                                   </button>
                                   <button
                                     onClick={() => { handleUpdateInvoiceStatus(invoice.id, 'sent'); setShowInvoiceDropdown(null); }}
@@ -1793,7 +1798,7 @@ const AdminDashboard: React.FC = () => {
                                     ) : (
                                       '⏳'
                                     )}
-                                    Open
+                                    {t('common.open')}
                                   </button>
                                   <button
                                     onClick={() => { handleUpdateInvoiceStatus(invoice.id, 'overdue'); setShowInvoiceDropdown(null); }}
@@ -1808,7 +1813,7 @@ const AdminDashboard: React.FC = () => {
                                     ) : (
                                       '⚠'
                                     )}
-                                    Te laat
+                                    {t('common.overdue')}
                                   </button>
                                   <div className="border-t border-dark-600 my-0.5"></div>
                                   <button
@@ -1818,7 +1823,7 @@ const AdminDashboard: React.FC = () => {
                                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
-                                    Download PDF
+                                    PDF
                                   </button>
                                   <div className="border-t border-dark-600 my-0.5"></div>
                                   <button
@@ -1842,7 +1847,9 @@ const AdminDashboard: React.FC = () => {
                             <td colSpan={5} className="px-3 py-2">
                               <div className="p-2.5 bg-red-900/30 border border-red-700 rounded-lg">
                                 <p className="text-red-300 text-xs mb-2">
-                                  Factuur <strong>{invoice.invoiceNumber}</strong> verwijderen?
+                                  {t('language') === 'nl' 
+                                    ? `Factuur ${invoice.invoiceNumber} verwijderen?`
+                                    : `Delete invoice ${invoice.invoiceNumber}?`}
                                 </p>
                                 <div className="flex space-x-2">
                                   <button
@@ -1877,12 +1884,12 @@ const AdminDashboard: React.FC = () => {
             <div className="bg-dark-800 rounded-lg border border-dark-700">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-white">Terugkerende Facturen</h2>
+                  <h2 className="text-xl font-semibold text-white">{t('language') === 'nl' ? 'Terugkerende Facturen' : 'Recurring Invoices'}</h2>
                   <button
                     onClick={() => setShowRecurringForm(true)}
                     className="bg-primary-500 text-dark-900 px-4 py-2 rounded-lg font-medium hover:bg-primary-400 text-sm"
                   >
-                    + Nieuwe Terugkerende Factuur
+                    + {t('language') === 'nl' ? 'Nieuwe Terugkerende Factuur' : 'New Recurring Invoice'}
                   </button>
                 </div>
 
@@ -1891,21 +1898,21 @@ const AdminDashboard: React.FC = () => {
                     <svg className="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    <p className="text-gray-400">Nog geen terugkerende facturen ingesteld</p>
-                    <p className="text-gray-500 text-sm mt-1">Stel maandelijkse facturen in voor onderhoud en andere diensten</p>
+                    <p className="text-gray-400">{t('language') === 'nl' ? 'Nog geen terugkerende facturen ingesteld' : 'No recurring invoices set up yet'}</p>
+                    <p className="text-gray-500 text-sm mt-1">{t('language') === 'nl' ? 'Stel maandelijkse facturen in voor onderhoud en andere diensten' : 'Set up monthly invoices for maintenance and other services'}</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-dark-700">
                       <thead>
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Klant</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Omschrijving</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Bedrag</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Cyclus</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Volgende</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Acties</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.customer')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.description')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.amount')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.cycle')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.next')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('common.status')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.actions')}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-dark-700">
@@ -1920,14 +1927,16 @@ const AdminDashboard: React.FC = () => {
                               €{parseFloat(ri.amount).toFixed(2)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                              Elke {ri.intervalMonths === 1 ? 'maand' : `${ri.intervalMonths} maanden`}
+                              {t('language') === 'nl' 
+                                ? (ri.intervalMonths === 1 ? 'Elke maand' : `Elke ${ri.intervalMonths} maanden`)
+                                : (ri.intervalMonths === 1 ? 'Every month' : `Every ${ri.intervalMonths} months`)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                               {new Date(ri.nextInvoiceDate).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`px-2 py-1 text-xs rounded-full ${ri.active ? 'bg-green-900 text-green-300' : 'bg-gray-800 text-gray-400'}`}>
-                                {ri.active ? 'Actief' : 'Gepauzeerd'}
+                                {ri.active ? t('common.active') : t('common.paused')}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -1952,7 +1961,7 @@ const AdminDashboard: React.FC = () => {
                                           <svg className="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                           </svg>
-                                          Pauzeren
+                                          {t('common.pause')}
                                         </>
                                       ) : (
                                         <>
@@ -1960,7 +1969,7 @@ const AdminDashboard: React.FC = () => {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                           </svg>
-                                          Activeren
+                                          {t('common.activate')}
                                         </>
                                       )}
                                     </button>
@@ -1971,7 +1980,7 @@ const AdminDashboard: React.FC = () => {
                                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                       </svg>
-                                      Bewerken
+                                      {t('common.edit')}
                                     </button>
                                     <div className="border-t border-dark-600 my-1"></div>
                                     <button
@@ -1981,7 +1990,7 @@ const AdminDashboard: React.FC = () => {
                                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                       </svg>
-                                      Verwijderen
+                                      {t('common.delete')}
                                     </button>
                                   </div>
                                 )}
@@ -1991,31 +2000,21 @@ const AdminDashboard: React.FC = () => {
                               {showRecurringDeleteConfirm === ri.id && (
                                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                                   <div className="bg-dark-800 rounded-lg p-6 w-full max-w-sm border border-dark-700">
-                                    <h3 className="text-lg font-semibold text-white mb-2">Terugkerende factuur verwijderen?</h3>
-                                    <p className="text-gray-400 text-sm mb-4">Weet je zeker dat je deze terugkerende factuur wilt verwijderen? Dit kan niet ongedaan worden gemaakt.</p>
+                                    <h3 className="text-lg font-semibold text-white mb-2">{t('language') === 'nl' ? 'Terugkerende factuur verwijderen?' : 'Delete recurring invoice?'}</h3>
+                                    <p className="text-gray-400 text-sm mb-4">{t('language') === 'nl' ? 'Weet je zeker dat je deze terugkerende factuur wilt verwijderen? Dit kan niet ongedaan worden gemaakt.' : 'Are you sure you want to delete this recurring invoice? This cannot be undone.'}</p>
                                     <div className="flex justify-end gap-3">
                                       <button
                                         onClick={() => setShowRecurringDeleteConfirm(null)}
                                         className="px-4 py-2 text-gray-400 hover:text-white text-sm"
                                       >
-                                        Annuleren
+                                      {t('common.cancel')}
                                       </button>
                                       <button
                                         onClick={() => { handleDeleteRecurring(ri.id); setShowRecurringDeleteConfirm(null); }}
                                         disabled={isDeletingRecurring === ri.id}
                                         className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                       >
-                                        {isDeletingRecurring === ri.id ? (
-                                          <>
-                                            <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                            Bezig...
-                                          </>
-                                        ) : (
-                                          'Verwijderen'
-                                        )}
+                                        {isDeletingRecurring === ri.id ? t('common.deleting') : t('common.delete')}
                                       </button>
                                     </div>
                                   </div>
@@ -2036,37 +2035,37 @@ const AdminDashboard: React.FC = () => {
           {showRecurringForm && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-dark-800 rounded-lg p-6 w-full max-w-md border border-dark-700">
-                <h3 className="text-xl font-semibold text-white mb-4">Nieuwe Terugkerende Factuur</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">{t('language') === 'nl' ? 'Nieuwe Terugkerende Factuur' : 'New Recurring Invoice'}</h3>
                 <form onSubmit={handleCreateRecurring}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Klant</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.customer')}</label>
                       <select
                         value={recurringForm.customerEmail}
                         onChange={(e) => setRecurringForm({ ...recurringForm, customerEmail: e.target.value })}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
                         required
                       >
-                        <option value="">Selecteer klant...</option>
+                        <option value="">{t('language') === 'nl' ? 'Selecteer klant...' : 'Select customer...'}</option>
                         {customers.map(c => (
                           <option key={c.email} value={c.email}>{c.displayName || c.email}</option>
                         ))}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Omschrijving</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.description')}</label>
                       <input
                         type="text"
                         value={recurringForm.description}
                         onChange={(e) => setRecurringForm({ ...recurringForm, description: e.target.value })}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
-                        placeholder="bijv. Website onderhoud maandelijks"
+                        placeholder={t('language') === 'nl' ? 'bijv. Website onderhoud maandelijks' : 'e.g. Monthly website maintenance'}
                         required
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Bedrag (incl. BTW)</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.amount')} ({t('language') === 'nl' ? 'incl. BTW' : 'incl. VAT'})</label>
                         <input
                           type="number"
                           step="0.01"
@@ -2078,22 +2077,22 @@ const AdminDashboard: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Cyclus (maanden)</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.cycle')} ({t('language') === 'nl' ? 'maanden' : 'months'})</label>
                         <select
                           value={recurringForm.intervalMonths}
                           onChange={(e) => setRecurringForm({ ...recurringForm, intervalMonths: parseInt(e.target.value) })}
                           className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
                         >
-                          <option value={1}>Elke maand</option>
-                          <option value={2}>Elke 2 maanden</option>
-                          <option value={3}>Elk kwartaal</option>
-                          <option value={6}>Elk half jaar</option>
-                          <option value={12}>Elk jaar</option>
+                          <option value={1}>{t('language') === 'nl' ? 'Elke maand' : 'Every month'}</option>
+                          <option value={2}>{t('language') === 'nl' ? 'Elke 2 maanden' : 'Every 2 months'}</option>
+                          <option value={3}>{t('language') === 'nl' ? 'Elk kwartaal' : 'Every quarter'}</option>
+                          <option value={6}>{t('language') === 'nl' ? 'Elk half jaar' : 'Every half year'}</option>
+                          <option value={12}>{t('language') === 'nl' ? 'Elk jaar' : 'Every year'}</option>
                         </select>
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Startdatum (eerste factuur)</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('language') === 'nl' ? 'Startdatum (eerste factuur)' : 'Start date (first invoice)'}</label>
                       <input
                         type="date"
                         value={recurringForm.startDate}
@@ -2111,14 +2110,14 @@ const AdminDashboard: React.FC = () => {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
-                          Bezig met aanmaken...
+                          {t('common.creating')}
                         </>
                       ) : (
-                        'Aanmaken'
+                        t('common.create')
                       )}
                     </button>
                     <button type="button" onClick={() => setShowRecurringForm(false)} className="flex-1 bg-dark-700 text-gray-300 py-2 rounded-lg font-medium hover:bg-dark-600">
-                      Annuleren
+                      {t('common.cancel')}
                     </button>
                   </div>
                 </form>
@@ -2130,14 +2129,14 @@ const AdminDashboard: React.FC = () => {
             <div className="bg-dark-800 rounded-lg border border-dark-700">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-white">Berichten</h2>
+                  <h2 className="text-xl font-semibold text-white">{t('admin.messages')}</h2>
                 </div>
                 {contactMessages.length === 0 ? (
                   <div className="text-center py-12">
                     <svg className="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                     </svg>
-                    <p className="text-gray-400">Nog geen berichten ontvangen</p>
+                    <p className="text-gray-400">{t('language') === 'nl' ? 'Nog geen berichten ontvangen' : 'No messages received yet'}</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -2157,7 +2156,7 @@ const AdminDashboard: React.FC = () => {
                             <span className={`px-2 py-1 text-xs rounded-full ${
                               msg.type === 'quote' ? 'bg-blue-900 text-blue-300' : 'bg-gray-800 text-gray-300'
                             }`}>
-                              {msg.type === 'quote' ? 'Offerte' : 'Contact'}
+                              {msg.type === 'quote' ? (t('language') === 'nl' ? 'Offerte' : 'Quote') : (t('language') === 'nl' ? 'Contact' : 'Contact')}
                             </span>
                             <span className="text-gray-500 text-xs">
                               {new Date(msg.createdAt).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
@@ -2194,7 +2193,12 @@ const AdminDashboard: React.FC = () => {
                           <div className="flex flex-wrap gap-3 mb-3">
                             {msg.projectType && (
                               <span className="px-2 py-1 text-xs rounded bg-primary-900/50 text-primary-300 border border-primary-700/50">
-                                {msg.projectType === 'website' ? 'Website' : msg.projectType === 'webshop' ? 'Webshop' : msg.projectType === 'social-media' ? 'Social Media' : msg.projectType === 'seo' ? 'SEO' : msg.projectType === 'maatwerk' ? 'Maatwerk' : msg.projectType === 'onderhoud' ? 'Onderhoud' : msg.projectType}
+                                {msg.projectType === 'website' ? 'Website' : 
+                                 msg.projectType === 'webshop' ? 'Webshop' : 
+                                 msg.projectType === 'social-media' ? (t('language') === 'nl' ? 'Social Media' : 'Social Media') : 
+                                 msg.projectType === 'seo' ? 'SEO' : 
+                                 msg.projectType === 'maatwerk' ? (t('language') === 'nl' ? 'Maatwerk' : 'Custom') : 
+                                 msg.projectType === 'onderhoud' ? (t('language') === 'nl' ? 'Onderhoud' : 'Maintenance') : msg.projectType}
                               </span>
                             )}
                             {msg.bedrijf && (
@@ -2214,24 +2218,14 @@ const AdminDashboard: React.FC = () => {
                         {/* Delete Confirmation */}
                         {showMessageDeleteConfirm === msg.id && (
                           <div className="mt-3 p-3 bg-red-900/30 border border-red-700 rounded-lg">
-                            <p className="text-red-300 text-sm mb-2">Weet je zeker dat je dit bericht wilt verwijderen?</p>
+                            <p className="text-red-300 text-sm mb-2">{t('language') === 'nl' ? 'Weet je zeker dat je dit bericht wilt verwijderen?' : 'Are you sure you want to delete this message?'}</p>
                             <div className="flex space-x-2">
                               <button
                                 onClick={() => handleDeleteMessage(msg.id)}
                                 disabled={isDeletingMessage === msg.id}
                                 className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                               >
-                                {isDeletingMessage === msg.id ? (
-                                  <>
-                                    <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Bezig...
-                                  </>
-                                ) : (
-                                  'Ja, verwijderen'
-                                )}
+                                {isDeletingMessage === msg.id ? t('common.deleting') : t('common.delete')}
                               </button>
                               <button
                                 onClick={() => setShowMessageDeleteConfirm(null)}
@@ -2255,25 +2249,25 @@ const AdminDashboard: React.FC = () => {
               {/* Financial Overview Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                  <p className="text-gray-400 text-sm">Totale Omzet</p>
+                  <p className="text-gray-400 text-sm">{t('language') === 'nl' ? 'Totale Omzet' : 'Total Revenue'}</p>
                   <p className="text-2xl font-bold text-green-400">
                     €{invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0).toFixed(2)}
                   </p>
                 </div>
                 <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                  <p className="text-gray-400 text-sm">Bedrijfskosten</p>
+                  <p className="text-gray-400 text-sm">{t('language') === 'nl' ? 'Bedrijfskosten' : 'Business Costs'}</p>
                   <p className="text-2xl font-bold text-red-400">
                     €{expenses.filter(e => e.type === 'business').reduce((sum, e) => sum + parseFloat(e.amount), 0).toFixed(2)}
                   </p>
                 </div>
                 <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                  <p className="text-gray-400 text-sm">Privékosten</p>
+                  <p className="text-gray-400 text-sm">{t('language') === 'nl' ? 'Privékosten' : 'Personal Costs'}</p>
                   <p className="text-2xl font-bold text-yellow-400">
                     €{expenses.filter(e => e.type === 'personal').reduce((sum, e) => sum + parseFloat(e.amount), 0).toFixed(2)}
                   </p>
                 </div>
                 <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                  <p className="text-gray-400 text-sm">Netto Winst</p>
+                  <p className="text-gray-400 text-sm">{t('language') === 'nl' ? 'Netto Winst' : 'Net Profit'}</p>
                   <p className={`text-2xl font-bold ${
                     (invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0) - 
                      expenses.filter(e => e.type === 'business').reduce((sum, e) => sum + parseFloat(e.amount), 0)) >= 0 
@@ -2290,7 +2284,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="bg-dark-800 rounded-lg border border-dark-700">
                   <div className="p-6">
                     <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-xl font-semibold text-white">Kostenoverzicht</h2>
+                      <h2 className="text-xl font-semibold text-white">{t('admin.expenses')}</h2>
                       <button
                         onClick={() => {
                           setEditingExpense(null);
@@ -2306,7 +2300,7 @@ const AdminDashboard: React.FC = () => {
                         }}
                         className="bg-primary-500 text-dark-900 px-4 py-2 rounded-lg font-medium hover:bg-primary-400 text-sm"
                       >
-                        + Nieuwe Kosten
+                        + {t('language') === 'nl' ? 'Nieuwe Kosten' : 'New Expense'}
                       </button>
                     </div>
 
@@ -2315,8 +2309,8 @@ const AdminDashboard: React.FC = () => {
                         <svg className="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a1 1 0 11-2 0 1 1 0 012 0z" />
                         </svg>
-                        <p className="text-gray-400">Nog geen kosten toegevoegd</p>
-                        <p className="text-gray-500 text-sm mt-1">Voeg bedrijfs- en privékosten toe om je winst te berekenen</p>
+                        <p className="text-gray-400">{t('language') === 'nl' ? 'Nog geen kosten toegevoegd' : 'No expenses added yet'}</p>
+                        <p className="text-gray-500 text-sm mt-1">{t('language') === 'nl' ? 'Voeg bedrijfs- en privékosten toe om je winst te berekenen' : 'Add business and personal costs to calculate your profit'}</p>
                       </div>
                     ) : (
                       <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-dark-600 scrollbar-track-dark-800">
@@ -2329,22 +2323,23 @@ const AdminDashboard: React.FC = () => {
                                   <span className={`px-2 py-0.5 text-xs rounded-full ${
                                     expense.type === 'business' ? 'bg-blue-900 text-blue-300' : 'bg-purple-900 text-purple-300'
                                   }`}>
-                                    {expense.type === 'business' ? 'Bedrijf' : 'Privé'}
+                                    {expense.type === 'business' ? (t('language') === 'nl' ? 'Bedrijf' : 'Business') : (t('language') === 'nl' ? 'Privé' : 'Personal')}
                                   </span>
                                   <span className={`px-2 py-0.5 text-xs rounded-full ${
                                     expense.frequency === 'monthly' ? 'bg-green-900 text-green-300' : 
                                     expense.frequency === 'yearly' ? 'bg-blue-900 text-blue-300' :
                                     'bg-orange-900 text-orange-300'
                                   }`}>
-                                    {expense.frequency === 'monthly' ? 'Maandelijks' : 
-                                     expense.frequency === 'yearly' ? 'Jaarlijks' : 'Eenmalig'}
+                                    {expense.frequency === 'monthly' ? (t('language') === 'nl' ? 'Maandelijks' : 'Monthly') : 
+                                     expense.frequency === 'yearly' ? (t('language') === 'nl' ? 'Jaarlijks' : 'Yearly') : 
+                                     (t('language') === 'nl' ? 'Eenmalig' : 'One-time')}
                                   </span>
                                 </div>
                                 {expense.category && (
                                   <p className="text-gray-500 text-xs mb-1">{expense.category}</p>
                                 )}
                                 <p className="text-gray-400 text-sm">
-                                  {expense.expense_date ? new Date(expense.expense_date).toLocaleDateString('nl-NL') : 'Geen datum'}
+                                  {expense.expense_date ? new Date(expense.expense_date).toLocaleDateString('nl-NL') : (t('language') === 'nl' ? 'Geen datum' : 'No date')}
                                 </p>
                               </div>
                               <div className="text-right">
@@ -2354,7 +2349,7 @@ const AdminDashboard: React.FC = () => {
                                     onClick={() => openEditExpense(expense)}
                                     className="text-gray-400 hover:text-white text-xs"
                                   >
-                                    Bewerken
+                                    {t('common.edit')}
                                   </button>
                                   <button
                                     onClick={() => handleDeleteExpense(expense.id)}
@@ -2367,10 +2362,10 @@ const AdminDashboard: React.FC = () => {
                                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
-                                        Bezig...
+                                        {t('common.loading')}
                                       </>
                                     ) : (
-                                      'Verwijderen'
+                                      t('common.delete')
                                     )}
                                   </button>
                                 </div>
@@ -2386,11 +2381,11 @@ const AdminDashboard: React.FC = () => {
                 {/* Cost Summary by Category */}
                 <div className="bg-dark-800 rounded-lg border border-dark-700">
                   <div className="p-6">
-                    <h2 className="text-xl font-semibold text-white mb-6">Kosten per Categorie</h2>
+                    <h2 className="text-xl font-semibold text-white mb-6">{t('language') === 'nl' ? 'Kosten per Categorie' : 'Costs by Category'}</h2>
                     
                     {/* Business Costs Summary */}
                     <div className="mb-6">
-                      <h3 className="text-sm font-semibold text-blue-400 uppercase mb-3">Bedrijfskosten</h3>
+                      <h3 className="text-sm font-semibold text-blue-400 uppercase mb-3">{t('language') === 'nl' ? 'Bedrijfskosten' : 'Business Costs'}</h3>
                       <div className="space-y-2">
                         {(() => {
                           const businessExpenses = expenses.filter(e => e.type === 'business');
@@ -2400,19 +2395,19 @@ const AdminDashboard: React.FC = () => {
                           return (
                             <>
                               <div className="flex justify-between items-center py-2 border-b border-dark-700">
-                                <span className="text-gray-400">Maandelijkse kosten</span>
-                                <span className="text-white font-medium">€{monthlyBusiness.toFixed(2)}/maand</span>
+                                <span className="text-gray-400">{t('language') === 'nl' ? 'Maandelijkse kosten' : 'Monthly costs'}</span>
+                                <span className="text-white font-medium">€{monthlyBusiness.toFixed(2)}/{t('language') === 'nl' ? 'maand' : 'month'}</span>
                               </div>
                               <div className="flex justify-between items-center py-2 border-b border-dark-700">
-                                <span className="text-gray-400">Jaarlijkse kosten</span>
-                                <span className="text-white font-medium">€{yearlyBusiness.toFixed(2)}/jaar</span>
+                                <span className="text-gray-400">{t('language') === 'nl' ? 'Jaarlijkse kosten' : 'Yearly costs'}</span>
+                                <span className="text-white font-medium">€{yearlyBusiness.toFixed(2)}/{t('language') === 'nl' ? 'jaar' : 'year'}</span>
                               </div>
                               <div className="flex justify-between items-center py-2 border-b border-dark-700">
-                                <span className="text-gray-400">Eenmalige kosten</span>
+                                <span className="text-gray-400">{t('language') === 'nl' ? 'Eenmalige kosten' : 'One-time costs'}</span>
                                 <span className="text-white font-medium">€{oneTimeBusiness.toFixed(2)}</span>
                               </div>
                               <div className="flex justify-between items-center py-2">
-                                <span className="text-white font-semibold">Totaal bedrijfskosten</span>
+                                <span className="text-white font-semibold">{t('language') === 'nl' ? 'Totaal bedrijfskosten' : 'Total business costs'}</span>
                                 <span className="text-red-400 font-bold">€{(monthlyBusiness + yearlyBusiness + oneTimeBusiness).toFixed(2)}</span>
                               </div>
                             </>
@@ -2423,7 +2418,7 @@ const AdminDashboard: React.FC = () => {
 
                     {/* Personal Costs Summary */}
                     <div>
-                      <h3 className="text-sm font-semibold text-purple-400 uppercase mb-3">Privékosten</h3>
+                      <h3 className="text-sm font-semibold text-purple-400 uppercase mb-3">{t('language') === 'nl' ? 'Privékosten' : 'Personal Costs'}</h3>
                       <div className="space-y-2">
                         {(() => {
                           const personalExpenses = expenses.filter(e => e.type === 'personal');
@@ -2433,19 +2428,19 @@ const AdminDashboard: React.FC = () => {
                           return (
                             <>
                               <div className="flex justify-between items-center py-2 border-b border-dark-700">
-                                <span className="text-gray-400">Maandelijkse kosten</span>
-                                <span className="text-white font-medium">€{monthlyPersonal.toFixed(2)}/maand</span>
+                                <span className="text-gray-400">{t('language') === 'nl' ? 'Maandelijkse kosten' : 'Monthly costs'}</span>
+                                <span className="text-white font-medium">€{monthlyPersonal.toFixed(2)}/{t('language') === 'nl' ? 'maand' : 'month'}</span>
                               </div>
                               <div className="flex justify-between items-center py-2 border-b border-dark-700">
-                                <span className="text-gray-400">Jaarlijkse kosten</span>
-                                <span className="text-white font-medium">€{yearlyPersonal.toFixed(2)}/jaar</span>
+                                <span className="text-gray-400">{t('language') === 'nl' ? 'Jaarlijkse kosten' : 'Yearly costs'}</span>
+                                <span className="text-white font-medium">€{yearlyPersonal.toFixed(2)}/{t('language') === 'nl' ? 'jaar' : 'year'}</span>
                               </div>
                               <div className="flex justify-between items-center py-2 border-b border-dark-700">
-                                <span className="text-gray-400">Eenmalige kosten</span>
+                                <span className="text-gray-400">{t('language') === 'nl' ? 'Eenmalige kosten' : 'One-time costs'}</span>
                                 <span className="text-white font-medium">€{oneTimePersonal.toFixed(2)}</span>
                               </div>
                               <div className="flex justify-between items-center py-2">
-                                <span className="text-white font-semibold">Totaal privékosten</span>
+                                <span className="text-white font-semibold">{t('language') === 'nl' ? 'Totaal privékosten' : 'Total personal costs'}</span>
                                 <span className="text-yellow-400 font-bold">€{(monthlyPersonal + yearlyPersonal + oneTimePersonal).toFixed(2)}</span>
                               </div>
                             </>
@@ -2461,7 +2456,7 @@ const AdminDashboard: React.FC = () => {
               <div className="bg-dark-800 rounded-lg border border-dark-700">
                 <div className="p-6">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold text-white">Toeslagenoverzicht</h2>
+                    <h2 className="text-xl font-semibold text-white">{t('language') === 'nl' ? 'Toeslagenoverzicht' : 'Surcharges Overview'}</h2>
                     <button
                       onClick={() => {
                         setEditingSurcharge(null);
@@ -2477,14 +2472,14 @@ const AdminDashboard: React.FC = () => {
                       }}
                       className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
                     >
-                      + Nieuwe Inkomst/Toeslag
+                      + {t('language') === 'nl' ? 'Nieuwe Inkomst/Toeslag' : 'New Income/Surcharge'}
                     </button>
                   </div>
                   
                   {surcharges.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                      <p>Geen inkomsten/toeslagen gevonden.</p>
-                      <p className="text-sm mt-1">Voeg hier je persoonlijke inkomsten toe zoals DUO, zorgtoeslag, huurtoeslag, etc.</p>
+                      <p>{t('language') === 'nl' ? 'Geen inkomsten/toeslagen gevonden.' : 'No income/surcharges found.'}</p>
+                      <p className="text-sm mt-1">{t('language') === 'nl' ? 'Voeg hier je persoonlijke inkomsten toe zoals DUO, zorgtoeslag, huurtoeslag, etc.' : 'Add your personal income here such as DUO, healthcare allowance, rent allowance, etc.'}</p>
                     </div>
                   ) : (
                     <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-dark-600 scrollbar-track-dark-800">
@@ -2497,22 +2492,23 @@ const AdminDashboard: React.FC = () => {
                                 <span className={`px-2 py-0.5 text-xs rounded-full ${
                                   surcharge.type === 'business' ? 'bg-blue-900 text-blue-300' : 'bg-purple-900 text-purple-300'
                                 }`}>
-                                  {surcharge.type === 'business' ? 'Bedrijf' : 'Privé'}
+                                  {surcharge.type === 'business' ? (t('language') === 'nl' ? 'Bedrijf' : 'Business') : (t('language') === 'nl' ? 'Privé' : 'Personal')}
                                 </span>
                                 <span className={`px-2 py-0.5 text-xs rounded-full ${
                                   surcharge.frequency === 'monthly' ? 'bg-green-900 text-green-300' : 
                                   surcharge.frequency === 'yearly' ? 'bg-blue-900 text-blue-300' :
                                   'bg-orange-900 text-orange-300'
                                 }`}>
-                                  {surcharge.frequency === 'monthly' ? 'Maandelijks' : 
-                                   surcharge.frequency === 'yearly' ? 'Jaarlijks' : 'Eenmalig'}
+                                  {surcharge.frequency === 'monthly' ? (t('language') === 'nl' ? 'Maandelijks' : 'Monthly') : 
+                                   surcharge.frequency === 'yearly' ? (t('language') === 'nl' ? 'Jaarlijks' : 'Yearly') : 
+                                   (t('language') === 'nl' ? 'Eenmalig' : 'One-time')}
                                 </span>
                               </div>
                               {surcharge.category && (
                                 <p className="text-gray-500 text-xs mb-1">{surcharge.category}</p>
                               )}
                               <p className="text-gray-400 text-sm">
-                                {surcharge.surcharge_date ? new Date(surcharge.surcharge_date).toLocaleDateString('nl-NL') : 'Geen datum'}
+                                {surcharge.surcharge_date ? new Date(surcharge.surcharge_date).toLocaleDateString('nl-NL') : (t('language') === 'nl' ? 'Geen datum' : 'No date')}
                               </p>
                             </div>
                             <div className="text-right">
@@ -2522,7 +2518,7 @@ const AdminDashboard: React.FC = () => {
                                   onClick={() => openEditSurcharge(surcharge)}
                                   className="text-gray-400 hover:text-white text-xs"
                                 >
-                                  Bewerken
+                                  {t('common.edit')}
                                 </button>
                                 <button
                                   onClick={() => handleDeleteSurcharge(surcharge.id)}
@@ -2535,10 +2531,10 @@ const AdminDashboard: React.FC = () => {
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                       </svg>
-                                      Bezig...
+                                      {t('common.loading')}
                                     </>
                                   ) : (
-                                    'Verwijderen'
+                                    t('common.delete')
                                   )}
                                 </button>
                               </div>
@@ -2554,7 +2550,7 @@ const AdminDashboard: React.FC = () => {
               {/* Profit/Loss Calculation */}
               <div className="bg-dark-800 rounded-lg border border-dark-700">
                 <div className="p-6">
-                  <h2 className="text-xl font-semibold text-white mb-6">Winst & Verlies Berekening</h2>
+                  <h2 className="text-xl font-semibold text-white mb-6">{t('language') === 'nl' ? 'Winst & Verlies Berekening' : 'Profit & Loss Calculation'}</h2>
                   
                   {(() => {
                     const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0);
@@ -2568,33 +2564,33 @@ const AdminDashboard: React.FC = () => {
                     return (
                       <div className="space-y-4">
                         <div className="flex justify-between items-center py-3 border-b border-dark-700">
-                          <span className="text-gray-400">Totale Omzet (betaalde facturen)</span>
+                          <span className="text-gray-400">{t('language') === 'nl' ? 'Totale Omzet (betaalde facturen)' : 'Total Revenue (paid invoices)'}</span>
                           <span className="text-green-400 font-medium text-lg">+ €{totalRevenue.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center py-3 border-b border-dark-700">
-                          <span className="text-gray-400">Persoonlijke inkomsten/toeslagen</span>
+                          <span className="text-gray-400">{t('language') === 'nl' ? 'Persoonlijke inkomsten/toeslagen' : 'Personal income/surcharges'}</span>
                           <span className="text-primary-400 font-medium text-lg">+ €{totalSurcharges.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center py-3 border-b border-dark-700 bg-dark-900/50 rounded px-3">
-                          <span className="text-white font-semibold">Totale Inkomsten</span>
+                          <span className="text-white font-semibold">{t('language') === 'nl' ? 'Totale Inkomsten' : 'Total Income'}</span>
                           <span className="text-green-400 font-bold text-lg">€{totalIncome.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center py-3 border-b border-dark-700">
-                          <span className="text-gray-400">Bedrijfskosten</span>
+                          <span className="text-gray-400">{t('language') === 'nl' ? 'Bedrijfskosten' : 'Business Costs'}</span>
                           <span className="text-red-400 font-medium text-lg">- €{businessCosts.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center py-3 border-b border-dark-700 bg-dark-900/50 rounded px-3">
-                          <span className="text-white font-semibold">Bruto Winst (voor privékosten)</span>
+                          <span className="text-white font-semibold">{t('language') === 'nl' ? 'Bruto Winst (voor privékosten)' : 'Gross Profit (before personal costs)'}</span>
                           <span className={`font-bold text-lg ${netProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                             €{netProfit.toFixed(2)}
                           </span>
                         </div>
                         <div className="flex justify-between items-center py-3 border-b border-dark-700">
-                          <span className="text-gray-400">Privékosten</span>
+                          <span className="text-gray-400">{t('language') === 'nl' ? 'Privékosten' : 'Personal Costs'}</span>
                           <span className="text-yellow-400 font-medium text-lg">- €{personalCosts.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center py-4 bg-primary-900/20 rounded-lg px-4">
-                          <span className="text-white font-bold text-lg">Netto Winst (zakelijk)</span>
+                          <span className="text-white font-bold text-lg">{t('language') === 'nl' ? 'Netto Winst (zakelijk)' : 'Net Profit (business)'}</span>
                           <span className={`font-bold text-2xl ${afterPersonal >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                             €{afterPersonal.toFixed(2)}
                           </span>
@@ -2611,18 +2607,18 @@ const AdminDashboard: React.FC = () => {
           {showProjectForm && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-dark-800 rounded-lg p-6 w-full max-w-md border border-dark-700">
-                <h3 className="text-xl font-semibold text-white mb-4">Nieuw Project</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">{t('language') === 'nl' ? 'Nieuw Project' : 'New Project'}</h3>
                 <form onSubmit={handleCreateProject}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Klant</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.customer')}</label>
                       <select
                         value={selectedCustomer}
                         onChange={(e) => setSelectedCustomer(e.target.value)}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                         required
                       >
-                        <option value="">Selecteer klant</option>
+                        <option value="">{t('language') === 'nl' ? 'Selecteer klant' : 'Select customer'}</option>
                         {customers.map(customer => (
                           <option key={customer.email} value={customer.email}>
                             {customer.displayName} ({customer.email})
@@ -2631,7 +2627,7 @@ const AdminDashboard: React.FC = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Titel</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.title')}</label>
                       <input
                         type="text"
                         value={projectForm.title}
@@ -2641,7 +2637,7 @@ const AdminDashboard: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Beschrijving</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.description')}</label>
                       <textarea
                         value={projectForm.description}
                         onChange={(e) => setProjectForm(prev => ({ ...prev, description: e.target.value }))}
@@ -2651,20 +2647,20 @@ const AdminDashboard: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Status</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('common.status')}</label>
                       <select
                         value={projectForm.status}
                         onChange={(e) => setProjectForm(prev => ({ ...prev, status: e.target.value as any }))}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                       >
-                        <option value="planning">Planning</option>
-                        <option value="active">Actief</option>
-                        <option value="completed">Voltooid</option>
-                        <option value="paused">Gepauzeerd</option>
+                        <option value="planning">{t('common.planning')}</option>
+                        <option value="active">{t('common.active')}</option>
+                        <option value="completed">{t('common.completed')}</option>
+                        <option value="paused">{t('common.paused')}</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Deadline</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.deadline')}</label>
                       <input
                         type="date"
                         value={projectForm.deadline}
@@ -2673,7 +2669,7 @@ const AdminDashboard: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Budget</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.budget')}</label>
                       <input
                         type="number"
                         value={projectForm.budget}
@@ -2682,13 +2678,13 @@ const AdminDashboard: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Website URL <span className="text-gray-500 text-xs">(optioneel)</span></label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.websiteUrl')} <span className="text-gray-500 text-xs">({t('common.optional')})</span></label>
                       <input
                         type="url"
                         value={projectForm.websiteUrl}
                         onChange={(e) => setProjectForm(prev => ({ ...prev, websiteUrl: e.target.value }))}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
-                        placeholder="https://leegstandmeldpunt.nl"
+                        placeholder="https://example.com"
                       />
                     </div>
                   </div>
@@ -2698,13 +2694,13 @@ const AdminDashboard: React.FC = () => {
                       onClick={() => setShowProjectForm(false)}
                       className="px-4 py-2 text-gray-400 hover:text-white"
                     >
-                      Annuleren
+                      {t('common.cancel')}
                     </button>
                     <button
                       type="submit"
                       className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
                     >
-                      Aanmaken
+                      {t('common.create')}
                     </button>
                   </div>
                 </form>
@@ -2716,11 +2712,11 @@ const AdminDashboard: React.FC = () => {
           {showEditProjectForm && editingProject && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-dark-800 rounded-lg p-6 w-full max-w-md border border-dark-700">
-                <h3 className="text-xl font-semibold text-white mb-4">Project Bewerken</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">{t('language') === 'nl' ? 'Project Bewerken' : 'Edit Project'}</h3>
                 <form onSubmit={handleUpdateProject}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Titel</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.title')}</label>
                       <input
                         type="text"
                         value={projectForm.title}
@@ -2730,7 +2726,7 @@ const AdminDashboard: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Beschrijving</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.description')}</label>
                       <textarea
                         value={projectForm.description}
                         onChange={(e) => setProjectForm(prev => ({ ...prev, description: e.target.value }))}
@@ -2740,20 +2736,20 @@ const AdminDashboard: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Status</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('common.status')}</label>
                       <select
                         value={projectForm.status}
                         onChange={(e) => setProjectForm(prev => ({ ...prev, status: e.target.value as any }))}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                       >
-                        <option value="planning">Planning</option>
-                        <option value="active">Actief</option>
-                        <option value="completed">Voltooid</option>
-                        <option value="paused">Gepauzeerd</option>
+                        <option value="planning">{t('common.planning')}</option>
+                        <option value="active">{t('common.active')}</option>
+                        <option value="completed">{t('common.completed')}</option>
+                        <option value="paused">{t('common.paused')}</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Deadline</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.deadline')}</label>
                       <input
                         type="date"
                         value={projectForm.deadline}
@@ -2763,7 +2759,7 @@ const AdminDashboard: React.FC = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-1">
-                        Voortgang: {projectForm.progress}%
+                        {t('common.progress')}: {projectForm.progress}%
                       </label>
                       <input
                         type="range"
@@ -2785,7 +2781,7 @@ const AdminDashboard: React.FC = () => {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Budget</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.budget')}</label>
                       <input
                         type="number"
                         value={projectForm.budget}
@@ -2794,13 +2790,13 @@ const AdminDashboard: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Website URL <span className="text-gray-500 text-xs">(optioneel)</span></label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.websiteUrl')} <span className="text-gray-500 text-xs">({t('common.optional')})</span></label>
                       <input
                         type="url"
                         value={projectForm.websiteUrl}
                         onChange={(e) => setProjectForm(prev => ({ ...prev, websiteUrl: e.target.value }))}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
-                        placeholder="https://leegstandmeldpunt.nl"
+                        placeholder="https://example.com"
                       />
                     </div>
                   </div>
@@ -2814,13 +2810,13 @@ const AdminDashboard: React.FC = () => {
                       }}
                       className="px-4 py-2 text-gray-400 hover:text-white"
                     >
-                      Annuleren
+                      {t('common.cancel')}
                     </button>
                     <button
                       type="submit"
                       className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
                     >
-                      Opslaan
+                      {t('common.save')}
                     </button>
                   </div>
                 </form>
@@ -2832,13 +2828,13 @@ const AdminDashboard: React.FC = () => {
           {showInvoiceForm && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-dark-800 rounded-lg p-6 w-full max-w-3xl border border-dark-700 max-h-[90vh] overflow-y-auto">
-                <h3 className="text-xl font-semibold text-white mb-4">Nieuwe Factuur</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">{t('language') === 'nl' ? 'Nieuwe Factuur' : 'New Invoice'}</h3>
                 <form onSubmit={handleCreateInvoice}>
                   <div className="space-y-4">
                     {/* Invoice Details */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Factuurnummer <span className="text-gray-500 text-xs">(automatisch)</span></label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.invoiceNumber')} <span className="text-gray-500 text-xs">({t('language') === 'nl' ? 'automatisch' : 'auto'})</span></label>
                         <input
                           type="text"
                           value={invoiceForm.invoiceNumber}
@@ -2848,7 +2844,7 @@ const AdminDashboard: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Factuurdatum</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.invoiceDate')}</label>
                         <input
                           type="date"
                           value={invoiceForm.invoiceDate}
@@ -2861,18 +2857,17 @@ const AdminDashboard: React.FC = () => {
 
                     {/* Customer Selection */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Klant (e-mail)</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.customer')} ({t('auth.email')})</label>
                       <select
                         value={selectedCustomer}
                         onChange={(e) => {
                           setSelectedCustomer(e.target.value);
-                          // Auto-fill customer email
                           setInvoiceForm(prev => ({ ...prev, customerEmail: e.target.value }));
                         }}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                         required
                       >
-                        <option value="">Selecteer klant</option>
+                        <option value="">{t('language') === 'nl' ? 'Selecteer klant' : 'Select customer'}</option>
                         {customers.map(customer => (
                           <option key={customer.email} value={customer.email}>
                             {customer.displayName} ({customer.email})
@@ -2883,40 +2878,40 @@ const AdminDashboard: React.FC = () => {
 
                     {/* Customer Details */}
                     <div className="bg-dark-900 p-4 rounded-lg border border-dark-700">
-                      <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">Klantgegevens</h4>
+                      <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">{t('language') === 'nl' ? 'Klantgegevens' : 'Customer Details'}</h4>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs font-medium text-gray-400 mb-1">Bedrijfsnaam</label>
+                          <label className="block text-xs font-medium text-gray-400 mb-1">{t('language') === 'nl' ? 'Bedrijfsnaam' : 'Company Name'}</label>
                           <input
                             type="text"
                             value={invoiceForm.customerCompany}
                             onChange={(e) => setInvoiceForm(prev => ({ ...prev, customerCompany: e.target.value }))}
                             className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm"
-                            placeholder="Bedrijfsnaam"
+                            placeholder={t('language') === 'nl' ? 'Bedrijfsnaam' : 'Company Name'}
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-medium text-gray-400 mb-1">Contactpersoon</label>
+                          <label className="block text-xs font-medium text-gray-400 mb-1">{t('language') === 'nl' ? 'Contactpersoon' : 'Contact Person'}</label>
                           <input
                             type="text"
                             value={invoiceForm.customerName}
                             onChange={(e) => setInvoiceForm(prev => ({ ...prev, customerName: e.target.value }))}
                             className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm"
-                            placeholder="Naam"
+                            placeholder={t('language') === 'nl' ? 'Naam' : 'Name'}
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-medium text-gray-400 mb-1">Adres</label>
+                          <label className="block text-xs font-medium text-gray-400 mb-1">{t('language') === 'nl' ? 'Adres' : 'Address'}</label>
                           <input
                             type="text"
                             value={invoiceForm.customerAddress}
                             onChange={(e) => setInvoiceForm(prev => ({ ...prev, customerAddress: e.target.value }))}
                             className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm"
-                            placeholder="Straat + huisnummer"
+                            placeholder={t('language') === 'nl' ? 'Straat + huisnummer' : 'Street + number'}
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-medium text-gray-400 mb-1">Telefoon</label>
+                          <label className="block text-xs font-medium text-gray-400 mb-1">{t('language') === 'nl' ? 'Telefoon' : 'Phone'}</label>
                           <input
                             type="text"
                             value={invoiceForm.customerPhone}
@@ -2927,7 +2922,7 @@ const AdminDashboard: React.FC = () => {
                         </div>
                         <div className="flex gap-2">
                           <div className="w-1/3">
-                            <label className="block text-xs font-medium text-gray-400 mb-1">Postcode</label>
+                            <label className="block text-xs font-medium text-gray-400 mb-1">{t('language') === 'nl' ? 'Postcode' : 'Postal Code'}</label>
                             <input
                               type="text"
                               value={invoiceForm.customerPostal}
@@ -2937,7 +2932,7 @@ const AdminDashboard: React.FC = () => {
                             />
                           </div>
                           <div className="flex-1">
-                            <label className="block text-xs font-medium text-gray-400 mb-1">Plaats</label>
+                            <label className="block text-xs font-medium text-gray-400 mb-1">{t('language') === 'nl' ? 'Plaats' : 'City'}</label>
                             <input
                               type="text"
                               value={invoiceForm.customerCity}
@@ -2951,19 +2946,19 @@ const AdminDashboard: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Project / Omschrijving</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('language') === 'nl' ? 'Project / Omschrijving' : 'Project / Description'}</label>
                       <input
                         type="text"
                         value={invoiceForm.projectTitle}
                         onChange={(e) => setInvoiceForm(prev => ({ ...prev, projectTitle: e.target.value }))}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
-                        placeholder="Website Ontwikkeling"
+                        placeholder={t('language') === 'nl' ? 'Website Ontwikkeling' : 'Website Development'}
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Vervaldatum</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('language') === 'nl' ? 'Vervaldatum' : 'Due Date'}</label>
                       <input
                         type="date"
                         value={invoiceForm.dueDate}
@@ -2976,21 +2971,21 @@ const AdminDashboard: React.FC = () => {
                     {/* Invoice Items */}
                     <div>
                       <div className="flex justify-between items-center mb-2">
-                        <label className="block text-sm font-medium text-gray-300">Factuurregels</label>
+                        <label className="block text-sm font-medium text-gray-300">{t('language') === 'nl' ? 'Factuurregels' : 'Invoice Items'}</label>
                         <button
                           type="button"
                           onClick={addInvoiceItem}
                           className="text-primary-400 hover:text-primary-300 text-sm"
                         >
-                          + Regel toevoegen
+                          + {t('language') === 'nl' ? 'Regel toevoegen' : 'Add Item'}
                         </button>
                       </div>
                       <div className="bg-dark-900 p-3 rounded-lg border border-dark-700">
                         <div className="grid grid-cols-12 gap-2 mb-2 text-xs text-gray-400 uppercase">
-                          <div className="col-span-1">Aantal</div>
-                          <div className="col-span-6">Omschrijving</div>
-                          <div className="col-span-3">Prijs</div>
-                          <div className="col-span-2">Totaal</div>
+                          <div className="col-span-1">{t('language') === 'nl' ? 'Aantal' : 'Qty'}</div>
+                          <div className="col-span-6">{t('admin.description')}</div>
+                          <div className="col-span-3">{t('language') === 'nl' ? 'Prijs' : 'Price'}</div>
+                          <div className="col-span-2">{t('language') === 'nl' ? 'Totaal' : 'Total'}</div>
                         </div>
                         {invoiceForm.items.map((item, index) => (
                           <div key={index} className="grid grid-cols-12 gap-2 mb-2">
@@ -3004,7 +2999,7 @@ const AdminDashboard: React.FC = () => {
                             />
                             <input
                               type="text"
-                              placeholder="Omschrijving"
+                              placeholder={t('language') === 'nl' ? 'Omschrijving' : 'Description'}
                               value={item.description}
                               onChange={(e) => updateInvoiceItem(index, 'description', e.target.value)}
                               className="col-span-6 px-2 py-2 bg-dark-800 border border-dark-600 rounded text-white text-sm"
@@ -3026,7 +3021,7 @@ const AdminDashboard: React.FC = () => {
                         {/* Total */}
                         <div className="border-t border-dark-600 mt-3 pt-3 flex justify-end">
                           <div className="text-right">
-                            <div className="text-sm text-gray-400">Totaalbedrag</div>
+                            <div className="text-sm text-gray-400">{t('language') === 'nl' ? 'Totaalbedrag' : 'Total Amount'}</div>
                             <div className="text-xl font-bold text-white">
                               €{invoiceForm.items.reduce((sum, item) => sum + (item.quantity * item.price), 0).toFixed(2)}
                             </div>
@@ -3041,7 +3036,7 @@ const AdminDashboard: React.FC = () => {
                       onClick={() => setShowInvoiceForm(false)}
                       className="px-4 py-2 text-gray-400 hover:text-white"
                     >
-                      Annuleren
+                      {t('common.cancel')}
                     </button>
                     <button
                       type="submit"
@@ -3054,10 +3049,10 @@ const AdminDashboard: React.FC = () => {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
-                          Bezig met aanmaken...
+                          {t('common.creating')}
                         </>
                       ) : (
-                        'Aanmaken & PDF Genereren'
+                        t('language') === 'nl' ? 'Aanmaken & PDF Genereren' : 'Create & Generate PDF'
                       )}
                     </button>
                   </div>
@@ -3072,7 +3067,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-6">
                     <div>
-                      <h3 className="text-2xl font-bold text-white">Factuur Details</h3>
+                      <h3 className="text-2xl font-bold text-white">{t('language') === 'nl' ? 'Factuur Details' : 'Invoice Details'}</h3>
                       <p className="text-primary-400 text-lg">{selectedInvoice.invoiceNumber}</p>
                     </div>
                     <button onClick={closeInvoiceDetails} className="text-gray-400 hover:text-white">
@@ -3085,26 +3080,26 @@ const AdminDashboard: React.FC = () => {
                   <div className="grid grid-cols-2 gap-6 mb-6">
                     {/* Invoice Info */}
                     <div className="bg-dark-900 p-4 rounded-lg border border-dark-700">
-                      <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">Factuurinformatie</h4>
+                      <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">{t('language') === 'nl' ? 'Factuurinformatie' : 'Invoice Information'}</h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Factuurnummer:</span>
+                          <span className="text-gray-400">{t('admin.invoiceNumber')}:</span>
                           <span className="text-white">{selectedInvoice.invoiceNumber}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Factuurdatum:</span>
+                          <span className="text-gray-400">{t('admin.invoiceDate')}:</span>
                           <span className="text-white">{selectedInvoice.invoiceDate ? new Date(selectedInvoice.invoiceDate).toLocaleDateString('nl-NL') : new Date(selectedInvoice.createdAt).toLocaleDateString('nl-NL')}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Vervaldatum:</span>
+                          <span className="text-gray-400">{t('language') === 'nl' ? 'Vervaldatum' : 'Due Date'}:</span>
                           <span className="text-white">{new Date(selectedInvoice.dueDate).toLocaleDateString('nl-NL')}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Status:</span>
+                          <span className="text-gray-400">{t('common.status')}:</span>
                           <span className="text-white capitalize">{selectedInvoice.status}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Project:</span>
+                          <span className="text-gray-400">{t('language') === 'nl' ? 'Project' : 'Project'}:</span>
                           <span className="text-white">{selectedInvoice.projectTitle}</span>
                         </div>
                       </div>
@@ -3112,33 +3107,33 @@ const AdminDashboard: React.FC = () => {
 
                     {/* Customer Info */}
                     <div className="bg-dark-900 p-4 rounded-lg border border-dark-700">
-                      <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">Klantgegevens</h4>
+                      <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">{t('language') === 'nl' ? 'Klantgegevens' : 'Customer Details'}</h4>
                       <div className="space-y-2 text-sm">
                         {selectedInvoice.customerCompany && (
                           <div className="flex justify-between">
-                            <span className="text-gray-400">Bedrijf:</span>
+                            <span className="text-gray-400">{t('language') === 'nl' ? 'Bedrijf' : 'Company'}:</span>
                             <span className="text-white">{selectedInvoice.customerCompany}</span>
                           </div>
                         )}
                         {selectedInvoice.customerName && (
                           <div className="flex justify-between">
-                            <span className="text-gray-400">Contact:</span>
+                            <span className="text-gray-400">{t('language') === 'nl' ? 'Contact' : 'Contact'}:</span>
                             <span className="text-white">{selectedInvoice.customerName}</span>
                           </div>
                         )}
                         <div className="flex justify-between">
-                          <span className="text-gray-400">E-mail:</span>
+                          <span className="text-gray-400">{t('auth.email')}:</span>
                           <span className="text-white">{selectedInvoice.customerEmail}</span>
                         </div>
                         {selectedInvoice.customerPhone && (
                           <div className="flex justify-between">
-                            <span className="text-gray-400">Telefoon:</span>
+                            <span className="text-gray-400">{t('language') === 'nl' ? 'Telefoon' : 'Phone'}:</span>
                             <span className="text-white">{selectedInvoice.customerPhone}</span>
                           </div>
                         )}
                         {(selectedInvoice.customerAddress || selectedInvoice.customerPostal || selectedInvoice.customerCity) && (
                           <div className="flex justify-between">
-                            <span className="text-gray-400">Adres:</span>
+                            <span className="text-gray-400">{t('language') === 'nl' ? 'Adres' : 'Address'}:</span>
                             <span className="text-white text-right">
                               {selectedInvoice.customerAddress && <div>{selectedInvoice.customerAddress}</div>}
                               {(selectedInvoice.customerPostal || selectedInvoice.customerCity) && (
@@ -3153,14 +3148,14 @@ const AdminDashboard: React.FC = () => {
 
                   {/* Invoice Items */}
                   <div className="bg-dark-900 p-4 rounded-lg border border-dark-700 mb-6">
-                    <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">Factuurregels</h4>
+                    <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">{t('language') === 'nl' ? 'Factuurregels' : 'Invoice Items'}</h4>
                     <table className="w-full">
                       <thead>
                         <tr className="text-left text-xs text-gray-400 uppercase border-b border-dark-700">
-                          <th className="pb-2">Omschrijving</th>
-                          <th className="pb-2 text-center">Aantal</th>
-                          <th className="pb-2 text-right">Prijs</th>
-                          <th className="pb-2 text-right">Totaal</th>
+                          <th className="pb-2">{t('admin.description')}</th>
+                          <th className="pb-2 text-center">{t('language') === 'nl' ? 'Aantal' : 'Qty'}</th>
+                          <th className="pb-2 text-right">{t('language') === 'nl' ? 'Prijs' : 'Price'}</th>
+                          <th className="pb-2 text-right">{t('language') === 'nl' ? 'Totaal' : 'Total'}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -3175,7 +3170,7 @@ const AdminDashboard: React.FC = () => {
                       </tbody>
                       <tfoot>
                         <tr className="border-t border-dark-700">
-                          <td colSpan={3} className="pt-3 text-right text-gray-400">Totaalbedrag:</td>
+                          <td colSpan={3} className="pt-3 text-right text-gray-400">{t('language') === 'nl' ? 'Totaalbedrag' : 'Total Amount'}:</td>
                           <td className="pt-3 text-right text-xl font-bold text-primary-400">€{selectedInvoice.amount.toFixed(2)}</td>
                         </tr>
                       </tfoot>
@@ -3187,7 +3182,7 @@ const AdminDashboard: React.FC = () => {
                       onClick={closeInvoiceDetails}
                       className="px-4 py-2 text-gray-400 hover:text-white"
                     >
-                      Sluiten
+                      {t('language') === 'nl' ? 'Sluiten' : 'Close'}
                     </button>
                     <button
                       onClick={() => {
@@ -3196,7 +3191,7 @@ const AdminDashboard: React.FC = () => {
                       }}
                       className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
                     >
-                      PDF Genereren
+                      {t('language') === 'nl' ? 'PDF Genereren' : 'Generate PDF'}
                     </button>
                   </div>
                 </div>
@@ -3211,7 +3206,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-6">
                     <div>
-                      <h3 className="text-xl font-semibold text-white">Project Logs: {selectedProjectForLogs.title}</h3>
+                      <h3 className="text-xl font-semibold text-white">{t('language') === 'nl' ? 'Project Logs' : 'Project Logs'}: {selectedProjectForLogs.title}</h3>
                       <p className="text-gray-400 text-sm">{selectedProjectForLogs.customerEmail}</p>
                     </div>
                     <button onClick={closeProjectLogs} className="text-gray-400 hover:text-white">
@@ -3223,12 +3218,12 @@ const AdminDashboard: React.FC = () => {
 
                   {/* Add New Log Form */}
                   <form onSubmit={handleAddLog} className="bg-dark-900 p-4 rounded-lg border border-dark-700 mb-6">
-                    <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">Nieuwe Update Toevoegen</h4>
+                    <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">{t('language') === 'nl' ? 'Nieuwe Update Toevoegen' : 'Add New Update'}</h4>
                     <div className="space-y-3">
                       <div>
                         <input
                           type="text"
-                          placeholder="Titel van de update"
+                          placeholder={t('language') === 'nl' ? 'Titel van de update' : 'Update title'}
                           value={newLogForm.title}
                           onChange={(e) => setNewLogForm(prev => ({ ...prev, title: e.target.value }))}
                           className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded-lg text-white"
@@ -3237,7 +3232,7 @@ const AdminDashboard: React.FC = () => {
                       </div>
                       <div>
                         <textarea
-                          placeholder="Beschrijving van wat er is gedaan..."
+                          placeholder={t('language') === 'nl' ? 'Beschrijving van wat er is gedaan...' : 'Description of what was done...'}
                           value={newLogForm.description}
                           onChange={(e) => setNewLogForm(prev => ({ ...prev, description: e.target.value }))}
                           className="w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded-lg text-white"
@@ -3251,12 +3246,12 @@ const AdminDashboard: React.FC = () => {
                           onChange={(e) => setNewLogForm(prev => ({ ...prev, logType: e.target.value as any }))}
                           className="px-3 py-2 bg-dark-800 border border-dark-600 rounded-lg text-white"
                         >
-                          <option value="update">Update</option>
-                          <option value="milestone">Mijlpaal</option>
-                          <option value="feature">Nieuwe functie</option>
-                          <option value="bugfix">Bugfix</option>
-                          <option value="design">Design</option>
-                          <option value="deployment">Deployment</option>
+                          <option value="update">{t('language') === 'nl' ? 'Update' : 'Update'}</option>
+                          <option value="milestone">{t('language') === 'nl' ? 'Mijlpaal' : 'Milestone'}</option>
+                          <option value="feature">{t('language') === 'nl' ? 'Nieuwe functie' : 'New Feature'}</option>
+                          <option value="bugfix">{t('language') === 'nl' ? 'Bugfix' : 'Bugfix'}</option>
+                          <option value="design">{t('language') === 'nl' ? 'Design' : 'Design'}</option>
+                          <option value="deployment">{t('language') === 'nl' ? 'Deployment' : 'Deployment'}</option>
                         </select>
                         <button
                           type="submit"
@@ -3269,10 +3264,10 @@ const AdminDashboard: React.FC = () => {
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                               </svg>
-                              Bezig met toevoegen...
+                              {t('common.adding')}
                             </>
                           ) : (
-                            'Toevoegen'
+                            t('common.add')
                           )}
                         </button>
                       </div>
@@ -3281,18 +3276,18 @@ const AdminDashboard: React.FC = () => {
 
                   {/* Logs List */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-400 uppercase mb-3">Updates & Logs</h4>
+                    <h4 className="text-sm font-semibold text-gray-400 uppercase mb-3">{t('language') === 'nl' ? 'Updates & Logs' : 'Updates & Logs'}</h4>
                     {isLoadingLogs ? (
                       <div className="text-center py-8 bg-dark-900 rounded-lg border border-dark-700">
                         <svg className="animate-spin h-6 w-6 text-primary-500 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <p className="text-gray-400">Bezig met laden...</p>
+                        <p className="text-gray-400">{t('common.loading')}</p>
                       </div>
                     ) : projectLogs.length === 0 ? (
                       <div className="text-center py-8 bg-dark-900 rounded-lg border border-dark-700">
-                        <p className="text-gray-400">Nog geen updates voor dit project.</p>
+                        <p className="text-gray-400">{t('language') === 'nl' ? 'Nog geen updates voor dit project.' : 'No updates for this project yet.'}</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -3516,42 +3511,42 @@ const AdminDashboard: React.FC = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Type</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">{t('common.type')}</label>
                         <select
                           value={surchargeForm.type}
                           onChange={(e) => setSurchargeForm(prev => ({ ...prev, type: e.target.value as 'business' | 'personal' }))}
                           className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                         >
-                          <option value="personal">Persoonlijk</option>
+                          <option value="personal">{t('language') === 'nl' ? 'Persoonlijk' : 'Personal'}</option>
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Frequentie</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">{t('common.frequency')}</label>
                         <select
                           value={surchargeForm.frequency}
                           onChange={(e) => setSurchargeForm(prev => ({ ...prev, frequency: e.target.value as 'monthly' | 'one-time' | 'yearly' }))}
                           className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                         >
-                          <option value="monthly">Maandelijks</option>
-                          <option value="yearly">Jaarlijks</option>
-                          <option value="one-time">Eenmalig</option>
+                          <option value="monthly">{t('language') === 'nl' ? 'Maandelijks' : 'Monthly'}</option>
+                          <option value="yearly">{t('language') === 'nl' ? 'Jaarlijks' : 'Yearly'}</option>
+                          <option value="one-time">{t('language') === 'nl' ? 'Eenmalig' : 'One-time'}</option>
                         </select>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Categorie (optioneel)</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('language') === 'nl' ? 'Categorie' : 'Category'} ({t('common.optional')})</label>
                       <input
                         type="text"
                         value={surchargeForm.category}
                         onChange={(e) => setSurchargeForm(prev => ({ ...prev, category: e.target.value }))}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
-                        placeholder="Bijv. DUO, Zorgtoeslag, Kinderbijslag, etc."
+                        placeholder={t('language') === 'nl' ? 'Bijv. DUO, Zorgtoeslag, Kinderbijslag, etc.' : 'E.g. DUO, Healthcare allowance, Child benefit, etc.'}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Datum</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('common.date')}</label>
                       <input
                         type="date"
                         value={surchargeForm.surchargeDate}
@@ -3579,7 +3574,7 @@ const AdminDashboard: React.FC = () => {
                       }}
                       className="px-4 py-2 text-gray-400 hover:text-white"
                     >
-                      Annuleren
+                      {t('common.cancel')}
                     </button>
                     <button
                       type="submit"
@@ -3592,10 +3587,10 @@ const AdminDashboard: React.FC = () => {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
-                          {editingSurcharge ? 'Bezig met bijwerken...' : 'Bezig met aanmaken...'}
+                          {editingSurcharge ? t('common.saving') : t('common.creating')}
                         </>
                       ) : (
-                        editingSurcharge ? 'Opslaan' : 'Toevoegen'
+                        editingSurcharge ? t('common.save') : t('common.add')
                       )}
                     </button>
                   </div>
@@ -3607,20 +3602,20 @@ const AdminDashboard: React.FC = () => {
           {editingCustomerSubscription && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
               <div className="bg-dark-800 rounded-lg p-6 w-full max-w-md border border-dark-700">
-                <h3 className="text-xl font-semibold text-white mb-4">Abonnement Bewerken</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">{t('language') === 'nl' ? 'Abonnement Bewerken' : 'Edit Subscription'}</h3>
                 <form onSubmit={(e) => { e.preventDefault(); handleUpdateCustomerSubscription(editingCustomerSubscription); }}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Pakket</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">{t('language') === 'nl' ? 'Pakket' : 'Package'}</label>
                       <select
                         value={subscriptionForm.subscription}
                         onChange={(e) => setSubscriptionForm(prev => ({ ...prev, subscription: e.target.value as any }))}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                       >
-                        <option value="">Geen abonnement</option>
-                        <option value="basic">Basic (€69.99/maand)</option>
-                        <option value="pro">Pro (€59.99/maand)</option>
-                        <option value="premium">Premium (€599.99/jaar)</option>
+                        <option value="">{t('language') === 'nl' ? 'Geen abonnement' : 'No subscription'}</option>
+                        <option value="basic">Basic (€69.99/{t('language') === 'nl' ? 'maand' : 'month'})</option>
+                        <option value="pro">Pro (€59.99/{t('language') === 'nl' ? 'maand' : 'month'})</option>
+                        <option value="premium">Premium (€599.99/{t('language') === 'nl' ? 'jaar' : 'year'})</option>
                       </select>
                     </div>
                     <div className="flex items-center gap-3">
@@ -3632,7 +3627,7 @@ const AdminDashboard: React.FC = () => {
                         className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
                       />
                       <label htmlFor="socialMedia" className="text-sm text-gray-300">
-                        Social Media Management (+€149.99/maand)
+                        {t('language') === 'nl' ? 'Social Media Management (+€149.99/maand)' : 'Social Media Management (+€149.99/month)'}
                       </label>
                     </div>
                   </div>
@@ -3642,13 +3637,13 @@ const AdminDashboard: React.FC = () => {
                       onClick={() => setEditingCustomerSubscription(null)}
                       className="px-4 py-2 text-gray-400 hover:text-white"
                     >
-                      Annuleren
+                      {t('common.cancel')}
                     </button>
                     <button
                       type="submit"
                       className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
                     >
-                      Opslaan
+                      {t('common.save')}
                     </button>
                   </div>
                 </form>

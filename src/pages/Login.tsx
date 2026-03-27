@@ -5,8 +5,10 @@ import { googleAuthService, GoogleUser } from '../services/googleAuth';
 import { authAPI } from '../services/api';
 import { Link } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Login: React.FC = () => {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -31,7 +33,7 @@ const Login: React.FC = () => {
       await mockAuth.signIn(email, password);
       navigate('/dashboard');
     } catch (error: any) {
-      setError(error.message || 'Inloggen mislukt. Controleer je e-mail en wachtwoord.');
+      setError(error.message || t('common.error'));
     } finally {
       setLoading(false);
     }
@@ -79,9 +81,9 @@ const Login: React.FC = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-primary-400 mb-2">Varexo</h2>
-          <h2 className="text-2xl font-bold text-white">Klant Portaal</h2>
+          <h2 className="text-2xl font-bold text-white">{t('language') === 'nl' ? 'Klant Portaal' : 'Customer Portal'}</h2>
           <p className="mt-2 text-gray-400">
-            Log in om je projecten en facturen te bekijken
+            {t('language') === 'nl' ? 'Log in om je projecten en facturen te bekijken' : 'Log in to view your projects and invoices'}
           </p>
         </div>
       </div>
@@ -104,7 +106,7 @@ const Login: React.FC = () => {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
             )}
-            {googleLoading ? 'Bezig met Google...' : 'Inloggen met Google'}
+            {googleLoading ? (t('common.loading')) : (t('auth.googleLogin') || 'Inloggen met Google')}
           </button>
 
           <div className="mt-6 relative">
@@ -112,7 +114,7 @@ const Login: React.FC = () => {
               <div className="w-full border-t border-dark-600" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-dark-800 text-gray-400">Of met e-mail</span>
+              <span className="px-2 bg-dark-800 text-gray-400">{t('language') === 'nl' ? 'Of met e-mail' : 'Or with email'}</span>
             </div>
           </div>
 
@@ -125,7 +127,7 @@ const Login: React.FC = () => {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-                E-mailadres
+                {t('auth.email')}
               </label>
               <div className="mt-1">
                 <input
@@ -144,7 +146,7 @@ const Login: React.FC = () => {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-                Wachtwoord
+                {t('auth.password')}
               </label>
               <div className="mt-1">
                 <input
@@ -170,13 +172,13 @@ const Login: React.FC = () => {
                   className="h-4 w-4 text-primary-500 focus:ring-primary-500 border-dark-600 rounded bg-dark-700"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-300">
-                  Onthoud mij
+                  {t('language') === 'nl' ? 'Onthoud mij' : 'Remember me'}
                 </label>
               </div>
 
               <div className="text-sm">
                 <Link to="/forgot-password" className="font-medium text-primary-400 hover:text-primary-300">
-                  Wachtwoord vergeten?
+                  {t('auth.forgotPassword')}
                 </Link>
               </div>
             </div>
@@ -187,7 +189,7 @@ const Login: React.FC = () => {
                 disabled={loading}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-dark-900 bg-primary-500 hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Inloggen...' : 'Inloggen'}
+                {loading ? t('common.loading') : t('nav.login')}
               </button>
             </div>
           </form>
@@ -198,7 +200,7 @@ const Login: React.FC = () => {
                 <div className="w-full border-t border-dark-600" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-dark-800 text-gray-400">Nog geen account?</span>
+                <span className="px-2 bg-dark-800 text-gray-400">{t('auth.noAccount')}</span>
               </div>
             </div>
 
@@ -207,7 +209,7 @@ const Login: React.FC = () => {
                 to="/signup"
                 className="w-full flex justify-center py-2 px-4 border-2 border-primary-500 rounded-md shadow-sm text-sm font-bold text-primary-400 hover:bg-primary-500 hover:text-dark-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition"
               >
-                Gratis Account Aanmaken
+                {t('auth.createAccount')}
               </Link>
             </div>
           </div>
