@@ -40,11 +40,11 @@ const Header: React.FC = () => {
           </Link>
           <nav className="hidden md:flex items-center space-x-6">
             <Link to="/" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.home')}</Link>
-            <Link to="/over-ons" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.about') || 'Over ons'}</Link>
+            <Link to="/over-ons" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.about')}</Link>
             <Link to="/portfolio" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">Portfolio</Link>
             <Link to="/diensten" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.services')}</Link>
             <Link to="/prijzen" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.pricing')}</Link>
-            <Link to="/werkwijze" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.process') || 'Werkwijze'}</Link>
+            <Link to="/werkwijze" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.process')}</Link>
             <Link to="/contact" className="text-gray-300 hover:text-primary-400 hover-underline transition text-sm font-medium">{t('nav.contact')}</Link>
             
             {/* Language Switcher */}

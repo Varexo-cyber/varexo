@@ -12,8 +12,10 @@ const translations = {
   nl: {
     // Navigation
     'nav.home': 'Home',
+    'nav.about': 'Over ons',
     'nav.services': 'Diensten',
     'nav.pricing': 'Prijzen',
+    'nav.process': 'Werkwijze',
     'nav.contact': 'Contact',
     'nav.login': 'Inloggen',
     'nav.signup': 'Account aanmaken',
@@ -125,8 +127,10 @@ const translations = {
   en: {
     // Navigation
     'nav.home': 'Home',
+    'nav.about': 'About',
     'nav.services': 'Services',
     'nav.pricing': 'Pricing',
+    'nav.process': 'Process',
     'nav.contact': 'Contact',
     'nav.login': 'Login',
     'nav.signup': 'Sign Up',
