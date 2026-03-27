@@ -103,7 +103,6 @@ const CustomerDashboard: React.FC = () => {
   };
 
   const getLogTypeLabel = (type: string) => {
-    const { t } = useLanguage();
     switch (type) {
       case 'milestone': return t('log.milestone') || 'Mijlpaal';
       case 'feature': return t('log.feature') || 'Nieuwe functie';
