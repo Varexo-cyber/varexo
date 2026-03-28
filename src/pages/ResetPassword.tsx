@@ -3,8 +3,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { mockAuth } from '../services/mockAuth';
 import { Link } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const ResetPassword: React.FC = () => {
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   
@@ -17,9 +19,9 @@ const ResetPassword: React.FC = () => {
 
   useEffect(() => {
     if (!token) {
-      setError('Ongeldige of verlopen reset link. Vraag een nieuwe wachtwoord reset aan.');
+      setError(t('auth.invalidResetLink'));
     }
-  }, [token]);
+  }, [token, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,17 +29,17 @@ const ResetPassword: React.FC = () => {
     setSuccess('');
 
     if (!token) {
-      setError('Ongeldige reset token');
+      setError(t('auth.invalidResetToken'));
       return;
     }
 
     if (newPassword.length < 6) {
-      setError('Wachtwoord moet minimaal 6 tekens bevatten');
+      setError(t('auth.errors.passwordLength'));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('Wachtwoorden komen niet overeen');
+      setError(t('auth.errors.passwordMismatch'));
       return;
     }
 
@@ -45,12 +47,12 @@ const ResetPassword: React.FC = () => {
 
     try {
       await mockAuth.resetPassword(token, newPassword);
-      setSuccess('Wachtwoord succesvol gewijzigd! Je wordt doorverwezen naar de login pagina...');
+      setSuccess(t('auth.passwordChanged'));
       setTimeout(() => {
         navigate('/login');
       }, 3000);
     } catch (error: any) {
-      setError(error.message || 'Wachtwoord reset mislukt. De link is mogelijk verlopen of al gebruikt.');
+      setError(error.message || t('auth.resetFailed'));
     } finally {
       setLoading(false);
     }
@@ -62,10 +64,10 @@ const ResetPassword: React.FC = () => {
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center">
             <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-              Nieuw wachtwoord instellen
+              {t('auth.resetPasswordTitle')}
             </h2>
             <p className="mt-2 text-center text-sm text-gray-400">
-              Kies een sterk wachtwoord voor je account.
+              {t('auth.resetPasswordSubtitle')}
             </p>
           </div>
 
@@ -82,7 +84,7 @@ const ResetPassword: React.FC = () => {
                   <p className="text-red-400 text-sm">{error}</p>
                   {!token && (
                     <Link to="/forgot-password" className="text-primary-500 hover:text-primary-400 text-sm mt-2 block">
-                      Nieuwe reset link aanvragen →
+                      {t('auth.requestNewLink')}
                     </Link>
                   )}
                 </div>
@@ -92,7 +94,7 @@ const ResetPassword: React.FC = () => {
                 <form className="space-y-6" onSubmit={handleSubmit}>
                   <div>
                     <label htmlFor="newPassword" className="block text-sm font-medium text-gray-300">
-                      Nieuw wachtwoord
+                      {t('auth.newPassword')}
                     </label>
                     <div className="mt-1">
                       <input
@@ -107,12 +109,12 @@ const ResetPassword: React.FC = () => {
                         placeholder="••••••••"
                       />
                     </div>
-                    <p className="mt-1 text-xs text-gray-500">Minimaal 6 tekens</p>
+                    <p className="mt-1 text-xs text-gray-500">{t('auth.passwordPlaceholder')}</p>
                   </div>
 
                   <div>
                     <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
-                      Bevestig wachtwoord
+                      {t('auth.confirmPassword')}
                     </label>
                     <div className="mt-1">
                       <input
@@ -135,7 +137,7 @@ const ResetPassword: React.FC = () => {
                       disabled={loading}
                       className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
                     >
-                      {loading ? 'Bezig...' : 'Wachtwoord wijzigen'}
+                      {loading ? t('auth.changing') : t('auth.changePassword')}
                     </button>
                   </div>
                 </form>
@@ -143,7 +145,7 @@ const ResetPassword: React.FC = () => {
 
               <div className="mt-6 text-center">
                 <Link to="/login" className="font-medium text-primary-500 hover:text-primary-400 text-sm">
-                  Terug naar inloggen
+                  {t('auth.backToLogin')}
                 </Link>
               </div>
             </div>

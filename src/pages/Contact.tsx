@@ -3,8 +3,11 @@ import { submitContactForm } from '../services/contactService';
 import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Contact: React.FC = () => {
+  const { t } = useLanguage();
+  
   const [formData, setFormData] = useState({
     naam: '',
     email: '',
@@ -59,10 +62,10 @@ const Contact: React.FC = () => {
     <div className="py-20 matrix-dots">
       <div className="container mx-auto px-4">
         <AnimateOnScroll>
-        <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">$ request_quote.sh</p>
-        <h1 className="text-4xl font-bold text-center mb-4 text-white">Gratis Offerte Aanvragen</h1>
+        <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">{t('contact.tag')}</p>
+        <h1 className="text-4xl font-bold text-center mb-4 text-white">{t('contact.title')}</h1>
         <p className="text-xl text-center text-gray-400 mb-16 max-w-2xl mx-auto">
-          Vertel ons over uw project en ontvang binnen 24 uur een vrijblijvende offerte
+          {t('contact.subtitle')}
         </p>
         </AnimateOnScroll>
         
@@ -70,7 +73,7 @@ const Contact: React.FC = () => {
           {/* Offerte Form */}
           <div className="lg:col-span-2">
             <div className="glass-card p-8 rounded-xl">
-              <h2 className="text-2xl font-bold mb-6 text-white">Project Details</h2>
+              <h2 className="text-2xl font-bold mb-6 text-white">{t('contact.form.title')}</h2>
               
               {message && (
                 <div className={`mb-6 p-4 rounded-lg ${
@@ -86,7 +89,7 @@ const Contact: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="naam" className="block text-gray-300 font-semibold mb-2">
-                      Naam *
+                      {t('contact.form.name')} *
                     </label>
                     <input
                       type="text"
@@ -102,7 +105,7 @@ const Contact: React.FC = () => {
                   
                   <div>
                     <label htmlFor="email" className="block text-gray-300 font-semibold mb-2">
-                      Email *
+                      {t('contact.form.email')} *
                     </label>
                     <input
                       type="email"
@@ -120,7 +123,7 @@ const Contact: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="telefoon" className="block text-gray-300 font-semibold mb-2">
-                      Telefoon
+                      {t('contact.form.phone')}
                     </label>
                     <input
                       type="tel"
@@ -135,7 +138,7 @@ const Contact: React.FC = () => {
                   
                   <div>
                     <label htmlFor="bedrijf" className="block text-gray-300 font-semibold mb-2">
-                      Bedrijf
+                      {t('contact.form.company')}
                     </label>
                     <input
                       type="text"
@@ -151,7 +154,7 @@ const Contact: React.FC = () => {
                 
                 <div>
                   <label htmlFor="projectType" className="block text-gray-300 font-semibold mb-2">
-                    Type Project *
+                    {t('contact.form.projectType')} *
                   </label>
                   <select
                     id="projectType"
@@ -161,20 +164,20 @@ const Contact: React.FC = () => {
                     required
                     className="w-full px-4 py-2 border border-dark-600 rounded-lg focus:outline-none focus:border-primary-500 bg-dark-700 text-white"
                   >
-                    <option value="">Kies een type project</option>
-                    <option value="website">Website</option>
-                    <option value="webshop">Webshop</option>
-                    <option value="social-media">Social Media Management</option>
-                    <option value="seo">SEO Optimalisatie</option>
-                    <option value="maatwerk">Maatwerk Software</option>
-                    <option value="onderhoud">Website Onderhoud</option>
-                    <option value="anders">Anders</option>
+                    <option value="">{t('contact.form.projectType.placeholder')}</option>
+                    <option value="website">{t('contact.form.projectType.website')}</option>
+                    <option value="webshop">{t('contact.form.projectType.webshop')}</option>
+                    <option value="social-media">{t('contact.form.projectType.social')}</option>
+                    <option value="seo">{t('contact.form.projectType.seo')}</option>
+                    <option value="maatwerk">{t('contact.form.projectType.custom')}</option>
+                    <option value="onderhoud">{t('contact.form.projectType.maintenance')}</option>
+                    <option value="anders">{t('contact.form.projectType.other')}</option>
                   </select>
                 </div>
                 
                 <div>
                   <label htmlFor="bericht" className="block text-gray-300 font-semibold mb-2">
-                    Project Beschrijving *
+                    {t('contact.form.description')} *
                   </label>
                   <textarea
                     id="bericht"
@@ -184,7 +187,7 @@ const Contact: React.FC = () => {
                     required
                     rows={5}
                     className="w-full px-4 py-2 border border-dark-600 rounded-lg focus:outline-none focus:border-primary-500 bg-dark-700 text-white placeholder-gray-500"
-                    placeholder="Beschrijf uw project, wensen en doelen..."
+                    placeholder={t('contact.form.description.placeholder')}
                   ></textarea>
                 </div>
                 
@@ -194,7 +197,7 @@ const Contact: React.FC = () => {
                     disabled={loading}
                     className="flex-1 bg-primary-500 text-dark-900 py-3 rounded-lg font-bold hover:bg-primary-400 transition disabled:opacity-50 disabled:cursor-not-allowed glow-emerald"
                   >
-                    {loading ? 'Versturen...' : 'Offerte Aanvragen'}
+                    {loading ? t('contact.form.sending') : t('contact.form.submit')}
                   </button>
                   
                   <button
@@ -218,9 +221,9 @@ const Contact: React.FC = () => {
             <div className="relative overflow-hidden bg-gradient-to-br from-green-600 to-green-700 text-white p-8 rounded-xl glow-green">
               <div className="absolute top-0 right-0 w-32 h-32 bg-green-400/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
               <div className="relative">
-                <h3 className="text-2xl font-bold mb-4">Direct Contact</h3>
+                <h3 className="text-2xl font-bold mb-4">{t('contact.whatsapp.title')}</h3>
                 <p className="text-green-100 mb-6">
-                  Liever direct contact? Stuur ons een bericht via WhatsApp voor een snelle respons!
+                  {t('contact.whatsapp.desc')}
                 </p>
                 <button
                   onClick={handleWhatsAppClick}
@@ -229,14 +232,14 @@ const Contact: React.FC = () => {
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.057-.371-.057-.566-.149-.198-1.356-1.653-1.511-1.95-.149-.297-.074-.458.074-.606.076-.099.173-.149.297-.248.124-.099.248-.198.371-.297.124-.099.198-.198.297-.347.099-.148.05-.297-.05-.445-.099-.148-.894-2.151-1.225-2.943-.322-.788-.645-.676-.894-.676-.248 0-.496-.05-.744-.05-.297 0-.744.149-1.134.676-.39.527-1.48 1.447-1.48 3.531 0 2.084 1.511 4.094 1.723 4.295.213.2 2.966 4.531 7.193 6.354.99.428 1.761.684 2.36.876.99.313 1.894.269 2.607.163.795-.119 2.447-1 2.794-1.965.347-.966.347-1.789.248-1.95-.099-.16-.348-.248-.744-.445z"/>
                   </svg>
-                  Stuur WhatsApp
+                  {t('contact.whatsapp.button')}
                 </button>
               </div>
             </div>
 
             {/* Contact Info */}
             <div className="glass-card p-6 rounded-xl">
-              <h3 className="text-xl font-semibold mb-4 text-white">Contact Info</h3>
+              <h3 className="text-xl font-semibold mb-4 text-white">{t('contact.info.title')}</h3>
               <div className="space-y-3">
                 <div className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -254,38 +257,38 @@ const Contact: React.FC = () => {
                   <svg className="w-5 h-5 text-primary-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span className="text-gray-300">Binnen 24 uur reactie</span>
+                  <span className="text-gray-300">{t('contact.info.response')}</span>
                 </div>
               </div>
             </div>
 
             {/* Why Choose Us */}
             <div className="glass-card p-6 rounded-xl">
-              <h3 className="text-xl font-semibold mb-4 text-white">Waarom Varexo?</h3>
+              <h3 className="text-xl font-semibold mb-4 text-white">{t('contact.why.title')}</h3>
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <svg className="w-5 h-5 text-primary-400 mr-2 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-300 text-sm">Gratis offerte binnen 24 uur</span>
+                  <span className="text-gray-300 text-sm">{t('contact.why.quote')}</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="w-5 h-5 text-primary-400 mr-2 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-300 text-sm">Vaste prijzen, geen verrassingen</span>
+                  <span className="text-gray-300 text-sm">{t('contact.why.pricing')}</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="w-5 h-5 text-primary-400 mr-2 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-300 text-sm">24/7 uptime garantie</span>
+                  <span className="text-gray-300 text-sm">{t('contact.why.uptime')}</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="w-5 h-5 text-primary-400 mr-2 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-300 text-sm">Persoonlijke aanpak</span>
+                  <span className="text-gray-300 text-sm">{t('contact.why.personal')}</span>
                 </li>
               </ul>
             </div>
@@ -294,27 +297,27 @@ const Contact: React.FC = () => {
 
         {/* Process Steps */}
         <div className="glass-card p-8 rounded-xl max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-8 text-white">Hoe Werkt Het?</h2>
+          <h2 className="text-2xl font-bold text-center mb-8 text-white">{t('contact.process.title')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="text-center">
               <div className="w-12 h-12 bg-primary-500 text-dark-900 rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-3">1</div>
-              <h3 className="font-semibold text-white mb-2">Offerte Aanvragen</h3>
-              <p className="text-gray-400 text-sm">Vul het formulier in of stuur een WhatsApp bericht</p>
+              <h3 className="font-semibold text-white mb-2">{t('contact.process.step1.title')}</h3>
+              <p className="text-gray-400 text-sm">{t('contact.process.step1.desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-primary-500 text-dark-900 rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-3">2</div>
-              <h3 className="font-semibold text-white mb-2">Contact</h3>
-              <p className="text-gray-400 text-sm">We nemen binnen 24 uur contact voor details</p>
+              <h3 className="font-semibold text-white mb-2">{t('contact.process.step2.title')}</h3>
+              <p className="text-gray-400 text-sm">{t('contact.process.step2.desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-primary-500 text-dark-900 rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-3">3</div>
-              <h3 className="font-semibold text-white mb-2">Offerte</h3>
-              <p className="text-gray-400 text-sm">U ontvangt een vrijblijvende offerte</p>
+              <h3 className="font-semibold text-white mb-2">{t('contact.process.step3.title')}</h3>
+              <p className="text-gray-400 text-sm">{t('contact.process.step3.desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-primary-500 text-dark-900 rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-3">4</div>
-              <h3 className="font-semibold text-white mb-2">Start Project</h3>
-              <p className="text-gray-400 text-sm">Akkoord? Dan starten we direct met uw project</p>
+              <h3 className="font-semibold text-white mb-2">{t('contact.process.step4.title')}</h3>
+              <p className="text-gray-400 text-sm">{t('contact.process.step4.desc')}</p>
             </div>
           </div>
         </div>

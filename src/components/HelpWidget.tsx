@@ -1,29 +1,31 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const HelpWidget: React.FC = () => {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [activeQuestion, setActiveQuestion] = useState<number | null>(null);
 
   const faqs = [
     {
-      question: 'Wat kost een website?',
-      answer: 'Onze pakketten starten vanaf €399 voor een basic website. Bekijk onze prijzenpagina voor alle opties.'
+      question: t('help.question1'),
+      answer: t('help.answer1')
     },
     {
-      question: 'Hoe lang duurt het?',
-      answer: 'Een basic website is binnen 1-2 weken klaar. Maatwerk projecten duren 4-8 weken, afhankelijk van de complexiteit.'
+      question: t('help.question2'),
+      answer: t('help.answer2')
     },
     {
-      question: 'Kan ik mijn site zelf beheren?',
-      answer: 'Ja! We leveren altijd een gebruiksvriendelijk CMS mee en geven uitleg over het beheer van je website.'
+      question: t('help.question3'),
+      answer: t('help.answer3')
     },
     {
-      question: 'Bieden jullie hosting aan?',
-      answer: 'Ja, we bieden snelle en betrouwbare hosting vanaf €20 per maand, inclusief SSL, back-ups en monitoring.'
+      question: t('help.question4'),
+      answer: t('help.answer4')
     },
     {
-      question: 'Hoe kan ik contact opnemen?',
-      answer: 'Via WhatsApp (+31 6 36075966), e-mail (info@varexo.nl) of het contactformulier op onze website.'
+      question: t('help.question5'),
+      answer: t('help.answer5')
     },
   ];
 
@@ -41,8 +43,8 @@ const HelpWidget: React.FC = () => {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-white font-bold text-sm">Hulp nodig?</p>
-                  <p className="text-primary-100 text-xs">Veelgestelde vragen</p>
+                  <p className="text-white font-bold text-sm">{t('help.title')}</p>
+                  <p className="text-primary-100 text-xs">{t('help.subtitle')}</p>
                 </div>
               </div>
               <button
@@ -87,7 +89,7 @@ const HelpWidget: React.FC = () => {
               href="/contact"
               className="block w-full text-center bg-primary-500 text-dark-900 py-2.5 rounded-lg font-bold text-sm hover:bg-primary-400 transition"
             >
-              Stel een andere vraag
+              {t('help.askQuestion')}
             </a>
           </div>
         </div>
@@ -101,7 +103,7 @@ const HelpWidget: React.FC = () => {
             ? 'bg-dark-700 scale-90'
             : 'bg-primary-500 hover:bg-primary-400 hover:scale-110 animate-pulse-glow'
         }`}
-        aria-label="Hulp nodig?"
+        aria-label={t('help.title')}
       >
         {isOpen ? (
           <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

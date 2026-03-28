@@ -2,8 +2,11 @@ import React from 'react';
 import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Werkwijze: React.FC = () => {
+  const { t } = useLanguage();
+  
   return (
     <PageTransition>
     <SEO 
@@ -16,8 +19,8 @@ const Werkwijze: React.FC = () => {
       <div className="container mx-auto px-4">
         <AnimateOnScroll>
         <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">{'// git log --oneline'}</p>
-        <h1 className="text-4xl font-bold text-center mb-4 text-white">Onze Werkwijze</h1>
-        <p className="text-gray-400 text-center mb-16 max-w-xl mx-auto">Van intake tot deployment in 5 sprints</p>
+        <h1 className="text-4xl font-bold text-center mb-4 text-white">{t('language') === 'nl' ? 'Onze Werkwijze' : 'Our Process'}</h1>
+        <p className="text-gray-400 text-center mb-16 max-w-xl mx-auto">{t('language') === 'nl' ? 'Van intake tot deployment in 5 sprints' : 'From intake to deployment in 5 sprints'}</p>
         </AnimateOnScroll>
         
         <div className="max-w-4xl mx-auto">

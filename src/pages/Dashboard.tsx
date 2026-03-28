@@ -572,7 +572,7 @@ const CustomerDashboard: React.FC = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-400">{t('dashboard.subscription') || 'Abonnement'}</p>
+                  <p className="text-sm font-medium text-gray-400">{t('dashboard.subscription')}</p>
                   <div className="flex flex-col">
                     {(() => {
                       const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
@@ -581,7 +581,7 @@ const CustomerDashboard: React.FC = () => {
                       const hasSocialMedia = currentUser?.hasSocialMedia;
                       
                       if (!subscription) {
-                        return <span className="text-sm text-gray-500">{t('dashboard.noSubscription') || 'Geen abonnement'}</span>;
+                        return <span className="text-sm text-gray-500">{t('dashboard.noSubscription')}</span>;
                       }
                       
                       return (
@@ -595,7 +595,7 @@ const CustomerDashboard: React.FC = () => {
                              subscription === 'pro' ? 'Pro' : 'Premium'}
                           </span>
                           {hasSocialMedia && (
-                            <span className="text-xs text-purple-400">+ Social Media</span>
+                            <span className="text-xs text-purple-400">+ {t('common.socialMedia')}</span>
                           )}
                         </>
                       );
@@ -613,7 +613,7 @@ const CustomerDashboard: React.FC = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-400">{t('dashboard.activeProjects') || 'Actieve Projecten'}</p>
+                  <p className="text-sm font-medium text-gray-400">{t('dashboard.activeProjects')}</p>
                   <p className="text-2xl font-bold text-white">{projects.filter(p => p.status === 'active').length}</p>
                 </div>
               </div>
@@ -627,7 +627,7 @@ const CustomerDashboard: React.FC = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-400">{t('dashboard.completedProjects') || 'Voltooide Projecten'}</p>
+                  <p className="text-sm font-medium text-gray-400">{t('dashboard.completedProjects')}</p>
                   <p className="text-2xl font-bold text-white">{projects.filter(p => p.status === 'completed').length}</p>
                 </div>
               </div>
@@ -641,7 +641,7 @@ const CustomerDashboard: React.FC = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-400">{t('dashboard.pendingInvoices') || 'Openstaande Facturen'}</p>
+                  <p className="text-sm font-medium text-gray-400">{t('dashboard.pendingInvoices')}</p>
                   <p className="text-2xl font-bold text-white">{invoices.filter(i => i.status === 'sent').length}</p>
                 </div>
               </div>
@@ -685,7 +685,7 @@ const CustomerDashboard: React.FC = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                     <p className="text-gray-400">{t('dashboard.noProjects')}</p>
-                    <p className="text-gray-500 text-sm mt-2">{t('dashboard.adminWillCreate') || 'De admin zal projecten voor je aanmaken'}</p>
+                    <p className="text-gray-500 text-sm mt-2">{t('dashboard.adminWillCreate')}</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
@@ -714,7 +714,7 @@ const CustomerDashboard: React.FC = () => {
                         {/* Progress Bar */}
                         <div className="mb-3">
                           <div className="flex justify-between text-xs text-gray-400 mb-1">
-                            <span>{t('common.progress') || 'Voortgang'}</span>
+                            <span>{t('common.progress')}</span>
                             <span>{project.progress || 0}%</span>
                           </div>
                           <div className="w-full bg-dark-700 rounded-full h-2">
@@ -732,9 +732,9 @@ const CustomerDashboard: React.FC = () => {
                             project.status === 'paused' ? 'bg-yellow-900 text-yellow-300' :
                             'bg-gray-900 text-gray-300'
                           }`}>
-                            {project.status === 'planning' ? 'Planning' :
-                             project.status === 'active' ? 'Actief' :
-                             project.status === 'completed' ? 'Voltooid' : 'Gepauzeerd'}
+                            {project.status === 'planning' ? t('common.planning') :
+                             project.status === 'active' ? t('common.active') :
+                             project.status === 'completed' ? t('common.completed') : t('common.paused')}
                           </span>
                           {project.deadline && (
                             <span className="text-xs text-gray-500">
@@ -753,26 +753,26 @@ const CustomerDashboard: React.FC = () => {
           {activeTab === 'invoices' && (
             <div className="bg-dark-800 rounded-lg border border-dark-700">
               <div className="p-6">
-                <h2 className="text-xl font-semibold text-white mb-4">Mijn Facturen</h2>
+                <h2 className="text-xl font-semibold text-white mb-4">{t('dashboard.invoices')}</h2>
                 {invoices.length === 0 ? (
                   <div className="text-center py-12">
                     <svg className="w-12 h-12 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <p className="text-gray-400">Geen facturen gevonden</p>
-                    <p className="text-gray-500 text-sm mt-2">De admin zal facturen voor je aanmaken</p>
+                    <p className="text-gray-400">{t('dashboard.noInvoicesFound')}</p>
+                    <p className="text-gray-500 text-sm mt-2">{t('dashboard.adminWillCreateInvoices')}</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-dark-700">
                       <thead>
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Factuur</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Project</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Bedrag</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Vervaldatum</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Actie</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('dashboard.invoice')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('dashboard.project')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('dashboard.amount')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('dashboard.status')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('dashboard.dueDate')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('dashboard.action')}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-dark-700">
@@ -797,9 +797,9 @@ const CustomerDashboard: React.FC = () => {
                                 invoice.status === 'overdue' ? 'bg-red-900 text-red-300' :
                                 'bg-gray-900 text-gray-300'
                               }`}>
-                                {invoice.status === 'draft' ? 'Concept' :
-                                 invoice.status === 'sent' ? 'Verzonden' :
-                                 invoice.status === 'paid' ? 'Betaald' : 'Te laat'}
+                                {invoice.status === 'draft' ? t('dashboard.invoiceStatus.draft') :
+                                 invoice.status === 'sent' ? t('dashboard.invoiceStatus.sent') :
+                                 invoice.status === 'paid' ? t('dashboard.invoiceStatus.paid') : t('dashboard.invoiceStatus.overdue')}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
@@ -813,7 +813,7 @@ const CustomerDashboard: React.FC = () => {
                                 <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
-                                PDF
+                                {t('common.download')}
                               </button>
                             </td>
                           </tr>
@@ -842,7 +842,7 @@ const CustomerDashboard: React.FC = () => {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
-                    <span>Vragen? Bel ons: </span>
+                    <span>{t('dashboard.questionsCall')} </span>
                     <a href="tel:+31636075966" className="font-semibold hover:text-primary-300 transition">06-36075966</a>
                   </div>
                 </div>
@@ -856,7 +856,7 @@ const CustomerDashboard: React.FC = () => {
               {/* Progress Section */}
               <div className="bg-dark-900 p-4 rounded-lg border border-dark-700 mb-6">
                 <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-lg font-semibold text-white">Voortgang</h3>
+                  <h3 className="text-lg font-semibold text-white">{t('dashboard.progress')}</h3>
                   <span className="text-2xl font-bold text-primary-400">{selectedProject?.progress || 0}%</span>
                 </div>
                 <div className="w-full bg-dark-700 rounded-full h-3 mb-4">
@@ -867,16 +867,16 @@ const CustomerDashboard: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                   <div className="bg-dark-800 p-3 rounded">
-                    <div className="text-xs text-gray-400">Status</div>
+                    <div className="text-xs text-gray-400">{t('dashboard.status')}</div>
                     <div className="text-sm font-medium text-white">
-                      {selectedProject?.status === 'planning' ? 'Planning' :
-                       selectedProject?.status === 'active' ? 'Actief' :
-                       selectedProject?.status === 'completed' ? 'Voltooid' : 'Gepauzeerd'}
+                      {selectedProject?.status === 'planning' ? t('common.planning') :
+                       selectedProject?.status === 'active' ? t('common.active') :
+                       selectedProject?.status === 'completed' ? t('common.completed') : t('common.paused')}
                     </div>
                   </div>
                   {selectedProject?.deadline && (
                     <div className="bg-dark-800 p-3 rounded">
-                      <div className="text-xs text-gray-400">Deadline</div>
+                      <div className="text-xs text-gray-400">{t('dashboard.deadline')}</div>
                       <div className="text-sm font-medium text-white">
                         {new Date(selectedProject.deadline).toLocaleDateString('nl-NL')}
                       </div>
@@ -884,7 +884,7 @@ const CustomerDashboard: React.FC = () => {
                   )}
                   {selectedProject?.budget && (
                     <div className="bg-dark-800 p-3 rounded">
-                      <div className="text-xs text-gray-400">Budget</div>
+                      <div className="text-xs text-gray-400">{t('dashboard.budget')}</div>
                       <div className="text-sm font-medium text-white">€{selectedProject.budget.toFixed(2)}</div>
                     </div>
                   )}
@@ -893,16 +893,16 @@ const CustomerDashboard: React.FC = () => {
 
               {/* Project Logs */}
               <div>
-                <h3 className="text-lg font-semibold text-white mb-4">Project Updates & Logs</h3>
+                <h3 className="text-lg font-semibold text-white mb-4">{t('dashboard.projectUpdates')}</h3>
                 {logsLoading ? (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
-                    <p className="text-gray-400 mt-2">Updates laden...</p>
+                    <p className="text-gray-400 mt-2">{t('dashboard.loadingUpdates')}</p>
                   </div>
                 ) : projectLogs.length === 0 ? (
                   <div className="bg-dark-900 p-6 rounded-lg border border-dark-700 text-center">
-                    <p className="text-gray-400">Nog geen updates voor dit project.</p>
-                    <p className="text-gray-500 text-sm mt-1">De admin zal hier updates plaatsen.</p>
+                    <p className="text-gray-400">{t('dashboard.noUpdates')}</p>
+                    <p className="text-gray-500 text-sm mt-1">{t('dashboard.adminWillPostUpdates')}</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -924,7 +924,7 @@ const CustomerDashboard: React.FC = () => {
                             </div>
                             <p className="text-gray-400 text-sm">{log.description}</p>
                             {log.createdBy && (
-                              <p className="text-xs text-gray-500 mt-2">Door: {log.createdBy}</p>
+                              <p className="text-xs text-gray-500 mt-2">{t('dashboard.by')} {log.createdBy}</p>
                             )}
                           </div>
                         </div>
@@ -942,6 +942,7 @@ const CustomerDashboard: React.FC = () => {
 };
 
 const Dashboard: React.FC = () => {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -967,7 +968,7 @@ const Dashboard: React.FC = () => {
         <div className="min-h-screen bg-dark-900 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto"></div>
-            <p className="mt-4 text-gray-400">Laden...</p>
+            <p className="mt-4 text-gray-400">{t('common.loading')}</p>
           </div>
         </div>
       </PageTransition>

@@ -96,8 +96,12 @@ const AdminDashboard: React.FC = () => {
   const [isDeletingSurcharge, setIsDeletingSurcharge] = useState<string | null>(null);
   const [isDeletingMessage, setIsDeletingMessage] = useState<string | null>(null);
   const [isCreatingRecurring, setIsCreatingRecurring] = useState(false);
+  const [isUpdatingRecurring, setIsUpdatingRecurring] = useState<string | null>(null);
   const [isDeletingRecurring, setIsDeletingRecurring] = useState<string | null>(null);
   const [isUpdatingInvoiceStatus, setIsUpdatingInvoiceStatus] = useState<string | null>(null);
+  const [isCreatingProject, setIsCreatingProject] = useState(false);
+  const [isUpdatingProject, setIsUpdatingProject] = useState<string | null>(null);
+  const [isUpdatingCustomerSubscription, setIsUpdatingCustomerSubscription] = useState<string | null>(null);
   
   // Invoice details modal
   const [showInvoiceDetails, setShowInvoiceDetails] = useState(false);
@@ -255,6 +259,7 @@ const AdminDashboard: React.FC = () => {
     e.preventDefault();
     if (!selectedCustomer) return;
 
+    setIsCreatingProject(true);
     try {
       await projectService.createProjectAsync({
         title: projectForm.title,
@@ -272,6 +277,8 @@ const AdminDashboard: React.FC = () => {
       await loadData();
     } catch (error) {
       console.error('Error creating project:', error);
+    } finally {
+      setIsCreatingProject(false);
     }
   };
 
@@ -279,6 +286,7 @@ const AdminDashboard: React.FC = () => {
     e.preventDefault();
     if (!editingProject) return;
 
+    setIsUpdatingProject(editingProject.id);
     try {
       await projectService.updateProjectAsync(editingProject.id, {
         title: projectForm.title,
@@ -296,6 +304,8 @@ const AdminDashboard: React.FC = () => {
       await loadData();
     } catch (error) {
       console.error('Error updating project:', error);
+    } finally {
+      setIsUpdatingProject(null);
     }
   };
 
@@ -386,6 +396,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleToggleRecurring = async (id: string, active: boolean) => {
+    setIsUpdatingRecurring(id);
     try {
       await fetch(`/.netlify/functions/recurring-invoices/${id}`, {
         method: 'PUT',
@@ -395,6 +406,8 @@ const AdminDashboard: React.FC = () => {
       loadData();
     } catch (error) {
       console.error('Error toggling recurring invoice:', error);
+    } finally {
+      setIsUpdatingRecurring(null);
     }
   };
 
@@ -459,6 +472,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleUpdateCustomerSubscription = async (email: string) => {
+    setIsUpdatingCustomerSubscription(email);
     try {
       // Update user in localStorage
       const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
@@ -476,6 +490,8 @@ const AdminDashboard: React.FC = () => {
       loadData();
     } catch (error) {
       console.error('Error updating subscription:', error);
+    } finally {
+      setIsUpdatingCustomerSubscription(null);
     }
   };
 
@@ -774,11 +790,14 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleUpdateProgress = async (projectId: string, progress: number) => {
+    setIsUpdatingProject(projectId);
     try {
       await projectService.updateProjectProgressAsync(projectId, progress);
       loadData();
     } catch (error) {
       console.error('Error updating progress:', error);
+    } finally {
+      setIsUpdatingProject(null);
     }
   };
 
@@ -2181,7 +2200,7 @@ const AdminDashboard: React.FC = () => {
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
-                                    Verwijderen
+                                    {t('common.delete')}
                                   </button>
                                 </div>
                               )}
@@ -2231,7 +2250,7 @@ const AdminDashboard: React.FC = () => {
                                 onClick={() => setShowMessageDeleteConfirm(null)}
                                 className="px-3 py-1 bg-dark-700 text-gray-300 text-xs rounded hover:bg-dark-600"
                               >
-                                Annuleren
+                                {t('common.cancel')}
                               </button>
                             </div>
                           </div>
@@ -2698,9 +2717,20 @@ const AdminDashboard: React.FC = () => {
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
+                      disabled={isCreatingProject}
+                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                      {t('common.create')}
+                      {isCreatingProject ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4 text-dark-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          {t('common.creating')}
+                        </>
+                      ) : (
+                        t('common.create')
+                      )}
                     </button>
                   </div>
                 </form>
@@ -2814,9 +2844,20 @@ const AdminDashboard: React.FC = () => {
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
+                      disabled={!!isUpdatingProject}
+                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                      {t('common.save')}
+                      {!!isUpdatingProject ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4 text-dark-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          {t('common.saving')}
+                        </>
+                      ) : (
+                        t('common.save')
+                      )}
                     </button>
                   </div>
                 </form>

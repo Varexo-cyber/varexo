@@ -4,8 +4,10 @@ import { mockAuth } from '../services/mockAuth';
 import { googleAuthService, GoogleUser } from '../services/googleAuth';
 import { authAPI } from '../services/api';
 import PageTransition from '../components/PageTransition';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const SignUp: React.FC = () => {
+  const { t } = useLanguage();
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,12 +30,12 @@ const SignUp: React.FC = () => {
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Wachtwoorden komen niet overeen');
+      setError(t('auth.errors.passwordMismatch'));
       return;
     }
 
     if (password.length < 6) {
-      setError('Wachtwoord moet minimaal 6 tekens bevatten');
+      setError(t('auth.errors.passwordLength'));
       return;
     }
 
@@ -43,7 +45,7 @@ const SignUp: React.FC = () => {
       await mockAuth.signUp(email, password, displayName);
       navigate('/dashboard');
     } catch (error: any) {
-      setError(error.message || 'Registratie mislukt. Probeer het opnieuw.');
+      setError(error.message || t('auth.errors.registrationFailed'));
     } finally {
       setLoading(false);
     }
@@ -72,7 +74,7 @@ const SignUp: React.FC = () => {
       navigate('/dashboard');
     } catch (error: any) {
       console.error('Google signup error:', error);
-      setError(error.message || 'Google registratie mislukt. Probeer het opnieuw.');
+      setError(error.message || t('auth.errors.googleSignupFailed'));
     } finally {
       setGoogleLoading(false);
     }
@@ -84,9 +86,9 @@ const SignUp: React.FC = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-primary-400 mb-2">Varexo</h2>
-          <h2 className="text-2xl font-bold text-white">Maak een account</h2>
+          <h2 className="text-2xl font-bold text-white">{t('auth.signupTitle')}</h2>
           <p className="mt-2 text-gray-400">
-            Registreer om toegang te krijgen tot het klantportaal
+            {t('auth.signupSubtitle')}
           </p>
         </div>
       </div>
@@ -109,7 +111,7 @@ const SignUp: React.FC = () => {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
             )}
-            {googleLoading ? 'Bezig met Google...' : 'Registreer met Google'}
+            {googleLoading ? t('common.loading') : t('auth.googleLogin')}
           </button>
 
           <div className="mt-6 relative">
@@ -117,7 +119,7 @@ const SignUp: React.FC = () => {
               <div className="w-full border-t border-dark-600" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-dark-800 text-gray-400">Of met e-mail</span>
+              <span className="px-2 bg-dark-800 text-gray-400">{t('auth.orWithEmail')}</span>
             </div>
           </div>
 
@@ -130,7 +132,7 @@ const SignUp: React.FC = () => {
 
             <div>
               <label htmlFor="displayName" className="block text-sm font-medium text-gray-300">
-                Naam
+                {t('auth.name')}
               </label>
               <div className="mt-1">
                 <input
@@ -141,14 +143,14 @@ const SignUp: React.FC = () => {
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-dark-600 rounded-md placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 bg-dark-700 text-white"
-                  placeholder="Jouw naam"
+                  placeholder={t('auth.namePlaceholder')}
                 />
               </div>
             </div>
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-                E-mailadres
+                {t('auth.email')}
               </label>
               <div className="mt-1">
                 <input
@@ -160,14 +162,14 @@ const SignUp: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-dark-600 rounded-md placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 bg-dark-700 text-white"
-                  placeholder="jouw@email.nl"
+                  placeholder={t('auth.emailPlaceholder')}
                 />
               </div>
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-                Wachtwoord
+                {t('auth.password')}
               </label>
               <div className="mt-1">
                 <input
@@ -178,14 +180,14 @@ const SignUp: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-dark-600 rounded-md placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 bg-dark-700 text-white"
-                  placeholder="Minimaal 6 tekens"
+                  placeholder={t('auth.passwordPlaceholder')}
                 />
               </div>
             </div>
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
-                Bevestig wachtwoord
+                {t('auth.confirmPassword')}
               </label>
               <div className="mt-1">
                 <input
@@ -196,7 +198,7 @@ const SignUp: React.FC = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-dark-600 rounded-md placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 bg-dark-700 text-white"
-                  placeholder="Herhaal wachtwoord"
+                  placeholder={t('auth.confirmPasswordPlaceholder')}
                 />
               </div>
             </div>
@@ -207,7 +209,7 @@ const SignUp: React.FC = () => {
                 disabled={loading}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-dark-900 bg-primary-500 hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
-                {loading ? 'Registreren...' : 'Account aanmaken'}
+                {loading ? t('auth.registering') : t('auth.signupButton')}
               </button>
             </div>
           </form>
@@ -218,7 +220,7 @@ const SignUp: React.FC = () => {
                 <div className="w-full border-t border-dark-600" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-dark-800 text-gray-400">Al een account?</span>
+                <span className="px-2 bg-dark-800 text-gray-400">{t('auth.hasAccount')}</span>
               </div>
             </div>
 
@@ -227,7 +229,7 @@ const SignUp: React.FC = () => {
                 to="/login"
                 className="font-medium text-primary-400 hover:text-primary-300"
               >
-                Log hier in
+                {t('auth.loginHere')}
               </Link>
             </div>
           </div>

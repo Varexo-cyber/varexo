@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const WhatsAppButton: React.FC = () => {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const phoneNumber = '31636075966';
   
   const messages = [
-    { label: 'Ik wil graag een offerte', message: 'Hallo! Ik wil graag een offerte aanvragen voor een website.' },
-    { label: 'Vraag over diensten', message: 'Hallo! Ik heb een vraag over jullie diensten.' },
-    { label: 'Support nodig', message: 'Hallo! Ik heb support nodig voor mijn website.' },
-    { label: 'Algemene vraag', message: 'Hallo! Ik heb een vraag.' },
+    { label: t('whatsapp.quote'), message: t('whatsapp.quoteMessage') },
+    { label: t('whatsapp.services'), message: t('whatsapp.servicesMessage') },
+    { label: t('whatsapp.support'), message: t('whatsapp.supportMessage') },
+    { label: t('whatsapp.general'), message: t('whatsapp.generalMessage') },
   ];
 
   const openWhatsApp = (msg: string) => {
@@ -30,8 +32,8 @@ const WhatsAppButton: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <p className="text-white font-bold text-sm">Varexo op WhatsApp</p>
-                <p className="text-green-100 text-xs">Meestal binnen 1 uur reactie</p>
+                <p className="text-white font-bold text-sm">{t('whatsapp.title')}</p>
+                <p className="text-green-100 text-xs">{t('whatsapp.response')}</p>
               </div>
             </div>
           </div>

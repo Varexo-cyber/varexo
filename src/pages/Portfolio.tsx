@@ -2,6 +2,7 @@ import React from 'react';
 import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface Project {
   id: string;
@@ -26,21 +27,23 @@ const projects: Project[] = [
 ];
 
 const Portfolio: React.FC = () => {
+  const { t } = useLanguage();
+  
   return (
     <PageTransition>
     <SEO 
-      title="Portfolio - Onze Projecten & Websites"
-      description="Bekijk ons portfolio met professionele websites en webshops. Van startups tot gevestigde bedrijven, wij leveren maatwerk webdesign dat resultaat oplevert."
-      keywords="portfolio webdesign, website voorbeelden, webshop voorbeelden, webdesign projecten, gemaakte websites"
+      title={t('language') === 'nl' ? "Portfolio - Onze Projecten & Websites" : "Portfolio - Our Projects & Websites"}
+      description={t('language') === 'nl' ? "Bekijk ons portfolio met professionele websites en webshops. Van startups tot gevestigde bedrijven, wij leveren maatwerk webdesign dat resultaat oplevert." : "View our portfolio with professional websites and webshops. From startups to established companies, we deliver custom web design that delivers results."}
+      keywords={t('language') === 'nl' ? "portfolio webdesign, website voorbeelden, webshop voorbeelden, webdesign projecten, gemaakte websites" : "portfolio web design, website examples, webshop examples, web design projects, made websites"}
       canonical="/portfolio"
     />
     <div className="py-20 matrix-dots">
       <div className="container mx-auto px-4">
         <AnimateOnScroll>
         <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">$ ls projects/</p>
-        <h1 className="text-4xl font-bold text-center mb-4 text-white">Ons Portfolio</h1>
+        <h1 className="text-4xl font-bold text-center mb-4 text-white">{t('language') === 'nl' ? 'Ons Portfolio' : 'Our Portfolio'}</h1>
         <p className="text-xl text-center text-gray-400 mb-8 max-w-2xl mx-auto">
-          Ontdek onze recente projecten en zie wat we voor jou kunnen betekenen
+          {t('language') === 'nl' ? 'Ontdek onze recente projecten en zie wat we voor jou kunnen betekenen' : 'Discover our recent projects and see what we can do for you'}
         </p>
         </AnimateOnScroll>
         

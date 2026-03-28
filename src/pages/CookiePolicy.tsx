@@ -1,18 +1,20 @@
 import React from 'react';
 import PageTransition from '../components/PageTransition';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const CookiePolicy: React.FC = () => {
+  const { t } = useLanguage();
   return (
     <PageTransition>
     <div className="py-20">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold mb-8 text-white">Cookie Policy</h1>
+          <h1 className="text-4xl font-bold mb-8 text-white">{t('footer.cookiePolicy')}</h1>
           
           <div className="bg-dark-800 p-8 rounded-lg shadow-lg border border-dark-700">
             <div className="prose prose-lg max-w-none">
               <p className="text-gray-400 mb-6">
-                Laatst bijgewerkt: {new Date().toLocaleDateString('nl-NL')}
+                {t('language') === 'nl' ? 'Laatst bijgewerkt:' : 'Last updated:'} {new Date().toLocaleDateString('nl-NL')}
               </p>
 
               <h2 className="text-2xl font-semibold mb-4 text-white">1. Wat zijn cookies?</h2>
