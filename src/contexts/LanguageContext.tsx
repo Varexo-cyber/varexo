@@ -318,10 +318,9 @@ const translations = {
     'admin.updateTitle': 'Update titel',
     'admin.updateDescPlaceholder': 'Beschrijving van wat er is gedaan...',
     'admin.updatesAndLogs': 'UPDATES & LOGS',
-    'admin.status': 'Status',
     
     // Recurring Invoices
-    'admin.recurring.title': 'Recurring Invoices',
+    'admin.recurring.title': 'Terugkerende Facturen',
     'admin.recurring.empty': 'No recurring invoices set up yet',
     'admin.recurring.empty.desc': 'Set up monthly invoices for maintenance and other services',
     'admin.recurring.new': '+ New Recurring Invoice',
