@@ -4,6 +4,16 @@ const { neon } = require('@netlify/neon');
 const PORTAL_URL = process.env.PORTAL_URL || 'https://varexo.nl';
 
 function createTransporter() {
+  // Check if required environment variables are set
+  const required = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS'];
+  const missing = required.filter(key => !process.env[key]);
+  
+  if (missing.length > 0) {
+    throw new Error(`Missing email configuration: ${missing.join(', ')}`);
+  }
+  
+  console.log('Creating email transporter with host:', process.env.SMTP_HOST);
+  
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     port: parseInt(process.env.SMTP_PORT || '587'),

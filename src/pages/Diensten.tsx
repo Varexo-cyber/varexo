@@ -5,7 +5,7 @@ import SEO from '../components/SEO';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const Diensten: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   return (
     <PageTransition>
@@ -41,19 +41,19 @@ const Diensten: React.FC = () => {
                 <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {t('language') === 'nl' ? 'Responsive design voor alle apparaten' : 'Responsive design for all devices'}
+                {language === 'nl' ? 'Responsive design voor alle apparaten' : 'Responsive design for all devices'}
               </li>
               <li className="flex items-center text-gray-300">
                 <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {t('language') === 'nl' ? 'Modern en professioneel uiterlijk' : 'Modern and professional appearance'}
+                {language === 'nl' ? 'Modern en professioneel uiterlijk' : 'Modern and professional appearance'}
               </li>
               <li className="flex items-center text-gray-300">
                 <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {t('language') === 'nl' ? 'Geoptimaliseerd voor gebruiksgemak' : 'Optimized for usability'}
+                {language === 'nl' ? 'Geoptimaliseerd voor gebruiksgemak' : 'Optimized for usability'}
               </li>
             </ul>
             <a href="/contact" className="text-primary-400 font-semibold hover:text-primary-300">
@@ -79,19 +79,19 @@ const Diensten: React.FC = () => {
                 <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {t('language') === 'nl' ? 'Maatwerk oplossingen' : 'Custom solutions'}
+                {language === 'nl' ? 'Maatwerk oplossingen' : 'Custom solutions'}
               </li>
               <li className="flex items-center text-gray-300">
                 <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {t('language') === 'nl' ? 'Snelle en veilige code' : 'Fast and secure code'}
+                {language === 'nl' ? 'Snelle en veilige code' : 'Fast and secure code'}
               </li>
               <li className="flex items-center text-gray-300">
                 <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {t('language') === 'nl' ? 'Schaalbare oplossingen' : 'Scalable solutions'}
+                {language === 'nl' ? 'Schaalbare oplossingen' : 'Scalable solutions'}
               </li>
             </ul>
             <a href="/contact" className="text-primary-400 font-semibold hover:text-primary-300">
@@ -117,19 +117,19 @@ const Diensten: React.FC = () => {
                 <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {t('language') === 'nl' ? 'Content creatie en planning' : 'Content creation and planning'}
+                {language === 'nl' ? 'Content creatie en planning' : 'Content creation and planning'}
               </li>
               <li className="flex items-center text-gray-300">
                 <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {t('language') === 'nl' ? 'Community management' : 'Community management'}
+                {language === 'nl' ? 'Community management' : 'Community management'}
               </li>
               <li className="flex items-center text-gray-300">
                 <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {t('language') === 'nl' ? 'Analytics en rapportage' : 'Analytics and reporting'}
+                {language === 'nl' ? 'Analytics en rapportage' : 'Analytics and reporting'}
               </li>
             </ul>
             <a href="/contact" className="text-primary-400 font-semibold hover:text-primary-300">
@@ -156,19 +156,19 @@ const Diensten: React.FC = () => {
                 <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {t('language') === 'nl' ? 'Snelle en betrouwbare hosting' : 'Fast and reliable hosting'}
+                {language === 'nl' ? 'Snelle en betrouwbare hosting' : 'Fast and reliable hosting'}
               </li>
               <li className="flex items-center text-gray-300">
                 <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {t('language') === 'nl' ? 'Regelmatige updates en back-ups' : 'Regular updates and backups'}
+                {language === 'nl' ? 'Regelmatige updates en back-ups' : 'Regular updates and backups'}
               </li>
               <li className="flex items-center text-gray-300">
                 <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {t('language') === 'nl' ? 'Beveiliging en monitoring' : 'Security and monitoring'}
+                {language === 'nl' ? 'Beveiliging en monitoring' : 'Security and monitoring'}
               </li>
             </ul>
             <a href="/contact" className="text-primary-400 font-semibold hover:text-primary-300">

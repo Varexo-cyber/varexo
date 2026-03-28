@@ -43,7 +43,7 @@ export const authAPI = {
   googleSignup: (email: string, displayName: string, photoURL?: string) =>
     apiCall('/auth/google-signup', { method: 'POST', body: JSON.stringify({ email, displayName, photoURL }) }),
 
-  updateProfile: (email: string, updates: { displayName?: string; phone?: string; company?: string; emailNotifications?: boolean }) =>
+  updateProfile: (email: string, updates: { displayName?: string; phone?: string; company?: string; emailNotifications?: boolean; emailLanguage?: string }) =>
     apiCall('/auth/profile', { method: 'PUT', body: JSON.stringify({ email, ...updates }) }),
 
   changePassword: (email: string, currentPassword: string, newPassword: string) =>

@@ -219,11 +219,12 @@ export const mockAuth = {
   // Forgot password - request reset link
   forgotPassword: async (email: string): Promise<void> => {
     try {
-      await authAPI.forgotPassword(email);
+      const response = await authAPI.forgotPassword(email);
+      console.log('Forgot password API response:', response);
       return;
     } catch (apiError: any) {
-      // Always show success to prevent email enumeration
-      console.warn('API unavailable for forgot password');
+      console.error('Forgot password API error:', apiError);
+      throw new Error(apiError.message || 'Wachtwoord reset aanvraag mislukt. Probeer het later opnieuw.');
     }
   },
 
@@ -235,7 +236,7 @@ export const mockAuth = {
     } catch (apiError: any) {
       throw new Error(apiError.message || 'Wachtwoord resetten mislukt. Probeer het opnieuw.');
     }
-  }
+  },
 };
 
 export default mockAuth;

@@ -257,9 +257,9 @@ exports.handler = async (event) => {
         console.log('Parsed body:', body);
         console.log('Body keys:', Object.keys(body));
         
-        const { email, displayName, phone, company, emailNotifications } = body;
+        const { email, displayName, phone, company, emailNotifications, emailLanguage } = body;
         
-        console.log('Extracted values:', { email, displayName, phone, company, emailNotifications });
+        console.log('Extracted values:', { email, displayName, phone, company, emailNotifications, emailLanguage });
         console.log('============================');
 
         // Get current user state before update to check if emailNotifications changed
@@ -276,9 +276,13 @@ exports.handler = async (event) => {
               WHEN ${emailNotifications !== undefined} THEN ${emailNotifications}
               ELSE email_notifications 
             END,
+            email_language = CASE 
+              WHEN ${emailLanguage !== undefined} THEN ${emailLanguage}
+              ELSE email_language 
+            END,
             updated_at = NOW()
           WHERE email = ${email}
-          RETURNING email, display_name, photo_url, provider, phone, company, email_notifications
+          RETURNING email, display_name, photo_url, provider, phone, company, email_notifications, email_language
         `;
 
         console.log('Profile update result:', result);
@@ -375,8 +379,8 @@ exports.handler = async (event) => {
         } catch (emailError) {
           console.error('EMAIL SEND ERROR:', emailError);
           console.error('Email error message:', emailError.message);
-          // Still return success to user, but log the error
-          return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Reset instructies verstuurd naar je email.' }) };
+          // Return error to user so they know something went wrong
+          return { statusCode: 500, headers, body: JSON.stringify({ error: 'Email versturen mislukt. Probeer het later opnieuw of neem contact op met support.' }) };
         }
         
         return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Reset instructies verstuurd naar je email.' }) };
