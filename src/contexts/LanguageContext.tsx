@@ -176,6 +176,7 @@ const translations = {
     'auth.requestNewLink': 'Nieuwe reset link aanvragen →',
     'auth.changing': 'Bezig...',
     'auth.changePassword': 'Wachtwoord wijzigen',
+    'auth.backToLogin': 'Terug naar login',
     
     // Dashboard
     'dashboard.title': 'Mijn Dashboard',
@@ -675,6 +676,7 @@ const translations = {
     'auth.requestNewLink': 'Request new reset link →',
     'auth.changing': 'Changing...',
     'auth.changePassword': 'Change Password',
+    'auth.backToLogin': 'Back to login',
     'auth.errors.accountNotFound': 'Account does not exist. First create an account via "Create Free Account".',
     'auth.errors.googleLoginFailed': 'Google login failed. Please try again.',
     'auth.rememberMe': 'Remember me',

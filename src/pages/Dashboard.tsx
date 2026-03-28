@@ -7,7 +7,7 @@ import PageTransition from '../components/PageTransition';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const CustomerDashboard: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [user, setUser] = useState<MockUser | null>(null);
   const [activeTab, setActiveTab] = useState<'projects' | 'invoices'>('projects');
   const navigate = useNavigate();
@@ -544,7 +544,7 @@ const CustomerDashboard: React.FC = () => {
                 {(() => {
                   const hour = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' })).getHours();
                   let greeting = '';
-                  if (t('language') === 'nl') {
+                  if (language === 'nl') {
                     if (hour >= 6 && hour < 12) greeting = 'Goedemorgen';
                     else if (hour >= 12 && hour < 18) greeting = 'Goedemiddag';
                     else if (hour >= 18 && hour < 23) greeting = 'Goedenavond';
