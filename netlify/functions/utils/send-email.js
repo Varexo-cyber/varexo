@@ -731,7 +731,6 @@ async function sendEmailNotificationsDisabledEmail(customerEmail, customerName) 
 async function sendPasswordResetEmail(customerEmail, displayName, resetUrl, language = 'nl') {
   try {
     const transporter = createTransporter();
-    const { SITE_URL, PORTAL_URL } = getUrls();
     
     // Bilingual content
     const content = {
@@ -796,7 +795,7 @@ async function sendPasswordResetEmail(customerEmail, displayName, resetUrl, lang
       from: `"Varexo" <${process.env.EMAIL_USER}>`,
       to: customerEmail,
       subject: lang.subject,
-      html: emailTemplate(lang.title, emailContent, lang.footerLink, SITE_URL),
+      html: emailTemplate(lang.title, emailContent, lang.footerLink, PORTAL_URL),
     };
     
     await transporter.sendMail(mailOptions);

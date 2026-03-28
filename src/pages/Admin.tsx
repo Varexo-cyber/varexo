@@ -3124,23 +3124,23 @@ const AdminDashboard: React.FC = () => {
                       <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">{language === 'nl' ? 'Factuurinformatie' : 'Invoice Information'}</h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-400">{language === 'nl' ? 'Factuurnummer' : 'Invoice Number'}:</span>
+                          <span className="text-gray-400">{t('admin.invoiceNumber')}:</span>
                           <span className="text-white">{selectedInvoice.invoiceNumber}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">{language === 'nl' ? 'Factuurdatum' : 'Invoice Date'}:</span>
+                          <span className="text-gray-400">{t('admin.invoiceDate')}:</span>
                           <span className="text-white">{selectedInvoice.invoiceDate ? new Date(selectedInvoice.invoiceDate).toLocaleDateString('nl-NL') : new Date(selectedInvoice.createdAt).toLocaleDateString('nl-NL')}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">{language === 'nl' ? 'Vervaldatum' : 'Due Date'}:</span>
+                          <span className="text-gray-400">{t('admin.dueDate')}:</span>
                           <span className="text-white">{new Date(selectedInvoice.dueDate).toLocaleDateString('nl-NL')}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">{language === 'nl' ? 'Status' : 'Status'}:</span>
+                          <span className="text-gray-400">{t('admin.status')}:</span>
                           <span className="text-white capitalize">{selectedInvoice.status}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">{language === 'nl' ? 'Project' : 'Project'}:</span>
+                          <span className="text-gray-400">{t('common.project')}:</span>
                           <span className="text-white">{selectedInvoice.projectTitle}</span>
                         </div>
                       </div>

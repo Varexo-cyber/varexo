@@ -823,12 +823,12 @@ const translations = {
     'admin.updatesAndLogs': 'UPDATES & LOGS',
     
     // Recurring Invoices
-    'admin.recurring.title': 'Terugkerende Facturen',
-    'admin.recurring.empty': 'Nog geen terugkerende facturen ingesteld',
-    'admin.recurring.empty.desc': 'Stel maandelijkse facturen in voor onderhoud en andere diensten',
-    'admin.recurring.new': '+ Nieuwe Terugkerende Factuur',
-    'admin.amount': 'Bedrag (incl. BTW)',
-    'admin.cycle': 'Cyclus (maanden)',
+    'admin.recurring.title': 'Recurring Invoices',
+    'admin.recurring.empty': 'No recurring invoices set up yet',
+    'admin.recurring.empty.desc': 'Set up monthly invoices for maintenance and other services',
+    'admin.recurring.new': '+ New Recurring Invoice',
+    'admin.amount': 'Amount (incl. VAT)',
+    'admin.cycle': 'Cycle (months)',
     
     // Profile Page
     'profile.loading': 'Loading...',
