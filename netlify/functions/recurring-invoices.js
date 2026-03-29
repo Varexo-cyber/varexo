@@ -1,5 +1,5 @@
 const { neon } = require('@netlify/neon');
-const { sendRecurringInvoiceSetupEmail } = require('./utils/send-email');
+const { sendNewInvoiceEmail, sendRecurringInvoiceSetupEmail } = require('./utils/send-email');
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -95,20 +95,60 @@ exports.handler = async (event) => {
 
       const r = result[0];
       
-      // Send confirmation email to customer
+      // Generate invoice number for first invoice
+      const year = new Date().getFullYear().toString();
+      const pattern = `${year}-%`;
+      const lastInvoice = await sql`
+        SELECT invoice_number FROM invoices 
+        WHERE invoice_number LIKE ${pattern}
+        ORDER BY invoice_number DESC LIMIT 1
+      `;
+      let nextNum = 1;
+      if (lastInvoice.length > 0) {
+        const lastNum = parseInt(lastInvoice[0].invoice_number.split('-')[1]) || 0;
+        nextNum = lastNum + 1;
+      }
+      const invoiceNumber = `${year}-${String(nextNum).padStart(3, '0')}`;
+      
+      // Calculate due date (30 days from start date)
+      const startDateObj = new Date(startDate);
+      const dueDateObj = new Date(startDateObj);
+      dueDateObj.setDate(dueDateObj.getDate() + 30);
+      const dueDate = dueDateObj.toISOString().split('T')[0];
+      
+      // Create actual invoice immediately
+      const invoiceResult = await sql`
+        INSERT INTO invoices (
+          invoice_number, invoice_date, project_title, customer_email,
+          customer_name, customer_company, customer_address, customer_postal, customer_city,
+          amount, status, due_date, items
+        )
+        VALUES (
+          ${invoiceNumber}, ${startDate}, ${description}, ${customerEmail},
+          ${customerName || null}, ${customerCompany || null}, ${customerAddress || null}, ${customerPostal || null}, ${customerCity || null},
+          ${amount}, 'sent', ${dueDate}, ${JSON.stringify(items || [{ description: description, quantity: 1, price: parseFloat(amount), total: parseFloat(amount) }])}
+        )
+        RETURNING *
+      `;
+      
+      const newInvoice = invoiceResult[0];
+      
+      // Send email with PDF for the actual invoice
       try {
-        await sendRecurringInvoiceSetupEmail(
-          r.customer_email,
-          r.customer_name,
-          r.description,
-          parseFloat(r.amount),
-          r.interval_months,
-          r.next_invoice_date
-        );
-        console.log('Recurring invoice setup email sent to:', r.customer_email);
+        await sendNewInvoiceEmail(customerEmail, customerName || '', invoiceNumber, amount, {
+          invoiceDate: startDate,
+          dueDate: dueDate,
+          customerName: customerName || '',
+          customerCompany: customerCompany || '',
+          customerAddress: customerAddress || '',
+          customerPostal: customerPostal || '',
+          customerCity: customerCity || '',
+          customerPhone: '',
+          items: items || [{ description: description, quantity: 1, price: parseFloat(amount), total: parseFloat(amount) }],
+        });
+        console.log('Invoice email with PDF sent to:', customerEmail);
       } catch (emailError) {
-        console.error('Failed to send recurring invoice setup email:', emailError);
-        // Don't fail the request if email fails
+        console.error('Failed to send invoice email:', emailError);
       }
       
       return { statusCode: 200, headers, body: JSON.stringify({
@@ -122,7 +162,14 @@ exports.handler = async (event) => {
         nextInvoiceDate: r.next_invoice_date,
         active: r.active,
         items: r.items || [],
-        createdAt: r.created_at
+        createdAt: r.created_at,
+        firstInvoice: {
+          id: newInvoice.id.toString(),
+          invoiceNumber: newInvoice.invoice_number,
+          invoiceDate: newInvoice.invoice_date,
+          dueDate: newInvoice.due_date,
+          amount: parseFloat(newInvoice.amount)
+        }
       })};
     }
 
