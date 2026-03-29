@@ -19,7 +19,7 @@ exports.handler = async (event) => {
   const params = event.queryStringParameters || {};
 
   try {
-    // Auto-create table
+    // Auto-create tables
     await sql`
       CREATE TABLE IF NOT EXISTS recurring_invoices (
         id SERIAL PRIMARY KEY,
@@ -35,6 +35,27 @@ exports.handler = async (event) => {
         start_date DATE NOT NULL,
         next_invoice_date DATE NOT NULL,
         active BOOLEAN DEFAULT true,
+        items JSONB DEFAULT '[]',
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    // Also ensure invoices table exists for generating invoice numbers
+    await sql`
+      CREATE TABLE IF NOT EXISTS invoices (
+        id SERIAL PRIMARY KEY,
+        invoice_number VARCHAR(50) UNIQUE NOT NULL,
+        invoice_date DATE NOT NULL,
+        project_title VARCHAR(500),
+        customer_email VARCHAR(255) NOT NULL,
+        customer_name VARCHAR(255),
+        customer_company VARCHAR(255),
+        customer_address TEXT,
+        customer_postal VARCHAR(20),
+        customer_city VARCHAR(100),
+        amount DECIMAL(10,2) NOT NULL,
+        status VARCHAR(50) DEFAULT 'sent',
+        due_date DATE,
         items JSONB DEFAULT '[]',
         created_at TIMESTAMP DEFAULT NOW()
       )
