@@ -1,4 +1,5 @@
 const { neon } = require('@netlify/neon');
+const { sendRecurringInvoiceSetupEmail } = require('./utils/send-email');
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -93,6 +94,23 @@ exports.handler = async (event) => {
       `;
 
       const r = result[0];
+      
+      // Send confirmation email to customer
+      try {
+        await sendRecurringInvoiceSetupEmail(
+          r.customer_email,
+          r.customer_name,
+          r.description,
+          parseFloat(r.amount),
+          r.interval_months,
+          r.next_invoice_date
+        );
+        console.log('Recurring invoice setup email sent to:', r.customer_email);
+      } catch (emailError) {
+        console.error('Failed to send recurring invoice setup email:', emailError);
+        // Don't fail the request if email fails
+      }
+      
       return { statusCode: 200, headers, body: JSON.stringify({
         id: r.id.toString(),
         customerEmail: r.customer_email,

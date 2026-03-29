@@ -808,6 +808,95 @@ async function sendPasswordResetEmail(customerEmail, displayName, resetUrl, lang
   }
 }
 
+// Send recurring invoice setup confirmation email
+async function sendRecurringInvoiceSetupEmail(customerEmail, customerName, description, amount, intervalMonths, nextInvoiceDate, language = 'nl') {
+  const prefs = await getUserEmailPrefs(customerEmail);
+  const lang = prefs.language || language;
+  
+  const frequencyText = {
+    nl: {
+      1: 'maandelijks',
+      3: 'per kwartaal',
+      6: 'halfjaarlijks',
+      12: 'jaarlijks'
+    },
+    en: {
+      1: 'monthly',
+      3: 'quarterly',
+      6: 'semi-annually',
+      12: 'annually'
+    }
+  };
+  
+  const frequency = frequencyText[lang][intervalMonths] || (lang === 'nl' ? `elke ${intervalMonths} maanden` : `every ${intervalMonths} months`);
+  const nextDate = new Date(nextInvoiceDate).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US');
+  
+  const translations = {
+    nl: {
+      greeting: `Beste ${customerName || 'klant'},`,
+      intro: 'Er is een automatische terugkerende factuur voor u ingesteld.',
+      detailsTitle: 'Details van uw automatische factuur:',
+      serviceLabel: 'Dienst',
+      amountLabel: 'Bedrag',
+      frequencyLabel: 'Frequentie',
+      nextLabel: 'Eerste factuur op',
+      infoText: 'U ontvangt automatisch een factuur met PDF bijlage op deze datum.',
+      manageText: 'U kunt uw terugkerende facturen beheren in uw klantenportaal.',
+      button: 'Beheer Facturen',
+      title: 'Terugkerende Factuur Ingesteld',
+      subject: 'Automatische factuur ingesteld: ' + description
+    },
+    en: {
+      greeting: `Dear ${customerName || 'customer'},`,
+      intro: 'An automatic recurring invoice has been set up for you.',
+      detailsTitle: 'Details of your automatic invoice:',
+      serviceLabel: 'Service',
+      amountLabel: 'Amount',
+      frequencyLabel: 'Frequency',
+      nextLabel: 'First invoice on',
+      infoText: 'You will automatically receive an invoice with PDF attachment on this date.',
+      manageText: 'You can manage your recurring invoices in your customer portal.',
+      button: 'Manage Invoices',
+      title: 'Recurring Invoice Set Up',
+      subject: 'Automatic invoice set up: ' + description
+    }
+  };
+  
+  const t = translations[lang];
+  
+  const content = `
+    <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">${t.greeting}</p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">${t.intro}</p>
+    
+    <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0 0 16px;color:#059669;font-size:16px;font-weight:600;">${t.detailsTitle}</p>
+      <table style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="padding:8px 0;color:#6b7280;font-size:14px;width:40%;">${t.serviceLabel}</td>
+          <td style="padding:8px 0;color:#1a1a1a;font-size:14px;font-weight:600;">${description}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;color:#6b7280;font-size:14px;">${t.amountLabel}</td>
+          <td style="padding:8px 0;color:#1a1a1a;font-size:16px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;color:#6b7280;font-size:14px;">${t.frequencyLabel}</td>
+          <td style="padding:8px 0;color:#1a1a1a;font-size:14px;font-weight:600;">${frequency}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;color:#6b7280;font-size:14px;">${t.nextLabel}</td>
+          <td style="padding:8px 0;color:#059669;font-size:14px;font-weight:700;">${nextDate}</td>
+        </tr>
+      </table>
+    </div>
+    
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">${t.infoText}</p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;">${t.manageText}</p>
+  `;
+  
+  return sendEmail(customerEmail, t.subject, t.title, content, t.button, `${PORTAL_URL}/dashboard`, null, lang);
+}
+
 module.exports = {
   sendNewProjectEmail,
   sendProjectDeletedEmail,
@@ -819,4 +908,5 @@ module.exports = {
   sendEmailNotificationsEnabledEmail,
   sendEmailNotificationsDisabledEmail,
   sendPasswordResetEmail,
+  sendRecurringInvoiceSetupEmail,
 };

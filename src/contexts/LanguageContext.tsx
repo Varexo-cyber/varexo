@@ -327,6 +327,7 @@ const translations = {
     'admin.recurring.new': '+ New Recurring Invoice',
     'admin.amount': 'Bedrag (incl. BTW)',
     'admin.cycle': 'Cyclus (maanden)',
+    'admin.next': 'Volgende',
     
     // Profile Page
     'profile.loading': 'Laden...',
@@ -460,6 +461,7 @@ const translations = {
     'common.overdue': 'Achterstallig',
     'common.active': 'Actief',
     'common.paused': 'Gepauzeerd',
+    'common.pause': 'Pauzeren',
     'common.planning': 'Planning',
     'common.completed': 'Voltooid',
     'common.monthly': 'Maandelijks',
@@ -831,6 +833,7 @@ const translations = {
     'admin.recurring.new': '+ New Recurring Invoice',
     'admin.amount': 'Amount (incl. VAT)',
     'admin.cycle': 'Cycle (months)',
+    'admin.next': 'Next',
     
     // Profile Page
     'profile.loading': 'Loading...',
@@ -964,6 +967,7 @@ const translations = {
     'common.overdue': 'Overdue',
     'common.active': 'Active',
     'common.paused': 'Paused',
+    'common.pause': 'Pause',
     'common.planning': 'Planning',
     'common.completed': 'Completed',
     'common.monthly': 'Monthly',
