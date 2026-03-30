@@ -1079,7 +1079,7 @@ const AdminDashboard: React.FC = () => {
             }
             .summary-row {
               display: grid;
-              grid-template-columns: 1fr 1fr 2fr 1fr;
+              grid-template-columns: 1fr 1fr 1fr 1fr;
               background: #f8f9fa;
               margin: 0 30px;
               padding: 12px 15px;
@@ -1091,12 +1091,20 @@ const AdminDashboard: React.FC = () => {
             }
             .summary-row span {
               text-align: center;
+              display: flex;
+              align-items: center;
+              justify-content: center;
             }
             .summary-row span:first-child {
               text-align: left;
+              justify-content: flex-start;
             }
             .summary-row span:last-child {
-              text-align: right;
+              text-align: left;
+              justify-content: flex-start;
+              font-size: 10px;
+              font-weight: 400;
+              text-transform: none;
             }
             .items-table {
               margin: 0 30px;
@@ -1477,7 +1485,7 @@ const AdminDashboard: React.FC = () => {
             }
             .summary-row {
               display: grid;
-              grid-template-columns: 1fr 1fr 2fr 1fr;
+              grid-template-columns: 1fr 1fr 1fr 1fr;
               background: #f8f9fa;
               margin: 0 30px;
               padding: 12px 15px;
@@ -1489,12 +1497,20 @@ const AdminDashboard: React.FC = () => {
             }
             .summary-row span {
               text-align: center;
+              display: flex;
+              align-items: center;
+              justify-content: center;
             }
             .summary-row span:first-child {
               text-align: left;
+              justify-content: flex-start;
             }
             .summary-row span:last-child {
-              text-align: right;
+              text-align: left;
+              justify-content: flex-start;
+              font-size: 10px;
+              font-weight: 400;
+              text-transform: none;
             }
             .items-table {
               margin: 0 30px;

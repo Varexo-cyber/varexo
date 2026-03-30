@@ -39,6 +39,13 @@ exports.handler = async (event) => {
       )
     `;
 
+    // Migration: Add invoice_number column if it doesn't exist (for existing tables)
+    try {
+      await sql`ALTER TABLE invoice_payment_tracking ADD COLUMN IF NOT EXISTS invoice_number VARCHAR(50)`;
+    } catch (migrateErr) {
+      console.log('Migration note:', migrateErr.message);
+    }
+
     // GET - payment tracking for invoice
     if (event.httpMethod === 'GET') {
       const invoiceId = params.invoiceId;
