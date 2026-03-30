@@ -61,6 +61,13 @@ exports.handler = async (event) => {
       )
     `;
 
+    // Drop foreign key constraint if exists (to allow invoices for non-registered customers)
+    try {
+      await sql`ALTER TABLE invoices DROP CONSTRAINT IF EXISTS invoices_customer_email_fkey`;
+    } catch (e) {
+      // Constraint might not exist, ignore error
+    }
+
     // GET - all or per customer
     if (event.httpMethod === 'GET') {
       let result;

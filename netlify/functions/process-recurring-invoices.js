@@ -33,6 +33,9 @@ exports.handler = async (event) => {
           created_at TIMESTAMP DEFAULT NOW()
         )
       `;
+      
+      // Drop foreign key constraint if exists (to allow invoices for non-registered customers)
+      await sql`ALTER TABLE IF EXISTS invoices DROP CONSTRAINT IF EXISTS invoices_customer_email_fkey`;
     } catch (e) { /* table exists */ }
 
     // Find all recurring invoices that are due today or earlier
