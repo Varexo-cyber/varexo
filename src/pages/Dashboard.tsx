@@ -13,6 +13,7 @@ const CustomerDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [recurringInvoices, setRecurringInvoices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [projectLogs, setProjectLogs] = useState<ProjectLog[]>([]);
@@ -503,15 +504,18 @@ const CustomerDashboard: React.FC = () => {
 
   const loadCustomerData = async (email: string) => {
     try {
-      const [p, i] = await Promise.all([
+      const [p, i, r] = await Promise.all([
         projectService.getProjectsForCustomerAsync(email),
-        projectService.getInvoicesForCustomerAsync(email)
+        projectService.getInvoicesForCustomerAsync(email),
+        fetch(`/.netlify/functions/recurring-invoices?email=${encodeURIComponent(email)}`).then(res => res.json()).catch(() => [])
       ]);
       setProjects(p);
       setInvoices(i);
+      setRecurringInvoices(Array.isArray(r) ? r : []);
     } catch {
       setProjects(projectService.getProjectsForCustomer(email));
       setInvoices(projectService.getInvoicesForCustomer(email));
+      setRecurringInvoices([]);
     }
   };
 
@@ -822,6 +826,78 @@ const CustomerDashboard: React.FC = () => {
                     </table>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'invoices' && recurringInvoices.length > 0 && (
+            <div className="bg-dark-800 rounded-lg border border-dark-700 mb-6">
+              <div className="p-6">
+                <h2 className="text-xl font-semibold text-white mb-4">
+                  {language === 'nl' ? 'Terugkerende Facturen' : 'Recurring Invoices'}
+                </h2>
+                <div className="space-y-4">
+                  {recurringInvoices.map((recurring) => (
+                    <div key={recurring.id} className="bg-dark-900 p-4 rounded-lg border border-dark-700">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h3 className="text-lg font-medium text-white">{recurring.description}</h3>
+                          <p className="text-sm text-gray-400">
+                            {language === 'nl' ? 'Bedrag' : 'Amount'}: €{recurring.amount.toFixed(2)} / 
+                            {recurring.intervalMonths === 1 ? (language === 'nl' ? 'maand' : 'month') :
+                             recurring.intervalMonths === 12 ? (language === 'nl' ? 'jaar' : 'year') :
+                             `${recurring.intervalMonths} ${language === 'nl' ? 'maanden' : 'months'}`}
+                          </p>
+                        </div>
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          recurring.active ? 'bg-green-900 text-green-300' : 'bg-gray-900 text-gray-300'
+                        }`}>
+                          {recurring.active ? (language === 'nl' ? 'Actief' : 'Active') : (language === 'nl' ? 'Gepauzeerd' : 'Paused')}
+                        </span>
+                      </div>
+                      
+                      {/* Period Information */}
+                      <div className="bg-dark-800 p-3 rounded border border-dark-600 mb-3">
+                        <p className="text-sm text-primary-400 font-medium mb-2">
+                          {language === 'nl' ? 'Huidige periode' : 'Current period'}:
+                        </p>
+                        <p className="text-sm text-gray-300">
+                          {(() => {
+                            const startDate = new Date(recurring.startDate);
+                            const today = new Date();
+                            const monthsDiff = Math.floor((today.getFullYear() - startDate.getFullYear()) * 12 + (today.getMonth() - startDate.getMonth()));
+                            const periodNumber = Math.max(1, monthsDiff + 1);
+                            
+                            // Calculate period dates
+                            const periodStart = new Date(startDate);
+                            periodStart.setMonth(startDate.getMonth() + (periodNumber - 1) * recurring.intervalMonths);
+                            const periodEnd = new Date(periodStart);
+                            periodEnd.setMonth(periodStart.getMonth() + recurring.intervalMonths);
+                            periodEnd.setDate(periodEnd.getDate() - 1);
+                            
+                            const nextInvoice = new Date(recurring.nextInvoiceDate);
+                            
+                            return (
+                              <span>
+                                <span className="text-white font-medium">
+                                  {language === 'nl' ? 'Periode' : 'Period'} #{periodNumber}
+                                </span>
+                                <span className="text-gray-400"> • </span>
+                                <span>
+                                  {periodStart.toLocaleDateString('nl-NL')} - {periodEnd.toLocaleDateString('nl-NL')}
+                                </span>
+                                <br />
+                                <span className="text-primary-400 text-xs">
+                                  {language === 'nl' ? 'Volgende factuur' : 'Next invoice'}: {nextInvoice.toLocaleDateString('nl-NL')}
+                                </span>
+                              </span>
+                            );
+                          })()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}

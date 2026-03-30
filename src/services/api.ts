@@ -121,3 +121,15 @@ export const projectLogsAPI = {
   delete: (id: string) =>
     apiCall(`/project-logs/${id}`, { method: 'DELETE' }),
 };
+
+// Payment Tracking API
+export const paymentTrackingAPI = {
+  getForInvoice: (invoiceId: string) =>
+    apiCall(`/payment-tracking?invoiceId=${encodeURIComponent(invoiceId)}`),
+
+  create: (tracking: { invoiceId: number; recurringInvoiceId?: number; periodNumber: number; periodStartDate: string; periodEndDate: string; amount: number; status?: string; paidDate?: string; paymentMethod?: string; paymentNotes?: string }) =>
+    apiCall('/payment-tracking', { method: 'POST', body: JSON.stringify(tracking) }),
+
+  update: (id: string, updates: { status?: string; paidDate?: string; paymentMethod?: string; paymentNotes?: string }) =>
+    apiCall(`/payment-tracking/${id}`, { method: 'PUT', body: JSON.stringify(updates) }),
+};

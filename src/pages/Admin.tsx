@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { mockAuth } from '../services/mockAuth';
 import { roleService } from '../services/roleService';
 import { projectService, Customer, Project, Invoice, ProjectLog } from '../services/projectService';
-import { invoicesAPI } from '../services/api';
+import { invoicesAPI, paymentTrackingAPI } from '../services/api';
 import { getContactMessages, deleteContactMessage, ContactMessage } from '../services/contactService';
 import PageTransition from '../components/PageTransition';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -106,6 +106,20 @@ const AdminDashboard: React.FC = () => {
   // Invoice details modal
   const [showInvoiceDetails, setShowInvoiceDetails] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [paymentTracking, setPaymentTracking] = useState<any[]>([]);
+  const [isLoadingPaymentTracking, setIsLoadingPaymentTracking] = useState(false);
+  const [showAddPaymentForm, setShowAddPaymentForm] = useState(false);
+  const [newPaymentForm, setNewPaymentForm] = useState({
+    periodNumber: 1,
+    periodStartDate: '',
+    periodEndDate: '',
+    amount: '',
+    status: 'pending',
+    paidDate: '',
+    paymentMethod: '',
+    paymentNotes: ''
+  });
+
   const [newLogForm, setNewLogForm] = useState({
     title: '',
     description: '',
@@ -344,9 +358,23 @@ const AdminDashboard: React.FC = () => {
     setNewLogForm({ title: '', description: '', logType: 'update' });
   };
 
-  const openInvoiceDetails = (invoice: Invoice) => {
+  const openInvoiceDetails = async (invoice: Invoice) => {
     setSelectedInvoice(invoice);
     setShowInvoiceDetails(true);
+    
+    // Load payment tracking data
+    if (invoice.id) {
+      setIsLoadingPaymentTracking(true);
+      try {
+        const tracking = await paymentTrackingAPI.getForInvoice(invoice.id);
+        setPaymentTracking(tracking);
+      } catch (error) {
+        console.error('Error loading payment tracking:', error);
+        setPaymentTracking([]);
+      } finally {
+        setIsLoadingPaymentTracking(false);
+      }
+    }
   };
 
   const closeInvoiceDetails = () => {
@@ -2014,36 +2042,36 @@ const AdminDashboard: React.FC = () => {
                                   </div>
                                 )}
                               </div>
-
-                              {/* Delete confirmation */}
-                              {showRecurringDeleteConfirm === ri.id && (
-                                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                                  <div className="bg-dark-800 rounded-lg p-6 w-full max-w-sm border border-dark-700">
-                                    <h3 className="text-lg font-semibold text-white mb-2">{language === 'nl' ? 'Terugkerende factuur verwijderen?' : 'Delete recurring invoice?'}</h3>
-                                    <p className="text-gray-400 text-sm mb-4">{language === 'nl' ? 'Weet je zeker dat je deze terugkerende factuur wilt verwijderen? Dit kan niet ongedaan worden gemaakt.' : 'Are you sure you want to delete this recurring invoice? This cannot be undone.'}</p>
-                                    <div className="flex justify-end gap-3">
-                                      <button
-                                        onClick={() => setShowRecurringDeleteConfirm(null)}
-                                        className="px-4 py-2 text-gray-400 hover:text-white text-sm"
-                                      >
-                                      {t('common.cancel')}
-                                      </button>
-                                      <button
-                                        onClick={() => { handleDeleteRecurring(ri.id); setShowRecurringDeleteConfirm(null); }}
-                                        disabled={isDeletingRecurring === ri.id}
-                                        className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                                      >
-                                        {isDeletingRecurring === ri.id ? t('common.deleting') : t('common.delete')}
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
+                  </div>
+                )}
+
+                {/* Delete confirmation modal - moved outside table */}
+                {showRecurringDeleteConfirm && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-dark-800 rounded-lg p-6 w-full max-w-sm border border-dark-700">
+                      <h3 className="text-lg font-semibold text-white mb-2">{language === 'nl' ? 'Terugkerende factuur verwijderen?' : 'Delete recurring invoice?'}</h3>
+                      <p className="text-gray-400 text-sm mb-4">{language === 'nl' ? 'Weet je zeker dat je deze terugkerende factuur wilt verwijderen? Dit kan niet ongedaan worden gemaakt.' : 'Are you sure you want to delete this recurring invoice? This cannot be undone.'}</p>
+                      <div className="flex justify-end gap-3">
+                        <button
+                          onClick={() => setShowRecurringDeleteConfirm(null)}
+                          className="px-4 py-2 text-gray-400 hover:text-white text-sm"
+                        >
+                          {t('common.cancel')}
+                        </button>
+                        <button
+                          onClick={() => { handleDeleteRecurring(showRecurringDeleteConfirm); setShowRecurringDeleteConfirm(null); }}
+                          disabled={isDeletingRecurring === showRecurringDeleteConfirm}
+                          className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        >
+                          {isDeletingRecurring === showRecurringDeleteConfirm ? t('common.deleting') : t('common.delete')}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -3137,7 +3165,16 @@ const AdminDashboard: React.FC = () => {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-400">{t('admin.status')}:</span>
-                          <span className="text-white capitalize">{selectedInvoice.status}</span>
+                          <span className={`font-medium ${
+                            selectedInvoice.status === 'paid' ? 'text-green-400' :
+                            selectedInvoice.status === 'overdue' ? 'text-red-400' :
+                            'text-blue-400'
+                          }`}>
+                            {selectedInvoice.status === 'paid' ? t('common.paid') :
+                             selectedInvoice.status === 'sent' ? t('common.open') :
+                             selectedInvoice.status === 'overdue' ? t('common.overdue') :
+                             selectedInvoice.status}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-400">{t('common.project')}:</span>
@@ -3216,6 +3253,191 @@ const AdminDashboard: React.FC = () => {
                         </tr>
                       </tfoot>
                     </table>
+                  </div>
+
+                  {/* Payment Tracking Section */}
+                  <div className="bg-dark-900 p-4 rounded-lg border border-dark-700 mb-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h4 className="text-sm font-semibold text-primary-400 uppercase">{language === 'nl' ? 'Betalingsoverzicht' : 'Payment Tracking'}</h4>
+                      <button
+                        onClick={() => setShowAddPaymentForm(!showAddPaymentForm)}
+                        className="text-xs bg-primary-500 text-dark-900 px-3 py-1 rounded hover:bg-primary-400"
+                      >
+                        {showAddPaymentForm ? (language === 'nl' ? 'Annuleren' : 'Cancel') : (language === 'nl' ? '+ Periode toevoegen' : '+ Add Period')}
+                      </button>
+                    </div>
+
+                    {/* Add Payment Period Form */}
+                    {showAddPaymentForm && (
+                      <div className="bg-dark-800 p-4 rounded-lg border border-dark-600 mb-4">
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">{language === 'nl' ? 'Periode #' : 'Period #'}</label>
+                            <input
+                              type="number"
+                              value={newPaymentForm.periodNumber}
+                              onChange={(e) => setNewPaymentForm(prev => ({ ...prev, periodNumber: parseInt(e.target.value) || 1 }))}
+                              className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded text-white text-sm"
+                              min={1}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">{language === 'nl' ? 'Bedrag' : 'Amount'}</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={newPaymentForm.amount}
+                              onChange={(e) => setNewPaymentForm(prev => ({ ...prev, amount: e.target.value }))}
+                              className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded text-white text-sm"
+                              placeholder="0.00"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">{language === 'nl' ? 'Start datum' : 'Start Date'}</label>
+                            <input
+                              type="date"
+                              value={newPaymentForm.periodStartDate}
+                              onChange={(e) => setNewPaymentForm(prev => ({ ...prev, periodStartDate: e.target.value }))}
+                              className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded text-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">{language === 'nl' ? 'Eind datum' : 'End Date'}</label>
+                            <input
+                              type="date"
+                              value={newPaymentForm.periodEndDate}
+                              onChange={(e) => setNewPaymentForm(prev => ({ ...prev, periodEndDate: e.target.value }))}
+                              className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded text-white text-sm"
+                            />
+                          </div>
+                        </div>
+                        <div className="mb-4">
+                          <label className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={newPaymentForm.status === 'paid'}
+                              onChange={(e) => setNewPaymentForm(prev => ({ 
+                                ...prev, 
+                                status: e.target.checked ? 'paid' : 'pending',
+                                paidDate: e.target.checked ? new Date().toISOString().split('T')[0] : ''
+                              }))}
+                              className="rounded border-dark-600"
+                            />
+                            <span className="text-sm text-gray-300">{language === 'nl' ? 'Als betaald markeren' : 'Mark as paid'}</span>
+                          </label>
+                        </div>
+                        {newPaymentForm.status === 'paid' && (
+                          <div className="mb-4">
+                            <label className="block text-xs text-gray-400 mb-1">{language === 'nl' ? 'Betaaldatum' : 'Payment Date'}</label>
+                            <input
+                              type="date"
+                              value={newPaymentForm.paidDate}
+                              onChange={(e) => setNewPaymentForm(prev => ({ ...prev, paidDate: e.target.value }))}
+                              className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded text-white text-sm"
+                            />
+                          </div>
+                        )}
+                        <div className="flex gap-2">
+                          <button
+                            onClick={async () => {
+                              if (!selectedInvoice?.id) return;
+                              try {
+                                await paymentTrackingAPI.create({
+                                  invoiceId: parseInt(selectedInvoice.id),
+                                  periodNumber: newPaymentForm.periodNumber,
+                                  periodStartDate: newPaymentForm.periodStartDate,
+                                  periodEndDate: newPaymentForm.periodEndDate,
+                                  amount: parseFloat(newPaymentForm.amount) || 0,
+                                  status: newPaymentForm.status,
+                                  paidDate: newPaymentForm.paidDate || null,
+                                  paymentMethod: newPaymentForm.paymentMethod,
+                                  paymentNotes: newPaymentForm.paymentNotes
+                                });
+                                // Refresh tracking data
+                                const tracking = await paymentTrackingAPI.getForInvoice(selectedInvoice.id);
+                                setPaymentTracking(tracking);
+                                setShowAddPaymentForm(false);
+                                setNewPaymentForm({
+                                  periodNumber: 1,
+                                  periodStartDate: '',
+                                  periodEndDate: '',
+                                  amount: '',
+                                  status: 'pending',
+                                  paidDate: '',
+                                  paymentMethod: '',
+                                  paymentNotes: ''
+                                });
+                              } catch (error) {
+                                console.error('Error creating payment period:', error);
+                              }
+                            }}
+                            className="flex-1 bg-primary-500 text-dark-900 py-2 rounded text-sm font-medium hover:bg-primary-400"
+                          >
+                            {language === 'nl' ? 'Toevoegen' : 'Add'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Payment Periods List */}
+                    {isLoadingPaymentTracking ? (
+                      <div className="text-center py-4">
+                        <svg className="animate-spin h-5 w-5 text-primary-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </div>
+                    ) : paymentTracking.length === 0 ? (
+                      <p className="text-gray-500 text-sm text-center py-4">{language === 'nl' ? 'Nog geen betalingsperioden toegevoegd' : 'No payment periods added yet'}</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {paymentTracking.map((period) => (
+                          <div key={period.id} className="flex items-center justify-between bg-dark-800 p-3 rounded border border-dark-600">
+                            <div className="flex items-center gap-3">
+                              <span className={`w-3 h-3 rounded-full ${period.status === 'paid' ? 'bg-green-500' : period.status === 'overdue' ? 'bg-red-500' : 'bg-yellow-500'}`}></span>
+                              <div>
+                                <p className="text-sm font-medium text-white">{language === 'nl' ? 'Periode' : 'Period'} #{period.periodNumber}</p>
+                                <p className="text-xs text-gray-400">
+                                  {new Date(period.periodStartDate).toLocaleDateString('nl-NL')} - {new Date(period.periodEndDate).toLocaleDateString('nl-NL')}
+                                </p>
+                                {period.paidDate && (
+                                  <p className="text-xs text-green-400">
+                                    {language === 'nl' ? 'Betaald op' : 'Paid on'}: {new Date(period.paidDate).toLocaleDateString('nl-NL')}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-medium text-white">€{period.amount.toFixed(2)}</span>
+                              {period.status !== 'paid' && (
+                                <button
+                                  onClick={async () => {
+                                    try {
+                                      await paymentTrackingAPI.update(period.id, {
+                                        status: 'paid',
+                                        paidDate: new Date().toISOString().split('T')[0]
+                                      });
+                                      // Refresh tracking data
+                                      if (selectedInvoice?.id) {
+                                        const tracking = await paymentTrackingAPI.getForInvoice(selectedInvoice.id);
+                                        setPaymentTracking(tracking);
+                                      }
+                                    } catch (error) {
+                                      console.error('Error marking as paid:', error);
+                                    }
+                                  }}
+                                  className="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-500"
+                                >
+                                  {language === 'nl' ? 'Betaald' : 'Paid'}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex justify-end space-x-3">

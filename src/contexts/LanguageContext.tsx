@@ -474,6 +474,7 @@ const translations = {
     'common.saving': 'Opslaan...',
     'common.creating': 'Aanmaken...',
     'common.add': 'Toevoegen',
+    'common.project': 'Project',
     
     // Footer
     'footer.navigation': 'Navigatie',
@@ -980,6 +981,7 @@ const translations = {
     'common.saving': 'Saving...',
     'common.creating': 'Creating...',
     'common.add': 'Add',
+    'common.project': 'Project',
     'common.socialMedia': 'Social Media',
     
     // Footer

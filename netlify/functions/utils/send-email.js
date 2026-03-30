@@ -356,6 +356,7 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
       customerPhone: invoiceData?.customerPhone || '',
       items: invoiceData?.items || [],
       amount,
+      dueDate: invoiceData?.dueDate,
     });
     console.log('PDF generated successfully, size:', pdfBuffer.length);
     attachments = [{
@@ -526,12 +527,78 @@ async function sendPaymentConfirmationEmail(customerEmail, customerName, invoice
   return sendEmail(customerEmail, t.subject, t.title, content, t.button, `${PORTAL_URL}/dashboard`, null, lang);
 }
 
-async function sendOverdueReminderEmail(customerEmail, customerName, invoiceNumber, amount, dueDate) {
+async function sendOverdueReminderEmail(customerEmail, customerName, invoiceNumber, amount, dueDate, reminderType = 'overdue') {
   const prefs = await getUserEmailPrefs(customerEmail);
   const lang = prefs.language || 'nl';
   
   const dueDateFormatted = dueDate ? new Date(dueDate).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US') : 
     (lang === 'nl' ? 'Onbekend' : 'Unknown');
+  
+  // Pre-due reminder (2 days before due date)
+  if (reminderType === 'pre-due') {
+    const translations = {
+      nl: {
+        greeting: `Beste ${customerName || 'klant'},`,
+        warning: 'Dit is een vriendelijke herinnering dat uw factuur binnenkort vervalt.',
+        invoiceLabel: 'Factuur',
+        dueLabel: '[BINNEN 2 DAGEN VERVALT]',
+        dueOnLabel: 'Vervaldatum:',
+        amountLabel: 'Te betalen:',
+        urgent: 'Betaal tijdig om achterstand te voorkomen.',
+        bankLabel: 'U kunt betalen via bankoverschrijving naar:',
+        accountHolder: 't.n.v. Mohammed Taher',
+        refLabel: 'Onder vermelding van:',
+        questions: 'Heeft u vragen? Neem contact met ons op via info@varexo.nl',
+        button: 'Nu Betalen',
+        title: '[HERINNERING] Factuur vervalt binnenkort',
+        subject: `HERINNERING: Factuur ${invoiceNumber} vervalt over 2 dagen`
+      },
+      en: {
+        greeting: `Dear ${customerName || 'customer'},`,
+        warning: 'This is a friendly reminder that your invoice is due soon.',
+        invoiceLabel: 'Invoice',
+        dueLabel: '[DUE IN 2 DAYS]',
+        dueOnLabel: 'Due date:',
+        amountLabel: 'Amount due:',
+        urgent: 'Pay on time to avoid falling behind.',
+        bankLabel: 'You can pay by bank transfer to:',
+        accountHolder: 'Account holder: Mohammed Taher',
+        refLabel: 'With reference:',
+        questions: 'Have questions? Contact us at info@varexo.nl',
+        button: 'Pay Now',
+        title: '[REMINDER] Invoice due soon',
+        subject: `REMINDER: Invoice ${invoiceNumber} due in 2 days`
+      }
+    };
+    
+    const t = translations[lang];
+    
+    const content = `
+      <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">${t.greeting}</p>
+      <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">
+        <strong style="color:#d97706;">${t.warning}</strong>
+      </p>
+      <div style="background:#fffbeb;border-left:4px solid #f59e0b;padding:20px;border-radius:0 8px 8px 0;margin:20px 0;">
+        <p style="margin:0 0 8px;color:#d97706;font-size:16px;font-weight:600;">${t.invoiceLabel} ${invoiceNumber}</p>
+        <p style="margin:0;color:#1a1a1a;font-size:24px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)}</p>
+        <p style="margin:8px 0 0;color:#d97706;font-size:14px;font-weight:600;">${t.dueLabel}</p>
+        <p style="margin:4px 0 0;color:#6b7280;font-size:13px;">${t.dueOnLabel} ${dueDateFormatted}</p>
+      </div>
+      <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">
+        <strong style="color:#d97706;">${t.urgent}</strong>
+      </p>
+      <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">
+        ${t.bankLabel}<br>
+        <strong style="color:#1a1a1a;">IBAN: NL75INGB0756428726</strong><br>
+        <strong style="color:#1a1a1a;">${t.accountHolder}</strong><br>
+        <strong style="color:#1a1a1a;">${t.refLabel} ${invoiceNumber}</strong>
+      </p>
+      <p style="color:#555555;font-size:16px;line-height:1.7;">${t.questions}</p>
+    `;
+    return sendEmail(customerEmail, t.subject, t.title, content, t.button, `${PORTAL_URL}/dashboard`, null, lang);
+  }
+  
+  // Overdue reminder (after due date) - existing logic
   const daysOverdue = dueDate ? Math.ceil((new Date() - new Date(dueDate)) / (1000 * 60 * 60 * 24)) : 0;
   
   const translations = {
