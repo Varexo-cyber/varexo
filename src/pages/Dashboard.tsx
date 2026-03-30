@@ -303,7 +303,17 @@ const CustomerDashboard: React.FC = () => {
             .footer {
               background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
               padding: 20px 30px;
-              margin-top: 20px;
+              margin-top: 10px;
+              page-break-inside: avoid;
+            }
+            @media print {
+              .footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin-top: 0;
+              }
             }
             .footer-content {
               display: flex;
@@ -691,7 +701,17 @@ const CustomerDashboard: React.FC = () => {
             .footer {
               background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
               padding: 20px 30px;
-              margin-top: 20px;
+              margin-top: 10px;
+              page-break-inside: avoid;
+            }
+            @media print {
+              .footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin-top: 0;
+              }
             }
             .footer-content {
               display: flex;
