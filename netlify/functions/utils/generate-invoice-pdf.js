@@ -131,10 +131,10 @@ async function generateInvoicePDF(invoiceData) {
       }
       .summary-row {
         display: grid;
-        grid-template-columns: 120px 140px 140px 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
         background: #f8f9fa;
-        margin: 0 40px;
-        padding: 12px 20px;
+        margin: 0 30px;
+        padding: 12px 15px;
         border: 1px solid #dee2e6;
         font-size: 11px;
         font-weight: 600;
@@ -144,21 +144,26 @@ async function generateInvoicePDF(invoiceData) {
       }
       .summary-row span {
         text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .summary-row span:first-child {
         text-align: left;
+        justify-content: flex-start;
       }
       .summary-row span:nth-child(3) {
         text-align: right;
-        font-size: 11px;
+        justify-content: flex-end;
+        padding-right: 10px;
       }
       .summary-row span:last-child {
         text-align: left;
+        justify-content: flex-start;
         font-size: 9px;
         font-weight: 400;
         text-transform: none;
         line-height: 1.4;
-        padding-left: 10px;
       }
       .items-table {
         margin: 0 40px;
