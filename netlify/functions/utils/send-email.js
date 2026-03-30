@@ -31,7 +31,7 @@ async function getUserEmailPrefs(email) {
     const dbUrl = process.env.DATABASE_URL.replace('&channel_binding=require', '');
     const sql = neon(dbUrl);
     const result = await sql`SELECT email_notifications, email_language FROM users WHERE email = ${email}`;
-    if (result.length === 0) return { shouldSend: false, language: 'nl' };
+    if (result.length === 0) return { shouldSend: true, language: 'nl' }; // Default: send to non-registered customers
     return { 
       shouldSend: result[0].email_notifications !== false, 
       language: result[0].email_language || 'nl' 
@@ -149,10 +149,14 @@ function emailTemplate(title, content, ctaText, ctaUrl, language = 'nl') {
 }
 
 async function sendEmail(to, subject, title, content, ctaText, ctaUrl, attachments, language = 'nl') {
+  console.log('=== DEBUG sendEmail: Starting email send to', to);
+  
   // Check if user wants to receive emails and get language
   const prefs = await getUserEmailPrefs(to);
+  console.log('=== DEBUG sendEmail: prefs =', prefs);
+  
   if (!prefs.shouldSend) {
-    console.log(`Email skipped: ${to} has disabled notifications`);
+    console.log(`=== DEBUG sendEmail: SKIPPED - ${to} has disabled notifications`);
     return false;
   }
   
@@ -160,30 +164,40 @@ async function sendEmail(to, subject, title, content, ctaText, ctaUrl, attachmen
   const userLang = language || prefs.language;
   
   // Skip if SMTP not configured
+  console.log('=== DEBUG sendEmail: Checking SMTP config...');
+  console.log('=== DEBUG sendEmail: SMTP_USER exists?', !!process.env.SMTP_USER);
+  console.log('=== DEBUG sendEmail: SMTP_PASS exists?', !!process.env.SMTP_PASS);
+  
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.log('Email skipped: SMTP not configured');
+    console.log('=== DEBUG sendEmail: SKIPPED - SMTP not configured');
     return false;
   }
 
   try {
+    console.log('=== DEBUG sendEmail: Creating transporter...');
     const transporter = createTransporter();
+    
     const mailOptions = {
       from: `"Varexo" <${process.env.SMTP_USER}>`,
       to,
       subject,
       html: emailTemplate(title, content, ctaText, ctaUrl, userLang),
     };
+    
     if (attachments && attachments.length > 0) {
-      console.log('Adding attachments:', attachments.map(a => a.filename));
+      console.log('=== DEBUG sendEmail: Adding attachments:', attachments.map(a => a.filename));
       mailOptions.attachments = attachments;
     } else {
-      console.log('No attachments to send');
+      console.log('=== DEBUG sendEmail: No attachments to send');
     }
+    
+    console.log('=== DEBUG sendEmail: Sending mail...');
     await transporter.sendMail(mailOptions);
-    console.log(`Email sent to ${to}: ${subject}`);
+    console.log(`=== DEBUG sendEmail: SUCCESS - Email sent to ${to}: ${subject}`);
     return true;
   } catch (error) {
-    console.error('Email error:', error.message);
+    console.error('=== DEBUG sendEmail: ERROR -', error.message);
+    console.error('=== DEBUG sendEmail: ERROR STACK -', error.stack);
     return false;
   }
 }
@@ -261,7 +275,12 @@ async function sendProjectDeletedEmail(customerEmail, customerName, projectTitle
 }
 
 async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, amount, invoiceData) {
+  console.log('=== DEBUG sendNewInvoiceEmail: Starting ===');
+  console.log('=== DEBUG sendNewInvoiceEmail: customerEmail =', customerEmail);
+  
   const prefs = await getUserEmailPrefs(customerEmail);
+  console.log('=== DEBUG sendNewInvoiceEmail: email prefs =', prefs);
+  
   const lang = prefs.language || 'nl';
   
   const dueDateRaw = invoiceData?.dueDate ? new Date(invoiceData.dueDate) : null;

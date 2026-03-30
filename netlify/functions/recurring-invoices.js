@@ -155,8 +155,12 @@ exports.handler = async (event) => {
       const newInvoice = invoiceResult[0];
       
       // Send email with PDF for the actual invoice
+      console.log('=== DEBUG: Starting email send process ===');
+      console.log('Customer email:', customerEmail);
+      console.log('Invoice number:', invoiceNumber);
+      console.log('Amount:', amount);
       try {
-        await sendNewInvoiceEmail(customerEmail, customerName || '', invoiceNumber, amount, {
+        const emailResult = await sendNewInvoiceEmail(customerEmail, customerName || '', invoiceNumber, amount, {
           invoiceDate: startDate,
           dueDate: dueDate,
           customerName: customerName || '',
@@ -167,9 +171,10 @@ exports.handler = async (event) => {
           customerPhone: '',
           items: items || [{ description: description, quantity: 1, price: parseFloat(amount), total: parseFloat(amount) }],
         });
-        console.log('Invoice email with PDF sent to:', customerEmail);
+        console.log('=== DEBUG: Email send result ===', emailResult);
       } catch (emailError) {
-        console.error('Failed to send invoice email:', emailError);
+        console.error('=== DEBUG: Failed to send invoice email ===', emailError);
+        console.error('=== DEBUG: Error stack ===', emailError.stack);
       }
       
       return { statusCode: 200, headers, body: JSON.stringify({
