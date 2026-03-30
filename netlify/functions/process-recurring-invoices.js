@@ -118,6 +118,40 @@ exports.handler = async (event) => {
           console.error(`Email failed for ${ri.customer_email}:`, emailErr.message);
         }
 
+        // Create payment tracking entry for this period
+        try {
+          // Calculate period dates
+          const periodStart = new Date(ri.next_invoice_date);
+          const periodEnd = new Date(periodStart);
+          periodEnd.setMonth(periodEnd.getMonth() + (ri.interval_months || 1));
+          periodEnd.setDate(periodEnd.getDate() - 1);
+          
+          // Get next period number
+          const lastPeriod = await sql`
+            SELECT MAX(period_number) as max_num 
+            FROM invoice_payment_tracking 
+            WHERE recurring_invoice_id = ${ri.id}
+          `;
+          const periodNumber = (lastPeriod[0]?.max_num || 0) + 1;
+          
+          await sql`
+            INSERT INTO invoice_payment_tracking (
+              invoice_id, recurring_invoice_id, period_number, 
+              period_start_date, period_end_date, invoice_number,
+              amount, status
+            ) VALUES (
+              (SELECT id FROM invoices WHERE invoice_number = ${invoiceNumber}),
+              ${ri.id}, ${periodNumber}, 
+              ${periodStart.toISOString().split('T')[0]}, 
+              ${periodEnd.toISOString().split('T')[0]},
+              ${invoiceNumber},
+              ${ri.amount}, 'pending'
+            )
+          `;
+        } catch (trackingErr) {
+          console.log('Payment tracking creation failed:', trackingErr.message);
+        }
+
         // Update next_invoice_date
         const nextDate = new Date(ri.next_invoice_date);
         nextDate.setMonth(nextDate.getMonth() + (ri.interval_months || 1));

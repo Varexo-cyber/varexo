@@ -27,6 +27,7 @@ exports.handler = async (event) => {
         period_number INTEGER NOT NULL,
         period_start_date DATE NOT NULL,
         period_end_date DATE NOT NULL,
+        invoice_number VARCHAR(50),
         amount DECIMAL(10,2) NOT NULL,
         status VARCHAR(50) DEFAULT 'pending',
         paid_date DATE,
@@ -61,6 +62,7 @@ exports.handler = async (event) => {
           periodNumber: t.period_number,
           periodStartDate: t.period_start_date,
           periodEndDate: t.period_end_date,
+          invoiceNumber: t.invoice_number,
           amount: parseFloat(t.amount),
           status: t.status,
           paidDate: t.paid_date,
@@ -75,15 +77,15 @@ exports.handler = async (event) => {
 
     // POST - create payment tracking entry
     if (event.httpMethod === 'POST') {
-      const { invoiceId, recurringInvoiceId, periodNumber, periodStartDate, periodEndDate, amount, status, paidDate, paymentMethod, paymentNotes } = body;
+      const { invoiceId, recurringInvoiceId, periodNumber, periodStartDate, periodEndDate, invoiceNumber, amount, status, paidDate, paymentMethod, paymentNotes } = body;
 
       const result = await sql`
         INSERT INTO invoice_payment_tracking (
           invoice_id, recurring_invoice_id, period_number, period_start_date, period_end_date,
-          amount, status, paid_date, payment_method, payment_notes
+          invoice_number, amount, status, paid_date, payment_method, payment_notes
         ) VALUES (
           ${invoiceId}, ${recurringInvoiceId || null}, ${periodNumber || 1}, ${periodStartDate}, ${periodEndDate},
-          ${amount}, ${status || 'pending'}, ${paidDate || null}, ${paymentMethod || null}, ${paymentNotes || null}
+          ${invoiceNumber || null}, ${amount}, ${status || 'pending'}, ${paidDate || null}, ${paymentMethod || null}, ${paymentNotes || null}
         )
         RETURNING *
       `;
@@ -93,6 +95,7 @@ exports.handler = async (event) => {
         id: t.id.toString(),
         invoiceId: t.invoice_id.toString(),
         periodNumber: t.period_number,
+        invoiceNumber: t.invoice_number,
         amount: parseFloat(t.amount),
         status: t.status,
         paidDate: t.paid_date

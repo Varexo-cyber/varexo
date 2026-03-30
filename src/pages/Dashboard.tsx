@@ -445,8 +445,8 @@ const CustomerDashboard: React.FC = () => {
             <div class="summary-row">
               <span>VAREXO</span>
               <span>DIENSTVERLENING</span>
-              <span>BETALINGSVOORWAARDEN<br><small style="font-weight:400;font-size:11px;">Betaling binnen 14 dagen</small></span>
-              <span>${new Date(invoice.dueDate).toLocaleDateString('nl-NL')}</span>
+              <span style="text-align:right;"><strong>Vervaldatum:</strong> ${new Date(invoice.dueDate).toLocaleDateString('nl-NL')}</span>
+              <span style="text-align:left;font-size:10px;font-weight:400;">Betalingsvoorwaarden:<br>Betaling binnen 14 dagen na vervaldatum</span>
             </div>
 
             <table class="items-table">
@@ -522,7 +522,7 @@ const CustomerDashboard: React.FC = () => {
     const customerCity = recurring.customerCity || '';
     const customerPhone = recurring.customerPhone || '';
     const customerEmail = recurring.customerEmail || '';
-    const invoiceNumber = `${recurring.id}-P${period.periodNumber}`;
+    const invoiceNumber = period.invoiceNumber ? `${period.invoiceNumber}-P${period.periodNumber}` : `${recurring.id}-P${period.periodNumber}`;
     const invoiceDate = new Date(period.periodStartDate).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
     
     const totalIncl = period.amount;
@@ -833,8 +833,8 @@ const CustomerDashboard: React.FC = () => {
             <div class="summary-row">
               <span>VAREXO</span>
               <span>DIENSTVERLENING</span>
-              <span>BETALINGSVOORWAARDEN<br><small style="font-weight:400;font-size:11px;">Betaling binnen 14 dagen</small></span>
-              <span>${new Date(period.periodEndDate).toLocaleDateString('nl-NL')}</span>
+              <span style="text-align:right;"><strong>Vervaldatum:</strong> ${new Date(period.periodEndDate).toLocaleDateString('nl-NL')}</span>
+              <span style="text-align:left;font-size:10px;font-weight:400;">Betalingsvoorwaarden:<br>Betaling binnen 14 dagen na vervaldatum</span>
             </div>
 
             <table class="items-table">
