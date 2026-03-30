@@ -33,9 +33,15 @@ exports.handler = async (event) => {
         .filter(i => i.status !== 'draft')
         .reduce((sum, i) => sum + parseFloat(i.amount || 0), 0);
       
-      // Get paid payment tracking periods (for recurring invoices)
-      const paidTrackingPeriods = await sql`SELECT * FROM invoice_payment_tracking WHERE status = 'paid'`;
-      const trackingRevenue = paidTrackingPeriods.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+      // Get paid payment tracking periods (for recurring invoices) - safely handle missing table
+      let trackingRevenue = 0;
+      try {
+        const paidTrackingPeriods = await sql`SELECT * FROM invoice_payment_tracking WHERE status = 'paid'`;
+        trackingRevenue = paidTrackingPeriods.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+      } catch (trackingError) {
+        console.log('Payment tracking table not found, using 0 for tracking revenue');
+        trackingRevenue = 0;
+      }
       
       // Total revenue = invoice revenue + paid tracking periods
       const revenue = invoiceRevenue + trackingRevenue;

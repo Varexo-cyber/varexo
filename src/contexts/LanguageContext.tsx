@@ -212,6 +212,8 @@ const translations = {
     'dashboard.adminWillPostUpdates': 'De admin zal hier updates plaatsen.',
     'dashboard.by': 'Door:',
     'dashboard.questionsCall': 'Vragen? Bel ons:',
+    'dashboard.noInvoicesFound': 'Nog geen facturen gevonden',
+    'dashboard.adminWillCreateInvoices': 'De admin zal facturen voor je aanmaken',
     
     // About Page
     'about.tag': '// over-ons',
@@ -719,6 +721,8 @@ const translations = {
     'dashboard.adminWillPostUpdates': 'The admin will post updates here.',
     'dashboard.by': 'By:',
     'dashboard.questionsCall': 'Questions? Call us:',
+    'dashboard.noInvoicesFound': 'No invoices found yet',
+    'dashboard.adminWillCreateInvoices': 'The admin will create invoices for you',
     
     // About Page
     'about.tag': '// about-us',

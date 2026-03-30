@@ -1372,6 +1372,367 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Generate PDF for recurring invoice period
+  const generateRecurringPeriodPDF = (recurring: any, period: any) => {
+    const customerName = recurring.customerName || recurring.customerEmail?.split('@')[0] || 'Klant';
+    const customerCompany = recurring.customerCompany || '';
+    const customerAddress = recurring.customerAddress || '';
+    const customerPostal = recurring.customerPostal || '';
+    const customerCity = recurring.customerCity || '';
+    const customerPhone = recurring.customerPhone || '';
+    const customerEmail = recurring.customerEmail || '';
+    const invoiceNumber = `REC-${recurring.id}-P${period.periodNumber}`;
+    const invoiceDate = new Date(period.periodStartDate).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    
+    const totalIncl = period.amount;
+    const subtotalExcl = totalIncl / 1.21;
+    const btwAmount = totalIncl - subtotalExcl;
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Factuur ${invoiceNumber}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: 'Inter', Arial, sans-serif; 
+              background: linear-gradient(135deg, #d4edda 0%, #a8d8ea 50%, #d4edda 100%);
+              min-height: 100vh;
+              padding: 40px;
+              color: #333;
+              margin: 0;
+            }
+            .invoice-container {
+              max-width: 800px;
+              margin: 0 auto;
+              background: white;
+              box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+              position: relative;
+            }
+            .header-section {
+              background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
+              padding: 30px;
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+            }
+            .header-left h1 {
+              font-size: 32px;
+              font-weight: 700;
+              color: #000;
+              margin-bottom: 30px;
+            }
+            .invoice-info {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 20px;
+            }
+            .info-block h3 {
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+              color: #000;
+              margin-bottom: 8px;
+              letter-spacing: 0.5px;
+            }
+            .info-block p {
+              font-size: 16px;
+              color: #000;
+            }
+            .logo-section {
+              text-align: right;
+            }
+            .company-info {
+              font-size: 12px;
+              color: #333;
+              line-height: 1.6;
+              text-align: right;
+            }
+            .customer-section {
+              padding: 20px 30px;
+              display: flex;
+              justify-content: space-between;
+            }
+            .customer-details {
+              max-width: 300px;
+            }
+            .customer-label {
+              font-size: 11px;
+              font-weight: 600;
+              text-transform: uppercase;
+              color: #000;
+              margin-bottom: 8px;
+            }
+            .customer-details p {
+              font-size: 13px;
+              color: #333;
+              line-height: 1.5;
+            }
+            .customer-email {
+              color: #0066cc;
+              text-decoration: underline;
+            }
+            .summary-row {
+              display: grid;
+              grid-template-columns: 1fr 1fr 2fr 1fr;
+              background: #f8f9fa;
+              margin: 0 30px;
+              padding: 12px 15px;
+              border: 1px solid #dee2e6;
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+              color: #2c6e4f;
+            }
+            .summary-row span {
+              text-align: center;
+            }
+            .summary-row span:first-child {
+              text-align: left;
+            }
+            .summary-row span:last-child {
+              text-align: right;
+            }
+            .items-table {
+              margin: 0 30px;
+              border-collapse: collapse;
+              width: calc(100% - 60px);
+            }
+            .items-table th {
+              text-align: left;
+              padding: 12px 15px;
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+              color: #2c6e4f;
+              border-bottom: 2px solid #2c6e4f;
+            }
+            .items-table td {
+              padding: 12px 15px;
+              font-size: 13px;
+              color: #333;
+              border-bottom: 1px solid #eee;
+            }
+            .items-table .quantity { text-align: center; width: 80px; }
+            .items-table .description { text-align: left; }
+            .items-table .price { text-align: right; width: 120px; }
+            .items-table .total { text-align: right; width: 120px; }
+            .totals-section {
+              margin: 20px 30px 0 30px;
+              padding-bottom: 20px;
+              display: flex;
+              justify-content: flex-end;
+            }
+            .totals-table {
+              width: 300px;
+            }
+            .totals-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 8px 0;
+              font-size: 13px;
+              color: #333;
+            }
+            .totals-row.total {
+              font-weight: 600;
+              font-size: 16px;
+              border-top: 2px solid #333;
+              padding-top: 12px;
+              margin-top: 8px;
+            }
+            .footer {
+              background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
+              padding: 20px 30px;
+              margin-top: 20px;
+            }
+            .footer-content {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+            }
+            .footer-left {
+              font-size: 11px;
+              color: #333;
+            }
+            .footer-right {
+              text-align: right;
+              font-size: 12px;
+              color: #333;
+              line-height: 1.8;
+            }
+            .footer-right strong {
+              font-weight: 600;
+            }
+            @media print {
+              @page {
+                size: A4;
+                margin: 0;
+              }
+              body { 
+                background: white; 
+                padding: 20px; 
+                min-height: auto;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+              .invoice-container { 
+                box-shadow: none; 
+                max-width: 100%;
+                min-height: calc(100vh - 40px);
+                display: flex;
+                flex-direction: column;
+              }
+              .footer {
+                margin-top: auto;
+                page-break-inside: avoid;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="invoice-container">
+            <div class="header-section">
+              <div class="header-left">
+                <h1>FACTUUR</h1>
+                <div class="invoice-info">
+                  <div class="info-block">
+                    <h3>Datum</h3>
+                    <p>${invoiceDate}</p>
+                  </div>
+                  <div class="info-block">
+                    <h3>Factuurnummer</h3>
+                    <p>${invoiceNumber}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="logo-section">
+                <svg width="180" height="80" viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="vLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#7cb8d4"/>
+                      <stop offset="100%" style="stop-color:#4a9cc7"/>
+                    </linearGradient>
+                    <linearGradient id="vRight" x1="100%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" style="stop-color:#1a3a5c"/>
+                      <stop offset="100%" style="stop-color:#2a5a8c"/>
+                    </linearGradient>
+                    <linearGradient id="vCenter" x1="50%" y1="0%" x2="50%" y2="100%">
+                      <stop offset="0%" style="stop-color:#5ba3cb"/>
+                      <stop offset="100%" style="stop-color:#3d8ab8"/>
+                    </linearGradient>
+                    <linearGradient id="vLeftFacet" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#a8d4e6"/>
+                      <stop offset="100%" style="stop-color:#6db5d4"/>
+                    </linearGradient>
+                    <linearGradient id="vRightFacet" x1="100%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" style="stop-color:#1e4d7a"/>
+                      <stop offset="100%" style="stop-color:#2a6a9e"/>
+                    </linearGradient>
+                  </defs>
+                  <polygon points="15,15 65,105 50,105 5,30" fill="url(#vLeft)"/>
+                  <polygon points="115,15 65,105 80,105 120,30" fill="url(#vRight)"/>
+                  <polygon points="65,105 45,60 65,48 85,60" fill="url(#vCenter)" opacity="0.85"/>
+                  <polygon points="15,15 48,15 65,48 45,60" fill="url(#vLeftFacet)" opacity="0.9"/>
+                  <polygon points="115,15 82,15 65,48 85,60" fill="url(#vRightFacet)" opacity="0.9"/>
+                  <text x="138" y="68" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="700" fill="#1a3050" letter-spacing="3">VAREXO</text>
+                  <text x="140" y="88" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#5a9ec4" letter-spacing="2">ICT  •  WEBSITES  •  SOFTWARE</text>
+                </svg>
+                <div class="company-info">
+                  <strong>Varexo</strong><br>
+                  Regulierenstraat 10<br>
+                  2694BA 's-Gravenzande<br>
+                  +31 6 36075966<br>
+                  Info@varexo.nl
+                </div>
+              </div>
+            </div>
+
+            <div class="customer-section">
+              <div class="customer-details">
+                <div class="customer-label">Factuur aan:</div>
+                <p>
+                  ${customerCompany ? `<strong>${customerCompany}</strong><br>` : ''}
+                  ${customerName}<br>
+                  ${customerAddress}<br>
+                  ${customerPostal} ${customerCity}<br>
+                  ${customerPhone}<br>
+                  <span class="customer-email">${customerEmail}</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="summary-row">
+              <span>VAREXO</span>
+              <span>DIENSTVERLENING</span>
+              <span>BETALINGSVOORWAARDEN<br><small style="font-weight:400;font-size:11px;">Betaling binnen 14 dagen</small></span>
+              <span>${new Date(period.periodEndDate).toLocaleDateString('nl-NL')}</span>
+            </div>
+
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th class="quantity">Aantal</th>
+                  <th class="description">Omschrijving</th>
+                  <th class="price">Prijs per eenheid</th>
+                  <th class="total">Regeltotaal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="quantity">1</td>
+                  <td class="description">${recurring.description} - Periode #${period.periodNumber}<br><small>(${new Date(period.periodStartDate).toLocaleDateString('nl-NL')} t/m ${new Date(period.periodEndDate).toLocaleDateString('nl-NL')})</small></td>
+                  <td class="price">€${totalIncl.toFixed(2)}</td>
+                  <td class="total">€${totalIncl.toFixed(2)}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="totals-section">
+              <div class="totals-table">
+                <div class="totals-row">
+                  <span>Subtotaal (excl. BTW)</span>
+                  <span>€${subtotalExcl.toFixed(2)}</span>
+                </div>
+                <div class="totals-row">
+                  <span>BTW 21%</span>
+                  <span>€${btwAmount.toFixed(2)}</span>
+                </div>
+                <div class="totals-row total">
+                  <span>Totaal (incl. BTW)</span>
+                  <span>€${totalIncl.toFixed(2)}</span>
+                </div>
+                <div style="font-size:11px;color:#666;margin-top:6px;text-align:right;">Alle bedragen zijn inclusief 21% BTW</div>
+              </div>
+            </div>
+
+            <div class="footer">
+              <div class="footer-content">
+                <div class="footer-left">
+                </div>
+                <div class="footer-right">
+                  <strong>Varexo</strong><br>
+                  t.n.v. Mohammed Taher<br>
+                  IBAN: NL75INGB0756428726<br>
+                  BTW: 21% inbegrepen
+                </div>
+              </div>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.print();
+    }
+  };
+
   if (loading) {
     return (
       <PageTransition>
@@ -2756,23 +3117,34 @@ const AdminDashboard: React.FC = () => {
                   <h2 className="text-xl font-semibold text-white mb-6">{language === 'nl' ? 'Winst & Verlies Berekening' : 'Profit & Loss Calculation'}</h2>
                   
                   {(() => {
-                    const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0);
-                    const totalSurcharges = surcharges.reduce((sum, s) => sum + parseFloat(s.amount), 0);
+                    const invoiceRevenue = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0);
+                    const businessSurcharges = surcharges.filter(s => s.type === 'business').reduce((sum, s) => sum + parseFloat(s.amount), 0);
+                    const personalSurcharges = surcharges.filter(s => s.type === 'personal').reduce((sum, s) => sum + parseFloat(s.amount), 0);
+                    const totalRevenue = invoiceRevenue + businessSurcharges;
+                    const totalSurcharges = businessSurcharges + personalSurcharges;
                     const businessCosts = expenses.filter(e => e.type === 'business').reduce((sum, e) => sum + parseFloat(e.amount), 0);
                     const personalCosts = expenses.filter(e => e.type === 'personal').reduce((sum, e) => sum + parseFloat(e.amount), 0);
-                    const totalIncome = totalRevenue + totalSurcharges;
+                    const totalIncome = invoiceRevenue + totalSurcharges;
                     const netProfit = totalIncome - businessCosts;
                     const afterPersonal = netProfit - personalCosts;
                     
                     return (
                       <div className="space-y-4">
                         <div className="flex justify-between items-center py-3 border-b border-dark-700">
-                          <span className="text-gray-400">{language === 'nl' ? 'Totale Omzet (betaalde facturen)' : 'Total Revenue (paid invoices)'}</span>
-                          <span className="text-green-400 font-medium text-lg">+ €{totalRevenue.toFixed(2)}</span>
+                          <span className="text-gray-400">{language === 'nl' ? 'Factuur omzet (betaald)' : 'Invoice revenue (paid)'}</span>
+                          <span className="text-green-400 font-medium text-lg">+ €{invoiceRevenue.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-dark-700">
+                          <span className="text-gray-400">{language === 'nl' ? 'Bedrijfsinkomen' : 'Company Income'}</span>
+                          <span className="text-green-400 font-medium text-lg">+ €{businessSurcharges.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-dark-700 bg-dark-900/50 rounded px-3">
+                          <span className="text-white font-semibold">{language === 'nl' ? 'Totale Omzet' : 'Total Revenue'}</span>
+                          <span className="text-green-400 font-bold text-lg">€{totalRevenue.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center py-3 border-b border-dark-700">
                           <span className="text-gray-400">{language === 'nl' ? 'Persoonlijke inkomsten/toeslagen' : 'Personal income/surcharges'}</span>
-                          <span className="text-primary-400 font-medium text-lg">+ €{totalSurcharges.toFixed(2)}</span>
+                          <span className="text-primary-400 font-medium text-lg">+ €{personalSurcharges.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center py-3 border-b border-dark-700 bg-dark-900/50 rounded px-3">
                           <span className="text-white font-semibold">{language === 'nl' ? 'Totale Inkomsten' : 'Total Income'}</span>
@@ -3870,6 +4242,18 @@ const AdminDashboard: React.FC = () => {
                             </div>
                             <div className="flex items-center gap-3">
                               <span className="text-sm font-medium text-white">€{period.amount.toFixed(2)}</span>
+                              {period.status === 'paid' && (
+                                <button
+                                  onClick={() => generateRecurringPeriodPDF(selectedRecurring, period)}
+                                  className="text-xs bg-primary-600 text-white px-2 py-1 rounded hover:bg-primary-500 flex items-center gap-1"
+                                  title={language === 'nl' ? 'PDF Factuur' : 'PDF Invoice'}
+                                >
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  </svg>
+                                  PDF
+                                </button>
+                              )}
                               {period.status !== 'paid' && (
                                 <button
                                   onClick={async () => {
@@ -4231,6 +4615,7 @@ const AdminDashboard: React.FC = () => {
                           className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                         >
                           <option value="personal">{language === 'nl' ? 'Persoonlijk' : 'Personal'}</option>
+                          <option value="business">{language === 'nl' ? 'Bedrijfsinkomen' : 'Company Income'}</option>
                         </select>
                       </div>
                       <div>
