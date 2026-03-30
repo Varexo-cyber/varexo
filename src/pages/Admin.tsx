@@ -1079,7 +1079,7 @@ const AdminDashboard: React.FC = () => {
             }
             .summary-row {
               display: grid;
-              grid-template-columns: 1fr 1fr 1fr 1fr;
+              grid-template-columns: 1fr 1fr 2fr 1fr;
               background: #f8f9fa;
               margin: 0 30px;
               padding: 12px 15px;
@@ -1091,20 +1091,12 @@ const AdminDashboard: React.FC = () => {
             }
             .summary-row span {
               text-align: center;
-              display: flex;
-              align-items: center;
-              justify-content: center;
             }
             .summary-row span:first-child {
               text-align: left;
-              justify-content: flex-start;
             }
             .summary-row span:last-child {
-              text-align: left;
-              justify-content: flex-start;
-              font-size: 10px;
-              font-weight: 400;
-              text-transform: none;
+              text-align: right;
             }
             .items-table {
               margin: 0 30px;
@@ -1309,8 +1301,8 @@ const AdminDashboard: React.FC = () => {
             <div class="summary-row">
               <span>VAREXO</span>
               <span>DIENSTVERLENING</span>
-              <span style="text-align:right;"><strong>Vervaldatum:</strong> ${invoiceForm.dueDate ? new Date(invoiceForm.dueDate).toLocaleDateString('nl-NL') : new Date(invoice.dueDate).toLocaleDateString('nl-NL')}</span>
-              <span style="text-align:left;font-size:10px;font-weight:400;">Betalingsvoorwaarden:<br>Betaling binnen 14 dagen na vervaldatum</span>
+              <span>BETALINGSVOORWAARDEN<br><small style="font-weight:400;font-size:11px;">Betaling binnen 14 dagen</small></span>
+              <span>${invoiceForm.dueDate ? new Date(invoiceForm.dueDate).toLocaleDateString('nl-NL') : new Date(invoice.dueDate).toLocaleDateString('nl-NL')}</span>
             </div>
 
             <!-- Items Table -->
@@ -1485,7 +1477,7 @@ const AdminDashboard: React.FC = () => {
             }
             .summary-row {
               display: grid;
-              grid-template-columns: 1fr 1fr 1fr 1fr;
+              grid-template-columns: 1fr 1fr 2fr 1fr;
               background: #f8f9fa;
               margin: 0 30px;
               padding: 12px 15px;
@@ -1497,20 +1489,12 @@ const AdminDashboard: React.FC = () => {
             }
             .summary-row span {
               text-align: center;
-              display: flex;
-              align-items: center;
-              justify-content: center;
             }
             .summary-row span:first-child {
               text-align: left;
-              justify-content: flex-start;
             }
             .summary-row span:last-child {
-              text-align: left;
-              justify-content: flex-start;
-              font-size: 10px;
-              font-weight: 400;
-              text-transform: none;
+              text-align: right;
             }
             .items-table {
               margin: 0 30px;
