@@ -3351,7 +3351,7 @@ const AdminDashboard: React.FC = () => {
                                   periodEndDate: newPaymentForm.periodEndDate,
                                   amount: parseFloat(newPaymentForm.amount) || 0,
                                   status: newPaymentForm.status,
-                                  paidDate: newPaymentForm.paidDate || null,
+                                  paidDate: newPaymentForm.paidDate || undefined,
                                   paymentMethod: newPaymentForm.paymentMethod,
                                   paymentNotes: newPaymentForm.paymentNotes
                                 });
