@@ -1667,8 +1667,8 @@ const AdminDashboard: React.FC = () => {
             <div class="summary-row">
               <span>VAREXO</span>
               <span>DIENSTVERLENING</span>
-              <span style="text-align:right;"><strong>Vervaldatum:</strong> ${new Date(period.periodEndDate).toLocaleDateString('nl-NL')}</span>
-              <span style="text-align:left;font-size:10px;font-weight:400;">Betalingsvoorwaarden:<br>Betaling binnen 14 dagen na vervaldatum</span>
+              <span>BETALINGSVOORWAARDEN<br><small style="font-weight:400;font-size:11px;">Betaling binnen 14 dagen</small></span>
+              <span>${new Date(period.periodEndDate).toLocaleDateString('nl-NL')}</span>
             </div>
 
             <table class="items-table">
