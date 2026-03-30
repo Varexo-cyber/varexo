@@ -131,32 +131,34 @@ async function generateInvoicePDF(invoiceData) {
       }
       .summary-row {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: 120px 140px 140px 1fr;
         background: #f8f9fa;
         margin: 0 40px;
-        padding: 15px 20px;
+        padding: 12px 20px;
         border: 1px solid #dee2e6;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 600;
         text-transform: uppercase;
         color: #2c6e4f;
+        align-items: center;
       }
       .summary-row span {
         text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
       .summary-row span:first-child {
         text-align: left;
-        justify-content: flex-start;
+      }
+      .summary-row span:nth-child(3) {
+        text-align: right;
+        font-size: 11px;
       }
       .summary-row span:last-child {
         text-align: left;
-        justify-content: flex-start;
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 400;
         text-transform: none;
+        line-height: 1.4;
+        padding-left: 10px;
       }
       .items-table {
         margin: 0 40px;
@@ -305,8 +307,8 @@ async function generateInvoicePDF(invoiceData) {
       <div class="summary-row">
         <span>VAREXO</span>
         <span>DIENSTVERLENING</span>
-        <span style="text-align:right;"><strong>Vervaldatum:</strong> ${dueDateStr}</span>
-        <span style="text-align:left;font-size:10px;font-weight:400;">Betalingsvoorwaarden:<br>Betaling binnen 14 dagen na vervaldatum</span>
+        <span><strong>Vervaldatum:</strong> ${dueDateStr}</span>
+        <span>Betalingsvoorwaarden:<br>Betaling binnen 14 dagen na vervaldatum</span>
       </div>
 
       <table class="items-table">
