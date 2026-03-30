@@ -72,6 +72,12 @@ const AdminDashboard: React.FC = () => {
   
   const [recurringForm, setRecurringForm] = useState({
     customerEmail: '',
+    customerName: '',
+    customerCompany: '',
+    customerAddress: '',
+    customerPostal: '',
+    customerCity: '',
+    customerPhone: '',
     description: '',
     amount: '',
     startDate: new Date().toISOString().split('T')[0],
@@ -102,6 +108,23 @@ const AdminDashboard: React.FC = () => {
   const [isCreatingProject, setIsCreatingProject] = useState(false);
   const [isUpdatingProject, setIsUpdatingProject] = useState<string | null>(null);
   const [isUpdatingCustomerSubscription, setIsUpdatingCustomerSubscription] = useState<string | null>(null);
+  
+  // Recurring invoice details modal
+  const [showRecurringDetails, setShowRecurringDetails] = useState(false);
+  const [selectedRecurring, setSelectedRecurring] = useState<any | null>(null);
+  const [recurringPaymentTracking, setRecurringPaymentTracking] = useState<any[]>([]);
+  const [isLoadingRecurringTracking, setIsLoadingRecurringTracking] = useState(false);
+  const [showAddRecurringPaymentForm, setShowAddRecurringPaymentForm] = useState(false);
+  const [newRecurringPaymentForm, setNewRecurringPaymentForm] = useState({
+    periodNumber: 1,
+    periodStartDate: '',
+    periodEndDate: '',
+    amount: '',
+    status: 'pending',
+    paidDate: '',
+    paymentMethod: '',
+    paymentNotes: ''
+  });
   
   // Invoice details modal
   const [showInvoiceDetails, setShowInvoiceDetails] = useState(false);
@@ -407,6 +430,12 @@ const AdminDashboard: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customerEmail: recurringForm.customerEmail,
+          customerName: recurringForm.customerName,
+          customerCompany: recurringForm.customerCompany,
+          customerAddress: recurringForm.customerAddress,
+          customerPostal: recurringForm.customerPostal,
+          customerCity: recurringForm.customerCity,
+          customerPhone: recurringForm.customerPhone,
           description: recurringForm.description,
           amount: parseFloat(recurringForm.amount),
           startDate: recurringForm.startDate,
@@ -414,7 +443,7 @@ const AdminDashboard: React.FC = () => {
         }),
       });
       setShowRecurringForm(false);
-      setRecurringForm({ customerEmail: '', description: '', amount: '', startDate: new Date().toISOString().split('T')[0], intervalMonths: 1 });
+      setRecurringForm({ customerEmail: '', customerName: '', customerCompany: '', customerAddress: '', customerPostal: '', customerCity: '', customerPhone: '', description: '', amount: '', startDate: new Date().toISOString().split('T')[0], intervalMonths: 1 });
       loadData();
     } catch (error) {
       console.error('Error creating recurring invoice:', error);
@@ -449,6 +478,41 @@ const AdminDashboard: React.FC = () => {
     } finally {
       setIsDeletingRecurring(null);
     }
+  };
+
+  const openRecurringDetails = async (recurring: any) => {
+    setSelectedRecurring(recurring);
+    setShowRecurringDetails(true);
+    
+    // Load payment tracking data for this recurring invoice
+    if (recurring.id) {
+      setIsLoadingRecurringTracking(true);
+      try {
+        const tracking = await paymentTrackingAPI.getForInvoice(recurring.id);
+        setRecurringPaymentTracking(tracking);
+      } catch (error) {
+        console.error('Error loading recurring payment tracking:', error);
+        setRecurringPaymentTracking([]);
+      } finally {
+        setIsLoadingRecurringTracking(false);
+      }
+    }
+  };
+
+  const closeRecurringDetails = () => {
+    setShowRecurringDetails(false);
+    setSelectedRecurring(null);
+    setShowAddRecurringPaymentForm(false);
+    setNewRecurringPaymentForm({
+      periodNumber: 1,
+      periodStartDate: '',
+      periodEndDate: '',
+      amount: '',
+      status: 'pending',
+      paidDate: '',
+      paymentMethod: '',
+      paymentNotes: ''
+    });
   };
 
   const handleDeleteMessage = async (id: string) => {
@@ -2000,6 +2064,16 @@ const AdminDashboard: React.FC = () => {
                                 {showRecurringDropdown === ri.id && (
                                   <div className="absolute right-0 mt-1 w-48 bg-dark-800 border border-dark-600 rounded-lg shadow-xl z-50 py-1">
                                     <button
+                                      onClick={() => { openRecurringDetails(ri); setShowRecurringDropdown(null); }}
+                                      className="w-full text-left px-4 py-2 text-sm text-primary-400 hover:bg-dark-700 hover:text-primary-300 flex items-center gap-2"
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                      </svg>
+                                      {language === 'nl' ? 'Betalingsoverzicht' : 'Payment Tracking'}
+                                    </button>
+                                    <div className="border-t border-dark-600 my-1"></div>
+                                    <button
                                       onClick={() => { handleToggleRecurring(ri.id, ri.active); setShowRecurringDropdown(null); }}
                                       className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
                                     >
@@ -2084,9 +2158,10 @@ const AdminDashboard: React.FC = () => {
               <div className="bg-dark-800 rounded-lg p-6 w-full max-w-md border border-dark-700">
                 <h3 className="text-xl font-semibold text-white mb-4">{language === 'nl' ? 'Nieuwe Terugkerende Factuur' : 'New Recurring Invoice'}</h3>
                 <form onSubmit={handleCreateRecurring}>
-                  <div className="space-y-4">
+                  <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                    {/* Customer Selection */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.customer')}</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.customer')} *</label>
                       <select
                         value={recurringForm.customerEmail}
                         onChange={(e) => setRecurringForm({ ...recurringForm, customerEmail: e.target.value })}
@@ -2099,54 +2174,135 @@ const AdminDashboard: React.FC = () => {
                         ))}
                       </select>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.description')}</label>
-                      <input
-                        type="text"
-                        value={recurringForm.description}
-                        onChange={(e) => setRecurringForm({ ...recurringForm, description: e.target.value })}
-                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
-                        placeholder={language === 'nl' ? 'bijv. Website onderhoud maandelijks' : 'e.g. Monthly website maintenance'}
-                        required
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.amount')} ({language === 'nl' ? 'incl. BTW' : 'incl. VAT'})</label>
+
+                    {/* Customer Details Section */}
+                    <div className="border-t border-dark-600 pt-4">
+                      <h4 className="text-sm font-medium text-primary-400 mb-3">{language === 'nl' ? 'Klantgegevens' : 'Customer Details'}</h4>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">{language === 'nl' ? 'Contactpersoon' : 'Contact Name'}</label>
+                          <input
+                            type="text"
+                            value={recurringForm.customerName}
+                            onChange={(e) => setRecurringForm({ ...recurringForm, customerName: e.target.value })}
+                            className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                            placeholder={language === 'nl' ? 'Naam contactpersoon' : 'Contact person name'}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">{language === 'nl' ? 'Bedrijf' : 'Company'}</label>
+                          <input
+                            type="text"
+                            value={recurringForm.customerCompany}
+                            onChange={(e) => setRecurringForm({ ...recurringForm, customerCompany: e.target.value })}
+                            className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                            placeholder={language === 'nl' ? 'Bedrijfsnaam' : 'Company name'}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium text-gray-300 mb-1">{language === 'nl' ? 'Adres' : 'Address'}</label>
                         <input
-                          type="number"
-                          step="0.01"
-                          value={recurringForm.amount}
-                          onChange={(e) => setRecurringForm({ ...recurringForm, amount: e.target.value })}
+                          type="text"
+                          value={recurringForm.customerAddress}
+                          onChange={(e) => setRecurringForm({ ...recurringForm, customerAddress: e.target.value })}
                           className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
-                          placeholder="49.99"
+                          placeholder={language === 'nl' ? 'Straatnaam en huisnummer' : 'Street and house number'}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 mt-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">{language === 'nl' ? 'Postcode' : 'Postal Code'}</label>
+                          <input
+                            type="text"
+                            value={recurringForm.customerPostal}
+                            onChange={(e) => setRecurringForm({ ...recurringForm, customerPostal: e.target.value })}
+                            className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                            placeholder="1234AB"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">{language === 'nl' ? 'Plaats' : 'City'}</label>
+                          <input
+                            type="text"
+                            value={recurringForm.customerCity}
+                            onChange={(e) => setRecurringForm({ ...recurringForm, customerCity: e.target.value })}
+                            className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                            placeholder={language === 'nl' ? 'Stad' : 'City'}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium text-gray-300 mb-1">{language === 'nl' ? 'Telefoon' : 'Phone'}</label>
+                        <input
+                          type="tel"
+                          value={recurringForm.customerPhone}
+                          onChange={(e) => setRecurringForm({ ...recurringForm, customerPhone: e.target.value })}
+                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                          placeholder="06-12345678"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Invoice Details Section */}
+                    <div className="border-t border-dark-600 pt-4">
+                      <h4 className="text-sm font-medium text-primary-400 mb-3">{language === 'nl' ? 'Factuur Details' : 'Invoice Details'}</h4>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.description')} *</label>
+                        <input
+                          type="text"
+                          value={recurringForm.description}
+                          onChange={(e) => setRecurringForm({ ...recurringForm, description: e.target.value })}
+                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                          placeholder={language === 'nl' ? 'bijv. Website onderhoud maandelijks' : 'e.g. Monthly website maintenance'}
                           required
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.cycle')} ({language === 'nl' ? 'maanden' : 'months'})</label>
-                        <select
-                          value={recurringForm.intervalMonths}
-                          onChange={(e) => setRecurringForm({ ...recurringForm, intervalMonths: parseInt(e.target.value) })}
-                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
-                        >
-                          <option value={1}>{language === 'nl' ? 'Elke maand' : 'Every month'}</option>
-                          <option value={2}>{language === 'nl' ? 'Elke 2 maanden' : 'Every 2 months'}</option>
-                          <option value={3}>{language === 'nl' ? 'Elk kwartaal' : 'Every quarter'}</option>
-                          <option value={6}>{language === 'nl' ? 'Elk half jaar' : 'Every half year'}</option>
-                          <option value={12}>{language === 'nl' ? 'Elk jaar' : 'Every year'}</option>
-                        </select>
+
+                      <div className="grid grid-cols-2 gap-4 mt-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.amount')} ({language === 'nl' ? 'incl. BTW' : 'incl. VAT'}) *</label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={recurringForm.amount}
+                            onChange={(e) => setRecurringForm({ ...recurringForm, amount: e.target.value })}
+                            className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                            placeholder="49.99"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">{t('admin.cycle')} ({language === 'nl' ? 'maanden' : 'months'}) *</label>
+                          <select
+                            value={recurringForm.intervalMonths}
+                            onChange={(e) => setRecurringForm({ ...recurringForm, intervalMonths: parseInt(e.target.value) })}
+                            className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                          >
+                            <option value={1}>{language === 'nl' ? 'Elke maand' : 'Every month'}</option>
+                            <option value={2}>{language === 'nl' ? 'Elke 2 maanden' : 'Every 2 months'}</option>
+                            <option value={3}>{language === 'nl' ? 'Elk kwartaal' : 'Every quarter'}</option>
+                            <option value={6}>{language === 'nl' ? 'Elk half jaar' : 'Every half year'}</option>
+                            <option value={12}>{language === 'nl' ? 'Elk jaar' : 'Every year'}</option>
+                          </select>
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">{language === 'nl' ? 'Startdatum (eerste factuur)' : 'Start date (first invoice)'}</label>
-                      <input
-                        type="date"
-                        value={recurringForm.startDate}
-                        onChange={(e) => setRecurringForm({ ...recurringForm, startDate: e.target.value })}
-                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
-                        required
-                      />
+
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium text-gray-300 mb-1">{language === 'nl' ? 'Startdatum (eerste factuur)' : 'Start date (first invoice)'} *</label>
+                        <input
+                          type="date"
+                          value={recurringForm.startDate}
+                          onChange={(e) => setRecurringForm({ ...recurringForm, startDate: e.target.value })}
+                          className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white text-sm"
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="flex space-x-3 mt-6">
@@ -3455,6 +3611,300 @@ const AdminDashboard: React.FC = () => {
                       className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
                     >
                       {language === 'nl' ? 'PDF Genereren' : 'Generate PDF'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Recurring Invoice Details Modal */}
+          {showRecurringDetails && selectedRecurring && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-dark-800 rounded-lg border border-dark-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-6">
+                    <div>
+                      <h3 className="text-2xl font-bold text-white">{language === 'nl' ? 'Terugkerende Factuur Details' : 'Recurring Invoice Details'}</h3>
+                      <p className="text-primary-400 text-lg">{selectedRecurring.description}</p>
+                    </div>
+                    <button onClick={closeRecurringDetails} className="text-gray-400 hover:text-white">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6 mb-6">
+                    {/* Recurring Invoice Info */}
+                    <div className="bg-dark-900 p-4 rounded-lg border border-dark-700">
+                      <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">{language === 'nl' ? 'Factuurinformatie' : 'Invoice Information'}</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{language === 'nl' ? 'Beschrijving' : 'Description'}:</span>
+                          <span className="text-white">{selectedRecurring.description}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{t('admin.amount')}:</span>
+                          <span className="text-white">€{selectedRecurring.amount?.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{t('admin.cycle')}:</span>
+                          <span className="text-white">
+                            {language === 'nl' 
+                              ? (selectedRecurring.intervalMonths === 1 ? 'Elke maand' : `Elke ${selectedRecurring.intervalMonths} maanden`)
+                              : (selectedRecurring.intervalMonths === 1 ? 'Every month' : `Every ${selectedRecurring.intervalMonths} months`)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{language === 'nl' ? 'Startdatum' : 'Start Date'}:</span>
+                          <span className="text-white">{new Date(selectedRecurring.startDate).toLocaleDateString('nl-NL')}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{language === 'nl' ? 'Volgende factuur' : 'Next Invoice'}:</span>
+                          <span className="text-white">{new Date(selectedRecurring.nextInvoiceDate).toLocaleDateString('nl-NL')}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{t('common.status')}:</span>
+                          <span className={`font-medium ${selectedRecurring.active ? 'text-green-400' : 'text-gray-400'}`}>
+                            {selectedRecurring.active ? (language === 'nl' ? 'Actief' : 'Active') : (language === 'nl' ? 'Gepauzeerd' : 'Paused')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Customer Info */}
+                    <div className="bg-dark-900 p-4 rounded-lg border border-dark-700">
+                      <h4 className="text-sm font-semibold text-primary-400 uppercase mb-3">{language === 'nl' ? 'Klantgegevens' : 'Customer Details'}</h4>
+                      <div className="space-y-2 text-sm">
+                        {selectedRecurring.customerCompany && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">{language === 'nl' ? 'Bedrijf' : 'Company'}:</span>
+                            <span className="text-white">{selectedRecurring.customerCompany}</span>
+                          </div>
+                        )}
+                        {selectedRecurring.customerName && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">{language === 'nl' ? 'Contact' : 'Contact'}:</span>
+                            <span className="text-white">{selectedRecurring.customerName}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{t('auth.email')}:</span>
+                          <span className="text-white">{selectedRecurring.customerEmail}</span>
+                        </div>
+                        {selectedRecurring.customerPhone && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">{language === 'nl' ? 'Telefoon' : 'Phone'}:</span>
+                            <span className="text-white">{selectedRecurring.customerPhone}</span>
+                          </div>
+                        )}
+                        {(selectedRecurring.customerAddress || selectedRecurring.customerPostal || selectedRecurring.customerCity) && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">{language === 'nl' ? 'Adres' : 'Address'}:</span>
+                            <span className="text-white text-right">
+                              {selectedRecurring.customerAddress && <div>{selectedRecurring.customerAddress}</div>}
+                              {(selectedRecurring.customerPostal || selectedRecurring.customerCity) && (
+                                <div>{selectedRecurring.customerPostal} {selectedRecurring.customerCity}</div>
+                              )}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Payment Tracking Section */}
+                  <div className="bg-dark-900 p-4 rounded-lg border border-dark-700 mb-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h4 className="text-sm font-semibold text-primary-400 uppercase">{language === 'nl' ? 'Betalingsoverzicht' : 'Payment Tracking'}</h4>
+                      <button
+                        onClick={() => setShowAddRecurringPaymentForm(!showAddRecurringPaymentForm)}
+                        className="text-xs bg-primary-500 text-dark-900 px-3 py-1 rounded hover:bg-primary-400"
+                      >
+                        {showAddRecurringPaymentForm ? (language === 'nl' ? 'Annuleren' : 'Cancel') : (language === 'nl' ? '+ Periode toevoegen' : '+ Add Period')}
+                      </button>
+                    </div>
+
+                    {/* Add Payment Period Form */}
+                    {showAddRecurringPaymentForm && (
+                      <div className="bg-dark-800 p-4 rounded-lg border border-dark-600 mb-4">
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">{language === 'nl' ? 'Periode #' : 'Period #'}</label>
+                            <input
+                              type="number"
+                              value={newRecurringPaymentForm.periodNumber}
+                              onChange={(e) => setNewRecurringPaymentForm(prev => ({ ...prev, periodNumber: parseInt(e.target.value) || 1 }))}
+                              className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded text-white text-sm"
+                              min={1}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">{language === 'nl' ? 'Bedrag' : 'Amount'}</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={newRecurringPaymentForm.amount}
+                              onChange={(e) => setNewRecurringPaymentForm(prev => ({ ...prev, amount: e.target.value }))}
+                              className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded text-white text-sm"
+                              placeholder="0.00"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">{language === 'nl' ? 'Start datum' : 'Start Date'}</label>
+                            <input
+                              type="date"
+                              value={newRecurringPaymentForm.periodStartDate}
+                              onChange={(e) => setNewRecurringPaymentForm(prev => ({ ...prev, periodStartDate: e.target.value }))}
+                              className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded text-white text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">{language === 'nl' ? 'Eind datum' : 'End Date'}</label>
+                            <input
+                              type="date"
+                              value={newRecurringPaymentForm.periodEndDate}
+                              onChange={(e) => setNewRecurringPaymentForm(prev => ({ ...prev, periodEndDate: e.target.value }))}
+                              className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded text-white text-sm"
+                            />
+                          </div>
+                        </div>
+                        <div className="mb-4">
+                          <label className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={newRecurringPaymentForm.status === 'paid'}
+                              onChange={(e) => setNewRecurringPaymentForm(prev => ({ 
+                                ...prev, 
+                                status: e.target.checked ? 'paid' : 'pending',
+                                paidDate: e.target.checked ? new Date().toISOString().split('T')[0] : ''
+                              }))}
+                              className="rounded border-dark-600"
+                            />
+                            <span className="text-sm text-gray-300">{language === 'nl' ? 'Als betaald markeren' : 'Mark as paid'}</span>
+                          </label>
+                        </div>
+                        {newRecurringPaymentForm.status === 'paid' && (
+                          <div className="mb-4">
+                            <label className="block text-xs text-gray-400 mb-1">{language === 'nl' ? 'Betaaldatum' : 'Payment Date'}</label>
+                            <input
+                              type="date"
+                              value={newRecurringPaymentForm.paidDate}
+                              onChange={(e) => setNewRecurringPaymentForm(prev => ({ ...prev, paidDate: e.target.value }))}
+                              className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded text-white text-sm"
+                            />
+                          </div>
+                        )}
+                        <div className="flex gap-2">
+                          <button
+                            onClick={async () => {
+                              if (!selectedRecurring?.id) return;
+                              try {
+                                await paymentTrackingAPI.create({
+                                  invoiceId: parseInt(selectedRecurring.id),
+                                  periodNumber: newRecurringPaymentForm.periodNumber,
+                                  periodStartDate: newRecurringPaymentForm.periodStartDate,
+                                  periodEndDate: newRecurringPaymentForm.periodEndDate,
+                                  amount: parseFloat(newRecurringPaymentForm.amount) || 0,
+                                  status: newRecurringPaymentForm.status,
+                                  paidDate: newRecurringPaymentForm.paidDate || undefined,
+                                  paymentMethod: newRecurringPaymentForm.paymentMethod,
+                                  paymentNotes: newRecurringPaymentForm.paymentNotes
+                                });
+                                // Refresh tracking data
+                                const tracking = await paymentTrackingAPI.getForInvoice(selectedRecurring.id);
+                                setRecurringPaymentTracking(tracking);
+                                setShowAddRecurringPaymentForm(false);
+                                setNewRecurringPaymentForm({
+                                  periodNumber: 1,
+                                  periodStartDate: '',
+                                  periodEndDate: '',
+                                  amount: '',
+                                  status: 'pending',
+                                  paidDate: '',
+                                  paymentMethod: '',
+                                  paymentNotes: ''
+                                });
+                              } catch (error) {
+                                console.error('Error creating payment period:', error);
+                              }
+                            }}
+                            className="flex-1 bg-primary-500 text-dark-900 py-2 rounded text-sm font-medium hover:bg-primary-400"
+                          >
+                            {language === 'nl' ? 'Toevoegen' : 'Add'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Payment Periods List */}
+                    {isLoadingRecurringTracking ? (
+                      <div className="text-center py-4">
+                        <svg className="animate-spin h-5 w-5 text-primary-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </div>
+                    ) : recurringPaymentTracking.length === 0 ? (
+                      <p className="text-gray-500 text-sm text-center py-4">{language === 'nl' ? 'Nog geen betalingsperioden toegevoegd' : 'No payment periods added yet'}</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {recurringPaymentTracking.map((period) => (
+                          <div key={period.id} className="flex items-center justify-between bg-dark-800 p-3 rounded border border-dark-600">
+                            <div className="flex items-center gap-3">
+                              <span className={`w-3 h-3 rounded-full ${period.status === 'paid' ? 'bg-green-500' : period.status === 'overdue' ? 'bg-red-500' : 'bg-yellow-500'}`}></span>
+                              <div>
+                                <p className="text-sm font-medium text-white">{language === 'nl' ? 'Periode' : 'Period'} #{period.periodNumber}</p>
+                                <p className="text-xs text-gray-400">
+                                  {new Date(period.periodStartDate).toLocaleDateString('nl-NL')} - {new Date(period.periodEndDate).toLocaleDateString('nl-NL')}
+                                </p>
+                                {period.paidDate && (
+                                  <p className="text-xs text-green-400">
+                                    {language === 'nl' ? 'Betaald op' : 'Paid on'}: {new Date(period.paidDate).toLocaleDateString('nl-NL')}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-medium text-white">€{period.amount.toFixed(2)}</span>
+                              {period.status !== 'paid' && (
+                                <button
+                                  onClick={async () => {
+                                    try {
+                                      await paymentTrackingAPI.update(period.id, {
+                                        status: 'paid',
+                                        paidDate: new Date().toISOString().split('T')[0]
+                                      });
+                                      // Refresh tracking data
+                                      if (selectedRecurring?.id) {
+                                        const tracking = await paymentTrackingAPI.getForInvoice(selectedRecurring.id);
+                                        setRecurringPaymentTracking(tracking);
+                                      }
+                                    } catch (error) {
+                                      console.error('Error marking as paid:', error);
+                                    }
+                                  }}
+                                  className="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-500"
+                                >
+                                  {language === 'nl' ? 'Betaald' : 'Paid'}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      onClick={closeRecurringDetails}
+                      className="px-4 py-2 text-gray-400 hover:text-white"
+                    >
+                      {language === 'nl' ? 'Sluiten' : 'Close'}
                     </button>
                   </div>
                 </div>

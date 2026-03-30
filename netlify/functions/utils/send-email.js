@@ -298,6 +298,8 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
       bankText: 'U kunt betalen via bankoverschrijving naar:',
       accountLabel: 't.n.v. Mohammed Taher',
       refLabel: 'Onder vermelding van:',
+      manualPaymentTitle: 'Handmatige overschrijving',
+      manualPaymentText: 'Voert u een handmatige overschrijving uit? Geen zorgen! Binnen <strong>24 uur</strong> na ontvangst wordt uw betaling verwerkt en bevestigd in uw klantenportaal.',
       button: 'Bekijk Klantenportaal',
       title: 'Nieuwe Factuur',
       subject: `Nieuwe factuur: ${invoiceNumber}`,
@@ -313,6 +315,8 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
       bankText: 'You can pay by bank transfer to:',
       accountLabel: 'Account holder: Mohammed Taher',
       refLabel: 'Reference:',
+      manualPaymentTitle: 'Manual Bank Transfer',
+      manualPaymentText: 'Are you making a manual bank transfer? Don\'t worry! Within <strong>24 hours</strong> of receipt, your payment will be processed and confirmed in your customer portal.',
       button: 'View Customer Portal',
       title: 'New Invoice',
       subject: `New invoice: ${invoiceNumber}`,
@@ -336,6 +340,10 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
       <strong style="color:#1a1a1a;">IBAN: NL75INGB0756428726</strong><br>
       <strong style="color:#1a1a1a;">${t.accountLabel}</strong>
     </p>
+    <div style="background:#eff6ff;border-left:4px solid #3b82f6;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0 0 8px;color:#3b82f6;font-size:14px;font-weight:600;">ℹ️ ${t.manualPaymentTitle}</p>
+      <p style="margin:0;color:#555555;font-size:14px;line-height:1.6;">${t.manualPaymentText}</p>
+    </div>
     <p style="color:#555555;font-size:16px;line-height:1.7;">${t.footer}</p>
   `;
 
@@ -369,7 +377,8 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
     console.error('PDF error stack:', pdfErr.stack);
   }
 
-  return sendEmail(
+  // Send email to customer
+  const customerResult = await sendEmail(
     customerEmail,
     t.subject,
     t.title,
@@ -379,6 +388,17 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
     attachments,
     lang
   );
+
+  // Send notification to admin
+  await sendAdminNotification('new_invoice', {
+    invoiceNumber,
+    customerEmail,
+    customerName,
+    amount,
+    dueDate
+  });
+
+  return customerResult;
 }
 
 async function sendProjectUpdateEmail(customerEmail, customerName, projectTitle, updateTitle, updateDescription, logType) {
@@ -660,7 +680,21 @@ async function sendOverdueReminderEmail(customerEmail, customerName, invoiceNumb
     </p>
     <p style="color:#555555;font-size:16px;line-height:1.7;">${t.questions}</p>
   `;
-  return sendEmail(customerEmail, t.subject, t.title, content, t.button, `${PORTAL_URL}/dashboard`, null, lang);
+
+  // Send reminder to customer
+  const customerResult = await sendEmail(customerEmail, t.subject, t.title, content, t.button, `${PORTAL_URL}/dashboard`, null, lang);
+
+  // Send notification to admin about overdue invoice
+  await sendAdminNotification('overdue_invoice', {
+    invoiceNumber,
+    customerEmail,
+    customerName,
+    amount,
+    dueDate: dueDateFormatted,
+    daysOverdue
+  });
+
+  return customerResult;
 }
 
 // Email notification toggle confirmations
@@ -983,6 +1017,121 @@ async function sendRecurringInvoiceSetupEmail(customerEmail, customerName, descr
   return sendEmail(customerEmail, t.subject, t.title, content, t.button, `${PORTAL_URL}/dashboard`, null, lang);
 }
 
+// Send admin notification for important events
+async function sendAdminNotification(type, data) {
+  const adminEmail = process.env.ADMIN_EMAIL || 'info@varexo.nl';
+  
+  const notifications = {
+    new_invoice: {
+      nl: {
+        subject: `Nieuwe factuur aangemaakt: ${data.invoiceNumber}`,
+        title: '📄 Nieuwe Factuur Aangemaakt',
+        greeting: 'Beste beheerder,',
+        intro: 'Er is zojuist een nieuwe factuur aangemaakt en verstuurd naar de klant.',
+        details: [
+          { label: 'Factuurnummer', value: data.invoiceNumber },
+          { label: 'Klant', value: `${data.customerName || 'Onbekend'} (${data.customerEmail})` },
+          { label: 'Bedrag', value: `€${parseFloat(data.amount).toFixed(2)}` },
+          { label: 'Vervaldatum', value: data.dueDate }
+        ],
+        actionText: 'Bekijk de factuur in het admin dashboard om meer details te zien.',
+        button: 'Naar Admin Dashboard'
+      },
+      en: {
+        subject: `New invoice created: ${data.invoiceNumber}`,
+        title: '📄 New Invoice Created',
+        greeting: 'Dear administrator,',
+        intro: 'A new invoice has just been created and sent to the customer.',
+        details: [
+          { label: 'Invoice Number', value: data.invoiceNumber },
+          { label: 'Customer', value: `${data.customerName || 'Unknown'} (${data.customerEmail})` },
+          { label: 'Amount', value: `€${parseFloat(data.amount).toFixed(2)}` },
+          { label: 'Due Date', value: data.dueDate }
+        ],
+        actionText: 'View the invoice in the admin dashboard for more details.',
+        button: 'Go to Admin Dashboard'
+      }
+    },
+    overdue_invoice: {
+      nl: {
+        subject: `⚠️ Achterstallige factuur: ${data.invoiceNumber} - ${data.daysOverdue} dagen te laat`,
+        title: '⚠️ Achterstallige Betaling',
+        greeting: 'Beste beheerder,',
+        intro: `Een factuur is nu ${data.daysOverdue} dagen te laat met betalen.`,
+        details: [
+          { label: 'Factuurnummer', value: data.invoiceNumber },
+          { label: 'Klant', value: `${data.customerName || 'Onbekend'} (${data.customerEmail})` },
+          { label: 'Bedrag', value: `€${parseFloat(data.amount).toFixed(2)}` },
+          { label: 'Vervaldatum', value: data.dueDate },
+          { label: 'Dagen te laat', value: `${data.daysOverdue} dagen` }
+        ],
+        actionText: 'Neem contact op met de klant om de betaling te bespreken.',
+        button: 'Naar Admin Dashboard'
+      },
+      en: {
+        subject: `⚠️ Overdue invoice: ${data.invoiceNumber} - ${data.daysOverdue} days late`,
+        title: '⚠️ Overdue Payment',
+        greeting: 'Dear administrator,',
+        intro: `An invoice is now ${data.daysOverdue} days overdue.`,
+        details: [
+          { label: 'Invoice Number', value: data.invoiceNumber },
+          { label: 'Customer', value: `${data.customerName || 'Unknown'} (${data.customerEmail})` },
+          { label: 'Amount', value: `€${parseFloat(data.amount).toFixed(2)}` },
+          { label: 'Due Date', value: data.dueDate },
+          { label: 'Days Overdue', value: `${data.daysOverdue} days` }
+        ],
+        actionText: 'Contact the customer to discuss the payment.',
+        button: 'Go to Admin Dashboard'
+      }
+    }
+  };
+
+  const t = notifications[type].nl; // Always send admin emails in Dutch
+  
+  const detailsHtml = t.details.map(d => `
+    <tr>
+      <td style="padding:8px 0;color:#6b7280;font-size:14px;width:40%;">${d.label}</td>
+      <td style="padding:8px 0;color:#1a1a1a;font-size:14px;font-weight:600;">${d.value}</td>
+    </tr>
+  `).join('');
+
+  const content = `
+    <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">${t.greeting}</p>
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">${t.intro}</p>
+    
+    <div style="background:${type === 'overdue_invoice' ? '#fef2f2' : '#f0fdf4'};border-left:4px solid ${type === 'overdue_invoice' ? '#ef4444' : '#10b981'};padding:20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0 0 16px;color:${type === 'overdue_invoice' ? '#dc2626' : '#059669'};font-size:16px;font-weight:600;">${t.title}</p>
+      <table style="width:100%;border-collapse:collapse;">
+        ${detailsHtml}
+      </table>
+    </div>
+    
+    <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">${t.actionText}</p>
+  `;
+
+  // Skip if SMTP not configured
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.log('Admin notification skipped: SMTP not configured');
+    return false;
+  }
+
+  try {
+    const transporter = createTransporter();
+    const mailOptions = {
+      from: `"Varexo Admin" <${process.env.SMTP_USER}>`,
+      to: adminEmail,
+      subject: t.subject,
+      html: emailTemplate(t.title, content, t.button, `${PORTAL_URL}/admin`, 'nl'),
+    };
+    await transporter.sendMail(mailOptions);
+    console.log(`Admin notification sent to ${adminEmail}: ${t.subject}`);
+    return true;
+  } catch (error) {
+    console.error('Admin notification email error:', error.message);
+    return false;
+  }
+}
+
 module.exports = {
   sendNewProjectEmail,
   sendProjectDeletedEmail,
@@ -995,4 +1144,5 @@ module.exports = {
   sendEmailNotificationsDisabledEmail,
   sendPasswordResetEmail,
   sendRecurringInvoiceSetupEmail,
+  sendAdminNotification,
 };

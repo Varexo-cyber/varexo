@@ -29,9 +29,16 @@ exports.handler = async (event) => {
       
       // FIX: Get ALL invoices and filter in JS  
       const allInvoices = await sql`SELECT * FROM invoices`;
-      const revenue = allInvoices
+      const invoiceRevenue = allInvoices
         .filter(i => i.status !== 'draft')
         .reduce((sum, i) => sum + parseFloat(i.amount || 0), 0);
+      
+      // Get paid payment tracking periods (for recurring invoices)
+      const paidTrackingPeriods = await sql`SELECT * FROM invoice_payment_tracking WHERE status = 'paid'`;
+      const trackingRevenue = paidTrackingPeriods.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+      
+      // Total revenue = invoice revenue + paid tracking periods
+      const revenue = invoiceRevenue + trackingRevenue;
       const pendingCount = allInvoices.filter(i => i.status === 'sent').length;
       const overdueCount = allInvoices.filter(i => i.status === 'overdue').length;
 

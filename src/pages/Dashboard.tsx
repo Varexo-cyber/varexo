@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { mockAuth, MockUser } from '../services/mockAuth';
 import { roleService } from '../services/roleService';
 import { projectService, Project, Invoice, ProjectLog } from '../services/projectService';
+import { paymentTrackingAPI } from '../services/api';
 import PageTransition from '../components/PageTransition';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -14,6 +15,7 @@ const CustomerDashboard: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [recurringInvoices, setRecurringInvoices] = useState<any[]>([]);
+  const [recurringPaymentTracking, setRecurringPaymentTracking] = useState<{[key: string]: any[]}>({});
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [projectLogs, setProjectLogs] = useState<ProjectLog[]>([]);
@@ -52,6 +54,15 @@ const CustomerDashboard: React.FC = () => {
   const closeProjectDetails = () => {
     setSelectedProject(null);
     setProjectLogs([]);
+  };
+
+  const loadRecurringPaymentTracking = async (recurringId: string) => {
+    try {
+      const tracking = await paymentTrackingAPI.getForInvoice(recurringId);
+      setRecurringPaymentTracking(prev => ({ ...prev, [recurringId]: tracking }));
+    } catch (error) {
+      console.error('Error loading payment tracking:', error);
+    }
   };
 
   const getProgressColor = (progress: number) => {
@@ -843,7 +854,7 @@ const CustomerDashboard: React.FC = () => {
                         <div>
                           <h3 className="text-lg font-medium text-white">{recurring.description}</h3>
                           <p className="text-sm text-gray-400">
-                            {language === 'nl' ? 'Bedrag' : 'Amount'}: €{recurring.amount.toFixed(2)} / 
+                            {language === 'nl' ? 'Bedrag' : 'Amount'}: €{recurring.amount?.toFixed(2)} / 
                             {recurring.intervalMonths === 1 ? (language === 'nl' ? 'maand' : 'month') :
                              recurring.intervalMonths === 12 ? (language === 'nl' ? 'jaar' : 'year') :
                              `${recurring.intervalMonths} ${language === 'nl' ? 'maanden' : 'months'}`}
@@ -895,6 +906,69 @@ const CustomerDashboard: React.FC = () => {
                           })()}
                         </p>
                       </div>
+
+                      {/* Payment History Toggle */}
+                      <button
+                        onClick={() => {
+                          if (!recurringPaymentTracking[recurring.id]) {
+                            loadRecurringPaymentTracking(recurring.id);
+                          } else {
+                            // Toggle by removing from state
+                            setRecurringPaymentTracking(prev => {
+                              const newState = { ...prev };
+                              delete newState[recurring.id];
+                              return newState;
+                            });
+                          }
+                        }}
+                        className="w-full text-left text-sm text-primary-400 hover:text-primary-300 flex items-center justify-between py-2 px-3 bg-dark-800 rounded border border-dark-600 hover:border-primary-500 transition"
+                      >
+                        <span className="flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                          </svg>
+                          {language === 'nl' ? 'Betalingsoverzicht' : 'Payment Tracking'}
+                        </span>
+                        <svg 
+                          className={`w-4 h-4 transition-transform ${recurringPaymentTracking[recurring.id] ? 'rotate-180' : ''}`} 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+
+                      {/* Payment History List */}
+                      {recurringPaymentTracking[recurring.id] && (
+                        <div className="mt-3 space-y-2">
+                          {recurringPaymentTracking[recurring.id].length === 0 ? (
+                            <p className="text-gray-500 text-sm text-center py-4 bg-dark-800 rounded">
+                              {language === 'nl' ? 'Nog geen betalingshistorie beschikbaar' : 'No payment history available yet'}
+                            </p>
+                          ) : (
+                            recurringPaymentTracking[recurring.id].map((period: any) => (
+                              <div key={period.id} className="flex items-center justify-between bg-dark-800 p-3 rounded border border-dark-600">
+                                <div className="flex items-center gap-3">
+                                  <span className={`w-3 h-3 rounded-full ${period.status === 'paid' ? 'bg-green-500' : period.status === 'overdue' ? 'bg-red-500' : 'bg-yellow-500'}`}></span>
+                                  <div>
+                                    <p className="text-sm font-medium text-white">{language === 'nl' ? 'Periode' : 'Period'} #{period.periodNumber}</p>
+                                    <p className="text-xs text-gray-400">
+                                      {new Date(period.periodStartDate).toLocaleDateString('nl-NL')} - {new Date(period.periodEndDate).toLocaleDateString('nl-NL')}
+                                    </p>
+                                    {period.paidDate && (
+                                      <p className="text-xs text-green-400">
+                                        {language === 'nl' ? 'Betaald op' : 'Paid on'}: {new Date(period.paidDate).toLocaleDateString('nl-NL')}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                                <span className="text-sm font-medium text-white">€{period.amount.toFixed(2)}</span>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
