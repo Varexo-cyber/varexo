@@ -367,7 +367,10 @@ async function generateInvoicePDF(invoiceData) {
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
-      margin: { top: 0, right: 0, bottom: 0, left: 0 },
+      margin: { top: '30px', right: 0, bottom: '60px', left: 0 },
+      displayHeaderFooter: true,
+      headerTemplate: `<div style="width:100%;padding:5px 30px;font-size:9px;color:#2c6e4f;font-weight:600;display:flex;justify-content:space-between;background:linear-gradient(135deg,#c8e6d1 0%,#b8e0e8 100%);"><span>VAREXO</span><span>Factuur ${invoiceNumber}</span></div>`,
+      footerTemplate: `<div style="width:100%;padding:10px 30px;font-size:10px;color:#333;text-align:right;background:linear-gradient(135deg,#c8e6d1 0%,#b8e0e8 100%);line-height:1.6;"><strong>Varexo</strong> &bull; t.n.v. Mohammed Taher &bull; IBAN: NL75INGB0756428726 &bull; BTW: 21% inbegrepen</div>`,
     });
 
     console.log('PDF Generation - Complete, size:', pdfBuffer.length);

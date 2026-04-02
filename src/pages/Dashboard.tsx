@@ -300,20 +300,13 @@ const CustomerDashboard: React.FC = () => {
               padding-top: 12px;
               margin-top: 8px;
             }
+            .running-header {
+              display: none;
+            }
             .footer {
               background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
-              padding: 20px 30px;
+              padding: 15px 30px;
               margin-top: 10px;
-              page-break-inside: avoid;
-            }
-            @media print {
-              .footer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                margin-top: 0;
-              }
             }
             .footer-content {
               display: flex;
@@ -336,11 +329,12 @@ const CustomerDashboard: React.FC = () => {
             @media print {
               @page {
                 size: A4;
-                margin: 0;
+                margin: 30px 0 65px 0;
               }
               body { 
                 background: white; 
-                padding: 20px; 
+                padding: 0; 
+                margin: 0;
                 min-height: auto;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
@@ -348,39 +342,38 @@ const CustomerDashboard: React.FC = () => {
               .invoice-container { 
                 box-shadow: none; 
                 max-width: 100%;
-                min-height: calc(100vh - 40px);
+              }
+              .running-header {
                 display: flex;
-                flex-direction: column;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 25px;
+                background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
+                padding: 5px 30px;
+                font-size: 9px;
+                color: #2c6e4f;
+                font-weight: 600;
+                justify-content: space-between;
+                align-items: center;
               }
               .footer {
-                margin-top: auto;
-                page-break-inside: avoid;
-              }
-              .header-section {
-                padding: 25px 30px;
-              }
-              .customer-section {
-                padding: 20px 30px;
-              }
-              .summary-row {
-                margin: 0 30px;
-                padding: 12px 15px;
-              }
-              .items-table {
-                margin: 0 30px;
-                width: calc(100% - 60px);
-              }
-              .items-table th, .items-table td {
-                padding: 12px 15px;
-              }
-              .totals-section {
-                margin: 20px 30px 0 30px;
-                padding-bottom: 20px;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: 0;
+                padding: 10px 30px;
               }
             }
           </style>
         </head>
         <body>
+          <div class="running-header">
+            <span>VAREXO</span>
+            <span>Factuur ${invoiceNumber}</span>
+          </div>
           <div class="invoice-container">
             <div class="header-section">
               <div class="header-left">
@@ -698,20 +691,13 @@ const CustomerDashboard: React.FC = () => {
               padding-top: 12px;
               margin-top: 8px;
             }
+            .running-header {
+              display: none;
+            }
             .footer {
               background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
-              padding: 20px 30px;
+              padding: 15px 30px;
               margin-top: 10px;
-              page-break-inside: avoid;
-            }
-            @media print {
-              .footer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                margin-top: 0;
-              }
             }
             .footer-content {
               display: flex;
@@ -734,11 +720,12 @@ const CustomerDashboard: React.FC = () => {
             @media print {
               @page {
                 size: A4;
-                margin: 0;
+                margin: 30px 0 65px 0;
               }
               body { 
                 background: white; 
-                padding: 20px; 
+                padding: 0; 
+                margin: 0;
                 min-height: auto;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
@@ -746,39 +733,38 @@ const CustomerDashboard: React.FC = () => {
               .invoice-container { 
                 box-shadow: none; 
                 max-width: 100%;
-                min-height: calc(100vh - 40px);
+              }
+              .running-header {
                 display: flex;
-                flex-direction: column;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 25px;
+                background: linear-gradient(135deg, #c8e6d1 0%, #b8e0e8 100%);
+                padding: 5px 30px;
+                font-size: 9px;
+                color: #2c6e4f;
+                font-weight: 600;
+                justify-content: space-between;
+                align-items: center;
               }
               .footer {
-                margin-top: auto;
-                page-break-inside: avoid;
-              }
-              .header-section {
-                padding: 25px 30px;
-              }
-              .customer-section {
-                padding: 20px 30px;
-              }
-              .summary-row {
-                margin: 0 30px;
-                padding: 12px 15px;
-              }
-              .items-table {
-                margin: 0 30px;
-                width: calc(100% - 60px);
-              }
-              .items-table th, .items-table td {
-                padding: 12px 15px;
-              }
-              .totals-section {
-                margin: 20px 30px 0 30px;
-                padding-bottom: 20px;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: 0;
+                padding: 10px 30px;
               }
             }
           </style>
         </head>
         <body>
+          <div class="running-header">
+            <span>VAREXO</span>
+            <span>Factuur ${invoiceNumber}</span>
+          </div>
           <div class="invoice-container">
             <div class="header-section">
               <div class="header-left">
