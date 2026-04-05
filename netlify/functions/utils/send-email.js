@@ -329,6 +329,12 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
   const content = `
     <p style="color:#333333;font-size:16px;line-height:1.7;margin-bottom:16px;">${t.greeting}</p>
     <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:24px;">${t.intro}</p>
+    ${invoiceData?.isRecurring ? `
+    <div style="background:#fffbeb;border-left:4px solid #f59e0b;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0;color:#92400e;font-size:14px;font-weight:600;">📋 Terugkerende Factuur</p>
+      <p style="margin:8px 0 0;color:#555555;font-size:14px;line-height:1.6;">Dit is een automatisch gegenereerde factuur voor uw terugkerende betaling. Heeft u <strong>automatische incasso</strong> ingesteld? Dan wordt deze betaling automatisch afgeschreven en hoeft u geen actie te ondernemen. Voert u liever een <strong>handmatige overschrijving</strong> uit? Dan kunt u deze factuur betalen zoals u gewend bent.</p>
+    </div>
+    ` : ''}
     <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:20px;border-radius:0 8px 8px 0;margin:20px 0;">
       <p style="margin:0 0 8px;color:#059669;font-size:16px;font-weight:600;">${t.invoiceLabel} ${invoiceNumber}</p>
       <p style="margin:0 0 8px;color:#1a1a1a;font-size:28px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)} <span style="font-size:14px;font-weight:400;color:#6b7280;">${t.vatLabel}</span></p>

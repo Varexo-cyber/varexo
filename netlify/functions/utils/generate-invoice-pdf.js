@@ -332,18 +332,6 @@ async function generateInvoicePDF(invoiceData) {
           <div style="font-size:11px;color:#666;margin-top:6px;text-align:right;">Alle bedragen zijn inclusief 21% BTW</div>
         </div>
       </div>
-
-      <div class="footer">
-        <div class="footer-content">
-          <div class="footer-left"></div>
-          <div class="footer-right">
-            <strong>Varexo</strong><br>
-            t.n.v. Mohammed Taher<br>
-            IBAN: NL75INGB0756428726<br>
-            BTW: 21% inbegrepen
-          </div>
-        </div>
-      </div>
     </div>
   </body>
 </html>`;

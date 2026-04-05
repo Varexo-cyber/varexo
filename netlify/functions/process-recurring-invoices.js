@@ -104,16 +104,26 @@ exports.handler = async (event) => {
 
         // Send email with PDF
         try {
-          await sendNewInvoiceEmail(ri.customer_email, ri.customer_name || '', invoiceNumber, ri.amount, {
-            invoiceDate: today,
-            dueDate: dueDateStr,
-            customerName: ri.customer_name || '',
-            customerCompany: ri.customer_company || '',
-            customerAddress: ri.customer_address || '',
-            customerPostal: ri.customer_postal || '',
-            customerCity: ri.customer_city || '',
-            items,
-          });
+          await sendNewInvoiceEmail(
+            ri.customer_email,
+            ri.customer_name,
+            invoiceNumber,
+            ri.amount,
+            {
+              customerName: ri.customer_name,
+              customerCompany: ri.customer_company,
+              customerAddress: ri.customer_address,
+              customerPostal: ri.customer_postal,
+              customerCity: ri.customer_city,
+              customerEmail: ri.customer_email,
+              customerPhone: ri.customer_phone,
+              items: [{ description: ri.description, quantity: 1, price: ri.amount }],
+              invoiceDate: today,
+              dueDate: dueDateStr,
+              isRecurring: true,  // <-- Mark as recurring invoice
+              message: 'This is an automatic invoice for your recurring payment.'
+            }
+          );
         } catch (emailErr) {
           console.error(`Email failed for ${ri.customer_email}:`, emailErr.message);
         }
