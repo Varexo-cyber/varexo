@@ -177,6 +177,7 @@ exports.handler = async (event) => {
           customerCity: customerCity || '',
           customerPhone: '',
           items: items || [{ description: description, quantity: 1, price: parseFloat(amount), total: parseFloat(amount) }],
+          isRecurring: true  // <-- DIT MOEST TOEGEVOEGD WORDEN
         });
         console.log('=== DEBUG: Email send result ===', emailResult);
       } catch (emailError) {
