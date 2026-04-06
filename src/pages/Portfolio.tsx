@@ -28,6 +28,17 @@ const Portfolio: React.FC = () => {
       image: '/portfolio/download.png',
       technologies: ['React', 'Node.js', 'Maps API'],
       link: 'https://leegstandmeldpunt.nl'
+    },
+    {
+      id: '2',
+      title: 'DirectAutoHulp',
+      category: language === 'nl' ? 'Bedrijfswebsite' : 'Business Website',
+      description: language === 'nl' 
+        ? 'Complete bedrijfswebsite voor autotransport, pechhulp en auto-inkoop. 24/7 bereikbaar met contactformulier, WhatsApp-integratie en professioneel design.'
+        : 'Complete business website for car transport, roadside assistance and car purchasing. 24/7 available with contact form, WhatsApp integration and professional design.',
+      image: '/portfolio/Directautohulp.png',
+      technologies: ['React', 'Node.js', 'Netlify'],
+      link: 'https://directautohulp.nl'
     }
   ];
   
