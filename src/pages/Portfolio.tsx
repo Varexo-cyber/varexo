@@ -63,8 +63,14 @@ const Portfolio: React.FC = () => {
         {/* Project Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {projects.map((project, index) => (
-            <AnimateOnScroll key={project.id} delay={index * 100}>
-              <div className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/10">
+            <AnimateOnScroll key={project.id} delay={0}>
+              <div 
+                className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 hover:-translate-y-2 hover:scale-[1.02] flex flex-col h-full"
+                style={{
+                  animation: `float ${3 + index * 0.5}s ease-in-out infinite`,
+                  animationDelay: `${index * 0.5}s`
+                }}
+              >
                 {/* Image Container */}
                 <div className="relative h-56 overflow-hidden">
                   <div 
@@ -101,11 +107,11 @@ const Portfolio: React.FC = () => {
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-1">
                   <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
                     {project.title}
                   </h3>
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+                  <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-1">
                     {project.description}
                   </p>
                   
