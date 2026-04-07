@@ -582,10 +582,25 @@ const AdminDashboard: React.FC = () => {
         localStorage.setItem('varexo_users', JSON.stringify(users));
       }
       
+      // Update the local customers state directly instead of calling loadData
+      setCustomers(prevCustomers => 
+        prevCustomers.map(c => 
+          c.email === email 
+            ? { 
+                ...c, 
+                subscription: subscriptionForm.subscription || undefined,
+                hasSocialMedia: !!subscriptionForm.socialMediaPackage,
+                socialMediaPackage: subscriptionForm.socialMediaPackage || undefined
+              }
+            : c
+        )
+      );
+      
       setEditingCustomerSubscription(null);
-      loadData();
+      setToast({ message: language === 'nl' ? 'Abonnement bijgewerkt' : 'Subscription updated', type: 'success' });
     } catch (error) {
       console.error('Error updating subscription:', error);
+      setToast({ message: language === 'nl' ? 'Fout bij bijwerken' : 'Error updating', type: 'error' });
     } finally {
       setIsUpdatingCustomerSubscription(null);
     }
@@ -610,8 +625,16 @@ const AdminDashboard: React.FC = () => {
         localStorage.setItem('varexo_users', JSON.stringify(users));
       }
       
+      // Update the local customers state directly instead of calling loadData
+      setCustomers(prevCustomers => 
+        prevCustomers.map(c => 
+          c.email === email 
+            ? { ...c, company: companyForm.company }
+            : c
+        )
+      );
+      
       setEditingCustomerCompany(null);
-      loadData();
       setToast({ message: language === 'nl' ? 'Bedrijf bijgewerkt' : 'Company updated', type: 'success' });
     } catch (error) {
       console.error('Error updating company:', error);
