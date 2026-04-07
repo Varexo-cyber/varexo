@@ -29,6 +29,8 @@ const AdminDashboard: React.FC = () => {
   const [showCustomerDeleteConfirm, setShowCustomerDeleteConfirm] = useState<string | null>(null);
   const [showCustomerDropdown, setShowCustomerDropdown] = useState<string | null>(null);
   const [editingCustomerSubscription, setEditingCustomerSubscription] = useState<string | null>(null);
+  const [editingCustomerCompany, setEditingCustomerCompany] = useState<string | null>(null);
+  const [companyForm, setCompanyForm] = useState<{ company: string }>({ company: '' });
   const [subscriptionForm, setSubscriptionForm] = useState<{
     subscription: 'basic' | 'pro' | 'premium' | '';
     hasSocialMedia: boolean;
@@ -586,6 +588,34 @@ const AdminDashboard: React.FC = () => {
       console.error('Error updating subscription:', error);
     } finally {
       setIsUpdatingCustomerSubscription(null);
+    }
+  };
+
+  const openEditCompany = (customer: Customer) => {
+    setEditingCustomerCompany(customer.email);
+    setCompanyForm({ company: customer.company || '' });
+    setShowCustomerDropdown(null);
+  };
+
+  const handleUpdateCustomerCompany = async (email: string) => {
+    try {
+      // Update user in localStorage
+      const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
+      const userIndex = users.findIndex((u: any) => u.email === email);
+      if (userIndex !== -1) {
+        users[userIndex] = {
+          ...users[userIndex],
+          company: companyForm.company
+        };
+        localStorage.setItem('varexo_users', JSON.stringify(users));
+      }
+      
+      setEditingCustomerCompany(null);
+      loadData();
+      setToast({ message: language === 'nl' ? 'Bedrijf bijgewerkt' : 'Company updated', type: 'success' });
+    } catch (error) {
+      console.error('Error updating company:', error);
+      setToast({ message: language === 'nl' ? 'Fout bij bijwerken bedrijf' : 'Error updating company', type: 'error' });
     }
   };
 
@@ -1927,9 +1957,9 @@ const AdminDashboard: React.FC = () => {
                             <div className="flex flex-col gap-1">
                               {customer.subscription ? (
                                 <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                                  customer.subscription === 'basic' ? 'bg-gray-700 text-gray-300' :
-                                  customer.subscription === 'pro' ? 'bg-primary-900/50 text-primary-400' :
-                                  'bg-yellow-900/50 text-yellow-400'
+                                  customer.subscription === 'basic' ? 'bg-emerald-900/50 text-emerald-400 border border-emerald-500/30' :
+                                  customer.subscription === 'pro' ? 'bg-emerald-800/50 text-emerald-300 border border-emerald-400/40' :
+                                  'bg-emerald-700/50 text-emerald-200 border border-emerald-300/50'
                                 }`}>
                                   {customer.subscription === 'basic' ? 'Basic' :
                                    customer.subscription === 'pro' ? 'Pro' : 'Premium'}
@@ -1938,7 +1968,7 @@ const AdminDashboard: React.FC = () => {
                                 <span className="text-gray-500">-</span>
                               )}
                               {customer.hasSocialMedia && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-900/50 text-blue-400">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-900/50 text-blue-400 border border-blue-500/30">
                                   + {(customer as any).socialMediaPackage === 'starter' ? 'Starter' :
                                      (customer as any).socialMediaPackage === 'groei' ? 'Groei' :
                                      (customer as any).socialMediaPackage === 'dominant' ? 'Dominant' : 'Social Media'}
@@ -2017,6 +2047,15 @@ const AdminDashboard: React.FC = () => {
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     {language === 'nl' ? 'Bewerk Abonnement' : 'Edit Subscription'}
+                                  </button>
+                                  <button
+                                    onClick={() => openEditCompany(customer)}
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white flex items-center gap-2"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                    {language === 'nl' ? 'Bewerk Bedrijf' : 'Edit Company'}
                                   </button>
                                   <button
                                     onClick={() => {
@@ -4767,6 +4806,44 @@ const AdminDashboard: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setEditingCustomerSubscription(null)}
+                      className="px-4 py-2 text-gray-400 hover:text-white"
+                    >
+                      {t('common.cancel')}
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-primary-500 text-dark-900 rounded-lg font-medium hover:bg-primary-400"
+                    >
+                      {t('common.save')}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+          
+          {/* Company Edit Modal */}
+          {editingCustomerCompany && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-dark-800 rounded-lg p-6 w-full max-w-md border border-dark-700">
+                <h3 className="text-xl font-semibold text-white mb-4">{language === 'nl' ? 'Bedrijf Bewerken' : 'Edit Company'}</h3>
+                <form onSubmit={(e) => { e.preventDefault(); handleUpdateCustomerCompany(editingCustomerCompany); }}>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400 mb-2">{language === 'nl' ? 'Bedrijfsnaam' : 'Company Name'}</label>
+                      <input
+                        type="text"
+                        value={companyForm.company}
+                        onChange={(e) => setCompanyForm({ company: e.target.value })}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                        placeholder={language === 'nl' ? 'Voer bedrijfsnaam in' : 'Enter company name'}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end space-x-3 mt-6">
+                    <button
+                      type="button"
+                      onClick={() => setEditingCustomerCompany(null)}
                       className="px-4 py-2 text-gray-400 hover:text-white"
                     >
                       {t('common.cancel')}

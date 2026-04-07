@@ -19,7 +19,7 @@ const PromoBanner: React.FC = () => {
   if (shouldHide || dismissed || isExpired) return null;
 
   return (
-    <div className="bg-dark-800/95 backdrop-blur-sm border-b border-primary-500/30 py-4 px-4 relative z-40 overflow-hidden">
+    <div className="bg-dark-800/95 backdrop-blur-sm border-b border-primary-500/30 py-2 sm:py-4 px-2 sm:px-4 relative z-40 overflow-hidden">
       {/* Animated background glow */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary-500/40 via-emerald-500/20 to-primary-500/40 animate-pulse" />
       
@@ -156,7 +156,7 @@ const PromoBanner: React.FC = () => {
         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary-400/70 to-transparent animate-pulse" style={{animationDelay: '0.8s'}} />
       </div>
       
-      <div className="container mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-sm relative z-10">
+      <div className="container mx-auto flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm relative z-10 px-2 sm:px-0">
         <div className="flex items-center gap-2">
           <span className="animate-pulse text-primary-400">✦</span>
           <span className="text-primary-400 font-bold">
@@ -170,7 +170,7 @@ const PromoBanner: React.FC = () => {
         
         <CountdownTimer targetDate="2026-05-31T23:59:59" language={language} />
         
-        <a href="/contact" className="text-primary-400 hover:text-primary-300 font-semibold transition-colors inline-flex items-center gap-1 group whitespace-nowrap">
+        <a href="/contact" className="text-primary-400 hover:text-primary-300 font-semibold transition-colors inline-flex items-center gap-1 group whitespace-nowrap text-xs sm:text-sm">
           {language === 'nl' ? 'Offerte aanvragen' : 'Request quote'}
           <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

@@ -51,27 +51,27 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate, language })
   }
 
   return (
-    <div className="flex items-center gap-1.5 text-sm">
-      <span className="text-gray-500">
+    <div className="flex items-center gap-1 text-xs sm:text-sm">
+      <span className="text-gray-500 text-xs sm:text-sm">
         {language === 'nl' ? 'Nog' : 'Only'}
       </span>
-      <div className="flex gap-1">
+      <div className="flex gap-0.5 sm:gap-1">
         {timeLeft.days > 0 && (
-          <span className="bg-primary-500/20 text-primary-400 px-2 py-0.5 rounded font-mono font-bold min-w-[2rem] text-center">
+          <span className="bg-primary-500/20 text-primary-400 px-1 sm:px-2 py-0.5 rounded font-mono font-bold min-w-[1.5rem] sm:min-w-[2rem] text-center text-xs sm:text-sm">
             {timeLeft.days}d
           </span>
         )}
-        <span className="bg-primary-500/20 text-primary-400 px-2 py-0.5 rounded font-mono font-bold min-w-[2rem] text-center">
+        <span className="bg-primary-500/20 text-primary-400 px-1 sm:px-2 py-0.5 rounded font-mono font-bold min-w-[1.5rem] sm:min-w-[2rem] text-center text-xs sm:text-sm">
           {String(timeLeft.hours).padStart(2, '0')}h
         </span>
-        <span className="bg-primary-500/20 text-primary-400 px-2 py-0.5 rounded font-mono font-bold min-w-[2rem] text-center">
+        <span className="bg-primary-500/20 text-primary-400 px-1 sm:px-2 py-0.5 rounded font-mono font-bold min-w-[1.5rem] sm:min-w-[2rem] text-center text-xs sm:text-sm">
           {String(timeLeft.minutes).padStart(2, '0')}m
         </span>
-        <span className="bg-primary-500/20 text-primary-400 px-2 py-0.5 rounded font-mono font-bold min-w-[2rem] text-center animate-pulse">
+        <span className="bg-primary-500/20 text-primary-400 px-1 sm:px-2 py-0.5 rounded font-mono font-bold min-w-[1.5rem] sm:min-w-[2rem] text-center animate-pulse text-xs sm:text-sm">
           {String(timeLeft.seconds).padStart(2, '0')}s
         </span>
       </div>
-      <span className="text-gray-500">
+      <span className="text-gray-500 text-xs sm:text-sm">
         {language === 'nl' ? 'over' : 'left'}
       </span>
     </div>

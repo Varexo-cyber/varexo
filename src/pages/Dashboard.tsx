@@ -996,9 +996,9 @@ const CustomerDashboard: React.FC = () => {
                         <>
                           {subscription && (
                             <span className={`text-sm font-bold ${
-                              subscription === 'basic' ? 'text-gray-300' :
-                              subscription === 'pro' ? 'text-primary-400' :
-                              'text-yellow-400'
+                              subscription === 'basic' ? 'text-emerald-400' :
+                              subscription === 'pro' ? 'text-emerald-300' :
+                              'text-emerald-200'
                             }`}>
                               {subscription === 'basic' ? 'Basic' :
                                subscription === 'pro' ? 'Pro' : 'Premium'}

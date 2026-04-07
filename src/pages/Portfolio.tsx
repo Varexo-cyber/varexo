@@ -150,125 +150,86 @@ const Portfolio: React.FC = () => {
         </p>
         </AnimateOnScroll>
         
-        {/* Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {projects.map((project, index) => (
+        {/* Project Grid - Box Style like Guarantees */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {projects.map((project) => (
             <AnimateOnScroll key={project.id} delay={0}>
               {project.link ? (
                 <a 
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500 hover:shadow-[0_20px_60px_-15px_rgba(16,185,129,0.4)] hover:-translate-y-4 hover:scale-[1.03] transition-all duration-400 flex flex-col h-full cursor-pointer"
-                  style={{
-                    animation: `float ${3 + index * 0.5}s ease-in-out infinite`,
-                    animationDelay: `${index * 0.5}s`
-                  }}
+                  className="group block rounded-xl bg-dark-800/50 border border-dark-600 hover:border-primary-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1 p-6 h-full"
                 >
-                  {/* Image Container */}
-                  <div className="relative h-56 overflow-hidden">
-                    <div 
-                      className="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center group-hover:scale-110 transition-transform duration-500"
-                    >
-                      <img 
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
-                    <div className="absolute top-4 left-4">
-                      <span className="px-4 py-1.5 bg-primary-500 text-dark-900 text-xs font-extrabold rounded-full border-2 border-primary-400 glow-badge">
-                        {project.category}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-6 flex flex-col flex-1">
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-1">
-                      {project.description}
-                    </p>
-                    
-                    {/* Technologies */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.technologies.map((tech) => (
-                        <span 
-                          key={tech}
-                          className="px-2 py-1 bg-dark-700 text-primary-300 text-xs rounded border border-dark-600"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Action Button */}
-                    <span className="inline-flex items-center text-primary-400 group-hover:text-primary-300 text-sm font-medium transition-colors">
-                      {t('portfolio.viewWebsite')}
-                      <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
+                  {/* Category Badge */}
+                  <div className="mb-4">
+                    <span className="px-3 py-1 bg-primary-500/20 text-primary-400 text-xs font-bold rounded-full border border-primary-500/30">
+                      {project.category}
                     </span>
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className="text-lg font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">
+                    {project.title}
+                  </h3>
+                  
+                  {/* Description */}
+                  <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                    {project.description}
+                  </p>
+                  
+                  {/* Technologies */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.technologies.map((tech) => (
+                      <span 
+                        key={tech}
+                        className="px-2 py-1 bg-dark-700/50 text-primary-300 text-xs rounded border border-dark-600"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                  
+                  {/* Link indicator */}
+                  <div className="flex items-center text-primary-400 text-sm font-medium">
+                    <span>{t('portfolio.viewWebsite')}</span>
+                    <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
                   </div>
                 </a>
               ) : (
-                <div 
-                  className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500 hover:shadow-[0_20px_60px_-15px_rgba(16,185,129,0.4)] hover:-translate-y-4 hover:scale-[1.03] transition-all duration-400 flex flex-col h-full"
-                  style={{
-                    animation: `float ${3 + index * 0.5}s ease-in-out infinite`,
-                    animationDelay: `${index * 0.5}s`
-                  }}
-                >
-                  {/* Image Container */}
-                  <div className="relative h-56 overflow-hidden">
-                    <div 
-                      className="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center group-hover:scale-110 transition-transform duration-500"
-                    >
-                      <div className="text-center">
-                        <svg className="w-16 h-16 text-white/30 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                        <span className="text-white/50 text-sm">{project.title}</span>
-                      </div>
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
-                    <div className="absolute top-4 left-4">
-                      <span className="px-4 py-1.5 bg-primary-500 text-dark-900 text-xs font-extrabold rounded-full border-2 border-primary-400 glow-badge">
-                        {project.category}
+                <div className="group block rounded-xl bg-dark-800/50 border border-dark-600 hover:border-primary-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1 p-6 h-full">
+                  {/* Category Badge */}
+                  <div className="mb-4">
+                    <span className="px-3 py-1 bg-primary-500/20 text-primary-400 text-xs font-bold rounded-full border border-primary-500/30">
+                      {project.category}
+                    </span>
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className="text-lg font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">
+                    {project.title}
+                  </h3>
+                  
+                  {/* Description */}
+                  <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                    {project.description}
+                  </p>
+                  
+                  {/* Technologies */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.technologies.map((tech) => (
+                      <span 
+                        key={tech}
+                        className="px-2 py-1 bg-dark-700/50 text-primary-300 text-xs rounded border border-dark-600"
+                      >
+                        {tech}
                       </span>
-                    </div>
+                    ))}
                   </div>
-
-                  {/* Content */}
-                  <div className="p-6 flex flex-col flex-1">
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-1">
-                      {project.description}
-                    </p>
-                    
-                    {/* Technologies */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.technologies.map((tech) => (
-                        <span 
-                          key={tech}
-                          className="px-2 py-1 bg-dark-700 text-primary-300 text-xs rounded border border-dark-600"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-
-                    <span className="text-gray-500 text-sm">{t('portfolio.internalProject')}</span>
-                  </div>
+                  
+                  <span className="text-gray-500 text-sm">{t('portfolio.internalProject')}</span>
                 </div>
               )}
             </AnimateOnScroll>
