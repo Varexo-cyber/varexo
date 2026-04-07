@@ -986,23 +986,30 @@ const CustomerDashboard: React.FC = () => {
                       const currentUser = users.find((u: any) => u.email === user?.email);
                       const subscription = currentUser?.subscription;
                       const hasSocialMedia = currentUser?.hasSocialMedia;
+                      const socialMediaPackage = currentUser?.socialMediaPackage;
                       
-                      if (!subscription) {
+                      if (!subscription && !hasSocialMedia) {
                         return <span className="text-sm text-gray-500">{t('dashboard.noSubscription')}</span>;
                       }
                       
                       return (
                         <>
-                          <span className={`text-sm font-bold ${
-                            subscription === 'basic' ? 'text-gray-300' :
-                            subscription === 'pro' ? 'text-primary-400' :
-                            'text-yellow-400'
-                          }`}>
-                            {subscription === 'basic' ? 'Basic' :
-                             subscription === 'pro' ? 'Pro' : 'Premium'}
-                          </span>
+                          {subscription && (
+                            <span className={`text-sm font-bold ${
+                              subscription === 'basic' ? 'text-gray-300' :
+                              subscription === 'pro' ? 'text-primary-400' :
+                              'text-yellow-400'
+                            }`}>
+                              {subscription === 'basic' ? 'Basic' :
+                               subscription === 'pro' ? 'Pro' : 'Premium'}
+                            </span>
+                          )}
                           {hasSocialMedia && (
-                            <span className="text-xs text-purple-400">+ {t('common.socialMedia')}</span>
+                            <span className="text-xs text-blue-400">
+                              + {socialMediaPackage === 'starter' ? 'Starter' :
+                                 socialMediaPackage === 'groei' ? 'Groei' :
+                                 socialMediaPackage === 'dominant' ? 'Dominant' : 'Social Media'}
+                            </span>
                           )}
                         </>
                       );

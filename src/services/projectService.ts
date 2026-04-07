@@ -64,6 +64,7 @@ export interface Customer {
   emailNotifications?: boolean;
   subscription?: 'basic' | 'pro' | 'premium' | null;
   hasSocialMedia?: boolean;
+  socialMediaPackage?: 'starter' | 'groei' | 'dominant' | null;
 }
 
 class ProjectService {

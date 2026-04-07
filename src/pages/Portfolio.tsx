@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
@@ -13,6 +13,96 @@ interface Project {
   technologies: string[];
   link?: string;
 }
+
+const CampaignCard: React.FC<{ language: string }> = ({ language }) => {
+  const [currentImage, setCurrentImage] = useState(0);
+  const images = ['/portfolio/Campagne 1.jpeg', '/portfolio/Campagne 2.jpeg'];
+
+  const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
+  const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
+
+  return (
+    <div 
+      className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20"
+      style={{ animation: 'float 3s ease-in-out infinite' }}
+    >
+      <div className="relative h-80 overflow-hidden">
+        {images.map((img, idx) => (
+          <img 
+            key={idx}
+            src={img}
+            alt={language === 'nl' ? `Leegstand Meldpunt campagne ${idx + 1}` : `Vacancy Reporting campaign ${idx + 1}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
+              idx === currentImage ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+            }`}
+          />
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/30 to-transparent opacity-60" />
+        <div className="absolute top-4 left-4">
+          <span className="px-4 py-1.5 bg-blue-500 text-white text-xs font-extrabold rounded-full border-2 border-blue-400">
+            {language === 'nl' ? 'Advertentie' : 'Ad Campaign'}
+          </span>
+        </div>
+        <button
+          onClick={prevImage}
+          className="absolute left-3 top-1/2 -translate-y-1/2 bg-dark-900/70 hover:bg-dark-900 text-white p-2 rounded-full border border-dark-600 transition-all hover:scale-110"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button
+          onClick={nextImage}
+          className="absolute right-3 top-1/2 -translate-y-1/2 bg-dark-900/70 hover:bg-dark-900 text-white p-2 rounded-full border border-dark-600 transition-all hover:scale-110"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          {images.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentImage(idx)}
+              className={`w-2.5 h-2.5 rounded-full transition-all ${
+                idx === currentImage ? 'bg-primary-400 scale-125' : 'bg-white/40 hover:bg-white/60'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+      <div className="p-6">
+        <h3 className="text-xl font-bold text-white mb-2">
+          {language === 'nl' ? 'Leegstand Meldpunt - Campagne' : 'Vacancy Reporting - Campaign'}
+        </h3>
+        <p className="text-gray-400 text-sm mb-4">
+          {language === 'nl'
+            ? 'Social media advertentiecampagne gericht op het bereiken van vastgoedeigenaren. Meerdere advertentievarianten A/B getest voor maximale conversie en bereik.'
+            : 'Social media ad campaign targeting property owners. Multiple ad variants A/B tested for maximum conversion and reach.'}
+        </p>
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="text-center bg-dark-700 rounded-lg p-2 border border-dark-600">
+            <div className="text-lg font-bold text-primary-400">10K+</div>
+            <p className="text-gray-500 text-[10px]">{language === 'nl' ? 'Bereik / dag' : 'Reach / day'}</p>
+          </div>
+          <div className="text-center bg-dark-700 rounded-lg p-2 border border-dark-600">
+            <div className="text-lg font-bold text-primary-400">3.2%</div>
+            <p className="text-gray-500 text-[10px]">CTR</p>
+          </div>
+          <div className="text-center bg-dark-700 rounded-lg p-2 border border-dark-600">
+            <div className="text-lg font-bold text-green-400">Active</div>
+            <p className="text-gray-500 text-[10px]">Status</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <span className="px-2 py-1 bg-dark-700 text-blue-300 text-xs rounded border border-dark-600">Meta Ads</span>
+          <span className="px-2 py-1 bg-dark-700 text-blue-300 text-xs rounded border border-dark-600">Instagram</span>
+          <span className="px-2 py-1 bg-dark-700 text-blue-300 text-xs rounded border border-dark-600">Facebook</span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Portfolio: React.FC = () => {
   const { t, language } = useLanguage();
@@ -64,19 +154,22 @@ const Portfolio: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {projects.map((project, index) => (
             <AnimateOnScroll key={project.id} delay={0}>
-              <div 
-                className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 hover:-translate-y-2 hover:scale-[1.02] flex flex-col h-full"
-                style={{
-                  animation: `float ${3 + index * 0.5}s ease-in-out infinite`,
-                  animationDelay: `${index * 0.5}s`
-                }}
-              >
-                {/* Image Container */}
-                <div className="relative h-56 overflow-hidden">
-                  <div 
-                    className="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center group-hover:scale-110 transition-transform duration-500"
-                  >
-                    {project.link ? (
+              {project.link ? (
+                <a 
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500 hover:shadow-[0_20px_60px_-15px_rgba(16,185,129,0.4)] hover:-translate-y-4 hover:scale-[1.03] transition-all duration-400 flex flex-col h-full cursor-pointer"
+                  style={{
+                    animation: `float ${3 + index * 0.5}s ease-in-out infinite`,
+                    animationDelay: `${index * 0.5}s`
+                  }}
+                >
+                  {/* Image Container */}
+                  <div className="relative h-56 overflow-hidden">
+                    <div 
+                      className="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center group-hover:scale-110 transition-transform duration-500"
+                    >
                       <img 
                         src={project.image}
                         alt={project.title}
@@ -86,67 +179,121 @@ const Portfolio: React.FC = () => {
                           target.style.display = 'none';
                         }}
                       />
-                    ) : (
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                    <div className="absolute top-4 left-4">
+                      <span className="px-4 py-1.5 bg-primary-500 text-dark-900 text-xs font-extrabold rounded-full border-2 border-primary-400 glow-badge">
+                        {project.category}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6 flex flex-col flex-1">
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
+                      {project.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-1">
+                      {project.description}
+                    </p>
+                    
+                    {/* Technologies */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.technologies.map((tech) => (
+                        <span 
+                          key={tech}
+                          className="px-2 py-1 bg-dark-700 text-primary-300 text-xs rounded border border-dark-600"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Action Button */}
+                    <span className="inline-flex items-center text-primary-400 group-hover:text-primary-300 text-sm font-medium transition-colors">
+                      {t('portfolio.viewWebsite')}
+                      <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </span>
+                  </div>
+                </a>
+              ) : (
+                <div 
+                  className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500 hover:shadow-[0_20px_60px_-15px_rgba(16,185,129,0.4)] hover:-translate-y-4 hover:scale-[1.03] transition-all duration-400 flex flex-col h-full"
+                  style={{
+                    animation: `float ${3 + index * 0.5}s ease-in-out infinite`,
+                    animationDelay: `${index * 0.5}s`
+                  }}
+                >
+                  {/* Image Container */}
+                  <div className="relative h-56 overflow-hidden">
+                    <div 
+                      className="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center group-hover:scale-110 transition-transform duration-500"
+                    >
                       <div className="text-center">
                         <svg className="w-16 h-16 text-white/30 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                         <span className="text-white/50 text-sm">{project.title}</span>
                       </div>
-                    )}
-                  </div>
-                  {/* Overlay on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
-                  
-                  {/* Category Badge */}
-                  <div className="absolute top-4 left-4">
-                    <span className="px-4 py-1.5 bg-primary-500 text-dark-900 text-xs font-extrabold rounded-full border-2 border-primary-400 glow-badge">
-                      {language === 'nl' ? project.category : project.category}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6 flex flex-col flex-1">
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
-                    {project.title}
-                  </h3>
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-1">
-                    {project.description}
-                  </p>
-                  
-                  {/* Technologies */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies.map((tech) => (
-                      <span 
-                        key={tech}
-                        className="px-2 py-1 bg-dark-700 text-primary-300 text-xs rounded border border-dark-600"
-                      >
-                        {tech}
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                    <div className="absolute top-4 left-4">
+                      <span className="px-4 py-1.5 bg-primary-500 text-dark-900 text-xs font-extrabold rounded-full border-2 border-primary-400 glow-badge">
+                        {project.category}
                       </span>
-                    ))}
+                    </div>
                   </div>
 
-                  {/* Action Button */}
-                  {project.link ? (
-                    <a 
-                      href={project.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center text-primary-400 hover:text-primary-300 text-sm font-medium transition-colors"
-                    >
-                      {t('portfolio.viewWebsite')}
-                      <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </a>
-                  ) : (
+                  {/* Content */}
+                  <div className="p-6 flex flex-col flex-1">
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
+                      {project.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-1">
+                      {project.description}
+                    </p>
+                    
+                    {/* Technologies */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.technologies.map((tech) => (
+                        <span 
+                          key={tech}
+                          className="px-2 py-1 bg-dark-700 text-primary-300 text-xs rounded border border-dark-600"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+
                     <span className="text-gray-500 text-sm">{t('portfolio.internalProject')}</span>
-                  )}
+                  </div>
                 </div>
-              </div>
+              )}
             </AnimateOnScroll>
           ))}
+        </div>
+
+        {/* Ads / Campagnes Section */}
+        <div className="mt-24">
+          <AnimateOnScroll>
+            <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">$ ls campaigns/</p>
+            <h2 className="text-3xl font-bold text-center mb-4 text-white">
+              {language === 'nl' ? 'Advertentiecampagnes' : 'Ad Campaigns'}
+            </h2>
+            <p className="text-lg text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+              {language === 'nl' 
+                ? 'Naast websites beheren wij ook advertentiecampagnes die dagelijks duizenden mensen bereiken. Sterk, doelgericht en resultaatgericht.'
+                : 'Besides websites, we also manage ad campaigns that reach thousands of people daily. Strong, targeted and results-driven.'}
+            </p>
+          </AnimateOnScroll>
+
+          <div className="max-w-2xl mx-auto">
+            <AnimateOnScroll delay={0}>
+              <CampaignCard language={language} />
+            </AnimateOnScroll>
+          </div>
         </div>
 
         {/* Stats Section */}

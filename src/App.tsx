@@ -23,6 +23,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import AlgemeneVoorwaarden from './pages/AlgemeneVoorwaarden';
 import CookiePolicy from './pages/CookiePolicy';
 import WhatsAppButton from './components/WhatsAppButton';
+import PromoBanner from './components/PromoBanner';
 import HelpWidget from './components/HelpWidget';
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-dark-900">
         <Header />
+        <PromoBanner />
         <main>
           <Routes>
             <Route path="/" element={<Home />} />

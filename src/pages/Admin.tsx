@@ -32,7 +32,8 @@ const AdminDashboard: React.FC = () => {
   const [subscriptionForm, setSubscriptionForm] = useState<{
     subscription: 'basic' | 'pro' | 'premium' | '';
     hasSocialMedia: boolean;
-  }>({ subscription: '', hasSocialMedia: false });
+    socialMediaPackage: 'starter' | 'groei' | 'dominant' | '';
+  }>({ subscription: '', hasSocialMedia: false, socialMediaPackage: '' });
   const [showInvoiceDeleteConfirm, setShowInvoiceDeleteConfirm] = useState<string | null>(null);
   const [showProjectDropdown, setShowProjectDropdown] = useState<string | null>(null);
   const [showInvoiceDropdown, setShowInvoiceDropdown] = useState<string | null>(null);
@@ -573,7 +574,8 @@ const AdminDashboard: React.FC = () => {
         users[userIndex] = {
           ...users[userIndex],
           subscription: subscriptionForm.subscription || null,
-          hasSocialMedia: subscriptionForm.hasSocialMedia
+          hasSocialMedia: !!subscriptionForm.socialMediaPackage,
+          socialMediaPackage: subscriptionForm.socialMediaPackage || null
         };
         localStorage.setItem('varexo_users', JSON.stringify(users));
       }
@@ -591,7 +593,8 @@ const AdminDashboard: React.FC = () => {
     setEditingCustomerSubscription(customer.email);
     setSubscriptionForm({
       subscription: customer.subscription || '',
-      hasSocialMedia: customer.hasSocialMedia || false
+      hasSocialMedia: customer.hasSocialMedia || false,
+      socialMediaPackage: (customer as any).socialMediaPackage || ''
     });
     setShowCustomerDropdown(null);
   };
@@ -1935,8 +1938,10 @@ const AdminDashboard: React.FC = () => {
                                 <span className="text-gray-500">-</span>
                               )}
                               {customer.hasSocialMedia && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-900/50 text-purple-400">
-                                  + {t('admin.socialMedia')}
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-900/50 text-blue-400">
+                                  + {(customer as any).socialMediaPackage === 'starter' ? 'Starter' :
+                                     (customer as any).socialMediaPackage === 'groei' ? 'Groei' :
+                                     (customer as any).socialMediaPackage === 'dominant' ? 'Dominant' : 'Social Media'}
                                 </span>
                               )}
                             </div>
@@ -4730,31 +4735,32 @@ const AdminDashboard: React.FC = () => {
               <div className="bg-dark-800 rounded-lg p-6 w-full max-w-md border border-dark-700">
                 <h3 className="text-xl font-semibold text-white mb-4">{language === 'nl' ? 'Abonnement Bewerken' : 'Edit Subscription'}</h3>
                 <form onSubmit={(e) => { e.preventDefault(); handleUpdateCustomerSubscription(editingCustomerSubscription); }}>
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">{language === 'nl' ? 'Pakket' : 'Package'}</label>
+                      <label className="block text-sm font-medium text-primary-400 mb-2">{language === 'nl' ? 'Website Pakket' : 'Website Package'}</label>
                       <select
                         value={subscriptionForm.subscription}
                         onChange={(e) => setSubscriptionForm(prev => ({ ...prev, subscription: e.target.value as any }))}
                         className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
                       >
-                        <option value="">{language === 'nl' ? 'Geen abonnement' : 'No subscription'}</option>
-                        <option value="basic">Basic (€69.99/{language === 'nl' ? 'maand' : 'month'})</option>
-                        <option value="pro">Pro (€59.99/{language === 'nl' ? 'maand' : 'month'})</option>
-                        <option value="premium">Premium (€599.99/{language === 'nl' ? 'jaar' : 'year'})</option>
+                        <option value="">{language === 'nl' ? 'Geen website pakket' : 'No website package'}</option>
+                        <option value="basic">Basic - €899.99 + €69.99/{language === 'nl' ? 'maand' : 'month'}</option>
+                        <option value="pro">Pro - €1299.99 + €59.99/{language === 'nl' ? 'maand' : 'month'}</option>
+                        <option value="premium">Premium - €1999.99 + €49.99/{language === 'nl' ? 'maand' : 'month'}</option>
                       </select>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        id="socialMedia"
-                        checked={subscriptionForm.hasSocialMedia}
-                        onChange={(e) => setSubscriptionForm(prev => ({ ...prev, hasSocialMedia: e.target.checked }))}
-                        className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                      />
-                      <label htmlFor="socialMedia" className="text-sm text-gray-300">
-                        {language === 'nl' ? 'Social Media Management (+€149.99/maand)' : 'Social Media Management (+€149.99/month)'}
-                      </label>
+                    <div className="border-t border-dark-600 pt-4">
+                      <label className="block text-sm font-medium text-blue-400 mb-2">{language === 'nl' ? 'Social Media Pakket' : 'Social Media Package'}</label>
+                      <select
+                        value={subscriptionForm.socialMediaPackage}
+                        onChange={(e) => setSubscriptionForm(prev => ({ ...prev, socialMediaPackage: e.target.value as any, hasSocialMedia: !!e.target.value }))}
+                        className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white"
+                      >
+                        <option value="">{language === 'nl' ? 'Geen social media pakket' : 'No social media package'}</option>
+                        <option value="starter">Starter - €399.99/{language === 'nl' ? 'maand' : 'month'}</option>
+                        <option value="groei">Groei - €699.99/{language === 'nl' ? 'maand' : 'month'}</option>
+                        <option value="dominant">Dominant - €999.99/{language === 'nl' ? 'maand' : 'month'}</option>
+                      </select>
                     </div>
                   </div>
                   <div className="flex justify-end space-x-3 mt-6">
