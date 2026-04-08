@@ -350,9 +350,11 @@ const AdminDashboard: React.FC = () => {
       });
 
       // Update local state directly instead of reloading all data
-      setProjects(prevProjects => 
-        prevProjects.map(p => p.id === editingProject.id ? updatedProject : p)
-      );
+      if (updatedProject) {
+        setProjects(prevProjects => 
+          prevProjects.map(p => p.id === editingProject.id ? updatedProject : p)
+        );
+      }
 
       setShowEditProjectForm(false);
       setEditingProject(null);
