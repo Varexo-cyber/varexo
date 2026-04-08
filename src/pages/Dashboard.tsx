@@ -1095,16 +1095,7 @@ const CustomerDashboard: React.FC = () => {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-400">{t('dashboard.completedProjects')}</p>
-                  <p className="text-2xl font-bold text-white">
-                    {(() => {
-                      const hasCompleted = projects.some(p => p.status === 'completed');
-                      return (
-                        <span className={hasCompleted ? 'text-green-400' : 'text-gray-500'}>
-                          {hasCompleted ? 'Ja ✓' : 'Nee'}
-                        </span>
-                      );
-                    })()}
-                  </p>
+                  <p className="text-2xl font-bold text-white">{projects.filter(p => p.status === 'completed').length}</p>
                 </div>
               </div>
             </div>

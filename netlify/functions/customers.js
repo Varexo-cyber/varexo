@@ -47,6 +47,66 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
     }
 
+    // PUT /admin-update - Admin update customer (subscription, company, etc.)
+    if (event.httpMethod === 'PUT' && event.path.includes('admin-update')) {
+      const body = JSON.parse(event.body || '{}');
+      const { email, subscription, hasSocialMedia, socialMediaPackage, company } = body;
+      
+      if (!email) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: 'Email required' }) };
+      }
+      
+      console.log('Admin updating customer:', email, { subscription, hasSocialMedia, company });
+      
+      try {
+        // Build dynamic update query
+        const updates = [];
+        const values = [];
+        let paramIndex = 1;
+        
+        if (subscription !== undefined) {
+          updates.push(`subscription = $${paramIndex++}`);
+          values.push(subscription);
+        }
+        if (hasSocialMedia !== undefined) {
+          updates.push(`has_social_media = $${paramIndex++}`);
+          values.push(hasSocialMedia);
+        }
+        if (socialMediaPackage !== undefined) {
+          updates.push(`social_media_package = $${paramIndex++}`);
+          values.push(socialMediaPackage);
+        }
+        if (company !== undefined) {
+          updates.push(`company = $${paramIndex++}`);
+          values.push(company);
+        }
+        
+        if (updates.length === 0) {
+          return { statusCode: 400, headers, body: JSON.stringify({ error: 'No fields to update' }) };
+        }
+        
+        // Add email as last parameter
+        values.push(email);
+        
+        const query = `UPDATE users SET ${updates.join(', ')}, updated_at = NOW() WHERE email = $${paramIndex} RETURNING *`;
+        console.log('Update query:', query, values);
+        
+        const result = await sql.query(query, values);
+        
+        return { 
+          statusCode: 200, 
+          headers, 
+          body: JSON.stringify({ 
+            success: true, 
+            customer: result[0] 
+          }) 
+        };
+      } catch (error) {
+        console.error('Error updating customer:', error);
+        return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
+      }
+    }
+
     return { statusCode: 404, headers, body: JSON.stringify({ error: 'Not found' }) };
 
   } catch (error) {
