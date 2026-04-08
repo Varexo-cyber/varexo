@@ -12,6 +12,9 @@ export interface MockUser {
   isAdmin?: boolean;
   emailNotifications?: boolean;
   emailLanguage?: 'nl' | 'en';
+  subscription?: string;
+  hasSocialMedia?: boolean;
+  socialMediaPackage?: string;
 }
 
 interface StoredUser {

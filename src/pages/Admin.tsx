@@ -339,7 +339,7 @@ const AdminDashboard: React.FC = () => {
 
     setIsUpdatingProject(editingProject.id);
     try {
-      await projectService.updateProjectAsync(editingProject.id, {
+      const updatedProject = await projectService.updateProjectAsync(editingProject.id, {
         title: projectForm.title,
         description: projectForm.description,
         status: projectForm.status,
@@ -349,12 +349,18 @@ const AdminDashboard: React.FC = () => {
         websiteUrl: projectForm.websiteUrl || undefined
       });
 
+      // Update local state directly instead of reloading all data
+      setProjects(prevProjects => 
+        prevProjects.map(p => p.id === editingProject.id ? updatedProject : p)
+      );
+
       setShowEditProjectForm(false);
       setEditingProject(null);
       setProjectForm({ title: '', description: '', status: 'planning', deadline: '', budget: '', progress: 0, websiteUrl: '' });
-      await loadData();
+      setToast({ message: language === 'nl' ? 'Project bijgewerkt' : 'Project updated', type: 'success' });
     } catch (error) {
       console.error('Error updating project:', error);
+      setToast({ message: language === 'nl' ? 'Fout bij bijwerken project' : 'Error updating project', type: 'error' });
     } finally {
       setIsUpdatingProject(null);
     }

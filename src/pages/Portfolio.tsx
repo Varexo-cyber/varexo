@@ -115,7 +115,7 @@ const Portfolio: React.FC = () => {
       description: language === 'nl' 
         ? 'Meldpunt voor het registreren en rapporteren van leegstaande panden. Gebruiksvriendelijke interface met kaartintegratie en automatische rapportage.'
         : 'Reporting system for vacant properties. User-friendly interface with map integration and automatic reporting.',
-      image: '/portfolio/download.png',
+      image: '/portfolio/download.png?v=2',
       technologies: ['React', 'Node.js', 'Maps API'],
       link: 'https://leegstandmeldpunt.nl'
     },
@@ -126,7 +126,7 @@ const Portfolio: React.FC = () => {
       description: language === 'nl' 
         ? 'Complete bedrijfswebsite voor autotransport, pechhulp en auto-inkoop. 24/7 bereikbaar met contactformulier, WhatsApp-integratie en professioneel design.'
         : 'Complete business website for car transport, roadside assistance and car purchasing. 24/7 available with contact form, WhatsApp integration and professional design.',
-      image: '/portfolio/Directautohulp.png',
+      image: '/portfolio/Directautohulp.png?v=2',
       technologies: ['React', 'Node.js', 'TypeScript'],
       link: 'https://directautohulp.nl'
     }
@@ -282,19 +282,19 @@ const Portfolio: React.FC = () => {
           <div className="glass-card p-8 rounded-xl max-w-5xl mx-auto">
             <h2 className="text-2xl font-bold text-center mb-8 text-white">{t('portfolio.stats.title')}</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              <div className="text-center p-6 border border-dark-600 rounded-xl bg-dark-800/50">
+              <div className="text-center p-6 border border-dark-600 rounded-xl bg-dark-800/50 hover:border-primary-500/50 hover:bg-dark-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/20">
                 <div className="text-3xl md:text-4xl font-bold text-primary-400 text-glow mb-2">10+</div>
                 <p className="text-gray-400 font-medium">{t('portfolio.stats.clients')}</p>
               </div>
-              <div className="text-center p-6 border border-dark-600 rounded-xl bg-dark-800/50">
+              <div className="text-center p-6 border border-dark-600 rounded-xl bg-dark-800/50 hover:border-primary-500/50 hover:bg-dark-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/20">
                 <div className="text-3xl md:text-4xl font-bold text-primary-400 text-glow mb-2">10+</div>
                 <p className="text-gray-400 font-medium">{t('portfolio.stats.projects')}</p>
               </div>
-              <div className="text-center p-6 border border-dark-600 rounded-xl bg-dark-800/50">
+              <div className="text-center p-6 border border-dark-600 rounded-xl bg-dark-800/50 hover:border-primary-500/50 hover:bg-dark-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/20">
                 <div className="text-3xl md:text-4xl font-bold text-primary-400 text-glow mb-2">99.9%</div>
                 <p className="text-gray-400 font-medium">{t('portfolio.stats.uptime')}</p>
               </div>
-              <div className="text-center p-6 border border-dark-600 rounded-xl bg-dark-800/50">
+              <div className="text-center p-6 border border-dark-600 rounded-xl bg-dark-800/50 hover:border-primary-500/50 hover:bg-dark-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/20">
                 <div className="text-3xl md:text-4xl font-bold text-primary-400 text-glow mb-2">&lt;24h</div>
                 <p className="text-gray-400 font-medium">{t('portfolio.stats.response')}</p>
               </div>
