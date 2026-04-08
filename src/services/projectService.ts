@@ -295,14 +295,10 @@ class ProjectService {
           };
         });
         
-        // Add any users that exist in localStorage but not in API (rare case)
-        const apiEmails = new Set(customers.map((c: Customer) => c.email));
-        const onlyLocalUsers = existingUsers.filter((u: any) => !apiEmails.has(u.email) && u.email !== 'info@varexo.nl');
+        // Only use API users - do NOT add local-only users (prevents deleted accounts from reappearing)
+        localStorage.setItem('varexo_users', JSON.stringify(mergedUsers));
         
-        const finalUsers = [...mergedUsers, ...onlyLocalUsers];
-        localStorage.setItem('varexo_users', JSON.stringify(finalUsers));
-        
-        console.log('getCustomersAsync - merged with localStorage:', finalUsers.map((u: any) => ({ 
+        console.log('getCustomersAsync - merged with localStorage:', mergedUsers.map((u: any) => ({ 
           email: u.email, 
           subscription: u.subscription,
           company: u.company 
