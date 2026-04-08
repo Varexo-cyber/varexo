@@ -279,23 +279,25 @@ const Portfolio: React.FC = () => {
 
         {/* Stats Section */}
         <div className="mt-48">
-          <h2 className="text-2xl font-bold text-center mb-12 text-white">{t('portfolio.stats.title')}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 text-glow mb-2">10+</div>
-              <p className="text-gray-400">{t('portfolio.stats.clients')}</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 text-glow mb-2">10+</div>
-              <p className="text-gray-400">{t('portfolio.stats.projects')}</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 text-glow mb-2">99.9%</div>
-              <p className="text-gray-400">{t('portfolio.stats.uptime')}</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary-400 text-glow mb-2">&lt;24h</div>
-              <p className="text-gray-400">{t('portfolio.stats.response')}</p>
+          <div className="glass-card p-8 rounded-xl max-w-5xl mx-auto">
+            <h2 className="text-2xl font-bold text-center mb-8 text-white">{t('portfolio.stats.title')}</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              <div className="text-center">
+                <div className="text-4xl font-bold text-primary-400 text-glow mb-2">10+</div>
+                <p className="text-gray-400">{t('portfolio.stats.clients')}</p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-primary-400 text-glow mb-2">10+</div>
+                <p className="text-gray-400">{t('portfolio.stats.projects')}</p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-primary-400 text-glow mb-2">99.9%</div>
+                <p className="text-gray-400">{t('portfolio.stats.uptime')}</p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-primary-400 text-glow mb-2">&lt;24h</div>
+                <p className="text-gray-400">{t('portfolio.stats.response')}</p>
+              </div>
             </div>
           </div>
         </div>

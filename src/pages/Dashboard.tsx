@@ -1003,7 +1003,20 @@ const CustomerDashboard: React.FC = () => {
                   <div className="flex flex-col">
                     {(() => {
                       const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
-                      const currentUser = users.find((u: any) => u.email === user?.email);
+                      const currentUserEmail = user?.email?.toLowerCase()?.trim();
+                      const currentUser = users.find((u: any) => 
+                        u.email?.toLowerCase()?.trim() === currentUserEmail
+                      );
+                      
+                      // Debug logging
+                      console.log('Dashboard subscription check:', {
+                        userEmail: currentUserEmail,
+                        foundUser: currentUser,
+                        subscription: currentUser?.subscription,
+                        hasSocialMedia: currentUser?.hasSocialMedia,
+                        allUsers: users.map((u: any) => u.email)
+                      });
+                      
                       const subscription = currentUser?.subscription;
                       const hasSocialMedia = currentUser?.hasSocialMedia;
                       const socialMediaPackage = currentUser?.socialMediaPackage;

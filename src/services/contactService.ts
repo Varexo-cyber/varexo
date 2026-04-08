@@ -88,12 +88,30 @@ export const getContactMessages = async (): Promise<ContactMessage[]> => {
     if (response.ok) {
       const apiMessages = await response.json();
       if (Array.isArray(apiMessages) && apiMessages.length > 0) {
-        // Merge: API messages + any local-only messages (by checking IDs)
-        const apiIds = new Set(apiMessages.map((m: any) => m.id));
-        const uniqueLocal = localMessages.filter(m => !apiIds.has(m.id) && m.id.startsWith('contact-'));
-        return [...apiMessages, ...uniqueLocal].sort((a, b) => 
+        // Create a deduplication key from content (email + bericht + createdAt rounded to minute)
+        const createDeduplicationKey = (m: any) => {
+          const date = new Date(m.createdAt);
+          // Round to nearest minute for comparison
+          date.setSeconds(0, 0);
+          return `${m.email}|${m.bericht?.substring(0, 50)}|${date.getTime()}`;
+        };
+        
+        // Get keys from API messages
+        const apiKeys = new Set(apiMessages.map(createDeduplicationKey));
+        
+        // Filter local messages: only keep if not already in API (by content key)
+        const uniqueLocal = localMessages.filter(m => {
+          const key = createDeduplicationKey(m);
+          // Skip if same content exists in API, or if local message has API-style ID
+          return !apiKeys.has(key) && m.id.startsWith('contact-');
+        });
+        
+        const merged = [...apiMessages, ...uniqueLocal].sort((a, b) => 
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
+        
+        console.log(`Merged messages: ${apiMessages.length} API + ${uniqueLocal.length} local unique = ${merged.length} total`);
+        return merged;
       }
     }
   } catch (error) {
