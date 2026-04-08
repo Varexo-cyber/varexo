@@ -111,7 +111,7 @@ const Portfolio: React.FC = () => {
     {
       id: '1',
       title: language === 'nl' ? 'Leegstand Meldpunt' : 'Vacancy Reporting System',
-      category: language === 'nl' ? 'Webapplicatie' : 'Web Application',
+      category: language === 'nl' ? 'Bedrijfswebsite' : 'Business Website',
       description: language === 'nl' 
         ? 'Meldpunt voor het registreren en rapporteren van leegstaande panden. Gebruiksvriendelijke interface met kaartintegratie en automatische rapportage.'
         : 'Reporting system for vacant properties. User-friendly interface with map integration and automatic reporting.',
@@ -150,8 +150,8 @@ const Portfolio: React.FC = () => {
         </p>
         </AnimateOnScroll>
         
-        {/* Project Grid - Box Style like Guarantees */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        {/* Project Grid - Cards with Images */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {projects.map((project) => (
             <AnimateOnScroll key={project.id} delay={0}>
               {project.link ? (
@@ -159,77 +159,97 @@ const Portfolio: React.FC = () => {
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group block rounded-xl bg-dark-800/50 border border-dark-600 hover:border-primary-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1 p-6 h-full"
+                  className="group block overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 hover:-translate-y-1 h-full"
                 >
-                  {/* Category Badge */}
-                  <div className="mb-4">
-                    <span className="px-3 py-1 bg-primary-500/20 text-primary-400 text-xs font-bold rounded-full border border-primary-500/30">
-                      {project.category}
-                    </span>
-                  </div>
-                  
-                  {/* Title */}
-                  <h3 className="text-lg font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">
-                    {project.title}
-                  </h3>
-                  
-                  {/* Description */}
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-3">
-                    {project.description}
-                  </p>
-                  
-                  {/* Technologies */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies.map((tech) => (
-                      <span 
-                        key={tech}
-                        className="px-2 py-1 bg-dark-700/50 text-primary-300 text-xs rounded border border-dark-600"
-                      >
-                        {tech}
+                  {/* Project Image */}
+                  <div className="relative h-52 overflow-hidden">
+                    <img 
+                      src={project.image} 
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-dark-800 via-transparent to-transparent" />
+                    <div className="absolute top-4 left-4">
+                      <span className="px-3 py-1 bg-primary-500/20 backdrop-blur-sm text-primary-400 text-xs font-bold rounded-full border border-primary-500/30">
+                        {project.category}
                       </span>
-                    ))}
+                    </div>
                   </div>
-                  
-                  {/* Link indicator */}
-                  <div className="flex items-center text-primary-400 text-sm font-medium">
-                    <span>{t('portfolio.viewWebsite')}</span>
-                    <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
+
+                  <div className="p-6">
+                    {/* Title */}
+                    <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">
+                      {project.title}
+                    </h3>
+                    
+                    {/* Description */}
+                    <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                      {project.description}
+                    </p>
+                    
+                    {/* Technologies */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.technologies.map((tech) => (
+                        <span 
+                          key={tech}
+                          className="px-2 py-1 bg-dark-700 text-primary-300 text-xs rounded border border-dark-600"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    {/* Link indicator */}
+                    <div className="flex items-center text-primary-400 text-sm font-medium">
+                      <span>{t('portfolio.viewWebsite')}</span>
+                      <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </div>
                   </div>
                 </a>
               ) : (
-                <div className="group block rounded-xl bg-dark-800/50 border border-dark-600 hover:border-primary-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1 p-6 h-full">
-                  {/* Category Badge */}
-                  <div className="mb-4">
-                    <span className="px-3 py-1 bg-primary-500/20 text-primary-400 text-xs font-bold rounded-full border border-primary-500/30">
-                      {project.category}
-                    </span>
-                  </div>
-                  
-                  {/* Title */}
-                  <h3 className="text-lg font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">
-                    {project.title}
-                  </h3>
-                  
-                  {/* Description */}
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-3">
-                    {project.description}
-                  </p>
-                  
-                  {/* Technologies */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies.map((tech) => (
-                      <span 
-                        key={tech}
-                        className="px-2 py-1 bg-dark-700/50 text-primary-300 text-xs rounded border border-dark-600"
-                      >
-                        {tech}
+                <div className="group overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 hover:-translate-y-1 h-full">
+                  {/* Project Image */}
+                  <div className="relative h-52 overflow-hidden">
+                    <img 
+                      src={project.image} 
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-dark-800 via-transparent to-transparent" />
+                    <div className="absolute top-4 left-4">
+                      <span className="px-3 py-1 bg-primary-500/20 backdrop-blur-sm text-primary-400 text-xs font-bold rounded-full border border-primary-500/30">
+                        {project.category}
                       </span>
-                    ))}
+                    </div>
                   </div>
-                  
-                  <span className="text-gray-500 text-sm">{t('portfolio.internalProject')}</span>
+
+                  <div className="p-6">
+                    {/* Title */}
+                    <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">
+                      {project.title}
+                    </h3>
+                    
+                    {/* Description */}
+                    <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                      {project.description}
+                    </p>
+                    
+                    {/* Technologies */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.technologies.map((tech) => (
+                        <span 
+                          key={tech}
+                          className="px-2 py-1 bg-dark-700 text-primary-300 text-xs rounded border border-dark-600"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    <span className="text-gray-500 text-sm">{t('portfolio.internalProject')}</span>
+                  </div>
                 </div>
               )}
             </AnimateOnScroll>
