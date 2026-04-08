@@ -41,22 +41,39 @@ const CustomerDashboard: React.FC = () => {
 
   // Refresh subscription data when window regains focus (in case admin updated it)
   useEffect(() => {
-    const handleFocus = () => {
+    const refreshSubscription = () => {
       if (user?.email) {
         const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
-        const currentUserData = users.find((u: any) => u.email === user.email);
+        const currentUserEmail = user.email.toLowerCase().trim();
+        const currentUserData = users.find((u: any) => 
+          u.email?.toLowerCase()?.trim() === currentUserEmail
+        );
+        
+        console.log('Dashboard subscription check:', {
+          userEmail: currentUserEmail,
+          foundUser: currentUserData,
+          subscription: currentUserData?.subscription,
+          hasSocialMedia: currentUserData?.hasSocialMedia,
+          allUsers: users.map((u: any) => u.email?.toLowerCase?.())
+        });
+        
         if (currentUserData) {
           // Force re-render by updating user state with fresh data
-          setUser(prev => prev ? { ...prev, subscription: currentUserData.subscription } : prev);
+          setUser(prev => prev ? { 
+            ...prev, 
+            subscription: currentUserData.subscription,
+            hasSocialMedia: currentUserData.hasSocialMedia,
+            socialMediaPackage: currentUserData.socialMediaPackage
+          } : prev);
         }
       }
     };
 
-    window.addEventListener('focus', handleFocus);
-    // Also check immediately on mount
-    handleFocus();
+    window.addEventListener('focus', refreshSubscription);
+    // Check on mount and when user changes
+    refreshSubscription();
     
-    return () => window.removeEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', refreshSubscription);
   }, [user?.email]);
 
   const openProjectDetails = async (project: Project) => {
@@ -1002,24 +1019,17 @@ const CustomerDashboard: React.FC = () => {
                   <p className="text-sm font-medium text-gray-400">{t('dashboard.subscription')}</p>
                   <div className="flex flex-col">
                     {(() => {
-                      const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
-                      const currentUserEmail = user?.email?.toLowerCase()?.trim();
-                      const currentUser = users.find((u: any) => 
-                        u.email?.toLowerCase()?.trim() === currentUserEmail
-                      );
+                      // Use subscription from user state (set by useEffect from localStorage)
+                      const subscription = user?.subscription;
+                      const hasSocialMedia = user?.hasSocialMedia;
+                      const socialMediaPackage = user?.socialMediaPackage;
                       
-                      // Debug logging
-                      console.log('Dashboard subscription check:', {
-                        userEmail: currentUserEmail,
-                        foundUser: currentUser,
-                        subscription: currentUser?.subscription,
-                        hasSocialMedia: currentUser?.hasSocialMedia,
-                        allUsers: users.map((u: any) => u.email)
+                      console.log('Dashboard render subscription:', {
+                        userEmail: user?.email,
+                        subscription,
+                        hasSocialMedia,
+                        socialMediaPackage
                       });
-                      
-                      const subscription = currentUser?.subscription;
-                      const hasSocialMedia = currentUser?.hasSocialMedia;
-                      const socialMediaPackage = currentUser?.socialMediaPackage;
                       
                       if (!subscription && !hasSocialMedia) {
                         return <span className="text-sm text-gray-500">{t('dashboard.noSubscription')}</span>;
