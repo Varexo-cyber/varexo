@@ -1087,13 +1087,12 @@ const CustomerDashboard: React.FC = () => {
                   <p className="text-sm font-medium text-gray-400">{t('dashboard.completedProjects')}</p>
                   <p className="text-2xl font-bold text-white">
                     {(() => {
-                      const completedCount = projects.filter(p => p.status === 'completed').length;
-                      console.log('Dashboard completed projects:', {
-                        totalProjects: projects.length,
-                        completedCount,
-                        allStatuses: projects.map(p => ({ id: p.id, title: p.title, status: p.status }))
-                      });
-                      return completedCount;
+                      const hasCompleted = projects.some(p => p.status === 'completed');
+                      return (
+                        <span className={hasCompleted ? 'text-green-400' : 'text-gray-500'}>
+                          {hasCompleted ? 'Ja ✓' : 'Nee'}
+                        </span>
+                      );
                     })()}
                   </p>
                 </div>
