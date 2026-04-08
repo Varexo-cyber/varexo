@@ -1992,7 +1992,6 @@ const AdminDashboard: React.FC = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.company')}</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.subscription')}</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.projects')}</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.invoices')}</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('auth.email')}</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.actions')}</th>
                       </tr>
@@ -2034,9 +2033,6 @@ const AdminDashboard: React.FC = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                             {customer.projectCount}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                            {customer.invoiceCount}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                             {customer.emailNotifications === false ? (
@@ -2133,7 +2129,7 @@ const AdminDashboard: React.FC = () => {
                           {/* Customer Delete Confirmation */}
                           {showCustomerDeleteConfirm === customer.email && (
                             <tr>
-                              <td colSpan={6} className="px-6 py-4">
+                              <td colSpan={5} className="px-6 py-4">
                                 <div className="p-3 bg-red-900/30 border border-red-700 rounded-lg">
                                   <p className="text-red-300 text-sm mb-2">
                                     {language === 'nl' 

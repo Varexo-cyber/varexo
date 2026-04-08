@@ -39,6 +39,26 @@ const CustomerDashboard: React.FC = () => {
     return unsubscribe;
   }, [navigate]);
 
+  // Refresh subscription data when window regains focus (in case admin updated it)
+  useEffect(() => {
+    const handleFocus = () => {
+      if (user?.email) {
+        const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
+        const currentUserData = users.find((u: any) => u.email === user.email);
+        if (currentUserData) {
+          // Force re-render by updating user state with fresh data
+          setUser(prev => prev ? { ...prev, subscription: currentUserData.subscription } : prev);
+        }
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    // Also check immediately on mount
+    handleFocus();
+    
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [user?.email]);
+
   const openProjectDetails = async (project: Project) => {
     setSelectedProject(project);
     setLogsLoading(true);
