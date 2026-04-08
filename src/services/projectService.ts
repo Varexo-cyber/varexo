@@ -269,20 +269,47 @@ class ProjectService {
     try {
       const customers = await customersAPI.getAll();
       
+      // Get localStorage users FIRST (these have the latest subscription/company data)
+      const existingUsers = JSON.parse(localStorage.getItem('varexo_users') || '[]');
+      
       // Only sync to localStorage if API returned actual data
-      // This prevents localStorage from being wiped when API returns empty array
       if (customers && customers.length > 0) {
-        // Sync to localStorage for consistency
-        const existingUsers = JSON.parse(localStorage.getItem('varexo_users') || '[]');
-        const otherUsers = existingUsers.filter((u: any) => !customers.some((c: Customer) => c.email === u.email));
-        const mergedUsers = [...otherUsers, ...customers.map((c: Customer) => ({
-          ...c,
-          password: existingUsers.find((u: any) => u.email === c.email)?.password || 'google',
-          isAdmin: c.email === 'info@varexo.nl'
-        }))];
-        localStorage.setItem('varexo_users', JSON.stringify(mergedUsers));
-        console.log('getCustomersAsync - synced from API:', customers.map((c: Customer) => ({ email: c.email, emailNotifications: c.emailNotifications })));
-        return customers;
+        // IMPORTANT: Merge API data with localStorage, keeping localStorage values for:
+        // - subscription
+        // - company
+        // - socialMediaPackage
+        // - hasSocialMedia
+        const mergedUsers = customers.map((apiCustomer: Customer) => {
+          const localUser = existingUsers.find((u: any) => u.email === apiCustomer.email);
+          return {
+            ...apiCustomer,
+            // Preserve localStorage data if it exists
+            subscription: localUser?.subscription ?? apiCustomer.subscription ?? null,
+            company: localUser?.company ?? apiCustomer.company ?? null,
+            socialMediaPackage: localUser?.socialMediaPackage ?? apiCustomer.socialMediaPackage ?? null,
+            hasSocialMedia: localUser?.hasSocialMedia ?? apiCustomer.hasSocialMedia ?? false,
+            emailNotifications: localUser?.emailNotifications ?? apiCustomer.emailNotifications ?? false,
+            // Keep auth data from localStorage
+            password: localUser?.password || 'google',
+            isAdmin: apiCustomer.email === 'info@varexo.nl'
+          };
+        });
+        
+        // Add any users that exist in localStorage but not in API (rare case)
+        const apiEmails = new Set(customers.map((c: Customer) => c.email));
+        const onlyLocalUsers = existingUsers.filter((u: any) => !apiEmails.has(u.email) && u.email !== 'info@varexo.nl');
+        
+        const finalUsers = [...mergedUsers, ...onlyLocalUsers];
+        localStorage.setItem('varexo_users', JSON.stringify(finalUsers));
+        
+        console.log('getCustomersAsync - merged with localStorage:', finalUsers.map((u: any) => ({ 
+          email: u.email, 
+          subscription: u.subscription,
+          company: u.company 
+        })));
+        
+        // Return the merged data (not just API data)
+        return this.getLocalCustomers();
       } else {
         console.warn('API returned empty customers array, using localStorage fallback');
         return this.getCustomers();

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { mockAuth } from '../services/mockAuth';
 import { roleService } from '../services/roleService';
 import { projectService, Customer, Project, Invoice, ProjectLog } from '../services/projectService';
-import { invoicesAPI, paymentTrackingAPI } from '../services/api';
+import { invoicesAPI, paymentTrackingAPI, customersAPI } from '../services/api';
 import { getContactMessages, deleteContactMessage, ContactMessage } from '../services/contactService';
 import PageTransition from '../components/PageTransition';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -214,14 +214,25 @@ const AdminDashboard: React.FC = () => {
     setIsRefreshing(true);
     console.log('=== ADMIN DATA RELOAD ===');
     try {
+      // ALWAYS get localStorage first to preserve subscription/company data
+      const localUsers = JSON.parse(localStorage.getItem('varexo_users') || '[]');
+      console.log('localStorage users BEFORE API call:', localUsers.map((u: any) => ({ 
+        email: u.email, 
+        subscription: u.subscription,
+        company: u.company 
+      })));
+      
       const [c, p, i, s] = await Promise.all([
         projectService.getCustomersAsync(),
         projectService.getAllProjectsAsync(),
         projectService.getAllInvoicesAsync(),
         projectService.getStatsAsync()
       ]);
-      console.log('Raw customers from API:', c);
-      console.log('Raw stats from API:', s);
+      console.log('Customers after merge:', c.map((customer: Customer) => ({ 
+        email: customer.email, 
+        subscription: customer.subscription,
+        company: customer.company 
+      })));
       
       // EMERGENCY FIX: If API returns empty but stats say there are customers, use localStorage
       if ((!c || c.length === 0) && s && s.totalCustomers > 0) {
@@ -567,9 +578,15 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleUpdateCustomerSubscription = async (email: string) => {
-    setIsUpdatingCustomerSubscription(email);
     try {
-      // Update user in localStorage
+      // STEP 1: Update in database via API
+      await customersAPI.updateAdmin(email, {
+        subscription: subscriptionForm.subscription || undefined,
+        hasSocialMedia: !!subscriptionForm.socialMediaPackage,
+        socialMediaPackage: subscriptionForm.socialMediaPackage || undefined
+      });
+      
+      // STEP 2: Update localStorage for persistence
       const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
       const userIndex = users.findIndex((u: any) => u.email === email);
       if (userIndex !== -1) {
@@ -582,7 +599,7 @@ const AdminDashboard: React.FC = () => {
         localStorage.setItem('varexo_users', JSON.stringify(users));
       }
       
-      // Update the local customers state directly instead of calling loadData
+      // STEP 3: Update local state directly (don't call loadData to avoid API overwriting)
       setCustomers(prevCustomers => 
         prevCustomers.map(c => 
           c.email === email 
@@ -614,7 +631,12 @@ const AdminDashboard: React.FC = () => {
 
   const handleUpdateCustomerCompany = async (email: string) => {
     try {
-      // Update user in localStorage
+      // STEP 1: Update in database via API
+      await customersAPI.updateAdmin(email, {
+        company: companyForm.company
+      });
+      
+      // STEP 2: Update localStorage for persistence
       const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
       const userIndex = users.findIndex((u: any) => u.email === email);
       if (userIndex !== -1) {
@@ -625,7 +647,7 @@ const AdminDashboard: React.FC = () => {
         localStorage.setItem('varexo_users', JSON.stringify(users));
       }
       
-      // Update the local customers state directly instead of calling loadData
+      // STEP 3: Update local state directly
       setCustomers(prevCustomers => 
         prevCustomers.map(c => 
           c.email === email 

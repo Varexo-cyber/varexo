@@ -100,6 +100,16 @@ export const invoicesAPI = {
 export const customersAPI = {
   getAll: () => apiCall('/customers'),
   delete: (email: string) => apiCall(`/customers/${email}`, { method: 'DELETE' }),
+  // Admin-only: update customer subscription and company info
+  updateAdmin: (email: string, updates: { 
+    subscription?: string; 
+    company?: string; 
+    socialMediaPackage?: string; 
+    hasSocialMedia?: boolean;
+  }) => apiCall('/customers/admin-update', { 
+    method: 'PUT', 
+    body: JSON.stringify({ email, ...updates }) 
+  }),
 };
 
 // Stats API
