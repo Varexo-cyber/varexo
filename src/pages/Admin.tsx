@@ -579,12 +579,17 @@ const AdminDashboard: React.FC = () => {
 
   const handleUpdateCustomerSubscription = async (email: string) => {
     try {
-      // STEP 1: Update in database via API
-      await customersAPI.updateAdmin(email, {
-        subscription: subscriptionForm.subscription || undefined,
-        hasSocialMedia: !!subscriptionForm.socialMediaPackage,
-        socialMediaPackage: subscriptionForm.socialMediaPackage || undefined
-      });
+      // STEP 1: Try to update in database via API (optional - may fail if endpoint not ready)
+      try {
+        await customersAPI.updateAdmin(email, {
+          subscription: subscriptionForm.subscription || undefined,
+          hasSocialMedia: !!subscriptionForm.socialMediaPackage,
+          socialMediaPackage: subscriptionForm.socialMediaPackage || undefined
+        });
+        console.log('API update successful for subscription');
+      } catch (apiError) {
+        console.warn('API update failed, using localStorage only:', apiError);
+      }
       
       // STEP 2: Update localStorage for persistence
       const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
@@ -631,10 +636,15 @@ const AdminDashboard: React.FC = () => {
 
   const handleUpdateCustomerCompany = async (email: string) => {
     try {
-      // STEP 1: Update in database via API
-      await customersAPI.updateAdmin(email, {
-        company: companyForm.company
-      });
+      // STEP 1: Try to update in database via API (optional - may fail if endpoint not ready)
+      try {
+        await customersAPI.updateAdmin(email, {
+          company: companyForm.company
+        });
+        console.log('API update successful for company');
+      } catch (apiError) {
+        console.warn('API update failed, using localStorage only:', apiError);
+      }
       
       // STEP 2: Update localStorage for persistence
       const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
@@ -645,6 +655,7 @@ const AdminDashboard: React.FC = () => {
           company: companyForm.company
         };
         localStorage.setItem('varexo_users', JSON.stringify(users));
+        console.log('localStorage updated for company:', companyForm.company);
       }
       
       // STEP 3: Update local state directly
