@@ -136,7 +136,7 @@ exports.handler = async (event) => {
           UPDATE projects SET
             title = COALESCE(${title || null}, title),
             description = COALESCE(${description || null}, description),
-            status = COALESCE(${status || null}, status),
+            status = ${status || 'active'},
             deadline = COALESCE(${deadline || null}, deadline),
             budget = COALESCE(${budget || null}, budget),
             progress = COALESCE(${typeof progress === 'number' ? progress : null}, progress, 0),
@@ -146,13 +146,17 @@ exports.handler = async (event) => {
           RETURNING *
         `;
       } catch (colErr) {
+        console.error('Error with COALESCE columns, trying fallback:', colErr);
         result = await sql`
-          UPDATE projects SET
-            title = COALESCE(${title || null}, title),
-            description = COALESCE(${description || null}, description),
-            status = COALESCE(${status || null}, status),
-            deadline = COALESCE(${deadline || null}, deadline),
-            budget = COALESCE(${budget || null}, budget),
+          UPDATE projects 
+          SET 
+            title = ${title},
+            description = ${description},
+            status = ${status || 'active'},
+            deadline = ${deadline || null},
+            budget = ${budget || null},
+            progress = ${progress || 0},
+            website_url = ${websiteUrl || null},
             updated_at = NOW()
           WHERE id = ${parseInt(id)}
           RETURNING *
