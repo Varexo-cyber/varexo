@@ -947,14 +947,34 @@ const CustomerDashboard: React.FC = () => {
 
   const loadCustomerData = async (email: string) => {
     try {
-      const [p, i, r] = await Promise.all([
+      const [p, i, r, customerData] = await Promise.all([
         projectService.getProjectsForCustomerAsync(email),
         projectService.getInvoicesForCustomerAsync(email),
-        fetch(`/.netlify/functions/recurring-invoices?email=${encodeURIComponent(email)}`).then(res => res.json()).catch(() => [])
+        fetch(`/.netlify/functions/recurring-invoices?email=${encodeURIComponent(email)}`).then(res => res.json()).catch(() => []),
+        fetch(`/.netlify/functions/customers?email=${encodeURIComponent(email)}`).then(res => res.json()).catch(() => null)
       ]);
       setProjects(p);
       setInvoices(i);
       setRecurringInvoices(Array.isArray(r) ? r : []);
+      
+      // Update user subscription data from API
+      if (customerData && (customerData.subscription || customerData.has_social_media !== undefined)) {
+        setUser(prev => prev ? {
+          ...prev,
+          subscription: customerData.subscription,
+          hasSocialMedia: customerData.has_social_media,
+          socialMediaPackage: customerData.social_media_package
+        } : prev);
+        
+        // Also update localStorage
+        const users = JSON.parse(localStorage.getItem('varexo_users') || '[]');
+        const updatedUsers = users.map((u: any) => 
+          u.email?.toLowerCase() === email.toLowerCase() 
+            ? { ...u, subscription: customerData.subscription, hasSocialMedia: customerData.has_social_media, socialMediaPackage: customerData.social_media_package }
+            : u
+        );
+        localStorage.setItem('varexo_users', JSON.stringify(updatedUsers));
+      }
     } catch {
       setProjects(projectService.getProjectsForCustomer(email));
       setInvoices(projectService.getInvoicesForCustomer(email));

@@ -163,7 +163,7 @@ const PromoBanner: React.FC = () => {
             {language === 'nl' ? 'ACTIE' : 'PROMO'}
           </span>
           <span className="text-gray-300">
-            {language === 'nl' ? '€100 korting' : '€100 off'}
+            {language === 'nl' ? '€250 korting' : '€250 off'}
           </span>
           <span className="animate-pulse text-primary-400">✦</span>
         </div>

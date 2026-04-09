@@ -131,13 +131,13 @@ const Header: React.FC = () => {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-dark-700/50 py-4 bg-dark-950">
             <div className="flex flex-col space-y-3">
-              <Link to="/" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-              <Link to="/over-ons" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Over ons</Link>
-              <Link to="/prijzen" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Prijzen</Link>
-              <Link to="/diensten" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Diensten</Link>
-              <Link to="/portfolio" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Portfolio</Link>
-              <Link to="/werkwijze" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Werkwijze</Link>
-              <Link to="/contact" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
+              <Link to="/" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>{t('nav.home')}</Link>
+              <Link to="/over-ons" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>{t('nav.about')}</Link>
+              <Link to="/prijzen" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>{t('nav.pricing')}</Link>
+              <Link to="/diensten" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>{t('nav.services')}</Link>
+              <Link to="/portfolio" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>{t('nav.portfolio')}</Link>
+              <Link to="/werkwijze" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>{t('nav.process')}</Link>
+              <Link to="/contact" className="text-gray-300 hover:text-primary-400 transition text-sm font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>{t('nav.contact')}</Link>
               
               <div className="border-t border-dark-700/50 pt-3 mt-2">
                 {user ? (
