@@ -116,40 +116,16 @@ class ProjectService {
   async getProjectsForCustomerAsync(customerEmail: string): Promise<Project[]> {
     try {
       const apiProjects: Project[] = await projectsAPI.getForCustomer(customerEmail);
-      const localProjects: Project[] = this.getLocalProjects().filter((p: Project) => p.customerEmail === customerEmail);
       
-      // Merge: prioritize localStorage for status updates (newer data)
-      const apiProjectMap = new Map<string, Project>(apiProjects.map((p: Project) => [p.id, p]));
-      const mergedProjects: Project[] = [...localProjects.map((localP: Project) => {
-        const apiP = apiProjectMap.get(localP.id);
-        if (apiP) {
-          // If local has newer updatedAt, use local version
-          const localDate = new Date(localP.updatedAt || 0).getTime();
-          const apiDate = new Date(apiP.updatedAt || 0).getTime();
-          if (localDate > apiDate) {
-            console.log('Using local version for project:', localP.id, 'status:', localP.status);
-            return localP;
-          }
-          return apiP;
-        }
-        return localP;
-      })];
-      
-      // Add any API projects not in local
-      apiProjects.forEach((apiP: Project) => {
-        if (!mergedProjects.some((p: Project) => p.id === apiP.id)) {
-          mergedProjects.push(apiP);
-        }
-      });
-      
-      // Save merged to localStorage
+      // FIX: API is source of truth - verwijderde projecten in admin zijn echt weg
+      // Sync alleen API projecten naar localStorage
       const allLocal: Project[] = this.getLocalProjects().filter((p: Project) => p.customerEmail !== customerEmail);
-      this.saveLocalProjects([...allLocal, ...mergedProjects]);
+      this.saveLocalProjects([...allLocal, ...apiProjects]);
       
-      console.log('Merged projects for customer:', customerEmail, mergedProjects.map((p: Project) => ({ id: p.id, status: p.status })));
-      return mergedProjects;
+      console.log('Synced projects for customer:', customerEmail, apiProjects.map((p: Project) => ({ id: p.id, status: p.status })));
+      return apiProjects;
     } catch (error) {
-      console.warn('API failed, using localStorage:', error);
+      console.warn('API failed, using localStorage fallback:', error);
       return this.getProjectsForCustomer(customerEmail);
     }
   }
