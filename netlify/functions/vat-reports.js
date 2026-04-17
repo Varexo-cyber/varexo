@@ -71,54 +71,57 @@ exports.handler = async (event) => {
           return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid quarter' }) };
         }
 
+        // Helper to convert DB dates to YYYY-MM-DD string
+        const toDateStr = (val) => {
+          if (!val) return null;
+          if (val instanceof Date) return val.toISOString().substring(0, 10);
+          if (typeof val === 'string') return val.substring(0, 10);
+          return null;
+        };
+        const inRange = (val, start, end) => {
+          const d = toDateStr(val);
+          return d && d >= start && d <= end;
+        };
+
         // Get active user emails (exclude deleted/test users only)
         const activeUsers = await sql`SELECT email FROM users WHERE deleted_at IS NULL`;
-        const activeEmails = activeUsers.map(u => u.email?.toLowerCase());
+        const activeEmailSet = new Set(activeUsers.map(u => u.email?.toLowerCase()));
 
-        // Calculate income from invoices (only active customers, non-draft, in this quarter)
-        const incomeResult = await sql`
-          SELECT 
-            COALESCE(SUM(i.amount), 0) as total_incl_vat
-          FROM invoices i
-          WHERE i.status != 'draft'
-            AND LOWER(i.customer_email) = ANY(${activeEmails})
-            AND (
-              (i.invoice_date >= ${range.start} AND i.invoice_date <= ${range.end})
-              OR (i.invoice_date IS NULL AND i.created_at >= ${range.start} AND i.created_at <= ${range.end}::timestamp + interval '1 day')
-            )
-        `;
+        // Fetch ALL invoices and filter in JS (more reliable than SQL ANY with neon)
+        const allInvoices = await sql`SELECT * FROM invoices WHERE status != 'draft'`;
+        const quarterInvoices = allInvoices.filter(i => {
+          // Must be from active user
+          if (!activeEmailSet.has(i.customer_email?.toLowerCase())) return false;
+          // Must be in date range
+          return inRange(i.invoice_date || i.created_at, range.start, range.end);
+        });
+        const invoiceTotal = quarterInvoices.reduce((sum, i) => sum + parseFloat(i.amount || 0), 0);
+        console.log(`VAT calc ${quarter} ${year}: ${quarterInvoices.length} invoices, total: ${invoiceTotal}, range: ${range.start} - ${range.end}`);
+        console.log('Invoice details:', quarterInvoices.map(i => ({ id: i.id, email: i.customer_email, amount: i.amount, date: toDateStr(i.invoice_date || i.created_at) })));
 
-        // Also include business surcharges/income
+        // Business surcharges in range
         let surchargeIncome = 0;
         try {
-          const surchargeResult = await sql`
-            SELECT COALESCE(SUM(amount), 0) as total
-            FROM surcharges 
-            WHERE type = 'business'
-              AND surcharge_date >= ${range.start} 
-              AND surcharge_date <= ${range.end}
-          `;
-          surchargeIncome = parseFloat(surchargeResult[0]?.total || 0);
+          const allSurcharges = await sql`SELECT * FROM surcharges WHERE type = 'business'`;
+          const qSurcharges = allSurcharges.filter(s => inRange(s.surcharge_date, range.start, range.end));
+          surchargeIncome = qSurcharges.reduce((sum, s) => sum + parseFloat(s.amount || 0), 0);
         } catch (e) { /* surcharges table may not exist */ }
 
-        // Calculate expenses from expenses table (business only in this quarter)
-        const expenseResult = await sql`
-          SELECT 
-            COALESCE(SUM(amount), 0) as total_amount
-          FROM expenses 
-          WHERE type = 'business'
-            AND expense_date >= ${range.start} 
-            AND expense_date <= ${range.end}
-        `;
+        // Business expenses in range
+        let expenseTotal = 0;
+        try {
+          const allExpenses = await sql`SELECT * FROM expenses WHERE type = 'business'`;
+          const qExpenses = allExpenses.filter(e => inRange(e.expense_date, range.start, range.end));
+          expenseTotal = qExpenses.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);
+          console.log(`Expenses: ${qExpenses.length} in range, total: ${expenseTotal}`);
+        } catch (e) { console.log('Expenses error:', e.message); }
 
-        const totalIncomeInclVat = parseFloat(incomeResult[0]?.total_incl_vat || 0) + surchargeIncome;
+        const totalIncomeInclVat = invoiceTotal + surchargeIncome;
         const totalIncomeExclVat = totalIncomeInclVat / 1.21;
         const totalIncomeVat = totalIncomeInclVat - totalIncomeExclVat;
 
-        const totalExpenseAmount = parseFloat(expenseResult[0]?.total_amount || 0);
-        // Expenses: assume incl VAT 21%
-        const totalExpenseExclVat = totalExpenseAmount / 1.21;
-        const totalExpenseVat = totalExpenseAmount - totalExpenseExclVat;
+        const totalExpenseExclVat = expenseTotal / 1.21;
+        const totalExpenseVat = expenseTotal - totalExpenseExclVat;
 
         const vatToPayOrRefund = totalIncomeVat - totalExpenseVat;
         const profit = totalIncomeExclVat - totalExpenseExclVat;
@@ -131,7 +134,7 @@ exports.handler = async (event) => {
           totalIncomeInclVat: Math.round(totalIncomeInclVat * 100) / 100,
           totalExpenseExclVat: Math.round(totalExpenseExclVat * 100) / 100,
           totalExpenseVat: Math.round(totalExpenseVat * 100) / 100,
-          totalExpenseInclVat: Math.round(totalExpenseAmount * 100) / 100,
+          totalExpenseInclVat: Math.round(expenseTotal * 100) / 100,
           vatToPayOrRefund: Math.round(vatToPayOrRefund * 100) / 100,
           profit: Math.round(profit * 100) / 100,
           deadline: deadlines[quarter]

@@ -72,17 +72,27 @@ exports.handler = async (event) => {
       
       // Get all expenses
       let allExpenses = [];
-      try { allExpenses = await sql`SELECT * FROM expenses`; } catch (e) { /* table may not exist */ }
+      try { 
+        const expResult = await sql`SELECT * FROM expenses`;
+        allExpenses = Array.isArray(expResult) ? expResult : [];
+        console.log('Expenses loaded:', allExpenses.length, 'business:', allExpenses.filter(e => e.type === 'business').length);
+      } catch (e) { 
+        console.log('Expenses table error:', e.message);
+      }
       
       // Get all surcharges
       let allSurcharges = [];
-      try { allSurcharges = await sql`SELECT * FROM surcharges`; } catch (e) { /* table may not exist */ }
+      try { 
+        const surResult = await sql`SELECT * FROM surcharges`;
+        allSurcharges = Array.isArray(surResult) ? surResult : [];
+      } catch (e) { /* table may not exist */ }
 
       // Get payment tracking - only from active customers
       let allTracking = [];
       try { 
         const tracking = await sql`SELECT * FROM invoice_payment_tracking WHERE status = 'paid'`;
-        allTracking = tracking.filter(t => activeEmails.has(t.customer_email?.toLowerCase()));
+        const trackArr = Array.isArray(tracking) ? tracking : [];
+        allTracking = trackArr.filter(t => activeEmails.has(t.customer_email?.toLowerCase()));
       } catch (e) { /* table may not exist */ }
 
       // Filter by period
@@ -116,6 +126,8 @@ exports.handler = async (event) => {
       // Pending/overdue only from active customers
       const pendingCount = realInvoices.filter(i => i.status === 'sent').length;
       const overdueCount = realInvoices.filter(i => i.status === 'overdue').length;
+
+      console.log('Stats result:', { period, invoiceRevenue, trackingRevenue, surchargeRevenue, totalRevenue, totalExpenses, expensesCount: filteredExpenses.length });
 
       return { statusCode: 200, headers, body: JSON.stringify({
         totalCustomers: customerCount,
