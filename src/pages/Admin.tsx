@@ -98,6 +98,7 @@ const AdminDashboard: React.FC = () => {
   const [isDeletingInvoice, setIsDeletingInvoice] = useState<string | null>(null);
   const [isAddingLog, setIsAddingLog] = useState(false);
   const [isLoadingLogs, setIsLoadingLogs] = useState(false);
+  const [statsPeriod, setStatsPeriod] = useState<'total' | 'monthly' | 'quarterly' | 'yearly'>('total');
   const [isCreatingExpense, setIsCreatingExpense] = useState(false);
   const [isUpdatingExpense, setIsUpdatingExpense] = useState(false);
   const [isDeletingExpense, setIsDeletingExpense] = useState<string | null>(null);
@@ -211,6 +212,15 @@ const AdminDashboard: React.FC = () => {
     }
   }, [showCustomerDropdown, showProjectDropdown, showInvoiceDropdown, showMessageDropdown, showRecurringDropdown]);
 
+  const loadStats = async (period: string) => {
+    try {
+      const s = await projectService.getStatsAsync(period);
+      setStats(s);
+    } catch (err) {
+      console.warn('Stats reload failed:', err);
+    }
+  };
+
   const loadData = async () => {
     setIsRefreshing(true);
     console.log('=== ADMIN DATA RELOAD ===');
@@ -227,7 +237,7 @@ const AdminDashboard: React.FC = () => {
         projectService.getCustomersAsync(),
         projectService.getAllProjectsAsync(),
         projectService.getAllInvoicesAsync(),
-        projectService.getStatsAsync()
+        projectService.getStatsAsync(statsPeriod)
       ]);
       console.log('Customers after merge:', c.map((customer: Customer) => ({ 
         email: customer.email, 
@@ -1883,30 +1893,72 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-            <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-              <p className="text-gray-400 text-sm">{t('admin.totalCustomers')}</p>
-              <p className="text-2xl font-bold text-white">{stats.totalCustomers || 0}</p>
+          <div className="mb-8">
+            {/* Period selector */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                {(['total', 'monthly', 'quarterly', 'yearly'] as const).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => { setStatsPeriod(p); loadStats(p); }}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                      statsPeriod === p
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-dark-800 text-gray-400 hover:text-white hover:bg-dark-700 border border-dark-700'
+                    }`}
+                  >
+                    {p === 'total' ? (language === 'nl' ? 'Totaal' : 'Total') :
+                     p === 'monthly' ? (language === 'nl' ? 'Deze maand' : 'This month') :
+                     p === 'quarterly' ? (language === 'nl' ? 'Dit kwartaal' : 'This quarter') :
+                     (language === 'nl' ? 'Dit jaar' : 'This year')}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-              <p className="text-gray-400 text-sm">{t('admin.totalProjects')}</p>
-              <p className="text-2xl font-bold text-white">{stats.totalProjects || 0}</p>
+            {/* Stats cards row 1 - counts */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
+              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                <p className="text-gray-400 text-sm">{t('admin.totalCustomers')}</p>
+                <p className="text-2xl font-bold text-white">{stats.totalCustomers || 0}</p>
+              </div>
+              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                <p className="text-gray-400 text-sm">{t('admin.totalProjects')}</p>
+                <p className="text-2xl font-bold text-white">{stats.totalProjects || 0}</p>
+              </div>
+              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                <p className="text-gray-400 text-sm">{t('admin.activeProjects')}</p>
+                <p className="text-2xl font-bold text-primary-400">{stats.activeProjects || 0}</p>
+              </div>
+              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                <p className="text-gray-400 text-sm">{t('admin.pendingInvoices')}</p>
+                <p className="text-2xl font-bold text-yellow-400">{stats.pendingInvoices || 0}</p>
+              </div>
+              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                <p className="text-gray-400 text-sm">{t('admin.overdueInvoices')}</p>
+                <p className="text-2xl font-bold text-red-400">{stats.overdueInvoices || 0}</p>
+              </div>
+              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                <p className="text-gray-400 text-sm">{language === 'nl' ? 'BTW Saldo' : 'VAT Balance'}</p>
+                <p className={`text-2xl font-bold ${(stats.vatBalance || 0) >= 0 ? 'text-yellow-400' : 'text-blue-400'}`}>
+                  €{Math.abs(stats.vatBalance || 0).toFixed(2)}
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">{(stats.vatBalance || 0) >= 0 ? (language === 'nl' ? 'Te betalen' : 'To pay') : (language === 'nl' ? 'Terug' : 'Refund')}</p>
+              </div>
             </div>
-            <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-              <p className="text-gray-400 text-sm">{t('admin.activeProjects')}</p>
-              <p className="text-2xl font-bold text-primary-400">{stats.activeProjects || 0}</p>
-            </div>
-            <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-              <p className="text-gray-400 text-sm">{t('admin.totalRevenue')}</p>
-              <p className="text-2xl font-bold text-green-400">€{(stats.totalRevenue || 0).toFixed(2)}</p>
-            </div>
-            <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-              <p className="text-gray-400 text-sm">{t('admin.pendingInvoices')}</p>
-              <p className="text-2xl font-bold text-yellow-400">{stats.pendingInvoices || 0}</p>
-            </div>
-            <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-              <p className="text-gray-400 text-sm">{t('admin.overdueInvoices')}</p>
-              <p className="text-2xl font-bold text-red-400">{stats.overdueInvoices || 0}</p>
+            {/* Stats cards row 2 - financials */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                <p className="text-gray-400 text-sm">{language === 'nl' ? 'Omzet' : 'Revenue'} <span className="text-xs text-gray-500">({language === 'nl' ? 'incl. BTW' : 'incl. VAT'})</span></p>
+                <p className="text-2xl font-bold text-green-400">€{(stats.totalRevenue || 0).toFixed(2)}</p>
+              </div>
+              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                <p className="text-gray-400 text-sm">{language === 'nl' ? 'Kosten' : 'Expenses'} <span className="text-xs text-gray-500">({language === 'nl' ? 'incl. BTW' : 'incl. VAT'})</span></p>
+                <p className="text-2xl font-bold text-red-400">€{(stats.totalExpenses || 0).toFixed(2)}</p>
+              </div>
+              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
+                <p className="text-gray-400 text-sm">{language === 'nl' ? 'Winst' : 'Profit'} <span className="text-xs text-gray-500">({language === 'nl' ? 'excl. BTW' : 'excl. VAT'})</span></p>
+                <p className={`text-2xl font-bold ${(stats.profit || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>€{(stats.profit || 0).toFixed(2)}</p>
+              </div>
             </div>
           </div>
 

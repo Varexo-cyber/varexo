@@ -95,7 +95,7 @@ const AdminBoekhouding: React.FC<AdminBoekhoudingProps> = ({ invoices, expenses 
 
   useEffect(() => {
     loadReports();
-  }, [selectedYear]);
+  }, [selectedYear, invoices.length, expenses.length]);
 
   const generateReport = async (quarter: string) => {
     setGenerating(quarter);
@@ -440,7 +440,7 @@ const AdminBoekhouding: React.FC<AdminBoekhoudingProps> = ({ invoices, expenses 
               <div key={q} className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4 flex items-center justify-between">
                 <div>
                   <p className="text-yellow-300 font-semibold">⚠️ {isNL ? 'BTW aangifte' : 'VAT filing'} {q} {selectedYear}</p>
-                  <p className="text-yellow-400/80 text-sm">{warning} — {isNL ? 'Deadline:' : 'Deadline:'} {new Date(quarterDeadlines[q]).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  <p className="text-yellow-200 text-sm">{warning} — {isNL ? 'Deadline:' : 'Deadline:'} {new Date(quarterDeadlines[q]).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                 </div>
                 <button onClick={() => { setActiveSection('belasting'); }} className="bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-yellow-700">
                   {isNL ? 'Bekijk rapport' : 'View report'}
@@ -570,7 +570,7 @@ const AdminBoekhouding: React.FC<AdminBoekhoudingProps> = ({ invoices, expenses 
         <div className="space-y-6">
           <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-4">
             <p className="text-blue-300 font-semibold">ℹ️ {isNL ? 'Hulpmiddel voor BTW aangifte' : 'Tax filing helper'}</p>
-            <p className="text-blue-400/80 text-sm mt-1">
+            <p className="text-blue-200 text-sm mt-1">
               {isNL 
                 ? 'Dit rapport helpt je bij het invullen van je BTW aangifte bij de Belastingdienst. Kopieer de nummers naar het aangifte formulier. Dit is GEEN automatische indiening.'
                 : 'This report helps you fill in your VAT return at the tax office. Copy the numbers to the filing form. This is NOT an automatic submission.'}

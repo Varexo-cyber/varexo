@@ -405,9 +405,9 @@ class ProjectService {
   }
 
   // Statistics
-  async getStatsAsync() {
+  async getStatsAsync(period?: string) {
     try {
-      return await statsAPI.get();
+      return await statsAPI.get(period);
     } catch {
       return this.getStats();
     }

@@ -114,7 +114,7 @@ export const customersAPI = {
 
 // Stats API
 export const statsAPI = {
-  get: () => apiCall('/stats'),
+  get: (period?: string) => apiCall(`/stats${period ? `?period=${period}` : ''}`),
 };
 
 // Project Logs API

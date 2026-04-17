@@ -52,6 +52,19 @@ exports.handler = async (event) => {
           )
       `;
 
+      // Include business surcharges/income
+      let surchargeIncome = 0;
+      try {
+        const surchargeResult = await sql`
+          SELECT COALESCE(SUM(amount), 0) as total
+          FROM surcharges 
+          WHERE type = 'business'
+            AND surcharge_date >= ${config.start} 
+            AND surcharge_date <= ${config.end}
+        `;
+        surchargeIncome = parseFloat(surchargeResult[0]?.total || 0);
+      } catch (e) { /* surcharges table may not exist */ }
+
       // Calculate expenses
       const expenseResult = await sql`
         SELECT COALESCE(SUM(amount), 0) as total_amount
@@ -61,7 +74,7 @@ exports.handler = async (event) => {
           AND expense_date <= ${config.end}
       `;
 
-      const totalIncomeInclVat = parseFloat(incomeResult[0]?.total_incl_vat || 0);
+      const totalIncomeInclVat = parseFloat(incomeResult[0]?.total_incl_vat || 0) + surchargeIncome;
       const totalIncomeExclVat = totalIncomeInclVat / 1.21;
       const totalIncomeVat = totalIncomeInclVat - totalIncomeExclVat;
       const totalExpenseAmount = parseFloat(expenseResult[0]?.total_amount || 0);
