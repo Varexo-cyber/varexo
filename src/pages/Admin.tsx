@@ -6,13 +6,14 @@ import { projectService, Customer, Project, Invoice, ProjectLog } from '../servi
 import { invoicesAPI, paymentTrackingAPI, customersAPI } from '../services/api';
 import { getContactMessages, deleteContactMessage, ContactMessage } from '../services/contactService';
 import PageTransition from '../components/PageTransition';
+import AdminBoekhouding from '../components/AdminBoekhouding';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const AdminDashboard: React.FC = () => {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'customers' | 'projects' | 'invoices' | 'recurring' | 'messages' | 'finance'>('customers');
+  const [activeTab, setActiveTab] = useState<'customers' | 'projects' | 'invoices' | 'recurring' | 'messages' | 'finance' | 'boekhouding'>('customers');
   
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -1971,6 +1972,16 @@ const AdminDashboard: React.FC = () => {
                 }`}
               >
                 {t('admin.finance')}
+              </button>
+              <button
+                onClick={() => setActiveTab('boekhouding')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'boekhouding'
+                    ? 'border-primary-500 text-primary-400'
+                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                {language === 'nl' ? 'Boekhouding' : 'Accounting'}
               </button>
             </nav>
           </div>
@@ -4831,6 +4842,11 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
           )}
+          {/* Boekhouding Tab */}
+          {activeTab === 'boekhouding' && (
+            <AdminBoekhouding invoices={invoices} expenses={expenses} />
+          )}
+
           {/* Subscription Edit Modal */}
           {editingCustomerSubscription && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

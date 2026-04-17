@@ -19,5 +19,8 @@
 [functions."process-recurring-invoices"]
   schedule = "0 8 * * *"
 
+[functions."generate-vat-reports"]
+  schedule = "30 7 * * *"
+
 [context.production]
   command = "npm run build"
