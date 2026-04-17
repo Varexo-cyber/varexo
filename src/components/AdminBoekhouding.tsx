@@ -61,37 +61,74 @@ const AdminBoekhouding: React.FC<AdminBoekhoudingProps> = ({ invoices, expenses 
     'Q4': `${selectedYear + 1}-01-31`
   };
 
+  // Helper: get quarter from date string
+  const getQuarterFromDate = (dateStr: string | null | undefined): string | null => {
+    if (!dateStr) return null;
+    const d = typeof dateStr === 'string' ? dateStr.substring(0, 10) : '';
+    const month = parseInt(d.split('-')[1]);
+    if (!month) return null;
+    return `Q${Math.ceil(month / 3)}`;
+  };
+
+  const getYearFromDate = (dateStr: string | null | undefined): number | null => {
+    if (!dateStr) return null;
+    const d = typeof dateStr === 'string' ? dateStr.substring(0, 10) : '';
+    const year = parseInt(d.split('-')[0]);
+    return year || null;
+  };
+
   const loadReports = useCallback(async () => {
     setLoading(true);
     try {
-      // Load saved reports
+      // Load saved reports from DB
       const res = await fetch(`/.netlify/functions/vat-reports?year=${selectedYear}`);
       const reports = await res.json();
       setVatReports(Array.isArray(reports) ? reports : []);
-
-      // Calculate live data for all 4 quarters
-      const calcs: QuarterCalc[] = [];
-      for (const q of ['Q1', 'Q2', 'Q3', 'Q4']) {
-        try {
-          const calcRes = await fetch(`/.netlify/functions/vat-reports/calculate?quarter=${q}&year=${selectedYear}`);
-          const calc = await calcRes.json();
-          calcs.push(calc);
-        } catch {
-          calcs.push({
-            quarter: q, year: selectedYear,
-            totalIncomeExclVat: 0, totalIncomeVat: 0, totalIncomeInclVat: 0,
-            totalExpenseExclVat: 0, totalExpenseVat: 0, totalExpenseInclVat: 0,
-            vatToPayOrRefund: 0, profit: 0, deadline: quarterDeadlines[q]
-          });
-        }
-      }
-      setQuarterCalcs(calcs);
     } catch (err) {
-      console.error('Error loading VAT reports:', err);
-    } finally {
-      setLoading(false);
+      console.error('Error loading saved VAT reports:', err);
     }
-  }, [selectedYear, quarterDeadlines]);
+
+    // Calculate directly from props (same data as Facturen/Financiën tabs)
+    const calcs: QuarterCalc[] = [];
+    for (const q of ['Q1', 'Q2', 'Q3', 'Q4']) {
+      // Filter invoices for this quarter + year (non-draft)
+      const qInvoices = invoices.filter(i => {
+        if (i.status === 'draft') return false;
+        const date = i.invoiceDate || i.invoice_date || i.createdAt || i.created_at;
+        return getQuarterFromDate(date) === q && getYearFromDate(date) === selectedYear;
+      });
+      const incomeInclVat = qInvoices.reduce((sum: number, i: any) => sum + parseFloat(i.amount || 0), 0);
+
+      // Filter business expenses for this quarter + year
+      const qExpenses = expenses.filter((e: any) => {
+        if (e.type !== 'business') return false;
+        const date = e.expenseDate || e.expense_date || e.createdAt || e.created_at;
+        return getQuarterFromDate(date) === q && getYearFromDate(date) === selectedYear;
+      });
+      const expenseInclVat = qExpenses.reduce((sum: number, e: any) => sum + parseFloat(e.amount || 0), 0);
+
+      const incomeExclVat = incomeInclVat / 1.21;
+      const incomeVat = incomeInclVat - incomeExclVat;
+      const expenseExclVat = expenseInclVat / 1.21;
+      const expenseVat = expenseInclVat - expenseExclVat;
+
+      calcs.push({
+        quarter: q,
+        year: selectedYear,
+        totalIncomeExclVat: Math.round(incomeExclVat * 100) / 100,
+        totalIncomeVat: Math.round(incomeVat * 100) / 100,
+        totalIncomeInclVat: Math.round(incomeInclVat * 100) / 100,
+        totalExpenseExclVat: Math.round(expenseExclVat * 100) / 100,
+        totalExpenseVat: Math.round(expenseVat * 100) / 100,
+        totalExpenseInclVat: Math.round(expenseInclVat * 100) / 100,
+        vatToPayOrRefund: Math.round((incomeVat - expenseVat) * 100) / 100,
+        profit: Math.round((incomeExclVat - expenseExclVat) * 100) / 100,
+        deadline: quarterDeadlines[q]
+      });
+    }
+    setQuarterCalcs(calcs);
+    setLoading(false);
+  }, [selectedYear, invoices, expenses, quarterDeadlines]);
 
   useEffect(() => {
     loadReports();
@@ -100,9 +137,9 @@ const AdminBoekhouding: React.FC<AdminBoekhoudingProps> = ({ invoices, expenses 
   const generateReport = async (quarter: string) => {
     setGenerating(quarter);
     try {
-      // First calculate
-      const calcRes = await fetch(`/.netlify/functions/vat-reports/calculate?quarter=${quarter}&year=${selectedYear}`);
-      const calc = await calcRes.json();
+      // Use locally calculated data (same as what's displayed)
+      const calc = quarterCalcs.find(q => q.quarter === quarter);
+      if (!calc) throw new Error('Quarter not found');
 
       // Save to DB
       await fetch('/.netlify/functions/vat-reports', {
