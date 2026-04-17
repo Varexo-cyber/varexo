@@ -71,15 +71,20 @@ exports.handler = async (event) => {
           return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid quarter' }) };
         }
 
-        // Calculate income from invoices (all non-draft invoices in this quarter)
+        // Get active customer emails (exclude deleted users)
+        const activeUsers = await sql`SELECT email FROM users WHERE deleted_at IS NULL AND is_admin = false`;
+        const activeEmails = activeUsers.map(u => u.email?.toLowerCase());
+
+        // Calculate income from invoices (only active customers, non-draft, in this quarter)
         const incomeResult = await sql`
           SELECT 
-            COALESCE(SUM(amount), 0) as total_incl_vat
-          FROM invoices 
-          WHERE status != 'draft'
+            COALESCE(SUM(i.amount), 0) as total_incl_vat
+          FROM invoices i
+          WHERE i.status != 'draft'
+            AND LOWER(i.customer_email) = ANY(${activeEmails})
             AND (
-              (invoice_date >= ${range.start} AND invoice_date <= ${range.end})
-              OR (invoice_date IS NULL AND created_at >= ${range.start} AND created_at <= ${range.end}::timestamp + interval '1 day')
+              (i.invoice_date >= ${range.start} AND i.invoice_date <= ${range.end})
+              OR (i.invoice_date IS NULL AND i.created_at >= ${range.start} AND i.created_at <= ${range.end}::timestamp + interval '1 day')
             )
         `;
 

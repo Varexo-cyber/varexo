@@ -29,9 +29,16 @@ function getDateRange(period) {
   return { start: `${year}-01-01`, end: `${year}-12-31` };
 }
 
-function isInRange(dateStr, start, end) {
-  if (!dateStr) return false;
-  const d = dateStr.substring(0, 10);
+function toDateStr(val) {
+  if (!val) return null;
+  if (val instanceof Date) return val.toISOString().substring(0, 10);
+  if (typeof val === 'string') return val.substring(0, 10);
+  return null;
+}
+
+function isInRange(val, start, end) {
+  const d = toDateStr(val);
+  if (!d) return false;
   return d >= start && d <= end;
 }
 
@@ -48,13 +55,19 @@ exports.handler = async (event) => {
   try {
     if (event.httpMethod === 'GET') {
       const allUsers = await sql`SELECT email, display_name, created_at, email_notifications, is_admin, deleted_at FROM users`;
-      const customerCount = allUsers.filter(u => u.is_admin === false && u.deleted_at === null).length;
+      const activeCustomers = allUsers.filter(u => u.is_admin === false && u.deleted_at === null);
+      const customerCount = activeCustomers.length;
+      const activeEmails = new Set(activeCustomers.map(u => u.email?.toLowerCase()));
       
       const allProjects = await sql`SELECT * FROM projects`;
-      const projectsCount = allProjects.length;
-      const activeProjectsCount = allProjects.filter(p => p.status === 'active').length;
+      // Only count projects from active customers
+      const activeProjects = allProjects.filter(p => activeEmails.has(p.customer_email?.toLowerCase()));
+      const projectsCount = activeProjects.length;
+      const activeProjectsCount = activeProjects.filter(p => p.status === 'active').length;
       
+      // Only count invoices from active customers
       const allInvoices = await sql`SELECT * FROM invoices`;
+      const realInvoices = allInvoices.filter(i => activeEmails.has(i.customer_email?.toLowerCase()));
       
       // Get all expenses
       let allExpenses = [];
@@ -64,24 +77,26 @@ exports.handler = async (event) => {
       let allSurcharges = [];
       try { allSurcharges = await sql`SELECT * FROM surcharges`; } catch (e) { /* table may not exist */ }
 
-      // Get payment tracking
+      // Get payment tracking - only from active customers
       let allTracking = [];
-      try { allTracking = await sql`SELECT * FROM invoice_payment_tracking WHERE status = 'paid'`; } catch (e) { /* table may not exist */ }
+      try { 
+        const tracking = await sql`SELECT * FROM invoice_payment_tracking WHERE status = 'paid'`;
+        allTracking = tracking.filter(t => activeEmails.has(t.customer_email?.toLowerCase()));
+      } catch (e) { /* table may not exist */ }
 
       // Filter by period
       let filteredInvoices, filteredExpenses, filteredSurcharges, filteredTracking;
       
       if (period === 'total') {
-        filteredInvoices = allInvoices.filter(i => i.status !== 'draft');
+        filteredInvoices = realInvoices.filter(i => i.status !== 'draft');
         filteredExpenses = allExpenses.filter(e => e.type === 'business');
         filteredSurcharges = allSurcharges.filter(s => s.type === 'business');
         filteredTracking = allTracking;
       } else {
         const range = getDateRange(period);
-        filteredInvoices = allInvoices.filter(i => {
+        filteredInvoices = realInvoices.filter(i => {
           if (i.status === 'draft') return false;
-          const d = i.invoice_date || (i.created_at ? i.created_at.substring(0, 10) : null);
-          return isInRange(d, range.start, range.end);
+          return isInRange(i.invoice_date || i.created_at, range.start, range.end);
         });
         filteredExpenses = allExpenses.filter(e => e.type === 'business' && isInRange(e.expense_date, range.start, range.end));
         filteredSurcharges = allSurcharges.filter(s => s.type === 'business' && isInRange(s.surcharge_date, range.start, range.end));
@@ -97,8 +112,9 @@ exports.handler = async (event) => {
       const profit = (totalRevenue / 1.21) - (totalExpenses / 1.21);
       const vatBalance = (totalRevenue - totalRevenue / 1.21) - (totalExpenses - totalExpenses / 1.21);
       
-      const pendingCount = allInvoices.filter(i => i.status === 'sent').length;
-      const overdueCount = allInvoices.filter(i => i.status === 'overdue').length;
+      // Pending/overdue only from active customers
+      const pendingCount = realInvoices.filter(i => i.status === 'sent').length;
+      const overdueCount = realInvoices.filter(i => i.status === 'overdue').length;
 
       return { statusCode: 200, headers, body: JSON.stringify({
         totalCustomers: customerCount,

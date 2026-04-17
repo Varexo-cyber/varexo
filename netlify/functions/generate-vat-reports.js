@@ -41,14 +41,19 @@ exports.handler = async (event) => {
         deadline: justEndedQuarter === 'Q4' && currentMonth === 1 ? `${qYear + 1}-01-31` : quarterConfig[justEndedQuarter].deadline
       };
 
-      // Calculate income
+      // Get active customer emails (exclude deleted users)
+      const activeUsers = await sql`SELECT email FROM users WHERE deleted_at IS NULL AND is_admin = false`;
+      const activeEmails = activeUsers.map(u => u.email?.toLowerCase());
+
+      // Calculate income (only active customers)
       const incomeResult = await sql`
-        SELECT COALESCE(SUM(amount), 0) as total_incl_vat
-        FROM invoices 
-        WHERE status != 'draft'
+        SELECT COALESCE(SUM(i.amount), 0) as total_incl_vat
+        FROM invoices i
+        WHERE i.status != 'draft'
+          AND LOWER(i.customer_email) = ANY(${activeEmails})
           AND (
-            (invoice_date >= ${config.start} AND invoice_date <= ${config.end})
-            OR (invoice_date IS NULL AND created_at >= ${config.start} AND created_at <= ${config.end}::timestamp + interval '1 day')
+            (i.invoice_date >= ${config.start} AND i.invoice_date <= ${config.end})
+            OR (i.invoice_date IS NULL AND i.created_at >= ${config.start} AND i.created_at <= ${config.end}::timestamp + interval '1 day')
           )
       `;
 
