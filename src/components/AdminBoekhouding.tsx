@@ -99,13 +99,54 @@ const AdminBoekhouding: React.FC<AdminBoekhoudingProps> = ({ invoices, expenses 
       });
       const incomeInclVat = qInvoices.reduce((sum: number, i: any) => sum + parseFloat(i.amount || 0), 0);
 
-      // Filter business expenses for this quarter + year
-      const qExpenses = expenses.filter((e: any) => {
-        if (e.type !== 'business') return false;
+      // Calculate business expenses for this quarter + year
+      // Monthly: counts in every quarter of the selected year (amount per month × 3)
+      // Yearly: counts once in the quarter the expense date falls in
+      // One-time: counts once in the quarter the expense date falls in
+      const quarterMonths: Record<string, number[]> = { 'Q1': [1,2,3], 'Q2': [4,5,6], 'Q3': [7,8,9], 'Q4': [10,11,12] };
+      let expenseInclVat = 0;
+      expenses.forEach((e: any) => {
+        if (e.type !== 'business') return;
+        const amount = parseFloat(e.amount || 0);
+        const freq = e.frequency || 'one-time';
         const date = e.expenseDate || e.expense_date || e.createdAt || e.created_at;
-        return getQuarterFromDate(date) === q && getYearFromDate(date) === selectedYear;
+        const expYear = getYearFromDate(date);
+        const expQuarter = getQuarterFromDate(date);
+
+        if (freq === 'monthly') {
+          // Monthly expense: counts 3x per quarter for the selected year
+          // Only if expense was created in or before this quarter
+          if (expYear && expYear <= selectedYear) {
+            // If expense started this year, only count from the start quarter onward
+            if (expYear === selectedYear) {
+              const startQNum = parseInt(expQuarter?.replace('Q','') || '0');
+              const thisQNum = parseInt(q.replace('Q',''));
+              if (thisQNum >= startQNum) {
+                // Count months in this quarter that are >= expense start month
+                const expMonth = parseInt((date || '').toString().substring(5,7)) || 1;
+                const monthsInQ = quarterMonths[q].filter(m => m >= expMonth || parseInt(q.replace('Q','')) > startQNum).length;
+                expenseInclVat += amount * monthsInQ;
+              }
+            } else {
+              // Expense from previous year: counts full 3 months per quarter
+              expenseInclVat += amount * 3;
+            }
+          }
+        } else if (freq === 'yearly') {
+          // Yearly: counts once per year in Q1 (or the quarter of the expense date)
+          if (expYear === selectedYear && expQuarter === q) {
+            expenseInclVat += amount;
+          } else if (expYear && expYear < selectedYear && q === 'Q1') {
+            // Recurring yearly from previous years: counts in Q1
+            expenseInclVat += amount;
+          }
+        } else {
+          // One-time: only in the exact quarter
+          if (expQuarter === q && expYear === selectedYear) {
+            expenseInclVat += amount;
+          }
+        }
       });
-      const expenseInclVat = qExpenses.reduce((sum: number, e: any) => sum + parseFloat(e.amount || 0), 0);
 
       const incomeExclVat = incomeInclVat / 1.21;
       const incomeVat = incomeInclVat - incomeExclVat;
