@@ -57,7 +57,8 @@ exports.handler = async (event) => {
       const allUsers = await sql`SELECT email, display_name, created_at, email_notifications, is_admin, deleted_at FROM users`;
       const activeCustomers = allUsers.filter(u => u.is_admin === false && u.deleted_at === null);
       const customerCount = activeCustomers.length;
-      const activeEmails = new Set(activeCustomers.map(u => u.email?.toLowerCase()));
+      // For revenue: include all non-deleted users (including admin) - only exclude deleted test accounts
+      const activeEmails = new Set(allUsers.filter(u => u.deleted_at === null).map(u => u.email?.toLowerCase()));
       
       const allProjects = await sql`SELECT * FROM projects`;
       // Only count projects from active customers

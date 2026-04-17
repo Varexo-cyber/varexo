@@ -41,8 +41,8 @@ exports.handler = async (event) => {
         deadline: justEndedQuarter === 'Q4' && currentMonth === 1 ? `${qYear + 1}-01-31` : quarterConfig[justEndedQuarter].deadline
       };
 
-      // Get active customer emails (exclude deleted users)
-      const activeUsers = await sql`SELECT email FROM users WHERE deleted_at IS NULL AND is_admin = false`;
+      // Get active user emails (exclude deleted/test users only)
+      const activeUsers = await sql`SELECT email FROM users WHERE deleted_at IS NULL`;
       const activeEmails = activeUsers.map(u => u.email?.toLowerCase());
 
       // Calculate income (only active customers)

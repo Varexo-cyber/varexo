@@ -71,8 +71,8 @@ exports.handler = async (event) => {
           return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid quarter' }) };
         }
 
-        // Get active customer emails (exclude deleted users)
-        const activeUsers = await sql`SELECT email FROM users WHERE deleted_at IS NULL AND is_admin = false`;
+        // Get active user emails (exclude deleted/test users only)
+        const activeUsers = await sql`SELECT email FROM users WHERE deleted_at IS NULL`;
         const activeEmails = activeUsers.map(u => u.email?.toLowerCase());
 
         // Calculate income from invoices (only active customers, non-draft, in this quarter)
