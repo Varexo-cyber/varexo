@@ -100,53 +100,53 @@ const AdminBoekhouding: React.FC<AdminBoekhoudingProps> = ({ invoices, expenses 
       const incomeInclVat = qInvoices.reduce((sum: number, i: any) => sum + parseFloat(i.amount || 0), 0);
 
       // Calculate business expenses for this quarter + year
-      // Monthly: counts per month, only for months that have passed or current month
+      // Monthly: full 3 months for past & current quarter, €0 for future quarters
       // Yearly: counts once in the quarter of the expense date
       // One-time: counts once in the quarter of the expense date
       const quarterMonthsMap: Record<string, number[]> = { 'Q1': [1,2,3], 'Q2': [4,5,6], 'Q3': [7,8,9], 'Q4': [10,11,12] };
       const now = new Date();
-      const nowMonth = now.getMonth() + 1; // 1-12
       const nowYear = now.getFullYear();
+      const currentQNum = Math.ceil((now.getMonth() + 1) / 3);
+      const thisQNum = parseInt(q.replace('Q',''));
+      
+      // Skip future quarters entirely
+      const isFutureQuarter = selectedYear > nowYear || (selectedYear === nowYear && thisQNum > currentQNum);
       let expenseInclVat = 0;
 
-      expenses.forEach((e: any) => {
-        if (e.type !== 'business') return;
-        const amount = parseFloat(e.amount || 0);
-        const freq = e.frequency || 'one-time';
-        const date = e.expenseDate || e.expense_date || e.createdAt || e.created_at;
-        const expYear = getYearFromDate(date);
-        const expQuarter = getQuarterFromDate(date);
-        const expMonth = parseInt((date || '').toString().substring(5,7)) || 1;
+      if (!isFutureQuarter) {
+        expenses.forEach((e: any) => {
+          if (e.type !== 'business') return;
+          const amount = parseFloat(e.amount || 0);
+          const freq = e.frequency || 'one-time';
+          const date = e.expenseDate || e.expense_date || e.createdAt || e.created_at;
+          const expYear = getYearFromDate(date);
+          const expQuarter = getQuarterFromDate(date);
+          const expMonth = parseInt((date || '').toString().substring(5,7)) || 1;
 
-        if (freq === 'monthly') {
-          // For each month in this quarter, check if:
-          // 1. The month is <= current month (don't count future months)
-          // 2. The expense start date is <= that month
-          if (expYear && expYear <= selectedYear) {
-            const monthsInQ = quarterMonthsMap[q];
-            monthsInQ.forEach(m => {
-              // Don't count future months
-              if (selectedYear === nowYear && m > nowMonth) return;
-              // Don't count months before the expense started
-              if (selectedYear === expYear && m < expMonth) return;
+          if (freq === 'monthly') {
+            // Full 3 months for current and past quarters
+            if (expYear && expYear <= selectedYear) {
+              const monthsInQ = quarterMonthsMap[q];
+              monthsInQ.forEach(m => {
+                // Don't count months before the expense started
+                if (selectedYear === expYear && m < expMonth) return;
+                expenseInclVat += amount;
+              });
+            }
+          } else if (freq === 'yearly') {
+            if (expYear === selectedYear && expQuarter === q) {
               expenseInclVat += amount;
-            });
+            } else if (expYear && expYear < selectedYear) {
+              if (expQuarter === q) expenseInclVat += amount;
+            }
+          } else {
+            // One-time: only in the exact quarter
+            if (expQuarter === q && expYear === selectedYear) {
+              expenseInclVat += amount;
+            }
           }
-        } else if (freq === 'yearly') {
-          // Yearly: counts once in the quarter of the original date
-          if (expYear === selectedYear && expQuarter === q) {
-            expenseInclVat += amount;
-          } else if (expYear && expYear < selectedYear) {
-            // Recurring yearly from prev year: count in same quarter as original
-            if (expQuarter === q) expenseInclVat += amount;
-          }
-        } else {
-          // One-time: only in the exact quarter
-          if (expQuarter === q && expYear === selectedYear) {
-            expenseInclVat += amount;
-          }
-        }
-      });
+        });
+      }
 
       const incomeExclVat = incomeInclVat / 1.21;
       const incomeVat = incomeInclVat - incomeExclVat;

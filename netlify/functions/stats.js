@@ -96,22 +96,22 @@ exports.handler = async (event) => {
       } catch (e) { /* table may not exist */ }
 
       // Filter by period
-      let filteredInvoices, filteredExpenses, filteredSurcharges, filteredTracking;
+      let filteredInvoices, filteredSurcharges, filteredTracking;
+      const businessExpenses = allExpenses.filter(e => e.type === 'business');
+      
+      const periodRange = period === 'total' ? null : getDateRange(period);
       
       if (period === 'total') {
         filteredInvoices = realInvoices.filter(i => i.status !== 'draft');
-        filteredExpenses = allExpenses.filter(e => e.type === 'business');
         filteredSurcharges = allSurcharges.filter(s => s.type === 'business');
         filteredTracking = allTracking;
       } else {
-        const range = getDateRange(period);
         filteredInvoices = realInvoices.filter(i => {
           if (i.status === 'draft') return false;
-          return isInRange(i.invoice_date || i.created_at, range.start, range.end);
+          return isInRange(i.invoice_date || i.created_at, periodRange.start, periodRange.end);
         });
-        filteredExpenses = allExpenses.filter(e => e.type === 'business' && isInRange(e.expense_date, range.start, range.end));
-        filteredSurcharges = allSurcharges.filter(s => s.type === 'business' && isInRange(s.surcharge_date, range.start, range.end));
-        filteredTracking = allTracking.filter(t => isInRange(t.paid_date || t.period_start_date, range.start, range.end));
+        filteredSurcharges = allSurcharges.filter(s => s.type === 'business' && isInRange(s.surcharge_date, periodRange.start, periodRange.end));
+        filteredTracking = allTracking.filter(t => isInRange(t.paid_date || t.period_start_date, periodRange.start, periodRange.end));
       }
 
       const invoiceRevenue = filteredInvoices.reduce((sum, i) => sum + parseFloat(i.amount || 0), 0);
@@ -119,7 +119,49 @@ exports.handler = async (event) => {
       const surchargeRevenue = filteredSurcharges.reduce((sum, s) => sum + parseFloat(s.amount || 0), 0);
       const totalRevenue = invoiceRevenue + trackingRevenue + surchargeRevenue;
       
-      const totalExpenses = filteredExpenses.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);
+      // Calculate expenses with recurring logic
+      let totalExpenses = 0;
+      businessExpenses.forEach(e => {
+        const amount = parseFloat(e.amount || 0);
+        const freq = e.frequency || 'one-time';
+        const expDate = toDateStr(e.expense_date || e.created_at);
+        
+        if (freq === 'monthly' && periodRange) {
+          // Count how many months in the range this expense applies to
+          const startDate = new Date(periodRange.start);
+          const endDate = new Date(periodRange.end);
+          const expStart = expDate ? new Date(expDate) : null;
+          let months = 0;
+          let d = new Date(startDate);
+          while (d <= endDate) {
+            if (!expStart || d >= expStart) months++;
+            d.setMonth(d.getMonth() + 1);
+          }
+          totalExpenses += amount * months;
+        } else if (freq === 'monthly' && !periodRange) {
+          // Total: count from expense start to now
+          const expStart = expDate ? new Date(expDate) : new Date();
+          const now = new Date();
+          let months = (now.getFullYear() - expStart.getFullYear()) * 12 + (now.getMonth() - expStart.getMonth()) + 1;
+          if (months < 1) months = 1;
+          totalExpenses += amount * months;
+        } else if (freq === 'yearly') {
+          if (!periodRange) {
+            // Total: count years from start to now
+            const expStart = expDate ? new Date(expDate) : new Date();
+            const years = new Date().getFullYear() - expStart.getFullYear() + 1;
+            totalExpenses += amount * Math.max(1, years);
+          } else if (periodRange && isInRange(e.expense_date || e.created_at, periodRange.start, periodRange.end)) {
+            totalExpenses += amount;
+          }
+        } else {
+          // One-time
+          if (!periodRange || isInRange(e.expense_date || e.created_at, periodRange.start, periodRange.end)) {
+            totalExpenses += amount;
+          }
+        }
+      });
+      console.log('Expenses calc:', { period, businessCount: businessExpenses.length, totalExpenses });
       const profit = (totalRevenue / 1.21) - (totalExpenses / 1.21);
       const vatBalance = (totalRevenue - totalRevenue / 1.21) - (totalExpenses - totalExpenses / 1.21);
       
@@ -127,7 +169,7 @@ exports.handler = async (event) => {
       const pendingCount = realInvoices.filter(i => i.status === 'sent').length;
       const overdueCount = realInvoices.filter(i => i.status === 'overdue').length;
 
-      console.log('Stats result:', { period, invoiceRevenue, trackingRevenue, surchargeRevenue, totalRevenue, totalExpenses, expensesCount: filteredExpenses.length });
+      console.log('Stats result:', { period, invoiceRevenue, trackingRevenue, surchargeRevenue, totalRevenue, totalExpenses, businessExpCount: businessExpenses.length });
 
       return { statusCode: 200, headers, body: JSON.stringify({
         totalCustomers: customerCount,
