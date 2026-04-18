@@ -70,14 +70,25 @@ exports.handler = async (event) => {
       const allInvoices = await sql`SELECT * FROM invoices`;
       const realInvoices = allInvoices.filter(i => activeEmails.has(i.customer_email?.toLowerCase()));
       
-      // Get all expenses
+      // Get all expenses (ensure table exists first)
       let allExpenses = [];
       try { 
+        await sql`CREATE TABLE IF NOT EXISTS expenses (
+          id SERIAL PRIMARY KEY,
+          description VARCHAR(255) NOT NULL,
+          amount DECIMAL(10,2) NOT NULL,
+          type VARCHAR(50) NOT NULL,
+          frequency VARCHAR(50) DEFAULT 'one-time',
+          category VARCHAR(100),
+          expense_date DATE DEFAULT NOW(),
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        )`;
         const expResult = await sql`SELECT * FROM expenses`;
         allExpenses = Array.isArray(expResult) ? expResult : [];
-        console.log('Expenses loaded:', allExpenses.length, 'business:', allExpenses.filter(e => e.type === 'business').length);
+        console.log('Expenses loaded:', allExpenses.length, 'items:', allExpenses.map(e => ({ type: e.type, freq: e.frequency, amount: e.amount })));
       } catch (e) { 
-        console.log('Expenses table error:', e.message);
+        console.error('Expenses error:', e.message);
       }
       
       // Get all surcharges
