@@ -100,11 +100,15 @@ const AdminBoekhouding: React.FC<AdminBoekhoudingProps> = ({ invoices, expenses 
       const incomeInclVat = qInvoices.reduce((sum: number, i: any) => sum + parseFloat(i.amount || 0), 0);
 
       // Calculate business expenses for this quarter + year
-      // Monthly: counts in every quarter of the selected year (amount per month × 3)
-      // Yearly: counts once in the quarter the expense date falls in
-      // One-time: counts once in the quarter the expense date falls in
-      const quarterMonths: Record<string, number[]> = { 'Q1': [1,2,3], 'Q2': [4,5,6], 'Q3': [7,8,9], 'Q4': [10,11,12] };
+      // Monthly: counts per month, only for months that have passed or current month
+      // Yearly: counts once in the quarter of the expense date
+      // One-time: counts once in the quarter of the expense date
+      const quarterMonthsMap: Record<string, number[]> = { 'Q1': [1,2,3], 'Q2': [4,5,6], 'Q3': [7,8,9], 'Q4': [10,11,12] };
+      const now = new Date();
+      const nowMonth = now.getMonth() + 1; // 1-12
+      const nowYear = now.getFullYear();
       let expenseInclVat = 0;
+
       expenses.forEach((e: any) => {
         if (e.type !== 'business') return;
         const amount = parseFloat(e.amount || 0);
@@ -112,33 +116,29 @@ const AdminBoekhouding: React.FC<AdminBoekhoudingProps> = ({ invoices, expenses 
         const date = e.expenseDate || e.expense_date || e.createdAt || e.created_at;
         const expYear = getYearFromDate(date);
         const expQuarter = getQuarterFromDate(date);
+        const expMonth = parseInt((date || '').toString().substring(5,7)) || 1;
 
         if (freq === 'monthly') {
-          // Monthly expense: counts 3x per quarter for the selected year
-          // Only if expense was created in or before this quarter
+          // For each month in this quarter, check if:
+          // 1. The month is <= current month (don't count future months)
+          // 2. The expense start date is <= that month
           if (expYear && expYear <= selectedYear) {
-            // If expense started this year, only count from the start quarter onward
-            if (expYear === selectedYear) {
-              const startQNum = parseInt(expQuarter?.replace('Q','') || '0');
-              const thisQNum = parseInt(q.replace('Q',''));
-              if (thisQNum >= startQNum) {
-                // Count months in this quarter that are >= expense start month
-                const expMonth = parseInt((date || '').toString().substring(5,7)) || 1;
-                const monthsInQ = quarterMonths[q].filter(m => m >= expMonth || parseInt(q.replace('Q','')) > startQNum).length;
-                expenseInclVat += amount * monthsInQ;
-              }
-            } else {
-              // Expense from previous year: counts full 3 months per quarter
-              expenseInclVat += amount * 3;
-            }
+            const monthsInQ = quarterMonthsMap[q];
+            monthsInQ.forEach(m => {
+              // Don't count future months
+              if (selectedYear === nowYear && m > nowMonth) return;
+              // Don't count months before the expense started
+              if (selectedYear === expYear && m < expMonth) return;
+              expenseInclVat += amount;
+            });
           }
         } else if (freq === 'yearly') {
-          // Yearly: counts once per year in Q1 (or the quarter of the expense date)
+          // Yearly: counts once in the quarter of the original date
           if (expYear === selectedYear && expQuarter === q) {
             expenseInclVat += amount;
-          } else if (expYear && expYear < selectedYear && q === 'Q1') {
-            // Recurring yearly from previous years: counts in Q1
-            expenseInclVat += amount;
+          } else if (expYear && expYear < selectedYear) {
+            // Recurring yearly from prev year: count in same quarter as original
+            if (expQuarter === q) expenseInclVat += amount;
           }
         } else {
           // One-time: only in the exact quarter
