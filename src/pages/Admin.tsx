@@ -212,10 +212,100 @@ const AdminDashboard: React.FC = () => {
     }
   }, [showCustomerDropdown, showProjectDropdown, showInvoiceDropdown, showMessageDropdown, showRecurringDropdown]);
 
+  // Calculate expenses from array (same logic as Boekhouding)
+  const calcExpensesFromList = (expList: any[], period: string) => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth(); // 0-indexed
+
+    let rangeStart: string, rangeEnd: string;
+    if (period === 'monthly') {
+      rangeStart = new Date(year, month, 1).toISOString().split('T')[0];
+      rangeEnd = new Date(year, month + 1, 0).toISOString().split('T')[0];
+    } else if (period === 'quarterly') {
+      const qStart = Math.floor(month / 3) * 3;
+      rangeStart = new Date(year, qStart, 1).toISOString().split('T')[0];
+      rangeEnd = new Date(year, qStart + 3, 0).toISOString().split('T')[0];
+    } else if (period === 'yearly') {
+      rangeStart = `${year}-01-01`;
+      rangeEnd = `${year}-12-31`;
+    } else {
+      rangeStart = '2000-01-01';
+      rangeEnd = '2099-12-31';
+    }
+
+    let total = 0;
+    expList.forEach((e: any) => {
+      if (e.type !== 'business') return;
+      const amount = parseFloat(e.amount || 0);
+      const freq = e.frequency || 'one-time';
+      const dateRaw = e.expenseDate || e.expense_date || e.createdAt || e.created_at || '';
+      const expDateStr = dateRaw instanceof Date ? dateRaw.toISOString().substring(0, 10) : typeof dateRaw === 'string' ? dateRaw.substring(0, 10) : '';
+      const expMonth = parseInt(expDateStr.substring(5, 7)) || 1;
+      const expYear = parseInt(expDateStr.substring(0, 4)) || year;
+
+      if (freq === 'monthly') {
+        if (period === 'total') {
+          let months = (now.getFullYear() - expYear) * 12 + (now.getMonth() + 1 - expMonth) + 1;
+          if (months < 1) months = 1;
+          total += amount * months;
+        } else {
+          const startMonth = parseInt(rangeStart.substring(5, 7));
+          const endMonth = parseInt(rangeEnd.substring(5, 7));
+          const startYear = parseInt(rangeStart.substring(0, 4));
+          for (let m = startMonth, y = startYear; ; ) {
+            if (y > parseInt(rangeEnd.substring(0, 4)) || (y === parseInt(rangeEnd.substring(0, 4)) && m > endMonth)) break;
+            if (y > expYear || (y === expYear && m >= expMonth)) {
+              total += amount;
+            }
+            m++;
+            if (m > 12) { m = 1; y++; }
+          }
+        }
+      } else if (freq === 'yearly') {
+        if (period === 'total') {
+          const years = now.getFullYear() - expYear + 1;
+          total += amount * Math.max(1, years);
+        } else if (expDateStr >= rangeStart && expDateStr <= rangeEnd) {
+          total += amount;
+        }
+      } else {
+        if (period === 'total' || (expDateStr >= rangeStart && expDateStr <= rangeEnd)) {
+          total += amount;
+        }
+      }
+    });
+    return Math.round(total * 100) / 100;
+  };
+
+  // Apply expense override to stats object
+  const applyExpenseOverride = (statsObj: any, expList: any[], period: string) => {
+    const localExpenses = calcExpensesFromList(expList, period);
+    const totalRevenue = statsObj.totalRevenue || 0;
+    return {
+      ...statsObj,
+      totalExpenses: localExpenses,
+      profit: Math.round(((totalRevenue / 1.21) - (localExpenses / 1.21)) * 100) / 100,
+      vatBalance: Math.round(((totalRevenue - totalRevenue / 1.21) - (localExpenses - localExpenses / 1.21)) * 100) / 100,
+    };
+  };
+
+  // Recalculate stats expenses whenever expenses data or period changes
+  useEffect(() => {
+    if (expenses.length > 0) {
+      setStats((prev: any) => {
+        if (!prev || prev.totalRevenue === undefined) return prev;
+        return applyExpenseOverride(prev, expenses, statsPeriod);
+      });
+    }
+  }, [expenses, statsPeriod]);
+
   const loadStats = async (period: string) => {
     try {
       const s = await projectService.getStatsAsync(period);
-      setStats(s);
+      // Apply local expense calculation immediately
+      const fixed = applyExpenseOverride(s, expenses, period);
+      setStats(fixed);
     } catch (err) {
       console.warn('Stats reload failed:', err);
     }
