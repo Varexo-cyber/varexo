@@ -152,14 +152,15 @@ const Portfolio: React.FC = () => {
         
         {/* Project Grid - Cards with Images */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {projects.map((project) => (
+          {projects.map((project, index) => (
             <AnimateOnScroll key={project.id} delay={0}>
               {project.link ? (
                 <a 
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group block overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 hover:-translate-y-1 h-full"
+                  className="group block overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 h-full"
+                  style={{ animation: `float ${3 + index * 0.5}s ease-in-out infinite`, animationDelay: `${index * 0.5}s` }}
                 >
                   {/* Project Image */}
                   <div className="relative h-52 overflow-hidden">
@@ -209,7 +210,10 @@ const Portfolio: React.FC = () => {
                   </div>
                 </a>
               ) : (
-                <div className="group overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 hover:-translate-y-1 h-full">
+                <div 
+                  className="group overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 h-full"
+                  style={{ animation: `float ${3 + index * 0.5}s ease-in-out infinite`, animationDelay: `${index * 0.5}s` }}
+                >
                   {/* Project Image */}
                   <div className="relative h-52 overflow-hidden">
                     <img 

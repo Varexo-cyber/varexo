@@ -50,10 +50,10 @@ const Prijzen: React.FC = () => {
                   <div className="text-4xl font-bold text-primary-400 text-glow">€649.99</div>
                 </div>
                 <div className="text-sm text-gray-400">{t('pricing.onetime')}</div>
-                <div className="text-xs text-red-400 font-semibold mt-1">{language === 'nl' ? 'Actie geldig t/m 31 mei 2026' : 'Offer valid until May 31, 2026'}</div>
+                <div className="text-xs text-red-400 font-semibold mt-1">{t('pricing.offerValid')}</div>
                 <div className="mt-4 pt-4 border-t border-dark-600">
                   <div className="text-xl font-bold text-white">€69.99 <span className="text-sm font-normal text-gray-400">{t('pricing.month')}</span></div>
-                  <div className="text-lg font-semibold text-primary-400 mt-1">{language === 'nl' ? 'of €799.99/jaar' : 'or €799.99/year'}</div>
+                  <div className="text-lg font-semibold text-primary-400 mt-1">{t('pricing.or')} €799.99{t('pricing.perYear')}</div>
                 </div>
                 <div className="text-xs text-gray-400 mt-2">{t('pricing.uptime')}</div>
               </div>
@@ -62,49 +62,49 @@ const Prijzen: React.FC = () => {
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Complete website (1-3 pagina's)
+                  {t('pricing.basic.f1')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Responsive design
+                  {t('pricing.basic.f2')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Contactformulier
+                  {t('pricing.basic.f3')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Google Maps integratie
+                  {t('pricing.basic.f4')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Social media links
+                  {t('pricing.basic.f5')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Basis SEO optimalisatie
+                  {t('pricing.basic.f6')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Updates binnen 24 uur
+                  {t('pricing.basic.f7')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  24/7 uptime garantie
+                  {t('pricing.basic.f8')}
                 </li>
               </ul>
               <a 
@@ -122,7 +122,7 @@ const Prijzen: React.FC = () => {
             <div className="relative overflow-hidden bg-gradient-to-b from-primary-600 to-primary-700 text-white p-8 rounded-xl shadow-xl transform scale-105 border-2 border-primary-400 glow-emerald-strong">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary-400/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
               <div className="bg-dark-900 text-primary-400 text-xs font-bold font-mono px-3 py-1 rounded-full inline-block mb-4 tracking-wider">
-                MOST_POPULAR
+                {t('pricing.mostPopular')}
               </div>
               <h3 className="text-2xl font-bold mb-2">{t('pricing.pro.title')}</h3>
               <p className="text-xs font-mono text-primary-200 mb-3">{'// speed-optimized'}</p>
@@ -132,10 +132,10 @@ const Prijzen: React.FC = () => {
                 <div className="text-4xl font-bold text-white" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>€1049.99</div>
               </div>
               <div className="text-sm text-primary-200">{t('pricing.onetime')}</div>
-              <div className="text-xs text-red-300 font-semibold mt-1">{language === 'nl' ? 'Actie geldig t/m 31 mei 2026' : 'Offer valid until May 31, 2026'}</div>
+              <div className="text-xs text-red-300 font-semibold mt-1">{t('pricing.offerValid')}</div>
               <div className="mt-4 pt-4 border-t border-primary-500/30">
                 <div className="text-xl font-bold text-white">€59.99 <span className="text-sm font-normal text-primary-200">{t('pricing.month')}</span></div>
-                <div className="text-lg font-semibold text-white mt-1" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>{language === 'nl' ? 'of €699.99/jaar' : 'or €699.99/year'}</div>
+                <div className="text-lg font-semibold text-white mt-1" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>{t('pricing.or')} €699.99{t('pricing.perYear')}</div>
               </div>
               <div className="text-xs text-primary-200 mt-2">{t('pricing.loadTime')}</div>
             </div>
@@ -144,49 +144,49 @@ const Prijzen: React.FC = () => {
                 <svg className="w-5 h-5 text-primary-200 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Alles uit Basic pakket
+                {t('pricing.pro.f1')}
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-primary-200 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-        Geavanceerde website (5-10 pagina's)
+                {t('pricing.pro.f2')}
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-primary-200 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                0.01s laadtijd garantie
+                {t('pricing.pro.f3')}
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-primary-200 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Geavanceerde SEO
+                {t('pricing.pro.f4')}
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-primary-200 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Marketing strategie
+                {t('pricing.pro.f5')}
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-primary-200 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Snelle levering
+                {t('pricing.pro.f6')}
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-primary-200 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Updates binnen 12 uur
+                {t('pricing.pro.f7')}
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-primary-200 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                24/7 uptime garantie
+                {t('pricing.pro.f8')}
               </li>
             </ul>
             <a 
@@ -210,10 +210,10 @@ const Prijzen: React.FC = () => {
                   <div className="text-4xl font-bold text-primary-400 text-glow">€1749.99</div>
                 </div>
                 <div className="text-sm text-gray-400">{t('pricing.onetime')}</div>
-                <div className="text-xs text-red-400 font-semibold mt-1">{language === 'nl' ? 'Actie geldig t/m 31 mei 2026' : 'Offer valid until May 31, 2026'}</div>
+                <div className="text-xs text-red-400 font-semibold mt-1">{t('pricing.offerValid')}</div>
                 <div className="mt-4 pt-4 border-t border-dark-600">
                   <div className="text-xl font-bold text-white">€49.99 <span className="text-sm font-normal text-gray-400">{t('pricing.month')}</span></div>
-                  <div className="text-lg font-semibold text-primary-400 mt-1">{language === 'nl' ? 'of €499.99/jaar' : 'or €499.99/year'}</div>
+                  <div className="text-lg font-semibold text-primary-400 mt-1">{t('pricing.or')} €499.99{t('pricing.perYear')}</div>
                 </div>
                 <div className="text-xs text-gray-400 mt-2">{t('pricing.allInclusive')}</div>
               </div>
@@ -222,55 +222,55 @@ const Prijzen: React.FC = () => {
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Alles uit Pro pakket
+                  {t('pricing.premium.f1')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Maatwerk website (10+ pagina's)
+                  {t('pricing.premium.f2')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  All-inclusive onderhoud
+                  {t('pricing.premium.f3')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Logo ontwerp
+                  {t('pricing.premium.f4')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Snelle levering
+                  {t('pricing.premium.f5')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Geavanceerde SEO
+                  {t('pricing.premium.f6')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Marketing strategie
+                  {t('pricing.premium.f7')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Updates binnen 6 uur
+                  {t('pricing.premium.f8')}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  24/7 uptime garantie
+                  {t('pricing.premium.f9')}
                 </li>
               </ul>
               <a 
