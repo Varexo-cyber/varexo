@@ -527,6 +527,15 @@ const translations = {
     'footer.btw': 'BTW',
     'footer.poweredBy': 'Medemogelijk gemaakt door',
     
+    // Reviews
+    'reviews.title': 'Klanten over Varexo',
+    'reviews.subtitle': 'Lees wat klanten over ons zeggen',
+    'reviews.cta.title': 'Lees onze reviews op Trustpilot',
+    'reviews.cta.subtitle': 'Bekijk eerlijke ervaringen van onze klanten',
+    'reviews.cta.link': 'trustpilot.com/review/varexo.nl',
+    'reviews.write.prefix': 'Tevreden over onze service?',
+    'reviews.write.link': 'Deel je ervaring op Trustpilot',
+    
     // WhatsApp
     'whatsapp.title': 'Varexo op WhatsApp',
     'whatsapp.response': 'Meestal binnen 1 uur reactie',
@@ -1071,6 +1080,15 @@ const translations = {
     'footer.kvk': 'KvK',
     'footer.btw': 'VAT',
     'footer.poweredBy': 'Powered by',
+    
+    // Reviews
+    'reviews.title': 'Customers about Varexo',
+    'reviews.subtitle': 'Read what customers say about us',
+    'reviews.cta.title': 'Read our reviews on Trustpilot',
+    'reviews.cta.subtitle': 'View honest experiences from our customers',
+    'reviews.cta.link': 'trustpilot.com/review/varexo.nl',
+    'reviews.write.prefix': 'Satisfied with our service?',
+    'reviews.write.link': 'Share your experience on Trustpilot',
     
     // WhatsApp
     'whatsapp.title': 'Varexo on WhatsApp',

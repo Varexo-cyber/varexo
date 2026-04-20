@@ -1,16 +1,19 @@
 import React from 'react';
 import AnimateOnScroll from './AnimateOnScroll';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const ReviewsSection: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <section className="py-20 bg-dark-900 relative">
       <div className="container mx-auto px-4">
         <AnimateOnScroll>
           <div className="text-center mb-12">
             <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">{'// klanten-reviews'}</p>
-            <h2 className="text-3xl font-bold text-center mb-4 text-white">Klanten over Varexo</h2>
+            <h2 className="text-3xl font-bold text-center mb-4 text-white">{t('reviews.title')}</h2>
             <p className="text-gray-400 text-center max-w-xl mx-auto">
-              Lees wat klanten over ons zeggen
+              {t('reviews.subtitle')}
             </p>
           </div>
         </AnimateOnScroll>
@@ -34,12 +37,12 @@ const ReviewsSection: React.FC = () => {
 
                 {/* Content */}
                 <div className="text-center md:text-left flex-1">
-                  <p className="text-white font-semibold text-lg mb-1">Lees onze reviews op Trustpilot</p>
+                  <p className="text-white font-semibold text-lg mb-1">{t('reviews.cta.title')}</p>
                   <p className="text-gray-400 text-sm mb-3">
-                    Bekijk eerlijke ervaringen van onze klanten
+                    {t('reviews.cta.subtitle')}
                   </p>
                   <div className="inline-flex items-center gap-2 text-primary-400 group-hover:text-primary-300 transition">
-                    <span className="text-sm font-medium">trustpilot.com/review/varexo.nl</span>
+                    <span className="text-sm font-medium">{t('reviews.cta.link')}</span>
                     <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
@@ -51,14 +54,14 @@ const ReviewsSection: React.FC = () => {
             {/* Write Review Link */}
             <div className="mt-6 text-center">
               <p className="text-gray-500 text-sm">
-                Tevreden over onze service?{' '}
+                {t('reviews.write.prefix')}{' '}
                 <a 
                   href="https://nl.trustpilot.com/evaluate/varexo.nl" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-primary-400 hover:text-primary-300 font-medium hover-underline"
                 >
-                  Deel je ervaring op Trustpilot
+                  {t('reviews.write.link')}
                 </a>
               </p>
             </div>
