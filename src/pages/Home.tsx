@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
-import TrustpilotWidget from '../components/TrustpilotWidget';
+import ReviewsSection from '../components/ReviewsSection';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const Home: React.FC = () => {
@@ -231,8 +231,8 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Trustpilot Reviews Section */}
-      <TrustpilotWidget />
+      {/* Reviews Section */}
+      <ReviewsSection />
 
       {/* CTA Section */}
       <AnimateOnScroll animation="reveal-scale">
