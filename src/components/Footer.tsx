@@ -55,8 +55,7 @@ const Footer: React.FC = () => {
                 {t('footer.whatsapp')}
               </a>
               <p className="text-gray-500 text-xs font-mono mt-2">
-                {t('footer.kvk')}: [later invullen]<br />
-                {t('footer.btw')}: [later invullen]
+                {t('footer.kvk')}: 42042045
               </p>
             </div>
           </div>

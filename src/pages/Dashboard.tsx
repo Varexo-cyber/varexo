@@ -466,7 +466,8 @@ const CustomerDashboard: React.FC = () => {
                   Regulierenstraat 10<br>
                   2694BA 's-Gravenzande<br>
                   +31 6 36075966<br>
-                  Info@varexo.nl
+                  Info@varexo.nl<br>
+                  KvK: 42042045
                 </div>
               </div>
             </div>
@@ -539,6 +540,7 @@ const CustomerDashboard: React.FC = () => {
                   <strong>Varexo</strong><br>
                   t.n.v. Mohammed Taher<br>
                   IBAN: NL75INGB0756428726<br>
+                  KvK: 42042045<br>
                   BTW: 21% inbegrepen
                 </div>
               </div>
@@ -857,7 +859,8 @@ const CustomerDashboard: React.FC = () => {
                   Regulierenstraat 10<br>
                   2694BA 's-Gravenzande<br>
                   +31 6 36075966<br>
-                  Info@varexo.nl
+                  Info@varexo.nl<br>
+                  KvK: 42042045
                 </div>
               </div>
             </div>
@@ -928,6 +931,7 @@ const CustomerDashboard: React.FC = () => {
                   <strong>Varexo</strong><br>
                   t.n.v. Mohammed Taher<br>
                   IBAN: NL75INGB0756428726<br>
+                  KvK: 42042045<br>
                   BTW: 21% inbegrepen
                 </div>
               </div>

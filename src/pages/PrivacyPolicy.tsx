@@ -130,7 +130,8 @@ const PrivacyPolicy: React.FC = () => {
                 <p className="text-gray-300">
                   <strong>Varexo</strong><br />
                   E-mail: info@varexo.nl<br />
-                  Website: www.varexo.nl
+                  Website: www.varexo.nl<br />
+                  KvK: 42042045
                 </p>
               </div>
 

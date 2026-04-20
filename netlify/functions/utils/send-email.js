@@ -125,7 +125,7 @@ function emailTemplate(title, content, ctaText, ctaUrl, language = 'nl') {
           <!-- Legal Info -->
           <div style="text-align:center;margin-bottom:16px;">
             <p style="margin:0;color:#64748b;font-size:11px;line-height:1.6;">
-              ${lang.kvk}: [Later Invullen] | ${lang.btw}: [Later Invullen]
+              ${lang.kvk}: 42042045
             </p>
           </div>
           

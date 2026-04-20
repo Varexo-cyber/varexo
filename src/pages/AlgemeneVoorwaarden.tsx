@@ -22,7 +22,7 @@ const AlgemeneVoorwaarden: React.FC = () => {
               <div className="mb-6">
                 <p className="text-gray-300 mb-4">{isNL ? 'In deze algemene voorwaarden wordt verstaan onder:' : 'In these general terms and conditions, the following is understood:'}</p>
                 <ul className="list-disc pl-6 space-y-2 text-gray-300">
-                  <li><strong>Varexo:</strong> {isNL ? 'De ICT- en webdevelopment onderneming, gevestigd in Nederland' : 'The ICT and web development company, established in the Netherlands'}</li>
+                  <li><strong>Varexo:</strong> {isNL ? 'De ICT- en webdevelopment onderneming, gevestigd te \'s-Gravenzande, ingeschreven bij de Kamer van Koophandel onder nummer 42042045' : 'The ICT and web development company, established in \'s-Gravenzande, registered at the Chamber of Commerce under number 42042045'}</li>
                   <li><strong>{isNL ? 'Klant' : 'Customer'}:</strong> {isNL ? 'De natuurlijke persoon of rechtspersoon die gebruikmaakt van de diensten van Varexo' : 'The natural person or legal entity using the services of Varexo'}</li>
                   <li><strong>{isNL ? 'Diensten' : 'Services'}:</strong> {isNL ? 'Alle door Varexo aangeboden diensten, waaronder webdesign, webdevelopment, social media beheer en onderhoud' : 'All services offered by Varexo, including web design, web development, social media management and maintenance'}</li>
                   <li><strong>{isNL ? 'Overeenkomst' : 'Agreement'}:</strong> {isNL ? 'De overeenkomst tussen Varexo en de Klant' : 'The agreement between Varexo and the Customer'}</li>
