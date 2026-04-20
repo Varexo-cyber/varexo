@@ -123,12 +123,23 @@ const Portfolio: React.FC = () => {
       id: '2',
       title: 'DirectAutoHulp',
       category: language === 'nl' ? 'Bedrijfswebsite' : 'Business Website',
-      description: language === 'nl' 
+      description: language === 'nl'
         ? 'Complete bedrijfswebsite voor autotransport, pechhulp en auto-inkoop. 24/7 bereikbaar met contactformulier, WhatsApp-integratie en professioneel design.'
         : 'Complete business website for car transport, roadside assistance and car purchasing. 24/7 available with contact form, WhatsApp integration and professional design.',
       image: '/portfolio/Directautohulp.png?v=2',
       technologies: ['React', 'Node.js', 'TypeScript'],
       link: 'https://directautohulp.nl'
+    },
+    {
+      id: '3',
+      title: 'LabFix',
+      category: language === 'nl' ? 'Webshop' : 'Webshop',
+      description: language === 'nl'
+        ? 'B2B webshop voor telefoon en tablet onderdelen. Professioneel platform met productcatalogus, zoekfunctie en Europese verzending voor groothandels.'
+        : 'B2B webshop for phone and tablet parts. Professional platform with product catalog, search functionality and European shipping for wholesalers.',
+      image: '/portfolio/labfix.png?v=1',
+      technologies: ['React', 'Node.js', 'PostgreSQL', 'Stripe'],
+      link: 'https://labfix.nl'
     }
   ];
   
@@ -151,7 +162,7 @@ const Portfolio: React.FC = () => {
         </AnimateOnScroll>
         
         {/* Project Grid - Cards with Images */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {projects.map((project, index) => (
             <AnimateOnScroll key={project.id} delay={0}>
               {project.link ? (
