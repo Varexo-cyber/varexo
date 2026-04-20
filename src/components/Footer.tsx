@@ -60,7 +60,22 @@ const Footer: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="mt-10 pt-6 border-t border-dark-700/50 flex flex-col md:flex-row justify-between items-center gap-4">
+        {/* Trustpilot Badge */}
+        <div className="mt-6 pt-6 border-t border-dark-700/50 flex justify-center">
+          <a 
+            href="https://nl.trustpilot.com/evaluate/varexo.nl" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-[#00B67A] hover:bg-[#00A06D] text-white px-4 py-2 rounded-md text-sm font-semibold transition"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L8.5 9H2l5 4-2 8 7-4.5L19 21l-2-8 5-4h-6.5L12 2z"/>
+            </svg>
+            Review ons op Trustpilot
+          </a>
+        </div>
+        
+        <div className="mt-6 pt-6 border-t border-dark-700/50 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-xs">&copy; {new Date().getFullYear()} Varexo. {t('footer.rights')}</p>
           <p className="text-gray-600 text-xs font-mono">
             &lt;/&gt; with <span className="text-primary-500">&#9829;</span> by Varexo
