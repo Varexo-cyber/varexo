@@ -7,10 +7,8 @@ async function generateInvoicePDF(invoiceData) {
     customerPhone, items, amount, dueDate
   } = invoiceData;
 
-  // BTW calculation
-  const totalIncl = parseFloat(amount) || 0;
-  const subtotalExcl = totalIncl / 1.21;
-  const btwAmount = totalIncl - subtotalExcl;
+  // Total amount (no BTW - KOR exempt)
+  const totalAmount = parseFloat(amount) || 0;
 
   // Format date
   let dateStr = '';
@@ -276,7 +274,9 @@ async function generateInvoicePDF(invoiceData) {
             2694BA 's-Gravenzande<br>
             +31 6 36075966<br>
             Info@varexo.nl<br>
-            KvK: 42042045
+            KvK: 42042045<br>
+            IBAN: NL20INGB0120284316<br>
+            <span style="font-size:9px;color:#666;">Vrijgesteld van btw in verband met KOR-regeling</span>
           </div>
         </div>
       </div>
@@ -318,19 +318,11 @@ async function generateInvoicePDF(invoiceData) {
 
       <div class="totals-section">
         <div class="totals-table">
-          <div class="totals-row">
-            <span>Subtotaal (excl. BTW)</span>
-            <span>&euro;${subtotalExcl.toFixed(2)}</span>
-          </div>
-          <div class="totals-row">
-            <span>BTW 21%</span>
-            <span>&euro;${btwAmount.toFixed(2)}</span>
-          </div>
           <div class="totals-row total">
-            <span>Totaal (incl. BTW)</span>
-            <span>&euro;${totalIncl.toFixed(2)}</span>
+            <span>Totaal te betalen</span>
+            <span>&euro;${totalAmount.toFixed(2)}</span>
           </div>
-          <div style="font-size:11px;color:#666;margin-top:6px;text-align:right;">Alle bedragen zijn inclusief 21% BTW</div>
+          <div style="font-size:11px;color:#666;margin-top:6px;text-align:right;">Vrijgesteld van btw in verband met KOR-regeling</div>
         </div>
       </div>
     </div>
@@ -359,7 +351,7 @@ async function generateInvoicePDF(invoiceData) {
       margin: { top: '30px', right: 0, bottom: '60px', left: 0 },
       displayHeaderFooter: true,
       headerTemplate: `<div style="width:100%;padding:5px 30px;font-size:9px;color:#2c6e4f;font-weight:600;display:flex;justify-content:space-between;background:linear-gradient(135deg,#c8e6d1 0%,#b8e0e8 100%);"><span>VAREXO</span><span>Factuur ${invoiceNumber}</span></div>`,
-      footerTemplate: `<div style="width:100%;padding:10px 30px;font-size:10px;color:#333;text-align:right;background:linear-gradient(135deg,#c8e6d1 0%,#b8e0e8 100%);line-height:1.6;"><strong>Varexo</strong> &bull; t.n.v. Mohammed Taher &bull; IBAN: NL75INGB0756428726 &bull; KvK: 42042045 &bull; BTW: 21% inbegrepen</div>`,
+      footerTemplate: `<div style="width:100%;padding:10px 30px;font-size:10px;color:#333;text-align:right;background:linear-gradient(135deg,#c8e6d1 0%,#b8e0e8 100%);line-height:1.6;"><strong>Varexo</strong> &bull; t.n.v. Mohammed Taher &bull; IBAN: NL20INGB0120284316 &bull; KvK: 42042045 &bull; Vrijgesteld van btw in verband met KOR-regeling</div>`,
     });
 
     console.log('PDF Generation - Complete, size:', pdfBuffer.length);

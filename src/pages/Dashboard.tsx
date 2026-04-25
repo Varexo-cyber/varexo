@@ -177,9 +177,7 @@ const CustomerDashboard: React.FC = () => {
     const rawDate = (invoice as any).invoiceDate || invoice.createdAt;
     const invoiceDate = rawDate ? new Date(rawDate).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
     
-    const totalIncl = invoice.amount;
-    const subtotalExcl = totalIncl / 1.21;
-    const btwAmount = totalIncl - subtotalExcl;
+    const totalAmount = invoice.amount;
 
     const html = `
       <!DOCTYPE html>
@@ -467,7 +465,9 @@ const CustomerDashboard: React.FC = () => {
                   2694BA 's-Gravenzande<br>
                   +31 6 36075966<br>
                   Info@varexo.nl<br>
-                  KvK: 42042045
+                  KvK: 42042045<br>
+                  IBAN: NL20INGB0120284316<br>
+                  <span style="font-size:9px;color:#666;">Vrijgesteld van btw in verband met KOR-regeling</span>
                 </div>
               </div>
             </div>
@@ -516,19 +516,11 @@ const CustomerDashboard: React.FC = () => {
 
             <div class="totals-section">
               <div class="totals-table">
-                <div class="totals-row">
-                  <span>Subtotaal (excl. BTW)</span>
-                  <span>€${subtotalExcl.toFixed(2)}</span>
-                </div>
-                <div class="totals-row">
-                  <span>BTW 21%</span>
-                  <span>€${btwAmount.toFixed(2)}</span>
-                </div>
                 <div class="totals-row total">
-                  <span>Totaal (incl. BTW)</span>
-                  <span>€${totalIncl.toFixed(2)}</span>
+                  <span>Totaal te betalen</span>
+                  <span>€${totalAmount.toFixed(2)}</span>
                 </div>
-                <div style="font-size:11px;color:#666;margin-top:6px;text-align:right;">Alle bedragen zijn inclusief 21% BTW</div>
+                <div style="font-size:11px;color:#666;margin-top:6px;text-align:right;">Vrijgesteld van btw in verband met KOR-regeling</div>
               </div>
             </div>
 
@@ -539,9 +531,9 @@ const CustomerDashboard: React.FC = () => {
                 <div class="footer-right">
                   <strong>Varexo</strong><br>
                   t.n.v. Mohammed Taher<br>
-                  IBAN: NL75INGB0756428726<br>
+                  IBAN: NL20INGB0120284316<br>
                   KvK: 42042045<br>
-                  BTW: 21% inbegrepen
+                  Vrijgesteld van btw in verband met KOR-regeling
                 </div>
               </div>
             </div>
@@ -570,9 +562,7 @@ const CustomerDashboard: React.FC = () => {
     const invoiceNumber = period.invoiceNumber ? `${period.invoiceNumber}-P${period.periodNumber}` : `${recurring.id}-P${period.periodNumber}`;
     const invoiceDate = new Date(period.periodStartDate).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
     
-    const totalIncl = period.amount;
-    const subtotalExcl = totalIncl / 1.21;
-    const btwAmount = totalIncl - subtotalExcl;
+    const totalAmount = period.amount;
 
     const html = `
       <!DOCTYPE html>
@@ -860,7 +850,9 @@ const CustomerDashboard: React.FC = () => {
                   2694BA 's-Gravenzande<br>
                   +31 6 36075966<br>
                   Info@varexo.nl<br>
-                  KvK: 42042045
+                  KvK: 42042045<br>
+                  IBAN: NL20INGB0120284316<br>
+                  <span style="font-size:9px;color:#666;">Vrijgesteld van btw in verband met KOR-regeling</span>
                 </div>
               </div>
             </div>
@@ -899,27 +891,19 @@ const CustomerDashboard: React.FC = () => {
                 <tr>
                   <td class="quantity">1</td>
                   <td class="description">${recurring.description} - Periode #${period.periodNumber}<br><small>(${new Date(period.periodStartDate).toLocaleDateString('nl-NL')} t/m ${new Date(period.periodEndDate).toLocaleDateString('nl-NL')})</small></td>
-                  <td class="price">€${totalIncl.toFixed(2)}</td>
-                  <td class="total">€${totalIncl.toFixed(2)}</td>
+                  <td class="price">€${totalAmount.toFixed(2)}</td>
+                  <td class="total">€${totalAmount.toFixed(2)}</td>
                 </tr>
               </tbody>
             </table>
 
             <div class="totals-section">
               <div class="totals-table">
-                <div class="totals-row">
-                  <span>Subtotaal (excl. BTW)</span>
-                  <span>€${subtotalExcl.toFixed(2)}</span>
-                </div>
-                <div class="totals-row">
-                  <span>BTW 21%</span>
-                  <span>€${btwAmount.toFixed(2)}</span>
-                </div>
                 <div class="totals-row total">
-                  <span>Totaal (incl. BTW)</span>
-                  <span>€${totalIncl.toFixed(2)}</span>
+                  <span>Totaal te betalen</span>
+                  <span>€${totalAmount.toFixed(2)}</span>
                 </div>
-                <div style="font-size:11px;color:#666;margin-top:6px;text-align:right;">Alle bedragen zijn inclusief 21% BTW</div>
+                <div style="font-size:11px;color:#666;margin-top:6px;text-align:right;">Vrijgesteld van btw in verband met KOR-regeling</div>
               </div>
             </div>
 
@@ -930,9 +914,9 @@ const CustomerDashboard: React.FC = () => {
                 <div class="footer-right">
                   <strong>Varexo</strong><br>
                   t.n.v. Mohammed Taher<br>
-                  IBAN: NL75INGB0756428726<br>
+                  IBAN: NL20INGB0120284316<br>
                   KvK: 42042045<br>
-                  BTW: 21% inbegrepen
+                  Vrijgesteld van btw in verband met KOR-regeling
                 </div>
               </div>
             </div>

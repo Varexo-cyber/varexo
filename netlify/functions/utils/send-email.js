@@ -49,16 +49,18 @@ function emailTemplate(title, content, ctaText, ctaUrl, language = 'nl') {
       companyDesc: 'Webdesign, Webshops & Social Media',
       autoMessage: 'Dit is een automatisch bericht vanuit het Varexo klantenportaal.',
       copyright: `© ${new Date().getFullYear()} Varexo. Alle rechten voorbehouden.`,
-      kvk: 'KvK',
-      btw: 'BTW'
+      kvk: 'KvK: 42042045',
+      iban: 'IBAN: NL20INGB0120284316',
+      kor: 'Vrijgesteld van btw in verband met KOR-regeling'
     },
     en: {
       companyInfo: 'Mohammed Taher',
       companyDesc: 'Webdesign, Webshops & Social Media',
       autoMessage: 'This is an automated message from the Varexo customer portal.',
       copyright: `© ${new Date().getFullYear()} Varexo. All rights reserved.`,
-      kvk: 'KvK',
-      btw: 'VAT'
+      kvk: 'KvK: 42042045',
+      iban: 'IBAN: NL20INGB0120284316',
+      kor: 'VAT exempt under KOR scheme'
     }
   };
   
@@ -125,7 +127,10 @@ function emailTemplate(title, content, ctaText, ctaUrl, language = 'nl') {
           <!-- Legal Info -->
           <div style="text-align:center;margin-bottom:16px;">
             <p style="margin:0;color:#64748b;font-size:11px;line-height:1.6;">
-              ${lang.kvk}: 42042045
+              ${lang.kvk} | ${lang.iban}
+            </p>
+            <p style="margin:4px 0 0;color:#64748b;font-size:10px;line-height:1.4;">
+              ${lang.kor}
             </p>
           </div>
           
@@ -292,7 +297,7 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
       greeting: `Beste ${customerName || 'klant'},`,
       intro: 'Er staat een nieuwe factuur voor u klaar. Gelieve deze binnen de gestelde termijn te voldoen.',
       invoiceLabel: 'Factuur',
-      vatLabel: '(incl. 21% BTW)',
+      vatLabel: '',
       dueLabel: 'Te betalen voor:',
       pdfText: 'De factuur vindt u als PDF in de bijlage van deze e-mail.',
       bankText: 'U kunt betalen via bankoverschrijving naar:',
@@ -309,7 +314,7 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
       greeting: `Dear ${customerName || 'customer'},`,
       intro: 'A new invoice is ready for you. Please pay within the specified term.',
       invoiceLabel: 'Invoice',
-      vatLabel: '(incl. 21% VAT)',
+      vatLabel: '',
       dueLabel: 'Due by:',
       pdfText: 'The invoice is attached as a PDF to this email.',
       bankText: 'You can pay by bank transfer to:',
@@ -337,13 +342,13 @@ async function sendNewInvoiceEmail(customerEmail, customerName, invoiceNumber, a
     ` : ''}
     <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:20px;border-radius:0 8px 8px 0;margin:20px 0;">
       <p style="margin:0 0 8px;color:#059669;font-size:16px;font-weight:600;">${t.invoiceLabel} ${invoiceNumber}</p>
-      <p style="margin:0 0 8px;color:#1a1a1a;font-size:28px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)} <span style="font-size:14px;font-weight:400;color:#6b7280;">${t.vatLabel}</span></p>
+      <p style="margin:0 0 8px;color:#1a1a1a;font-size:28px;font-weight:700;">&euro;${parseFloat(amount).toFixed(2)}</p>
       <p style="margin:4px 0 0;color:#6b7280;font-size:14px;">${t.dueLabel} <strong style="color:#d97706;">${dueDate}</strong></p>
     </div>
     <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">${t.pdfText}</p>
     <p style="color:#555555;font-size:16px;line-height:1.7;margin-bottom:12px;">
       ${t.bankText}<br>
-      <strong style="color:#1a1a1a;">IBAN: NL75INGB0756428726</strong><br>
+      <strong style="color:#1a1a1a;">IBAN: NL20INGB0120284316</strong><br>
       <strong style="color:#1a1a1a;">${t.accountLabel}</strong>
     </p>
     <div style="background:#eff6ff;border-left:4px solid #3b82f6;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">

@@ -55,7 +55,9 @@ const Footer: React.FC = () => {
                 {t('footer.whatsapp')}
               </a>
               <p className="text-gray-500 text-xs font-mono mt-2">
-                {t('footer.kvk')}: 42042045
+                {t('footer.kvk')}: 42042045<br/>
+                BTW: NL005213845B91<br/>
+                IBAN: NL20INGB0120284316
               </p>
             </div>
           </div>
