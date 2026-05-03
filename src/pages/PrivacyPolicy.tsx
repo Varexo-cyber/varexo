@@ -131,7 +131,9 @@ const PrivacyPolicy: React.FC = () => {
                   <strong>Varexo</strong><br />
                   E-mail: info@varexo.nl<br />
                   Website: www.varexo.nl<br />
-                  KvK: 42042045
+                  KvK: 42042045<br />
+                  BTW: NL005213845B91<br />
+                  IBAN: NL20INGB0120284316
                 </p>
               </div>
 

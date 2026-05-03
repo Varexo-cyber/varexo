@@ -22,7 +22,7 @@ const AlgemeneVoorwaarden: React.FC = () => {
               <div className="mb-6">
                 <p className="text-gray-300 mb-4">{isNL ? 'In deze algemene voorwaarden wordt verstaan onder:' : 'In these general terms and conditions, the following is understood:'}</p>
                 <ul className="list-disc pl-6 space-y-2 text-gray-300">
-                  <li><strong>Varexo:</strong> {isNL ? 'De ICT- en webdevelopment onderneming, gevestigd te \'s-Gravenzande, ingeschreven bij de Kamer van Koophandel onder nummer 42042045' : 'The ICT and web development company, established in \'s-Gravenzande, registered at the Chamber of Commerce under number 42042045'}</li>
+                  <li><strong>Varexo:</strong> {isNL ? 'De ICT- en webdevelopment onderneming, ingeschreven bij de Kamer van Koophandel onder nummer 42042045, BTW-identificatienummer: NL005213845B91' : 'The ICT and web development company, registered at the Chamber of Commerce under number 42042045, VAT identification number: NL005213845B91'}</li>
                   <li><strong>{isNL ? 'Klant' : 'Customer'}:</strong> {isNL ? 'De natuurlijke persoon of rechtspersoon die gebruikmaakt van de diensten van Varexo' : 'The natural person or legal entity using the services of Varexo'}</li>
                   <li><strong>{isNL ? 'Diensten' : 'Services'}:</strong> {isNL ? 'Alle door Varexo aangeboden diensten, waaronder webdesign, webdevelopment, social media beheer en onderhoud' : 'All services offered by Varexo, including web design, web development, social media management and maintenance'}</li>
                   <li><strong>{isNL ? 'Overeenkomst' : 'Agreement'}:</strong> {isNL ? 'De overeenkomst tussen Varexo en de Klant' : 'The agreement between Varexo and the Customer'}</li>
@@ -61,8 +61,8 @@ const AlgemeneVoorwaarden: React.FC = () => {
                 <h3 className="text-xl font-semibold mb-3 text-white">5.1 {isNL ? 'Prijzen' : 'Prices'}</h3>
                 <p className="text-gray-300 mb-4">
                   {isNL 
-                    ? 'Alle prijzen zijn exclusief BTW, tenzij anders vermeld. Prijzen zijn gebaseerd op de geldende tarieven op het moment van de offerte.'
-                    : 'All prices are excluding VAT, unless otherwise stated. Prices are based on the applicable rates at the time of the quote.'}
+                    ? 'Alle prijzen zijn inclusief diensten vrijgesteld van BTW in verband met de KOR-regeling, tenzij anders vermeld. Prijzen zijn gebaseerd op de geldende tarieven op het moment van de offerte.'
+                    : 'All prices include services exempt from VAT under the KOR scheme, unless otherwise stated. Prices are based on the applicable rates at the time of the quote.'}
                 </p>
                 
                 <h3 className="text-xl font-semibold mb-3 text-white">5.2 {isNL ? 'Betalingstermijnen' : 'Payment Terms'}</h3>
@@ -154,8 +154,9 @@ const AlgemeneVoorwaarden: React.FC = () => {
                   <strong>Varexo</strong><br />
                   E-mail: info@varexo.nl<br />
                   Website: www.varexo.nl<br />
-                  KvK: {isNL ? '[later invullen]' : '[to be filled in]'}<br />
-                  BTW: {isNL ? '[later invullen]' : '[to be filled in]'}
+                  KvK: 42042045<br />
+                  BTW: NL005213845B91<br />
+                  IBAN: NL20INGB0120284316
                 </p>
               </div>
             </div>
