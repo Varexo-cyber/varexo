@@ -139,6 +139,17 @@ const Portfolio: React.FC = () => {
       image: '/portfolio/Directautohulp.png?v=2',
       technologies: ['React', 'Node.js', 'TypeScript'],
       link: 'https://directautohulp.nl'
+    },
+    {
+      id: '3',
+      title: 'HG Transport',
+      category: language === 'nl' ? 'Bedrijfswebsite' : 'Business Website',
+      description: language === 'nl'
+        ? 'Professionele website voor internationaal transport en logistiek. Focus op eenvoud, betrouwbaarheid en snelle offerte-aanvragen voor wegtransport.'
+        : 'Professional website for international transport and logistics. Focus on simplicity, reliability and quick quote requests for road transport.',
+      image: '/portfolio/hgtransport.jpg',
+      technologies: ['React', 'Tailwind CSS', 'Framer Motion'],
+      link: 'https://hgexperts.nl'
     }
   ];
 
@@ -192,7 +203,7 @@ const Portfolio: React.FC = () => {
         </AnimateOnScroll>
         
         {/* Project Grid - Cards with Images */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {projects.map((project, index) => (
             <AnimateOnScroll key={project.id} delay={index * 0.1}>
               {project.link ? (
