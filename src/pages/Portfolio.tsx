@@ -14,24 +14,36 @@ interface Project {
   link?: string;
 }
 
-const CampaignCard: React.FC<{ language: string }> = ({ language }) => {
-  const [currentImage, setCurrentImage] = useState(0);
-  const images = ['/portfolio/Campagne 1.jpeg', '/portfolio/Campagne 2.jpeg'];
+interface Campaign {
+  id: string;
+  title: string;
+  description: string;
+  images: string[];
+  stats: {
+    reach: string;
+    conversions: string;
+    status: string;
+  };
+  tags: string[];
+}
 
-  const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
-  const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
+const CampaignCard: React.FC<{ campaign: Campaign; language: string }> = ({ campaign, language }) => {
+  const [currentImage, setCurrentImage] = useState(0);
+
+  const nextImage = () => setCurrentImage((prev) => (prev + 1) % campaign.images.length);
+  const prevImage = () => setCurrentImage((prev) => (prev - 1 + campaign.images.length) % campaign.images.length);
 
   return (
     <div 
-      className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20"
+      className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 h-full"
       style={{ animation: 'float 3s ease-in-out infinite' }}
     >
       <div className="relative h-80 overflow-hidden">
-        {images.map((img, idx) => (
+        {campaign.images.map((img, idx) => (
           <img 
             key={idx}
             src={img}
-            alt={language === 'nl' ? `Leegstand Meldpunt campagne ${idx + 1}` : `Vacancy Reporting campaign ${idx + 1}`}
+            alt={`${campaign.title} ${idx + 1}`}
             className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
               idx === currentImage ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
             }`}
@@ -45,7 +57,7 @@ const CampaignCard: React.FC<{ language: string }> = ({ language }) => {
         </div>
         <button
           onClick={prevImage}
-          className="absolute left-3 top-1/2 -translate-y-1/2 bg-dark-900/70 hover:bg-dark-900 text-white p-2 rounded-full border border-dark-600 transition-all hover:scale-110"
+          className="absolute left-3 top-1/2 -translate-y-1/2 bg-dark-900/70 hover:bg-dark-900 text-white p-2 rounded-full border border-dark-600 transition-all hover:scale-110 z-10"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -53,14 +65,14 @@ const CampaignCard: React.FC<{ language: string }> = ({ language }) => {
         </button>
         <button
           onClick={nextImage}
-          className="absolute right-3 top-1/2 -translate-y-1/2 bg-dark-900/70 hover:bg-dark-900 text-white p-2 rounded-full border border-dark-600 transition-all hover:scale-110"
+          className="absolute right-3 top-1/2 -translate-y-1/2 bg-dark-900/70 hover:bg-dark-900 text-white p-2 rounded-full border border-dark-600 transition-all hover:scale-110 z-10"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-          {images.map((_, idx) => (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          {campaign.images.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentImage(idx)}
@@ -73,31 +85,29 @@ const CampaignCard: React.FC<{ language: string }> = ({ language }) => {
       </div>
       <div className="p-6">
         <h3 className="text-xl font-bold text-white mb-2">
-          {language === 'nl' ? 'Leegstand Meldpunt - Campagne' : 'Vacancy Reporting - Campaign'}
+          {campaign.title}
         </h3>
         <p className="text-gray-400 text-sm mb-4">
-          {language === 'nl'
-            ? 'Social media advertentiecampagne gericht op het bereiken van vastgoedeigenaren. Meerdere advertentievarianten A/B getest voor maximale conversie en bereik.'
-            : 'Social media ad campaign targeting property owners. Multiple ad variants A/B tested for maximum conversion and reach.'}
+          {campaign.description}
         </p>
         <div className="grid grid-cols-3 gap-3 mb-4">
           <div className="text-center bg-dark-700 rounded-lg p-2 border border-dark-600">
-            <div className="text-lg font-bold text-primary-400">10K+</div>
+            <div className="text-lg font-bold text-primary-400">{campaign.stats.reach}</div>
             <p className="text-gray-500 text-[10px]">{language === 'nl' ? 'Bereik / dag' : 'Reach / day'}</p>
           </div>
           <div className="text-center bg-dark-700 rounded-lg p-2 border border-dark-600">
-            <div className="text-lg font-bold text-primary-400">3.2%</div>
-            <p className="text-gray-500 text-[10px]">CTR</p>
+            <div className="text-lg font-bold text-primary-400">{campaign.stats.conversions}</div>
+            <p className="text-gray-500 text-[10px]">{language === 'nl' ? 'Leads / dag' : 'Leads / day'}</p>
           </div>
           <div className="text-center bg-dark-700 rounded-lg p-2 border border-dark-600">
-            <div className="text-lg font-bold text-green-400">Active</div>
+            <div className="text-lg font-bold text-green-400">{campaign.stats.status}</div>
             <p className="text-gray-500 text-[10px]">Status</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <span className="px-2 py-1 bg-dark-700 text-blue-300 text-xs rounded border border-dark-600">Meta Ads</span>
-          <span className="px-2 py-1 bg-dark-700 text-blue-300 text-xs rounded border border-dark-600">Instagram</span>
-          <span className="px-2 py-1 bg-dark-700 text-blue-300 text-xs rounded border border-dark-600">Facebook</span>
+          {campaign.tags.map(tag => (
+            <span key={tag} className="px-2 py-1 bg-dark-700 text-blue-300 text-xs rounded border border-dark-600">{tag}</span>
+          ))}
         </div>
       </div>
     </div>
@@ -129,17 +139,37 @@ const Portfolio: React.FC = () => {
       image: '/portfolio/Directautohulp.png?v=2',
       technologies: ['React', 'Node.js', 'TypeScript'],
       link: 'https://directautohulp.nl'
+    }
+  ];
+
+  const campaigns: Campaign[] = [
+    {
+      id: '1',
+      title: language === 'nl' ? 'Leegstand Meldpunt - Campagne' : 'Vacancy Reporting - Campaign',
+      description: language === 'nl'
+        ? 'Social media advertentiecampagne gericht op het bereiken van vastgoedeigenaren. Meerdere advertentievarianten A/B getest voor maximale conversie.'
+        : 'Social media ad campaign targeting property owners. Multiple ad variants A/B tested for maximum conversion and reach.',
+      images: ['/portfolio/Campagne 1.jpeg', '/portfolio/Campagne 2.jpeg'],
+      stats: {
+        reach: '10K+',
+        conversions: '3.2%',
+        status: 'Active'
+      },
+      tags: ['Meta Ads', 'Instagram', 'Facebook']
     },
     {
-      id: '3',
-      title: 'LabFix',
-      category: language === 'nl' ? 'Webshop' : 'Webshop',
+      id: '2',
+      title: 'SAMKILL CLOTHING',
       description: language === 'nl'
-        ? 'B2B webshop voor telefoon en tablet onderdelen. Professioneel platform met productcatalogus, zoekfunctie en Europese verzending voor groothandels.'
-        : 'B2B webshop for phone and tablet parts. Professional platform with product catalog, search functionality and European shipping for wholesalers.',
-      image: '/portfolio/labfix.png?v=1',
-      technologies: ['React', 'Node.js', 'PostgreSQL', 'Stripe'],
-      link: 'https://labfix.nl'
+        ? 'Social media advertentiecampagne voor premium streetwear merk. Focus op de nieuwe lente/zomer collectie 2026 en online verkoop.'
+        : 'Social media ad campaign for premium streetwear brand. Focused on the new spring/summer 2026 collection and online sales.',
+      images: ['/portfolio/samkill-1.jpg', '/portfolio/samkill-2.jpg'],
+      stats: {
+        reach: '2K+',
+        conversions: '3-4 / dag',
+        status: 'Active'
+      },
+      tags: ['Streetwear', 'E-commerce', 'Social Media']
     }
   ];
   
@@ -162,7 +192,7 @@ const Portfolio: React.FC = () => {
         </AnimateOnScroll>
         
         {/* Project Grid - Cards with Images */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {projects.map((project, index) => (
             <AnimateOnScroll key={project.id} delay={0}>
               {project.link ? (
@@ -285,10 +315,12 @@ const Portfolio: React.FC = () => {
             </p>
           </AnimateOnScroll>
 
-          <div className="max-w-2xl mx-auto">
-            <AnimateOnScroll delay={0}>
-              <CampaignCard language={language} />
-            </AnimateOnScroll>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {campaigns.map((campaign, index) => (
+              <AnimateOnScroll key={campaign.id} delay={index * 100}>
+                <CampaignCard campaign={campaign} language={language} />
+              </AnimateOnScroll>
+            ))}
           </div>
         </div>
 
