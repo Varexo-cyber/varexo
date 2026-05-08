@@ -38,13 +38,13 @@ const CampaignCard: React.FC<{ campaign: Campaign; language: string }> = ({ camp
       className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 h-full"
       style={{ animation: 'float 3s ease-in-out infinite' }}
     >
-      <div className="relative h-80 overflow-hidden">
+      <div className="relative overflow-hidden bg-dark-900/50" style={{ height: '450px' }}>
         {campaign.images.map((img, idx) => (
           <img 
             key={idx}
             src={img}
             alt={`${campaign.title} ${idx + 1}`}
-            className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
+            className={`absolute inset-0 w-full h-full object-contain transition-all duration-500 ${
               idx === currentImage ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
             }`}
           />
@@ -194,7 +194,7 @@ const Portfolio: React.FC = () => {
         {/* Project Grid - Cards with Images */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {projects.map((project, index) => (
-            <AnimateOnScroll key={project.id} delay={0}>
+            <AnimateOnScroll key={project.id} delay={index * 0.1}>
               {project.link ? (
                 <a 
                   href={project.link}
@@ -317,7 +317,7 @@ const Portfolio: React.FC = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {campaigns.map((campaign, index) => (
-              <AnimateOnScroll key={campaign.id} delay={index * 100}>
+              <AnimateOnScroll key={campaign.id} delay={index * 0.1}>
                 <CampaignCard campaign={campaign} language={language} />
               </AnimateOnScroll>
             ))}
