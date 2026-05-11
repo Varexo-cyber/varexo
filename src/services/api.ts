@@ -106,6 +106,7 @@ export const customersAPI = {
     company?: string; 
     socialMediaPackage?: string; 
     hasSocialMedia?: boolean;
+    extraServices?: string[];
   }) => apiCall('/customers/admin-update', { 
     method: 'PUT', 
     body: JSON.stringify({ email, ...updates }) 

@@ -36,7 +36,8 @@ const AdminDashboard: React.FC = () => {
     subscription: 'basic' | 'pro' | 'premium' | '';
     hasSocialMedia: boolean;
     socialMediaPackage: 'starter' | 'groei' | 'dominant' | '';
-  }>({ subscription: '', hasSocialMedia: false, socialMediaPackage: '' });
+    extraServices: ('email' | 'maintenance' | 'seo' | 'logo' | 'domain')[];
+  }>({ subscription: '', hasSocialMedia: false, socialMediaPackage: '', extraServices: [] });
   const [showInvoiceDeleteConfirm, setShowInvoiceDeleteConfirm] = useState<string | null>(null);
   const [showProjectDropdown, setShowProjectDropdown] = useState<string | null>(null);
   const [showInvoiceDropdown, setShowInvoiceDropdown] = useState<string | null>(null);
@@ -693,7 +694,8 @@ const AdminDashboard: React.FC = () => {
         await customersAPI.updateAdmin(email, {
           subscription: subscriptionForm.subscription || undefined,
           hasSocialMedia: !!subscriptionForm.socialMediaPackage,
-          socialMediaPackage: subscriptionForm.socialMediaPackage || undefined
+          socialMediaPackage: subscriptionForm.socialMediaPackage || undefined,
+          extraServices: subscriptionForm.extraServices.length > 0 ? subscriptionForm.extraServices : undefined
         });
         console.log('API update successful for subscription');
       } catch (apiError) {
@@ -708,7 +710,8 @@ const AdminDashboard: React.FC = () => {
           ...users[userIndex],
           subscription: subscriptionForm.subscription || null,
           hasSocialMedia: !!subscriptionForm.socialMediaPackage,
-          socialMediaPackage: subscriptionForm.socialMediaPackage || null
+          socialMediaPackage: subscriptionForm.socialMediaPackage || null,
+          extraServices: subscriptionForm.extraServices.length > 0 ? subscriptionForm.extraServices : null
         };
         localStorage.setItem('varexo_users', JSON.stringify(users));
       }
@@ -721,7 +724,8 @@ const AdminDashboard: React.FC = () => {
                 ...c, 
                 subscription: subscriptionForm.subscription || undefined,
                 hasSocialMedia: !!subscriptionForm.socialMediaPackage,
-                socialMediaPackage: subscriptionForm.socialMediaPackage || undefined
+                socialMediaPackage: subscriptionForm.socialMediaPackage || undefined,
+                extraServices: subscriptionForm.extraServices.length > 0 ? subscriptionForm.extraServices : undefined
               }
             : c
         )
@@ -789,7 +793,8 @@ const AdminDashboard: React.FC = () => {
     setSubscriptionForm({
       subscription: customer.subscription || '',
       hasSocialMedia: customer.hasSocialMedia || false,
-      socialMediaPackage: (customer as any).socialMediaPackage || ''
+      socialMediaPackage: (customer as any).socialMediaPackage || '',
+      extraServices: (customer as any).extraServices || []
     });
     setShowCustomerDropdown(null);
   };
@@ -2177,6 +2182,15 @@ const AdminDashboard: React.FC = () => {
                                      (customer as any).socialMediaPackage === 'groei' ? 'Groei' :
                                      (customer as any).socialMediaPackage === 'dominant' ? 'Dominant' : 'Social Media'}
                                 </span>
+                              )}
+                              {(customer as any).extraServices && (customer as any).extraServices.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {(customer as any).extraServices.map((s: string) => (
+                                    <span key={s} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-900/50 text-amber-400 border border-amber-500/30">
+                                      {s === 'email' ? 'Email' : s === 'maintenance' ? 'Maint.' : s === 'seo' ? 'SEO' : s === 'logo' ? 'Logo' : 'Domain'}
+                                    </span>
+                                  ))}
+                                </div>
                               )}
                             </div>
                           </td>
@@ -5009,6 +5023,34 @@ const AdminDashboard: React.FC = () => {
                         <option value="groei">Groei - €699.99/{language === 'nl' ? 'maand' : 'month'}</option>
                         <option value="dominant">Dominant - €999.99/{language === 'nl' ? 'maand' : 'month'}</option>
                       </select>
+                    </div>
+                    <div className="border-t border-dark-600 pt-4">
+                      <label className="block text-sm font-medium text-amber-400 mb-2">{language === 'nl' ? 'Extra Diensten' : 'Extra Services'}</label>
+                      <div className="space-y-2">
+                        {[
+                          { value: 'email' as const, label: `Email Hosting - €9,99/${language === 'nl' ? 'maand' : 'month'}` },
+                          { value: 'maintenance' as const, label: `${language === 'nl' ? 'Onderhoud & Backups' : 'Maintenance & Backups'} - €39,99/${language === 'nl' ? 'maand' : 'month'}` },
+                          { value: 'seo' as const, label: `SEO - €89,99/${language === 'nl' ? 'maand' : 'month'}` },
+                          { value: 'logo' as const, label: `Logo & ${language === 'nl' ? 'Huisstijl' : 'Branding'} - €199,99 (${language === 'nl' ? 'eenmalig' : 'one-time'})` },
+                          { value: 'domain' as const, label: `${language === 'nl' ? 'Domein Registratie' : 'Domain Registration'} - €19,99/${language === 'nl' ? 'jaar' : 'year'}` },
+                        ].map(service => (
+                          <label key={service.value} className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={subscriptionForm.extraServices.includes(service.value)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSubscriptionForm(prev => ({ ...prev, extraServices: [...prev.extraServices, service.value] }));
+                                } else {
+                                  setSubscriptionForm(prev => ({ ...prev, extraServices: prev.extraServices.filter(s => s !== service.value) }));
+                                }
+                              }}
+                              className="w-4 h-4 rounded border-dark-600 bg-dark-700 text-amber-500 focus:ring-amber-500"
+                            />
+                            <span className="text-sm text-gray-300">{service.label}</span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
                   </div>
                   <div className="flex justify-end space-x-3 mt-6">

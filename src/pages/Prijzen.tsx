@@ -584,6 +584,221 @@ const Prijzen: React.FC = () => {
           </div>
         </div>
 
+        {/* Extra Diensten Section */}
+        <div className="max-w-6xl mx-auto mb-16 mt-16">
+          <AnimateOnScroll>
+            <div className="text-center mb-4">
+              <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 text-xs font-bold font-mono rounded-full border border-amber-500/30 mb-4 tracking-wider">SERVICES</span>
+            </div>
+            <p className="text-amber-400 text-center font-mono text-sm mb-2 tracking-wider">$ run services --extra</p>
+            <h2 className="text-3xl font-bold text-center mb-4 text-white">
+              {language === 'nl' ? 'Extra Diensten' : 'Additional Services'}
+            </h2>
+            <p className="text-lg text-center text-gray-400 mb-12 max-w-3xl mx-auto">
+              {language === 'nl'
+                ? 'Naast websites en social media bieden wij ook losse diensten aan om jouw bedrijf compleet online te krijgen.'
+                : 'Besides websites and social media, we also offer individual services to get your business fully online.'}
+            </p>
+          </AnimateOnScroll>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Email Hosting */}
+            <AnimateOnScroll animation="reveal-scale" delay={0.1}>
+            <div className="glass-card card-hover p-6 rounded-xl border-t-2 border-t-amber-500/50 h-full flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-white">{language === 'nl' ? 'Email Hosting' : 'Email Hosting'}</h3>
+              </div>
+              <div className="mb-4">
+                <div className="text-3xl font-bold text-amber-400">€9,99<span className="text-sm font-normal text-gray-400">/{language === 'nl' ? 'maand' : 'month'}</span></div>
+                <div className="text-sm text-gray-400 mt-1">{language === 'nl' ? 'of' : 'or'} €149,99/{language === 'nl' ? 'jaar' : 'year'}</div>
+              </div>
+              <ul className="space-y-2 mb-6 flex-1">
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Zakelijk emailadres (info@jouwbedrijf.nl)' : 'Business email (info@yourbusiness.com)'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Webmail toegang' : 'Webmail access'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Spam- en virusbeveiliging' : 'Spam & virus protection'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Setup inbegrepen' : 'Setup included'}
+                </li>
+              </ul>
+              <a href="/contact" className="block w-full bg-amber-500/20 text-amber-400 text-center py-2.5 rounded-lg font-semibold hover:bg-amber-500/30 transition border border-amber-500/30">
+                {language === 'nl' ? 'Aanvragen' : 'Request'}
+              </a>
+            </div>
+            </AnimateOnScroll>
+
+            {/* Onderhoud & Backups */}
+            <AnimateOnScroll animation="reveal-scale" delay={0.2}>
+            <div className="glass-card card-hover p-6 rounded-xl border-t-2 border-t-amber-500/50 h-full flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-white">{language === 'nl' ? 'Onderhoud & Backups' : 'Maintenance & Backups'}</h3>
+              </div>
+              <div className="mb-4">
+                <div className="text-3xl font-bold text-amber-400">€39,99<span className="text-sm font-normal text-gray-400">/{language === 'nl' ? 'maand' : 'month'}</span></div>
+                <div className="text-sm text-gray-400 mt-1">{language === 'nl' ? 'of' : 'or'} €439/{language === 'nl' ? 'jaar' : 'year'}</div>
+              </div>
+              <ul className="space-y-2 mb-6 flex-1">
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Wekelijkse backups' : 'Weekly backups'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Technische updates' : 'Technical updates'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Bug fixes & kleine aanpassingen' : 'Bug fixes & minor adjustments'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Uptime monitoring 24/7' : 'Uptime monitoring 24/7'}
+                </li>
+              </ul>
+              <a href="/contact" className="block w-full bg-amber-500/20 text-amber-400 text-center py-2.5 rounded-lg font-semibold hover:bg-amber-500/30 transition border border-amber-500/30">
+                {language === 'nl' ? 'Aanvragen' : 'Request'}
+              </a>
+            </div>
+            </AnimateOnScroll>
+
+            {/* SEO */}
+            <AnimateOnScroll animation="reveal-scale" delay={0.3}>
+            <div className="glass-card card-hover p-6 rounded-xl border-t-2 border-t-amber-500/50 h-full flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-white">SEO</h3>
+              </div>
+              <div className="mb-4">
+                <div className="text-3xl font-bold text-amber-400">€89,99<span className="text-sm font-normal text-gray-400">/{language === 'nl' ? 'maand' : 'month'}</span></div>
+                <div className="text-sm text-gray-400 mt-1">{language === 'nl' ? 'of' : 'or'} €999,99/{language === 'nl' ? 'jaar' : 'year'}</div>
+              </div>
+              <ul className="space-y-2 mb-6 flex-1">
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Technische SEO optimalisatie' : 'Technical SEO optimization'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Google Search Console setup' : 'Google Search Console setup'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Zoekwoorden analyse & on-page optimalisatie' : 'Keyword analysis & on-page optimization'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Maandelijkse rapportage' : 'Monthly reporting'}
+                </li>
+              </ul>
+              <a href="/contact" className="block w-full bg-amber-500/20 text-amber-400 text-center py-2.5 rounded-lg font-semibold hover:bg-amber-500/30 transition border border-amber-500/30">
+                {language === 'nl' ? 'Aanvragen' : 'Request'}
+              </a>
+            </div>
+            </AnimateOnScroll>
+
+            {/* Logo & Huisstijl */}
+            <AnimateOnScroll animation="reveal-scale" delay={0.4}>
+            <div className="glass-card card-hover p-6 rounded-xl border-t-2 border-t-amber-500/50 h-full flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-white">{language === 'nl' ? 'Logo & Huisstijl' : 'Logo & Branding'}</h3>
+              </div>
+              <div className="mb-4">
+                <div className="text-3xl font-bold text-amber-400">€199,99</div>
+                <div className="text-sm text-gray-400 mt-1">{language === 'nl' ? 'eenmalig' : 'one-time'}</div>
+              </div>
+              <ul className="space-y-2 mb-6 flex-1">
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? '3 logo concepten' : '3 logo concepts'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? '2 revisierondes' : '2 revision rounds'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Alle bestandsformaten (PNG, SVG, PDF)' : 'All file formats (PNG, SVG, PDF)'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Kleurenpalet + lettertype advies' : 'Color palette + typography advice'}
+                </li>
+              </ul>
+              <a href="/contact" className="block w-full bg-amber-500/20 text-amber-400 text-center py-2.5 rounded-lg font-semibold hover:bg-amber-500/30 transition border border-amber-500/30">
+                {language === 'nl' ? 'Aanvragen' : 'Request'}
+              </a>
+            </div>
+            </AnimateOnScroll>
+
+            {/* Domein Registratie */}
+            <AnimateOnScroll animation="reveal-scale" delay={0.5}>
+            <div className="glass-card card-hover p-6 rounded-xl border-t-2 border-t-amber-500/50 h-full flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-white">{language === 'nl' ? 'Domein Registratie' : 'Domain Registration'}</h3>
+              </div>
+              <div className="mb-4">
+                <div className="text-3xl font-bold text-amber-400">€19,99<span className="text-sm font-normal text-gray-400">/{language === 'nl' ? 'jaar' : 'year'}</span></div>
+              </div>
+              <ul className="space-y-2 mb-6 flex-1">
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? '.nl of .com domein' : '.nl or .com domain'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'DNS beheer inbegrepen' : 'DNS management included'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'Automatische verlenging' : 'Automatic renewal'}
+                </li>
+                <li className="flex items-center text-gray-300 text-sm">
+                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {language === 'nl' ? 'SSL-certificaat inbegrepen' : 'SSL certificate included'}
+                </li>
+              </ul>
+              <a href="/contact" className="block w-full bg-amber-500/20 text-amber-400 text-center py-2.5 rounded-lg font-semibold hover:bg-amber-500/30 transition border border-amber-500/30">
+                {language === 'nl' ? 'Aanvragen' : 'Request'}
+              </a>
+            </div>
+            </AnimateOnScroll>
+          </div>
+        </div>
+
         {/* CTA */}
         <div className="mt-16 text-center">
           <h2 className="text-2xl font-bold mb-4 text-white">{t('pricing.cta.title')}</h2>
