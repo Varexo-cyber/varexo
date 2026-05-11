@@ -585,13 +585,13 @@ const Prijzen: React.FC = () => {
         </div>
 
         {/* Extra Diensten Section */}
-        <div className="max-w-6xl mx-auto mb-16 mt-16">
+        <div className="max-w-7xl mx-auto mb-16 mt-16">
           <AnimateOnScroll>
             <div className="text-center mb-4">
-              <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 text-xs font-bold font-mono rounded-full border border-amber-500/30 mb-4 tracking-wider">SERVICES</span>
+              <span className="inline-block px-4 py-1.5 text-xs font-bold font-mono rounded-full mb-4 tracking-wider" style={{background: 'rgba(249, 115, 22, 0.1)', color: '#fb923c', border: '1px solid rgba(249, 115, 22, 0.3)'}}>EXTRA</span>
             </div>
-            <p className="text-amber-400 text-center font-mono text-sm mb-2 tracking-wider">$ run services --extra</p>
-            <h2 className="text-3xl font-bold text-center mb-4 text-white">
+            <p className="text-center font-mono text-sm mb-2 tracking-wider" style={{color: '#fb923c'}}>$ run services --extra</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-white">
               {language === 'nl' ? 'Extra Diensten' : 'Additional Services'}
             </h2>
             <p className="text-lg text-center text-gray-400 mb-12 max-w-3xl mx-auto">
@@ -601,201 +601,169 @@ const Prijzen: React.FC = () => {
             </p>
           </AnimateOnScroll>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Email Hosting */}
-            <AnimateOnScroll animation="reveal-scale" delay={0.1}>
-            <div className="glass-card card-hover p-6 rounded-xl border-t-2 border-t-amber-500/50 h-full flex flex-col">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+            {[
+              {
+                title: language === 'nl' ? 'Email Hosting' : 'Email Hosting',
+                price: '€9,99',
+                period: language === 'nl' ? '/maand' : '/month',
+                subPrice: language === 'nl' ? 'of €149,99/jaar' : 'or €149,99/year',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white">{language === 'nl' ? 'Email Hosting' : 'Email Hosting'}</h3>
-              </div>
-              <div className="mb-4">
-                <div className="text-3xl font-bold text-amber-400">€9,99<span className="text-sm font-normal text-gray-400">/{language === 'nl' ? 'maand' : 'month'}</span></div>
-                <div className="text-sm text-gray-400 mt-1">{language === 'nl' ? 'of' : 'or'} €149,99/{language === 'nl' ? 'jaar' : 'year'}</div>
-              </div>
-              <ul className="space-y-2 mb-6 flex-1">
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Zakelijk emailadres (info@jouwbedrijf.nl)' : 'Business email (info@yourbusiness.com)'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Webmail toegang' : 'Webmail access'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Spam- en virusbeveiliging' : 'Spam & virus protection'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Setup inbegrepen' : 'Setup included'}
-                </li>
-              </ul>
-              <a href="/contact" className="block w-full bg-amber-500/20 text-amber-400 text-center py-2.5 rounded-lg font-semibold hover:bg-amber-500/30 transition border border-amber-500/30">
-                {language === 'nl' ? 'Aanvragen' : 'Request'}
-              </a>
-            </div>
-            </AnimateOnScroll>
-
-            {/* Onderhoud & Backups */}
-            <AnimateOnScroll animation="reveal-scale" delay={0.2}>
-            <div className="glass-card card-hover p-6 rounded-xl border-t-2 border-t-amber-500/50 h-full flex flex-col">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ),
+                features: language === 'nl' 
+                  ? ['Eigen zakelijk emailadres', 'Webmail toegang', 'Spam- en virusbeveiliging', 'Volledige setup inbegrepen']
+                  : ['Own business email address', 'Webmail access', 'Spam & virus protection', 'Full setup included'],
+                delay: 0.1
+              },
+              {
+                title: language === 'nl' ? 'Onderhoud & Backups' : 'Maintenance & Backups',
+                price: '€39,99',
+                period: language === 'nl' ? '/maand' : '/month',
+                subPrice: language === 'nl' ? 'of €439/jaar' : 'or €439/year',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white">{language === 'nl' ? 'Onderhoud & Backups' : 'Maintenance & Backups'}</h3>
-              </div>
-              <div className="mb-4">
-                <div className="text-3xl font-bold text-amber-400">€39,99<span className="text-sm font-normal text-gray-400">/{language === 'nl' ? 'maand' : 'month'}</span></div>
-                <div className="text-sm text-gray-400 mt-1">{language === 'nl' ? 'of' : 'or'} €439/{language === 'nl' ? 'jaar' : 'year'}</div>
-              </div>
-              <ul className="space-y-2 mb-6 flex-1">
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Wekelijkse backups' : 'Weekly backups'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Technische updates' : 'Technical updates'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Bug fixes & kleine aanpassingen' : 'Bug fixes & minor adjustments'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Uptime monitoring 24/7' : 'Uptime monitoring 24/7'}
-                </li>
-              </ul>
-              <a href="/contact" className="block w-full bg-amber-500/20 text-amber-400 text-center py-2.5 rounded-lg font-semibold hover:bg-amber-500/30 transition border border-amber-500/30">
-                {language === 'nl' ? 'Aanvragen' : 'Request'}
-              </a>
-            </div>
-            </AnimateOnScroll>
-
-            {/* SEO */}
-            <AnimateOnScroll animation="reveal-scale" delay={0.3}>
-            <div className="glass-card card-hover p-6 rounded-xl border-t-2 border-t-amber-500/50 h-full flex flex-col">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ),
+                features: language === 'nl' 
+                  ? ['Wekelijkse backups', 'Technische updates', 'Bug fixes & aanpassingen', '24/7 uptime monitoring']
+                  : ['Weekly backups', 'Technical updates', 'Bug fixes & adjustments', '24/7 uptime monitoring'],
+                delay: 0.2
+              },
+              {
+                title: 'SEO',
+                price: '€89,99',
+                period: language === 'nl' ? '/maand' : '/month',
+                subPrice: language === 'nl' ? 'of €999,99/jaar' : 'or €999,99/year',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white">SEO</h3>
-              </div>
-              <div className="mb-4">
-                <div className="text-3xl font-bold text-amber-400">€89,99<span className="text-sm font-normal text-gray-400">/{language === 'nl' ? 'maand' : 'month'}</span></div>
-                <div className="text-sm text-gray-400 mt-1">{language === 'nl' ? 'of' : 'or'} €999,99/{language === 'nl' ? 'jaar' : 'year'}</div>
-              </div>
-              <ul className="space-y-2 mb-6 flex-1">
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Technische SEO optimalisatie' : 'Technical SEO optimization'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Google Search Console setup' : 'Google Search Console setup'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Zoekwoorden analyse & on-page optimalisatie' : 'Keyword analysis & on-page optimization'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Maandelijkse rapportage' : 'Monthly reporting'}
-                </li>
-              </ul>
-              <a href="/contact" className="block w-full bg-amber-500/20 text-amber-400 text-center py-2.5 rounded-lg font-semibold hover:bg-amber-500/30 transition border border-amber-500/30">
-                {language === 'nl' ? 'Aanvragen' : 'Request'}
-              </a>
-            </div>
-            </AnimateOnScroll>
-
-            {/* Logo & Huisstijl */}
-            <AnimateOnScroll animation="reveal-scale" delay={0.4}>
-            <div className="glass-card card-hover p-6 rounded-xl border-t-2 border-t-amber-500/50 h-full flex flex-col">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ),
+                features: language === 'nl' 
+                  ? ['Technische SEO optimalisatie', 'Google Search Console', 'Zoekwoorden analyse', 'Maandelijkse rapportage']
+                  : ['Technical SEO optimization', 'Google Search Console', 'Keyword analysis', 'Monthly reporting'],
+                delay: 0.3
+              },
+              {
+                title: language === 'nl' ? 'Logo & Huisstijl' : 'Logo & Branding',
+                price: '€199,99',
+                period: '',
+                subPrice: language === 'nl' ? 'eenmalig' : 'one-time',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                   </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white">{language === 'nl' ? 'Logo & Huisstijl' : 'Logo & Branding'}</h3>
-              </div>
-              <div className="mb-4">
-                <div className="text-3xl font-bold text-amber-400">€199,99</div>
-                <div className="text-sm text-gray-400 mt-1">{language === 'nl' ? 'eenmalig' : 'one-time'}</div>
-              </div>
-              <ul className="space-y-2 mb-6 flex-1">
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? '3 logo concepten' : '3 logo concepts'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? '2 revisierondes' : '2 revision rounds'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Alle bestandsformaten (PNG, SVG, PDF)' : 'All file formats (PNG, SVG, PDF)'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Kleurenpalet + lettertype advies' : 'Color palette + typography advice'}
-                </li>
-              </ul>
-              <a href="/contact" className="block w-full bg-amber-500/20 text-amber-400 text-center py-2.5 rounded-lg font-semibold hover:bg-amber-500/30 transition border border-amber-500/30">
-                {language === 'nl' ? 'Aanvragen' : 'Request'}
-              </a>
-            </div>
-            </AnimateOnScroll>
-
-            {/* Domein Registratie */}
-            <AnimateOnScroll animation="reveal-scale" delay={0.5}>
-            <div className="glass-card card-hover p-6 rounded-xl border-t-2 border-t-amber-500/50 h-full flex flex-col">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ),
+                features: language === 'nl' 
+                  ? ['3 logo concepten', '2 revisierondes', 'PNG, SVG & PDF', 'Kleurenpalet + typografie']
+                  : ['3 logo concepts', '2 revision rounds', 'PNG, SVG & PDF', 'Color palette + typography'],
+                delay: 0.4
+              },
+              {
+                title: language === 'nl' ? 'Domein Registratie' : 'Domain Registration',
+                price: '€19,99',
+                period: language === 'nl' ? '/jaar' : '/year',
+                subPrice: language === 'nl' ? '.nl of .com' : '.nl or .com',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                   </svg>
+                ),
+                features: language === 'nl' 
+                  ? ['.nl of .com domein', 'DNS beheer inbegrepen', 'Automatische verlenging', 'SSL-certificaat']
+                  : ['.nl or .com domain', 'DNS management included', 'Automatic renewal', 'SSL certificate'],
+                delay: 0.5
+              }
+            ].map((service, idx) => (
+              <AnimateOnScroll key={idx} animation="reveal-scale" delay={service.delay}>
+                <div 
+                  className="group relative h-full p-6 rounded-xl bg-dark-800/60 backdrop-blur-sm border border-dark-700 hover:border-orange-500/50 transition-all duration-300 flex flex-col overflow-hidden"
+                  style={{boxShadow: '0 0 0 rgba(251, 146, 60, 0)'}}
+                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 30px rgba(251, 146, 60, 0.2)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 0 rgba(251, 146, 60, 0)'; }}
+                >
+                  {/* Decorative gradient blob */}
+                  <div 
+                    className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-500"
+                    style={{background: 'radial-gradient(circle, #fb923c 0%, transparent 70%)'}}
+                  />
+                  
+                  {/* Icon */}
+                  <div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 relative z-10"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.2) 0%, rgba(249, 115, 22, 0.1) 100%)',
+                      border: '1px solid rgba(251, 146, 60, 0.3)',
+                      color: '#fb923c'
+                    }}
+                  >
+                    {service.icon}
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className="text-lg font-bold text-white mb-3 relative z-10">{service.title}</h3>
+                  
+                  {/* Price */}
+                  <div className="mb-4 relative z-10">
+                    <div className="flex items-baseline gap-1">
+                      <span 
+                        className="text-3xl font-bold" 
+                        style={{color: '#fb923c', textShadow: '0 0 20px rgba(251, 146, 60, 0.4)'}}
+                      >
+                        {service.price}
+                      </span>
+                      {service.period && <span className="text-sm text-gray-400">{service.period}</span>}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">{service.subPrice}</div>
+                  </div>
+
+                  {/* Features */}
+                  <ul className="space-y-2 mb-5 flex-1 relative z-10">
+                    {service.features.map((feature, fIdx) => (
+                      <li key={fIdx} className="flex items-start text-gray-300 text-sm">
+                        <svg className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#fb923c'}}>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <a 
+                    href="/contact" 
+                    className="relative z-10 block w-full text-center py-2.5 rounded-lg font-semibold transition-all duration-300 group-hover:scale-[1.02]"
+                    style={{
+                      background: 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)',
+                      color: '#0f172a',
+                      boxShadow: '0 4px 14px 0 rgba(251, 146, 60, 0.3)'
+                    }}
+                  >
+                    {language === 'nl' ? 'Aanvragen' : 'Request'}
+                  </a>
                 </div>
-                <h3 className="text-xl font-bold text-white">{language === 'nl' ? 'Domein Registratie' : 'Domain Registration'}</h3>
-              </div>
-              <div className="mb-4">
-                <div className="text-3xl font-bold text-amber-400">€19,99<span className="text-sm font-normal text-gray-400">/{language === 'nl' ? 'jaar' : 'year'}</span></div>
-              </div>
-              <ul className="space-y-2 mb-6 flex-1">
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? '.nl of .com domein' : '.nl or .com domain'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'DNS beheer inbegrepen' : 'DNS management included'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Automatische verlenging' : 'Automatic renewal'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'SSL-certificaat inbegrepen' : 'SSL certificate included'}
-                </li>
-              </ul>
-              <a href="/contact" className="block w-full bg-amber-500/20 text-amber-400 text-center py-2.5 rounded-lg font-semibold hover:bg-amber-500/30 transition border border-amber-500/30">
-                {language === 'nl' ? 'Aanvragen' : 'Request'}
-              </a>
-            </div>
-            </AnimateOnScroll>
+              </AnimateOnScroll>
+            ))}
+          </div>
+
+          {/* Info banner under extra services */}
+          <div 
+            className="mt-10 rounded-xl p-6 text-center"
+            style={{
+              background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.08) 0%, rgba(249, 115, 22, 0.04) 100%)',
+              border: '1px solid rgba(251, 146, 60, 0.2)'
+            }}
+          >
+            <p className="text-gray-300 max-w-3xl mx-auto">
+              {language === 'nl' 
+                ? 'Combineer deze losse diensten met een van onze website pakketten voor de beste resultaten. Alles in één hand voor maximaal gemak.' 
+                : 'Combine these individual services with one of our website packages for the best results. Everything in one place for maximum convenience.'}
+            </p>
           </div>
         </div>
 

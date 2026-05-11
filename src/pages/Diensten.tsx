@@ -179,12 +179,12 @@ const Diensten: React.FC = () => {
         </div>
 
         {/* Extra Diensten */}
-        <div className="mt-20 max-w-6xl mx-auto">
+        <div className="mt-20 max-w-7xl mx-auto">
           <AnimateOnScroll>
             <div className="text-center mb-4">
-              <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 text-xs font-bold font-mono rounded-full border border-amber-500/30 mb-4 tracking-wider">EXTRA</span>
+              <span className="inline-block px-4 py-1.5 text-xs font-bold font-mono rounded-full mb-4 tracking-wider" style={{background: 'rgba(249, 115, 22, 0.1)', color: '#fb923c', border: '1px solid rgba(249, 115, 22, 0.3)'}}>EXTRA</span>
             </div>
-            <h2 className="text-3xl font-bold text-center mb-4 text-white">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-white">
               {language === 'nl' ? 'Extra Diensten' : 'Additional Services'}
             </h2>
             <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
@@ -194,152 +194,136 @@ const Diensten: React.FC = () => {
             </p>
           </AnimateOnScroll>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Email Hosting */}
-            <AnimateOnScroll animation="reveal-scale" delay={0.1}>
-            <div className="glass-card card-hover p-6 rounded-xl border-l-4 border-l-amber-500/70 h-full">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-amber-500/10 rounded-xl border border-amber-500/20 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+            {[
+              {
+                title: 'Email Hosting',
+                desc: language === 'nl'
+                  ? 'Professioneel zakelijk emailadres op jouw eigen domein.'
+                  : 'Professional business email on your own domain.',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white">Email Hosting</h3>
-              </div>
-              <p className="text-gray-400 text-sm mb-4">
-                {language === 'nl'
-                  ? 'Professioneel zakelijk emailadres op jouw eigen domeinnaam. Inclusief webmail, spam-beveiliging en volledige setup.'
-                  : 'Professional business email on your own domain. Including webmail, spam protection and full setup.'}
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'info@jouwbedrijf.nl' : 'info@yourbusiness.com'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Spam- en virusbeveiliging' : 'Spam & virus protection'}
-                </li>
-              </ul>
-            </div>
-            </AnimateOnScroll>
-
-            {/* Onderhoud & Backups */}
-            <AnimateOnScroll animation="reveal-scale" delay={0.2}>
-            <div className="glass-card card-hover p-6 rounded-xl border-l-4 border-l-amber-500/70 h-full">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-amber-500/10 rounded-xl border border-amber-500/20 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ),
+                features: language === 'nl'
+                  ? ['Eigen domein email', 'Spam- en virusbeveiliging']
+                  : ['Custom domain email', 'Spam & virus protection'],
+                delay: 0.1
+              },
+              {
+                title: language === 'nl' ? 'Onderhoud & Backups' : 'Maintenance & Backups',
+                desc: language === 'nl'
+                  ? 'Wekelijkse backups, updates en 24/7 monitoring.'
+                  : 'Weekly backups, updates and 24/7 monitoring.',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white">{language === 'nl' ? 'Onderhoud & Backups' : 'Maintenance & Backups'}</h3>
-              </div>
-              <p className="text-gray-400 text-sm mb-4">
-                {language === 'nl'
-                  ? 'Regelmatig onderhoud, wekelijkse backups, technische updates en 24/7 uptime monitoring voor jouw website.'
-                  : 'Regular maintenance, weekly backups, technical updates and 24/7 uptime monitoring for your website.'}
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Wekelijkse backups' : 'Weekly backups'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Bug fixes & updates' : 'Bug fixes & updates'}
-                </li>
-              </ul>
-            </div>
-            </AnimateOnScroll>
-
-            {/* SEO */}
-            <AnimateOnScroll animation="reveal-scale" delay={0.3}>
-            <div className="glass-card card-hover p-6 rounded-xl border-l-4 border-l-amber-500/70 h-full">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-amber-500/10 rounded-xl border border-amber-500/20 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ),
+                features: language === 'nl'
+                  ? ['Wekelijkse backups', 'Bug fixes & updates']
+                  : ['Weekly backups', 'Bug fixes & updates'],
+                delay: 0.2
+              },
+              {
+                title: language === 'nl' ? 'SEO Optimalisatie' : 'SEO Optimization',
+                desc: language === 'nl'
+                  ? 'Word gevonden in Google met technische SEO en analyses.'
+                  : 'Get found on Google with technical SEO and analytics.',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white">SEO Optimalisatie</h3>
-              </div>
-              <p className="text-gray-400 text-sm mb-4">
-                {language === 'nl'
-                  ? 'Zorg dat jouw website gevonden wordt in Google. Technische SEO, zoekwoorden analyse en maandelijkse rapportage.'
-                  : 'Make sure your website is found on Google. Technical SEO, keyword analysis and monthly reporting.'}
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'On-page optimalisatie' : 'On-page optimization'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'Google Search Console' : 'Google Search Console'}
-                </li>
-              </ul>
-            </div>
-            </AnimateOnScroll>
-
-            {/* Logo & Branding */}
-            <AnimateOnScroll animation="reveal-scale" delay={0.4}>
-            <div className="glass-card card-hover p-6 rounded-xl border-l-4 border-l-amber-500/70 h-full">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-amber-500/10 rounded-xl border border-amber-500/20 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ),
+                features: language === 'nl'
+                  ? ['On-page optimalisatie', 'Google Search Console']
+                  : ['On-page optimization', 'Google Search Console'],
+                delay: 0.3
+              },
+              {
+                title: language === 'nl' ? 'Logo & Huisstijl' : 'Logo & Branding',
+                desc: language === 'nl'
+                  ? 'Professioneel logo design met concepten, revisies en bestanden.'
+                  : 'Professional logo design with concepts, revisions and files.',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                   </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white">{language === 'nl' ? 'Logo & Huisstijl' : 'Logo & Branding'}</h3>
-              </div>
-              <p className="text-gray-400 text-sm mb-4">
-                {language === 'nl'
-                  ? 'Professioneel logo ontwerp met meerdere concepten, revisierondes en alle bestandsformaten. Inclusief kleurenpalet en typografie advies.'
-                  : 'Professional logo design with multiple concepts, revision rounds and all file formats. Including color palette and typography advice.'}
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? '3 concepten + 2 revisies' : '3 concepts + 2 revisions'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'PNG, SVG & PDF formaat' : 'PNG, SVG & PDF format'}
-                </li>
-              </ul>
-            </div>
-            </AnimateOnScroll>
-
-            {/* Domein Registratie */}
-            <AnimateOnScroll animation="reveal-scale" delay={0.5}>
-            <div className="glass-card card-hover p-6 rounded-xl border-l-4 border-l-amber-500/70 h-full">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-amber-500/10 rounded-xl border border-amber-500/20 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ),
+                features: language === 'nl'
+                  ? ['3 concepten + 2 revisies', 'PNG, SVG & PDF']
+                  : ['3 concepts + 2 revisions', 'PNG, SVG & PDF'],
+                delay: 0.4
+              },
+              {
+                title: language === 'nl' ? 'Domein Registratie' : 'Domain Registration',
+                desc: language === 'nl'
+                  ? 'Eigen .nl of .com domein met DNS, SSL en verlenging.'
+                  : 'Own .nl or .com domain with DNS, SSL and renewal.',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                   </svg>
+                ),
+                features: language === 'nl'
+                  ? ['.nl of .com domeinen', 'SSL + DNS inbegrepen']
+                  : ['.nl or .com domains', 'SSL + DNS included'],
+                delay: 0.5
+              }
+            ].map((service, idx) => (
+              <AnimateOnScroll key={idx} animation="reveal-scale" delay={service.delay}>
+                <div 
+                  className="group relative h-full p-6 rounded-xl bg-dark-800/60 backdrop-blur-sm border border-dark-700 transition-all duration-300 flex flex-col overflow-hidden"
+                  style={{boxShadow: '0 0 0 rgba(251, 146, 60, 0)'}}
+                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 30px rgba(251, 146, 60, 0.2)'; e.currentTarget.style.borderColor = 'rgba(251, 146, 60, 0.5)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 0 rgba(251, 146, 60, 0)'; e.currentTarget.style.borderColor = ''; }}
+                >
+                  <div 
+                    className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-500"
+                    style={{background: 'radial-gradient(circle, #fb923c 0%, transparent 70%)'}}
+                  />
+                  <div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 relative z-10"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.2) 0%, rgba(249, 115, 22, 0.1) 100%)',
+                      border: '1px solid rgba(251, 146, 60, 0.3)',
+                      color: '#fb923c'
+                    }}
+                  >
+                    {service.icon}
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2 relative z-10">{service.title}</h3>
+                  <p className="text-gray-400 text-sm mb-4 relative z-10">{service.desc}</p>
+                  <ul className="space-y-2 relative z-10 mt-auto">
+                    {service.features.map((feature, fIdx) => (
+                      <li key={fIdx} className="flex items-start text-gray-300 text-sm">
+                        <svg className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#fb923c'}}>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <h3 className="text-xl font-bold text-white">{language === 'nl' ? 'Domein Registratie' : 'Domain Registration'}</h3>
-              </div>
-              <p className="text-gray-400 text-sm mb-4">
-                {language === 'nl'
-                  ? 'Registreer jouw eigen domeinnaam (.nl of .com). Inclusief DNS beheer, SSL-certificaat en automatische verlenging.'
-                  : 'Register your own domain name (.nl or .com). Including DNS management, SSL certificate and automatic renewal.'}
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? '.nl of .com domeinen' : '.nl or .com domains'}
-                </li>
-                <li className="flex items-center text-gray-300 text-sm">
-                  <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  {language === 'nl' ? 'SSL + DNS inbegrepen' : 'SSL + DNS included'}
-                </li>
-              </ul>
-            </div>
-            </AnimateOnScroll>
+              </AnimateOnScroll>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <a 
+              href="/prijzen" 
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+              style={{
+                background: 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)',
+                color: '#0f172a',
+                boxShadow: '0 4px 14px 0 rgba(251, 146, 60, 0.3)'
+              }}
+            >
+              {language === 'nl' ? 'Bekijk prijzen' : 'View pricing'}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            </a>
           </div>
         </div>
 
