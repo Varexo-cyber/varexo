@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
-import ReviewsSection from '../components/ReviewsSection';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const Home: React.FC = () => {
@@ -231,27 +230,140 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Reviews Section */}
-      <ReviewsSection />
-
-      {/* CTA Section */}
+      {/* CTA Section - Coding themed */}
       <AnimateOnScroll animation="reveal-scale">
-      <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600"></div>
-        <div className="absolute inset-0 tech-grid opacity-20"></div>
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <p className="font-mono text-primary-100 text-sm mb-4 tracking-wider">{t('home.cta.tag')}</p>
-          <h2 className="text-3xl md:text-4xl font-extrabold mb-4 text-white">{t('home.cta.title')}</h2>
-          <p className="text-xl mb-8 text-primary-100 max-w-xl mx-auto">
-            {t('home.cta.subtitle')}
-          </p>
-          <Link 
-            to="/contact" 
-            className="bg-dark-900 text-primary-400 px-10 py-4 rounded-lg font-bold hover:bg-dark-800 transition text-lg glow-emerald"
-          >
-            {t('home.cta.button')} &rarr;
-          </Link>
+      <section className="relative py-24 overflow-hidden bg-dark-950">
+        {/* Animated gradient background */}
+        <div 
+          className="absolute inset-0 opacity-40"
+          style={{
+            background: 'radial-gradient(ellipse at center, rgba(16, 185, 129, 0.15) 0%, transparent 70%)',
+          }}
+        />
+        
+        {/* Matrix rain effect background */}
+        <div className="absolute inset-0 overflow-hidden opacity-20">
+          <div className="matrix-rain"></div>
         </div>
+        
+        {/* Tech grid */}
+        <div className="absolute inset-0 tech-grid opacity-30"></div>
+        
+        {/* Floating code particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {['<div>', '{ }', '</>', 'const', 'npm', '01010', 'fn()', '</>', 'export', '=>'].map((code, i) => (
+            <div
+              key={i}
+              className="absolute font-mono text-primary-400/20 text-sm whitespace-nowrap"
+              style={{
+                left: `${(i * 11) % 95}%`,
+                top: `${(i * 17) % 90}%`,
+                animation: `float-code ${8 + (i % 4) * 2}s ease-in-out infinite`,
+                animationDelay: `${i * 0.5}s`,
+              }}
+            >
+              {code}
+            </div>
+          ))}
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto">
+            {/* Terminal mockup */}
+            <div className="bg-dark-900/90 backdrop-blur-md rounded-2xl border border-primary-500/30 overflow-hidden shadow-2xl" style={{boxShadow: '0 0 60px rgba(16, 185, 129, 0.2)'}}>
+              {/* Terminal header */}
+              <div className="flex items-center gap-2 px-4 py-3 bg-dark-800/80 border-b border-dark-700">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-primary-500/80"></div>
+                </div>
+                <div className="flex-1 text-center">
+                  <span className="text-gray-500 text-xs font-mono">~/varexo/your-project</span>
+                </div>
+              </div>
+              
+              {/* Terminal body */}
+              <div className="p-8 md:p-12 text-center">
+                <div className="font-mono text-primary-400 text-sm mb-6 flex items-center justify-center gap-2">
+                  <span className="text-gray-500">$</span>
+                  <span>varexo --start-project</span>
+                  <span className="inline-block w-2 h-4 bg-primary-400 animate-pulse"></span>
+                </div>
+                
+                <h2 className="text-3xl md:text-5xl font-extrabold mb-4 text-white">
+                  {t('home.cta.title')}
+                </h2>
+                <p className="text-lg md:text-xl mb-8 text-gray-300 max-w-2xl mx-auto">
+                  {t('home.cta.subtitle')}
+                </p>
+                
+                {/* Code snippet decoration */}
+                <div className="font-mono text-xs text-gray-500 mb-8 space-y-1">
+                  <div><span className="text-purple-400">const</span> <span className="text-blue-400">project</span> = <span className="text-yellow-400">await</span> varexo.<span className="text-primary-400">create</span>({'{'}</div>
+                  <div className="ml-4">type: <span className="text-orange-300">'website'</span>,</div>
+                  <div className="ml-4">quality: <span className="text-orange-300">'premium'</span>,</div>
+                  <div className="ml-4">success: <span className="text-primary-400">true</span></div>
+                  <div>{'}'});</div>
+                </div>
+                
+                <Link 
+                  to="/contact" 
+                  className="group inline-flex items-center gap-3 bg-gradient-to-r from-primary-500 to-primary-400 text-dark-900 px-10 py-4 rounded-lg font-bold transition-all duration-300 text-lg hover:scale-105"
+                  style={{boxShadow: '0 0 30px rgba(16, 185, 129, 0.5)'}}
+                >
+                  <span className="font-mono text-sm opacity-70">{'>'}</span>
+                  {t('home.cta.button')}
+                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+                
+                {/* Stats below button */}
+                <div className="mt-10 grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+                  <div className="text-center">
+                    <div className="text-2xl md:text-3xl font-bold text-primary-400" style={{textShadow: '0 0 10px rgba(16, 185, 129, 0.5)'}}>24h</div>
+                    <p className="text-gray-500 text-xs font-mono mt-1">{t('home.cta.delivery') || 'response_time'}</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl md:text-3xl font-bold text-primary-400" style={{textShadow: '0 0 10px rgba(16, 185, 129, 0.5)'}}>100%</div>
+                    <p className="text-gray-500 text-xs font-mono mt-1">{t('home.cta.satisfaction') || 'satisfaction'}</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl md:text-3xl font-bold text-primary-400" style={{textShadow: '0 0 10px rgba(16, 185, 129, 0.5)'}}>0.01s</div>
+                    <p className="text-gray-500 text-xs font-mono mt-1">{t('home.cta.loadtime') || 'load_time'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <style>{`
+          @keyframes float-code {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.2; }
+            50% { transform: translateY(-30px) translateX(10px); opacity: 0.5; }
+          }
+          .matrix-rain {
+            background-image: 
+              linear-gradient(180deg, transparent 0%, rgba(16, 185, 129, 0.03) 50%, transparent 100%),
+              repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 50px,
+                rgba(16, 185, 129, 0.05) 50px,
+                rgba(16, 185, 129, 0.05) 51px
+              );
+            background-size: 100% 100%, 51px 100%;
+            width: 100%;
+            height: 100%;
+            animation: matrix-fall 20s linear infinite;
+          }
+          @keyframes matrix-fall {
+            0% { background-position: 0 -100%; }
+            100% { background-position: 0 100%; }
+          }
+        `}</style>
       </section>
       </AnimateOnScroll>
     </PageTransition>
