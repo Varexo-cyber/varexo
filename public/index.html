@@ -50,16 +50,30 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "Varexo | ICT & Webdevelopment",
+      "name": "Varexo",
+      "legalName": "Varexo | ICT & Webdevelopment",
       "url": "https://varexo.nl",
       "logo": "https://varexo.nl/logo512.png",
-      "description": "Professioneel webdesign- en webdevelopmentbureau uit Nederland. Moderne websites, webshops en social media beheer.",
+      "image": "https://varexo.nl/logo512.png",
+      "description": "Professioneel webdesign- en webdevelopmentbureau uit Nederland. Moderne websites, webshops, maatwerk software en social media beheer.",
       "email": "info@varexo.nl",
-      "sameAs": [],
+      "telephone": "+31636075966",
+      "foundingDate": "2024",
+      "founder": {
+        "@type": "Person",
+        "name": "Mohammed Taher"
+      },
       "address": {
         "@type": "PostalAddress",
+        "streetAddress": "Regulierenstraat 10",
+        "postalCode": "2694BA",
+        "addressLocality": "'s-Gravenzande",
+        "addressRegion": "Zuid-Holland",
         "addressCountry": "NL"
-      }
+      },
+      "vatID": "NL005213845B91",
+      "taxID": "42042045",
+      "sameAs": []
     }
     </script>
 
@@ -70,6 +84,7 @@
       "@type": "WebSite",
       "name": "Varexo",
       "url": "https://varexo.nl",
+      "inLanguage": ["nl-NL", "en-GB"],
       "potentialAction": {
         "@type": "SearchAction",
         "target": "https://varexo.nl/?q={search_term_string}",
@@ -78,25 +93,127 @@
     }
     </script>
 
-    <!-- Structured Data - LocalBusiness -->
+    <!-- Structured Data - LocalBusiness (Professional Service) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "ProfessionalService",
+      "@id": "https://varexo.nl/#localbusiness",
       "name": "Varexo | ICT & Webdevelopment",
+      "alternateName": "Varexo",
       "url": "https://varexo.nl",
+      "logo": "https://varexo.nl/logo512.png",
+      "image": "https://varexo.nl/logo512.png",
       "email": "info@varexo.nl",
-      "description": "Professioneel webdesign, webdevelopment en social media beheer voor ondernemers in Nederland.",
-      "priceRange": "$$",
+      "telephone": "+31636075966",
+      "description": "Professioneel webdesign, webdevelopment, maatwerk software en social media beheer voor ondernemers in Nederland, België en het Verenigd Koninkrijk. Snelle, schaalbare en moderne websites met React & Next.js.",
+      "priceRange": "€€",
+      "currenciesAccepted": "EUR, GBP",
+      "paymentAccepted": "iDEAL, Bank transfer, Credit Card, PayPal",
       "address": {
         "@type": "PostalAddress",
+        "streetAddress": "Regulierenstraat 10",
+        "postalCode": "2694BA",
+        "addressLocality": "'s-Gravenzande",
+        "addressRegion": "Zuid-Holland",
         "addressCountry": "NL"
       },
-      "serviceType": ["Webdesign", "Webdevelopment", "Social Media Beheer", "SEO", "Online Marketing", "Webshop ontwikkeling"],
-      "areaServed": {
-        "@type": "Country",
-        "name": "Nederland"
-      }
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 51.9883,
+        "longitude": 4.1718
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "09:00",
+          "closes": "18:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "10:00",
+          "closes": "16:00"
+        }
+      ],
+      "serviceType": [
+        "Webdesign",
+        "Webdevelopment",
+        "Webshop ontwikkeling",
+        "Maatwerk Software",
+        "App Development",
+        "CRM Systemen",
+        "Social Media Beheer",
+        "SEO Optimalisatie",
+        "Online Marketing"
+      ],
+      "areaServed": [
+        { "@type": "Country", "name": "Nederland" },
+        { "@type": "Country", "name": "België" },
+        { "@type": "Country", "name": "Verenigd Koninkrijk" },
+        { "@type": "City", "name": "Amsterdam" },
+        { "@type": "City", "name": "Rotterdam" },
+        { "@type": "City", "name": "Den Haag" },
+        { "@type": "City", "name": "Utrecht" },
+        { "@type": "City", "name": "Eindhoven" }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Varexo Diensten",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Website Laten Maken",
+              "description": "Professionele website binnen 7 dagen live"
+            },
+            "priceCurrency": "EUR",
+            "price": "650",
+            "priceValidUntil": "2026-05-31"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Webshop Laten Maken",
+              "description": "Complete webshop met iDEAL, voorraadbeheer en koppelingen"
+            },
+            "priceCurrency": "EUR",
+            "price": "650",
+            "priceValidUntil": "2026-05-31"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Maatwerk Software",
+              "description": "CRM, klantportalen, ERP en custom apps"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Social Media Beheer",
+              "description": "Instagram, Facebook & LinkedIn management"
+            },
+            "priceCurrency": "EUR",
+            "price": "399"
+          }
+        ]
+      },
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "telephone": "+31636075966",
+          "contactType": "customer service",
+          "email": "info@varexo.nl",
+          "availableLanguage": ["Dutch", "English"],
+          "areaServed": ["NL", "BE", "GB"]
+        }
+      ]
     }
     </script>
   </head>

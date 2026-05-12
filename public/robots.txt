@@ -1,10 +1,25 @@
 # Varexo - ICT & Webdevelopment
+# https://varexo.nl
+
 User-agent: *
 Allow: /
+
+# Block private/auth areas (not for public indexing)
 Disallow: /admin
 Disallow: /dashboard
 Disallow: /profile
 Disallow: /login
 Disallow: /signup
+Disallow: /forgot-password
+Disallow: /reset-password
 
+# Allow Google to crawl all public content including SEO landing pages
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Sitemap
 Sitemap: https://varexo.nl/sitemap.xml
+

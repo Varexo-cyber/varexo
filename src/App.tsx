@@ -22,6 +22,7 @@ import AdminDashboard from './pages/Admin';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import AlgemeneVoorwaarden from './pages/AlgemeneVoorwaarden';
 import CookiePolicy from './pages/CookiePolicy';
+import SeoLandingPage from './pages/SeoLandingPage';
 import WhatsAppButton from './components/WhatsAppButton';
 import PromoBanner from './components/PromoBanner';
 import HelpWidget from './components/HelpWidget';
@@ -76,6 +77,8 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/algemene-voorwaarden" element={<AlgemeneVoorwaarden />} />
             <Route path="/cookie-policy" element={<CookiePolicy />} />
+            {/* SEO landing pages - hidden from navigation but accessible via URL */}
+            <Route path="/:slug" element={<SeoLandingPage />} />
           </Routes>
         </main>
         <Footer />

@@ -1,63 +1,156 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- ============ MAIN PAGES ============ -->
   <url>
     <loc>https://varexo.nl/</loc>
-    <lastmod>2026-03-23</lastmod>
+    <lastmod>2026-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://varexo.nl/over-ons</loc>
-    <lastmod>2026-03-23</lastmod>
+    <lastmod>2026-05-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://varexo.nl/diensten</loc>
-    <lastmod>2026-03-23</lastmod>
+    <lastmod>2026-05-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://varexo.nl/portfolio</loc>
-    <lastmod>2026-03-23</lastmod>
+    <lastmod>2026-05-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://varexo.nl/prijzen</loc>
-    <lastmod>2026-03-23</lastmod>
+    <lastmod>2026-05-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://varexo.nl/werkwijze</loc>
-    <lastmod>2026-03-23</lastmod>
+    <lastmod>2026-05-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://varexo.nl/contact</loc>
-    <lastmod>2026-03-23</lastmod>
+    <lastmod>2026-05-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
+
+  <!-- ============ SEO LANDING - NL CITIES ============ -->
+  <url><loc>https://varexo.nl/webdesign-amsterdam</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/webdesign-rotterdam</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/webdesign-den-haag</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/webdesign-utrecht</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/webdesign-eindhoven</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/webdesign-tilburg</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-groningen</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-almere</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-breda</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-nijmegen</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-haarlem</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-arnhem</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-enschede</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-apeldoorn</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-zoetermeer</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-zwolle</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-deventer</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-leiden</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-dordrecht</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- ============ SEO LANDING - BE CITIES ============ -->
+  <url><loc>https://varexo.nl/webdesign-antwerpen</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/webdesign-gent</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/webdesign-brussel</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/webdesign-brugge</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/webdesign-leuven</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+
+  <!-- ============ SEO LANDING - UK CITIES ============ -->
+  <url><loc>https://varexo.nl/web-design-london</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/web-design-manchester</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/web-design-birmingham</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/web-design-leeds</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/web-design-glasgow</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/web-design-liverpool</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/web-design-bristol</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+
+  <!-- ============ SEO LANDING - UK SERVICES ============ -->
+  <url><loc>https://varexo.nl/website-design-uk</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/custom-software-development-uk</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/web-development-uk</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- ============ SEO LANDING - NL SERVICES ============ -->
+  <url><loc>https://varexo.nl/website-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.95</priority></url>
+  <url><loc>https://varexo.nl/website-laten-bouwen</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://varexo.nl/webshop-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://varexo.nl/software-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://varexo.nl/app-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/maatwerk-software</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/crm-systeem-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/urenregistratie-systeem</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/administratie-systeem</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/boekhoudsoftware-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/personeelsplanning-systeem</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/facturatie-systeem</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/voorraadbeheer-systeem</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/klantportaal-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://varexo.nl/api-koppeling-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://varexo.nl/wordpress-website-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/react-website-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/nextjs-website-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webdesign-op-maat</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/seo-optimalisatie</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/social-media-beheer</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/goedkope-website-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/snelle-website-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/professionele-website-laten-maken</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-prijzen</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://varexo.nl/wat-kost-een-website</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+
+  <!-- ============ SEO LANDING - NICHE PAGES ============ -->
+  <url><loc>https://varexo.nl/website-laten-maken-zzp</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-mkb</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-restaurant</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-kapper</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-garage</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-fysiotherapeut</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-tandarts</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-advocaat</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-accountant</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-makelaar</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-coach</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-bouwbedrijf</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-schoonmaakbedrijf</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/website-laten-maken-transportbedrijf</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://varexo.nl/webshop-laten-maken-kleding</loc><lastmod>2026-05-12</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- ============ LEGAL PAGES ============ -->
   <url>
     <loc>https://varexo.nl/privacy-policy</loc>
-    <lastmod>2026-03-23</lastmod>
+    <lastmod>2026-05-12</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://varexo.nl/algemene-voorwaarden</loc>
-    <lastmod>2026-03-23</lastmod>
+    <lastmod>2026-05-12</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://varexo.nl/cookie-policy</loc>
-    <lastmod>2026-03-23</lastmod>
+    <lastmod>2026-05-12</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+
 </urlset>
