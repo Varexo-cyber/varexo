@@ -11,9 +11,9 @@ const Home: React.FC = () => {
   return (
     <PageTransition>
       <SEO 
-        title="Website Laten Maken | Webdesign & Social Media Beheer"
-        description="Varexo bouwt professionele websites die klanten opleveren. Webdesign, webdevelopment, webshops en social media beheer voor ondernemers in Nederland. Vraag gratis een offerte aan!"
-        keywords="website laten maken, webdesign, webdevelopment, social media beheer, webshop laten maken, professionele website, website bouwen, online marketing, SEO, Nederland"
+        title="Varexo | Websites & Software op Maat – Vanaf €650"
+        description="Varexo bouwt professionele websites, webshops én maatwerk software (CRM, apps, portalen) vanaf €650. Binnen 7 dagen live. Voor ondernemers in NL, BE & UK."
+        keywords="website laten maken, software laten maken, maatwerk software, webdesign, webshop laten maken, app laten maken, crm systeem, webdevelopment, social media beheer, SEO"
         canonical="/"
       />
       {/* Hero Section */}

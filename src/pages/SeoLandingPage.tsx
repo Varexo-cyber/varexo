@@ -22,6 +22,7 @@ const SeoLandingPage: React.FC = () => {
         description={data.description}
         keywords={data.keywords}
         canonical={`/${slug}`}
+        language={data.language || 'nl'}
       />
       <div className="py-20 tech-grid">
         <div className="container mx-auto px-4 max-w-5xl">
