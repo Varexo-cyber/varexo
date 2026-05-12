@@ -1,5 +1,13 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Full dark square background (rounded corners for square crops) -->
   <rect width="64" height="64" rx="12" fill="#0a0a0a"/>
-  <text x="32" y="42" text-anchor="middle" font-family="system-ui, -apple-system, Arial, sans-serif" font-size="28" font-weight="800" fill="#ffffff">V</text>
-  <rect x="20" y="48" width="24" height="3" rx="1.5" fill="#10b981"/>
+  <!-- Real Varexo V-logo, extracted from varexo-logo.svg -->
+  <!-- Original V bbox: x=2..48 (46w), y=7..45 (38h). Scaled 0.95 + centered with padding -->
+  <g transform="translate(8.25, 7.3) scale(0.95)">
+    <polygon points="5,7 25,45 19,45 2,12" fill="#4fc3f7"/>
+    <polygon points="45,7 25,45 31,45 48,12" fill="#1565c0"/>
+    <polygon points="25,45 17,27 25,22 33,27" fill="#42a5f5" opacity="0.8"/>
+    <polygon points="5,7 19,7 25,22 17,27" fill="#b3e5fc" opacity="0.9"/>
+    <polygon points="45,7 31,7 25,22 33,27" fill="#1976d2" opacity="0.9"/>
+  </g>
 </svg>
