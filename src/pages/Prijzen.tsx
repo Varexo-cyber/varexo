@@ -52,8 +52,8 @@ const Prijzen: React.FC = () => {
                 <div className="text-sm text-gray-400">{t('pricing.onetime')}</div>
                 <div className="text-xs text-red-400 font-semibold mt-1">{t('pricing.offerValid')}</div>
                 <div className="mt-4 pt-4 border-t border-dark-600">
-                  <div className="text-xl font-bold text-white">€69.99 <span className="text-sm font-normal text-gray-400">{t('pricing.month')}</span></div>
-                  <div className="text-lg font-semibold text-primary-400 mt-1">{t('pricing.or')} €799.99{t('pricing.perYear')}</div>
+                  <div className="text-xl font-bold text-white">€39.99 <span className="text-sm font-normal text-gray-400">{t('pricing.month')}</span></div>
+                  <div className="text-lg font-semibold text-primary-400 mt-1">{t('pricing.or')} €449.99{t('pricing.perYear')}</div>
                 </div>
                 <div className="text-xs text-gray-400 mt-2">{t('pricing.uptime')}</div>
               </div>
@@ -106,6 +106,12 @@ const Prijzen: React.FC = () => {
                   </svg>
                   {t('pricing.basic.f8')}
                 </li>
+                <li className="flex items-center">
+                  <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  {t('pricing.basic.seoDiscount')}
+                </li>
               </ul>
               <a 
                 href="/contact" 
@@ -134,8 +140,8 @@ const Prijzen: React.FC = () => {
               <div className="text-sm text-primary-200">{t('pricing.onetime')}</div>
               <div className="text-xs text-red-300 font-semibold mt-1">{t('pricing.offerValid')}</div>
               <div className="mt-4 pt-4 border-t border-primary-500/30">
-                <div className="text-xl font-bold text-white">€59.99 <span className="text-sm font-normal text-primary-200">{t('pricing.month')}</span></div>
-                <div className="text-lg font-semibold text-white mt-1" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>{t('pricing.or')} €699.99{t('pricing.perYear')}</div>
+                <div className="text-xl font-bold text-white">€39.99 <span className="text-sm font-normal text-primary-200">{t('pricing.month')}</span></div>
+                <div className="text-lg font-semibold text-white mt-1" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>{t('pricing.or')} €449.99{t('pricing.perYear')}</div>
               </div>
               <div className="text-xs text-primary-200 mt-2">{t('pricing.loadTime')}</div>
             </div>
@@ -188,6 +194,12 @@ const Prijzen: React.FC = () => {
                 </svg>
                 {t('pricing.pro.f8')}
               </li>
+              <li className="flex items-center">
+                <svg className="w-5 h-5 text-primary-200 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {t('pricing.pro.seoDiscount')}
+              </li>
             </ul>
             <a 
               href="/contact" 
@@ -212,8 +224,8 @@ const Prijzen: React.FC = () => {
                 <div className="text-sm text-gray-400">{t('pricing.onetime')}</div>
                 <div className="text-xs text-red-400 font-semibold mt-1">{t('pricing.offerValid')}</div>
                 <div className="mt-4 pt-4 border-t border-dark-600">
-                  <div className="text-xl font-bold text-white">€49.99 <span className="text-sm font-normal text-gray-400">{t('pricing.month')}</span></div>
-                  <div className="text-lg font-semibold text-primary-400 mt-1">{t('pricing.or')} €499.99{t('pricing.perYear')}</div>
+                  <div className="text-xl font-bold text-white">€39.99 <span className="text-sm font-normal text-gray-400">{t('pricing.month')}</span></div>
+                  <div className="text-lg font-semibold text-primary-400 mt-1">{t('pricing.or')} €449.99{t('pricing.perYear')}</div>
                 </div>
                 <div className="text-xs text-gray-400 mt-2">{t('pricing.allInclusive')}</div>
               </div>
@@ -271,6 +283,12 @@ const Prijzen: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   {t('pricing.premium.f9')}
+                </li>
+                <li className="flex items-center">
+                  <svg className="w-5 h-5 text-primary-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  {t('pricing.premium.seoDiscount')}
                 </li>
               </ul>
               <a 
@@ -371,7 +389,7 @@ const Prijzen: React.FC = () => {
                   <svg className="w-5 h-5 text-blue-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  {language === 'nl' ? '2 campagnes per maand' : '2 campaigns per month'}
+                  {language === 'nl' ? '1 campagne per maand' : '1 campaign per month'}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-blue-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -441,7 +459,7 @@ const Prijzen: React.FC = () => {
                   <svg className="w-5 h-5 text-blue-200 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  {language === 'nl' ? '6 campagnes per maand' : '6 campaigns per month'}
+                  {language === 'nl' ? '2 campagnes per maand' : '2 campaigns per month'}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-blue-200 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -513,13 +531,13 @@ const Prijzen: React.FC = () => {
                   <svg className="w-5 h-5 text-blue-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  {language === 'nl' ? 'Onbeperkt campagnes' : 'Unlimited campaigns'}
+                  {language === 'nl' ? '3 campagnes per maand' : '3 campaigns per month'}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-blue-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  {language === 'nl' ? 'Premium ads design & video' : 'Premium ad design & video'}
+                  {language === 'nl' ? 'Premium ads design' : 'Premium ad design'}
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-blue-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -638,15 +656,15 @@ const Prijzen: React.FC = () => {
                 title: 'SEO',
                 price: '€89,99',
                 period: language === 'nl' ? '/maand' : '/month',
-                subPrice: language === 'nl' ? 'of €999,99/jaar' : 'or €999,99/year',
+                subPrice: language === 'nl' ? 'Eenmalige opstel €399,99' : 'One-time setup €399,99',
                 icon: (
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 ),
-                features: language === 'nl' 
-                  ? ['Technische SEO optimalisatie', 'Google Search Console', 'Zoekwoorden analyse', 'Maandelijkse rapportage']
-                  : ['Technical SEO optimization', 'Google Search Console', 'Keyword analysis', 'Monthly reporting'],
+                features: language === 'nl'
+                  ? ['Opstel: technische audit + zoekwoorden', 'Opstel: Search Console + concurrentie', 'Maand: content strategie + backlinks', 'Maand: ranking rapportage + optimalisatie']
+                  : ['Setup: technical audit + keywords', 'Setup: Search Console + competitor scan', 'Monthly: content strategy + backlinks', 'Monthly: ranking report + optimization'],
                 delay: 0.3
               },
               {
