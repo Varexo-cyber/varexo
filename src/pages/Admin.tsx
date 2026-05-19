@@ -7,6 +7,7 @@ import { invoicesAPI, paymentTrackingAPI, customersAPI } from '../services/api';
 import { getContactMessages, deleteContactMessage, ContactMessage } from '../services/contactService';
 import PageTransition from '../components/PageTransition';
 import AdminBoekhouding from '../components/AdminBoekhouding';
+import AdminIncassoButton from '../components/AdminIncassoButton';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const AdminDashboard: React.FC = () => {
@@ -2146,7 +2147,7 @@ const AdminDashboard: React.FC = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.company')}</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.subscription')}</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.projects')}</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('auth.email')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{language === 'nl' ? 'Mandaat' : 'Mandate'}</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{t('admin.actions')}</th>
                       </tr>
                     </thead>
@@ -2198,19 +2199,25 @@ const AdminDashboard: React.FC = () => {
                             {customer.projectCount}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                            {customer.emailNotifications === false ? (
-                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-900/50 text-red-400 rounded-full text-xs">
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                                </svg>
-                                {t('common.off')}
-                              </span>
+                            {(customer as any).sepaMandateStatus === 'valid' ? (
+                              <div className="space-y-2">
+                                <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-900/50 text-green-400 rounded-full text-xs">
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  {language === 'nl' ? 'Mandaat actief' : 'Mandate active'}
+                                </span>
+                                <AdminIncassoButton
+                                  customerEmail={customer.email}
+                                  customerName={customer.displayName}
+                                  hasMandate={true}
+                                  amount={0}
+                                  onSuccess={() => loadCustomers()}
+                                />
+                              </div>
                             ) : (
-                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-900/50 text-green-400 rounded-full text-xs">
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
-                                {t('common.on')}
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-900/50 text-yellow-400 rounded-full text-xs">
+                                {language === 'nl' ? 'Geen mandaat' : 'No mandate'}
                               </span>
                             )}
                           </td>

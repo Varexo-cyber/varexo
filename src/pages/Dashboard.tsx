@@ -5,6 +5,7 @@ import { roleService } from '../services/roleService';
 import { projectService, Project, Invoice, ProjectLog } from '../services/projectService';
 import { paymentTrackingAPI } from '../services/api';
 import PageTransition from '../components/PageTransition';
+import SepaMandateButton from '../components/SepaMandateButton';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const CustomerDashboard: React.FC = () => {
@@ -1072,6 +1073,14 @@ const CustomerDashboard: React.FC = () => {
                                  socialMediaPackage === 'dominant' ? 'Dominant' : 'Social Media'}
                             </span>
                           )}
+                          
+                          {/* SEPA Mandaat sectie */}
+                          <div className="mt-4 pt-4 border-t border-dark-600">
+                            <SepaMandateButton 
+                              customerEmail={user?.email || ''}
+                              hasMandate={(user as any)?.sepaMandateStatus === 'valid'}
+                            />
+                          </div>
                         </>
                       );
                     })()}
