@@ -150,6 +150,28 @@ const Portfolio: React.FC = () => {
       image: '/portfolio/hgtransport.jpg',
       technologies: ['React', 'Tailwind CSS', 'Framer Motion'],
       link: 'https://hgexperts.nl'
+    },
+    {
+      id: '4',
+      title: 'Labfix',
+      category: language === 'nl' ? 'Webshop' : 'Webshop',
+      description: language === 'nl'
+        ? 'Moderne webshop voor laboratoriumbenodigdheden en chemische producten. Gebruiksvriendelijk bestelproces met voorraadbeheer en veilige betalingen.'
+        : 'Modern webshop for laboratory supplies and chemical products. User-friendly ordering process with inventory management and secure payments.',
+      image: '/portfolio/labfix.jpg',
+      technologies: ['React', 'Node.js', 'Payment API'],
+      link: 'https://labfix.nl'
+    },
+    {
+      id: '5',
+      title: 'Boekora',
+      category: language === 'nl' ? 'AI Boekhouding • Dochterbedrijf' : 'AI Accounting • Subsidiary',
+      description: language === 'nl'
+        ? 'Revolutionaire AI-gedreven boekhoudsoftware voor ondernemers. Automatische factuurverwerking, real-time btw-inzichten en slimme financiële analyses. Ons dochterbedrijf.'
+        : 'Revolutionary AI-driven accounting software for entrepreneurs. Automatic invoice processing, real-time VAT insights and smart financial analysis. Our subsidiary.',
+      image: '/portfolio/boekora.jpg',
+      technologies: ['AI/ML', 'React', 'Node.js', 'Cloud'],
+      link: 'https://boekora.nl'
     }
   ];
 
@@ -223,7 +245,7 @@ const Portfolio: React.FC = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-dark-800 via-transparent to-transparent" />
                     <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1 bg-primary-500/20 backdrop-blur-sm text-primary-400 text-xs font-bold rounded-full border border-primary-500/30">
+                      <span className="px-3 py-1.5 bg-primary-500 text-dark-900 text-xs font-extrabold rounded-full border-2 border-primary-400 shadow-lg shadow-primary-500/40">
                         {project.category}
                       </span>
                     </div>
@@ -275,7 +297,7 @@ const Portfolio: React.FC = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-dark-800 via-transparent to-transparent" />
                     <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1 bg-primary-500/20 backdrop-blur-sm text-primary-400 text-xs font-bold rounded-full border border-primary-500/30">
+                      <span className="px-3 py-1.5 bg-primary-500 text-dark-900 text-xs font-extrabold rounded-full border-2 border-primary-400 shadow-lg shadow-primary-500/40">
                         {project.category}
                       </span>
                     </div>

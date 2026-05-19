@@ -176,6 +176,90 @@ const Diensten: React.FC = () => {
             </a>
           </div>
           </AnimateOnScroll>
+
+          {/* Mobiele Apps */}
+          <AnimateOnScroll animation="reveal-scale" delay={0.5}>
+          <div className="glass-card card-hover p-8 rounded-xl">
+            <div className="w-16 h-16 bg-primary-500/10 rounded-xl border border-primary-500/20 flex items-center justify-center mb-6">
+              <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold mb-4 text-white">
+              {language === 'nl' ? 'Mobiele Apps' : 'Mobile Apps'}
+            </h2>
+            <p className="text-gray-400 mb-6">
+              {language === 'nl'
+                ? 'Native iOS en Android apps. Wij zorgen voor volledige publicatie in App Store en Google Play Store.'
+                : 'Native iOS and Android apps. We handle full publishing to App Store and Google Play Store.'}
+            </p>
+            <ul className="space-y-2 mb-6">
+              <li className="flex items-center text-gray-300">
+                <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {language === 'nl' ? 'iOS & Android ontwikkeling' : 'iOS & Android development'}
+              </li>
+              <li className="flex items-center text-gray-300">
+                <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {language === 'nl' ? 'App Store publicatie' : 'App Store publishing'}
+              </li>
+              <li className="flex items-center text-gray-300">
+                <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {language === 'nl' ? 'Push notificaties & API koppelingen' : 'Push notifications & API integrations'}
+              </li>
+            </ul>
+            <a href="/contact" className="text-primary-400 font-semibold hover:text-primary-300">
+              {t('services.page.moreInfo')}
+            </a>
+          </div>
+          </AnimateOnScroll>
+
+          {/* Maatwerk Software */}
+          <AnimateOnScroll animation="reveal-scale" delay={0.6}>
+          <div className="glass-card card-hover p-8 rounded-xl">
+            <div className="w-16 h-16 bg-primary-500/10 rounded-xl border border-primary-500/20 flex items-center justify-center mb-6">
+              <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold mb-4 text-white">
+              {language === 'nl' ? 'Maatwerk Software' : 'Custom Software'}
+            </h2>
+            <p className="text-gray-400 mb-6">
+              {language === 'nl'
+                ? 'Van eenvoudige tools tot complexe bedrijfssystemen. Software die jouw processen automatiseert.'
+                : 'From simple tools to complex business systems. Software that automates your processes.'}
+            </p>
+            <ul className="space-y-2 mb-6">
+              <li className="flex items-center text-gray-300">
+                <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {language === 'nl' ? 'Web applicaties & tools' : 'Web applications & tools'}
+              </li>
+              <li className="flex items-center text-gray-300">
+                <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {language === 'nl' ? 'Database & API ontwikkeling' : 'Database & API development'}
+              </li>
+              <li className="flex items-center text-gray-300">
+                <svg className="w-5 h-5 text-primary-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {language === 'nl' ? 'Automatisering & integraties' : 'Automation & integrations'}
+              </li>
+            </ul>
+            <a href="/contact" className="text-primary-400 font-semibold hover:text-primary-300">
+              {t('services.page.moreInfo')}
+            </a>
+          </div>
+          </AnimateOnScroll>
         </div>
 
         {/* Extra Diensten */}

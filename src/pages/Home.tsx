@@ -6,7 +6,7 @@ import SEO from '../components/SEO';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const Home: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   return (
     <PageTransition>
@@ -100,6 +100,96 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* Boekora AI Bookkeeping Promotion */}
+      <section className="py-16 bg-dark-800 relative overflow-hidden border-y border-dark-700">
+        <div className="container mx-auto px-4 relative z-10">
+          <AnimateOnScroll>
+            <div className="max-w-5xl mx-auto">
+              <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+                {/* Left side - Logo/Image */}
+                <div className="flex-shrink-0">
+                  <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-2xl bg-dark-700 border border-dark-600 flex items-center justify-center shadow-xl transform hover:scale-105 transition-transform duration-300 overflow-hidden">
+                    <img 
+                      src="/portfolio/boekora.png" 
+                      alt="Boekora" 
+                      className="w-28 h-28 lg:w-32 lg:h-32 object-contain p-2"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        target.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                </div>
+                
+                {/* Right side - Content */}
+                <div className="flex-1 text-center lg:text-left">
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/20 border border-primary-500/30 text-primary-400 text-xs font-bold font-mono mb-4">
+                    <span className="w-2 h-2 rounded-full bg-primary-400 animate-pulse"></span>
+                    {language === 'nl' ? 'DOCHTERBEDRIJF VAN VAREXO' : 'SUBSIDIARY OF VAREXO'}
+                  </div>
+                  
+                  <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
+                    {language === 'nl' ? 'Boekhouding zo simpel' : 'Bookkeeping made simple'}
+                    <span className="block text-primary-400">
+                      {language === 'nl' ? 'als een praatje.' : 'as a chat.'}
+                    </span>
+                  </h2>
+                  
+                  <p className="text-gray-400 text-lg mb-6 max-w-xl">
+                    {language === 'nl' 
+                      ? 'Praat gewoon met Boekora AI in normaal Nederlands. Geen ingewikkelde menu\'s. Facturen, bonnetjes en je administratie - automatisch geregeld.'
+                      : 'Just chat with Boekora AI in plain English. No complicated menus. Invoices, receipts and your administration - handled automatically.'}
+                  </p>
+                  
+                  {/* Feature pills */}
+                  <div className="flex flex-wrap gap-2 mb-6 justify-center lg:justify-start">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-dark-700 text-gray-300 text-sm rounded-lg border border-dark-600">
+                      <svg className="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                      {language === 'nl' ? 'AI Chat' : 'AI Chat'}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-dark-700 text-gray-300 text-sm rounded-lg border border-dark-600">
+                      <svg className="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      {language === 'nl' ? 'Automatische facturen' : 'Auto invoices'}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-dark-700 text-gray-300 text-sm rounded-lg border border-dark-600">
+                      <svg className="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      </svg>
+                      {language === 'nl' ? 'Bonnetjes scannen' : 'Scan receipts'}
+                    </span>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <a 
+                      href="https://boekora.nl" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center justify-center gap-2 bg-primary-500 text-dark-900 px-8 py-4 rounded-xl font-semibold hover:bg-primary-400 transition-all duration-300 shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transform hover:-translate-y-1"
+                    >
+                      {language === 'nl' ? 'Start gratis op Boekora' : 'Start free on Boekora'}
+                      <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </a>
+                    
+                    <span className="inline-flex items-center justify-center gap-2 text-gray-500 text-sm">
+                      <svg className="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                      </svg>
+                      boekora.nl
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </AnimateOnScroll>
+        </div>
+      </section>
+
       {/* Services Section */}
       <section className="py-20 bg-dark-800 tech-grid">
         <div className="container mx-auto px-4">
@@ -108,7 +198,7 @@ const Home: React.FC = () => {
           <h2 className="text-3xl font-bold text-center mb-4 text-white">{t('home.services.title')}</h2>
           <p className="text-gray-400 text-center mb-12 max-w-xl mx-auto">{t('home.services.subtitle')}</p>
           </AnimateOnScroll>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <AnimateOnScroll animation="reveal-scale" delay={0.1}>
             <div className="glass-card card-hover p-6 rounded-xl text-center">
               <div className="w-16 h-16 bg-primary-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
@@ -151,6 +241,36 @@ const Home: React.FC = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2 text-white">{t('home.services.hosting')}</h3>
               <p className="text-gray-400 text-sm">{t('home.services.hosting.desc')}</p>
+            </div>
+            </AnimateOnScroll>
+            <AnimateOnScroll animation="reveal-scale" delay={0.5}>
+            <div className="glass-card card-hover p-6 rounded-xl text-center">
+              <div className="w-16 h-16 bg-primary-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
+                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-white">
+                {language === 'nl' ? 'Mobiele Apps' : 'Mobile Apps'}
+              </h3>
+              <p className="text-gray-400 text-sm">
+                {language === 'nl' ? 'iOS & Android app ontwikkeling met publicatie in App Store en Play Store.' : 'iOS & Android app development with publishing to App Store and Play Store.'}
+              </p>
+            </div>
+            </AnimateOnScroll>
+            <AnimateOnScroll animation="reveal-scale" delay={0.6}>
+            <div className="glass-card card-hover p-6 rounded-xl text-center">
+              <div className="w-16 h-16 bg-primary-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
+                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-white">
+                {language === 'nl' ? 'Maatwerk Software' : 'Custom Software'}
+              </h3>
+              <p className="text-gray-400 text-sm">
+                {language === 'nl' ? 'Schaalbare software oplossingen, automatisering en business tools.' : 'Scalable software solutions, automation and business tools.'}
+              </p>
             </div>
             </AnimateOnScroll>
           </div>

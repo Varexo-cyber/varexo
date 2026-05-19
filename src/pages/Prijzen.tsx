@@ -785,6 +785,280 @@ const Prijzen: React.FC = () => {
           </div>
         </div>
 
+        {/* Mobiele Apps Section */}
+        <div className="max-w-7xl mx-auto mb-16 mt-20">
+          <AnimateOnScroll>
+            <div className="text-center mb-4">
+              <span className="inline-block px-4 py-1.5 text-xs font-bold font-mono rounded-full mb-4 tracking-wider" style={{background: 'rgba(16, 185, 129, 0.1)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.3)'}}>APPS</span>
+            </div>
+            <p className="text-center font-mono text-sm mb-2 tracking-wider" style={{color: '#34d399'}}>$ npm run build:apps --platform=all</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-white">
+              {language === 'nl' ? 'Mobiele Apps' : 'Mobile Apps'}
+            </h2>
+            <p className="text-lg text-center text-gray-400 mb-12 max-w-3xl mx-auto">
+              {language === 'nl'
+                ? 'Native apps voor iOS en Android. Wij zorgen voor publicatie in de App Store en Google Play Store, inclusief volledige goedkeuring.'
+                : 'Native apps for iOS and Android. We handle publishing in the App Store and Google Play Store, including full approval.'}
+            </p>
+          </AnimateOnScroll>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              {
+                title: language === 'nl' ? 'App Basis' : 'App Basic',
+                price: '€2.499',
+                period: '',
+                subPrice: language === 'nl' ? 'eenmalig' : 'one-time',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                ),
+                features: language === 'nl' 
+                  ? ['iOS of Android app', 'Max 5 schermen', 'App Store publicatie', '6 maanden garantie']
+                  : ['iOS or Android app', 'Max 5 screens', 'App Store publishing', '6 months warranty'],
+                delay: 0.1,
+                color: '#34d399'
+              },
+              {
+                title: language === 'nl' ? 'App Pro' : 'App Pro',
+                price: '€4.999',
+                period: '',
+                subPrice: language === 'nl' ? 'eenmalig' : 'one-time',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                ),
+                features: language === 'nl' 
+                  ? ['iOS én Android (cross-platform)', 'Max 10 schermen', 'Push notificaties', 'API koppeling mogelijk', '12 maanden garantie']
+                  : ['iOS and Android (cross-platform)', 'Max 10 screens', 'Push notifications', 'API integration possible', '12 months warranty'],
+                delay: 0.2,
+                color: '#34d399'
+              },
+              {
+                title: language === 'nl' ? 'App Premium' : 'App Premium',
+                price: '€9.999',
+                period: '',
+                subPrice: language === 'nl' ? 'eenmalig' : 'one-time',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                ),
+                features: language === 'nl' 
+                  ? ['Maatwerk app (ongelimiteerd)', 'Complexe functionaliteit', 'Database & backend', 'Real-time synchronisatie', 'Onderhoud pakket inbegrepen (1 jaar)']
+                  : ['Custom app (unlimited)', 'Complex functionality', 'Database & backend', 'Real-time sync', 'Maintenance included (1 year)'],
+                delay: 0.3,
+                color: '#34d399'
+              }
+            ].map((app, idx) => (
+              <AnimateOnScroll key={idx} animation="reveal-scale" delay={app.delay}>
+                <div 
+                  className="group relative h-full p-6 rounded-xl bg-dark-800/60 backdrop-blur-sm border border-dark-700 hover:border-green-500/50 transition-all duration-300 flex flex-col overflow-hidden"
+                  style={{boxShadow: '0 0 0 rgba(52, 211, 153, 0)'}}
+                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 30px rgba(52, 211, 153, 0.2)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 0 rgba(52, 211, 153, 0)'; }}
+                >
+                  <div 
+                    className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-500"
+                    style={{background: 'radial-gradient(circle, #34d399 0%, transparent 70%)'}}
+                  />
+                  <div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 relative z-10"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%)',
+                      border: '1px solid rgba(52, 211, 153, 0.3)',
+                      color: '#34d399'
+                    }}
+                  >
+                    {app.icon}
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-3 relative z-10">{app.title}</h3>
+                  <div className="mb-4 relative z-10">
+                    <div className="flex items-baseline gap-1">
+                      <span 
+                        className="text-3xl font-bold" 
+                        style={{color: '#34d399', textShadow: '0 0 20px rgba(52, 211, 153, 0.4)'}}
+                      >
+                        {app.price}
+                      </span>
+                      {app.period && <span className="text-sm text-gray-400">{app.period}</span>}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">{app.subPrice}</div>
+                  </div>
+                  <ul className="space-y-2 mb-5 flex-1 relative z-10">
+                    {app.features.map((feature, fIdx) => (
+                      <li key={fIdx} className="flex items-start text-gray-300 text-sm">
+                        <svg className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#34d399'}}>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <a 
+                    href="/contact" 
+                    className="relative z-10 block w-full text-center py-2.5 rounded-lg font-semibold transition-all duration-300 group-hover:scale-[1.02]"
+                    style={{
+                      background: 'linear-gradient(135deg, #34d399 0%, #10b981 100%)',
+                      color: '#0f172a',
+                      boxShadow: '0 4px 14px 0 rgba(52, 211, 153, 0.3)'
+                    }}
+                  >
+                    {language === 'nl' ? 'Aanvragen' : 'Request'}
+                  </a>
+                </div>
+              </AnimateOnScroll>
+            ))}
+          </div>
+        </div>
+
+        {/* Software Development Section */}
+        <div className="max-w-7xl mx-auto mb-16 mt-20">
+          <AnimateOnScroll>
+            <div className="text-center mb-4">
+              <span className="inline-block px-4 py-1.5 text-xs font-bold font-mono rounded-full mb-4 tracking-wider" style={{background: 'rgba(99, 102, 241, 0.1)', color: '#818cf8', border: '1px solid rgba(99, 102, 241, 0.3)'}}>SOFTWARE</span>
+            </div>
+            <p className="text-center font-mono text-sm mb-2 tracking-wider" style={{color: '#818cf8'}}>$ npm run build:software --custom</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-white">
+              {language === 'nl' ? 'Maatwerk Software' : 'Custom Software'}
+            </h2>
+            <p className="text-lg text-center text-gray-400 mb-12 max-w-3xl mx-auto">
+              {language === 'nl'
+                ? 'Van eenvoudige tools tot complexe bedrijfssystemen. Wij bouwen software die jouw processen automatiseert en efficiency verhoogt.'
+                : 'From simple tools to complex business systems. We build software that automates your processes and increases efficiency.'}
+            </p>
+          </AnimateOnScroll>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
+            {[
+              {
+                title: language === 'nl' ? 'Tool Basis' : 'Tool Basic',
+                price: '€299',
+                period: '',
+                subPrice: language === 'nl' ? 'eenmalig' : 'one-time',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                ),
+                features: language === 'nl' 
+                  ? ['Eenvoudige tool/script', '1 functionaliteit', 'Web-based of desktop', 'Basis documentatie']
+                  : ['Simple tool/script', '1 functionality', 'Web-based or desktop', 'Basic documentation'],
+                delay: 0.1,
+                color: '#818cf8'
+              },
+              {
+                title: language === 'nl' ? 'Applicatie' : 'Application',
+                price: '€1.499',
+                period: '',
+                subPrice: language === 'nl' ? 'eenmalig' : 'one-time',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                ),
+                features: language === 'nl' 
+                  ? ['Web applicatie', '5-10 schermen/modules', 'Database integratie', 'User management', '3 maanden garantie']
+                  : ['Web application', '5-10 screens/modules', 'Database integration', 'User management', '3 months warranty'],
+                delay: 0.2,
+                color: '#818cf8'
+              },
+              {
+                title: language === 'nl' ? 'Systeem Pro' : 'System Pro',
+                price: '€3.999',
+                period: '',
+                subPrice: language === 'nl' ? 'eenmalig' : 'one-time',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                ),
+                features: language === 'nl' 
+                  ? ['Complex bedrijfssysteem', '10-20 modules', 'API integraties', 'Advanced reporting', 'Automatisering', '6 maanden garantie']
+                  : ['Complex business system', '10-20 modules', 'API integrations', 'Advanced reporting', 'Automation', '6 months warranty'],
+                delay: 0.3,
+                color: '#818cf8'
+              },
+              {
+                title: language === 'nl' ? 'Enterprise' : 'Enterprise',
+                price: '€7.499',
+                period: '',
+                subPrice: language === 'nl' ? 'vanaf prijs' : 'starting price',
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                ),
+                features: language === 'nl' 
+                  ? ['Enterprise oplossing', 'Ongelimiteerd schalen', 'Multi-tenant', 'Custom integraties', 'Prioriteit support', '12 maanden garantie']
+                  : ['Enterprise solution', 'Unlimited scaling', 'Multi-tenant', 'Custom integrations', 'Priority support', '12 months warranty'],
+                delay: 0.4,
+                color: '#818cf8'
+              }
+            ].map((software, idx) => (
+              <AnimateOnScroll key={idx} animation="reveal-scale" delay={software.delay}>
+                <div 
+                  className="group relative h-full p-6 rounded-xl bg-dark-800/60 backdrop-blur-sm border border-dark-700 hover:border-indigo-500/50 transition-all duration-300 flex flex-col overflow-hidden"
+                  style={{boxShadow: '0 0 0 rgba(129, 140, 248, 0)'}}
+                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 30px rgba(129, 140, 248, 0.2)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 0 rgba(129, 140, 248, 0)'; }}
+                >
+                  <div 
+                    className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-500"
+                    style={{background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)'}}
+                  />
+                  <div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 relative z-10"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(129, 140, 248, 0.2) 0%, rgba(99, 102, 241, 0.1) 100%)',
+                      border: '1px solid rgba(129, 140, 248, 0.3)',
+                      color: '#818cf8'
+                    }}
+                  >
+                    {software.icon}
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-3 relative z-10">{software.title}</h3>
+                  <div className="mb-4 relative z-10">
+                    <div className="flex items-baseline gap-1">
+                      <span 
+                        className="text-3xl font-bold" 
+                        style={{color: '#818cf8', textShadow: '0 0 20px rgba(129, 140, 248, 0.4)'}}
+                      >
+                        {software.price}
+                      </span>
+                      {software.period && <span className="text-sm text-gray-400">{software.period}</span>}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">{software.subPrice}</div>
+                  </div>
+                  <ul className="space-y-2 mb-5 flex-1 relative z-10">
+                    {software.features.map((feature, fIdx) => (
+                      <li key={fIdx} className="flex items-start text-gray-300 text-sm">
+                        <svg className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#818cf8'}}>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <a 
+                    href="/contact" 
+                    className="relative z-10 block w-full text-center py-2.5 rounded-lg font-semibold transition-all duration-300 group-hover:scale-[1.02]"
+                    style={{
+                      background: 'linear-gradient(135deg, #818cf8 0%, #6366f1 100%)',
+                      color: '#0f172a',
+                      boxShadow: '0 4px 14px 0 rgba(129, 140, 248, 0.3)'
+                    }}
+                  >
+                    {language === 'nl' ? 'Aanvragen' : 'Request'}
+                  </a>
+                </div>
+              </AnimateOnScroll>
+            ))}
+          </div>
+        </div>
+
         {/* CTA */}
         <div className="mt-16 text-center">
           <h2 className="text-2xl font-bold mb-4 text-white">{t('pricing.cta.title')}</h2>

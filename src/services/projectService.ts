@@ -65,6 +65,16 @@ export interface Customer {
   subscription?: 'basic' | 'pro' | 'premium' | null;
   hasSocialMedia?: boolean;
   socialMediaPackage?: 'starter' | 'groei' | 'dominant' | null;
+  // Mollie fields
+  mollieCustomerId?: string;
+  sepaMandateId?: string;
+  sepaMandateStatus?: 'pending' | 'valid' | 'invalid' | 'revoked';
+  sepaMandateDate?: string;
+  kvkNumber?: string;
+  vatNumber?: string;
+  address?: string;
+  postalCode?: string;
+  city?: string;
 }
 
 class ProjectService {
