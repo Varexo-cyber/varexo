@@ -18,7 +18,7 @@ const SepaMandateButton: React.FC<Props> = ({ customerEmail, hasMandate, onSucce
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/payments/klant/setup-mandate', {
+      const response = await fetch('/.netlify/functions/setup-mandate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ const SepaMandateButton: React.FC<Props> = ({ customerEmail, hasMandate, onSucce
             {language === 'nl' ? 'Automatisch betalen actief' : 'Automatic payment active'}
           </p>
           <p className="text-green-400/70 text-sm">
-            {language === 'nl' ? 'SEPA mandaat ingesteld' : 'SEPA mandate configured'}
+            {language === 'nl' ? 'Automatisch incasso actief' : 'Automatic collection active'}
           </p>
         </div>
       </div>
@@ -107,7 +107,7 @@ const SepaMandateButton: React.FC<Props> = ({ customerEmail, hasMandate, onSucce
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            {language === 'nl' ? 'SEPA Mandaat Instellen' : 'Setup SEPA Mandate'}
+            {language === 'nl' ? 'Automatisch Incasso Instellen' : 'Setup Automatic Collection'}
           </>
         )}
       </button>

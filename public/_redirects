@@ -1,0 +1,4 @@
+# Netlify redirects for API endpoints
+/api/payments/klant/setup-mandate /.netlify/functions/setup-mandate 200
+/api/payments/admin/incasseren /.netlify/functions/incasseren 200
+/api/webhooks/mollie /.netlify/functions/webhook 200

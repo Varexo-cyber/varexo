@@ -1136,18 +1136,18 @@ const CustomerDashboard: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-400 uppercase tracking-wider">
-                      {language === 'nl' ? 'Betalingsservice' : 'Payment Service'}
+                      {language === 'nl' ? 'Automatisch Incasso' : 'Automatic Collection'}
                     </p>
                     <p className="text-2xl font-bold text-white">
                       {(user as any)?.sepaMandateStatus === 'valid' 
                         ? (language === 'nl' ? '✅ Automatisch incasso actief' : '✅ Automatic debit active')
-                        : (language === 'nl' ? '⏳ SEPA mandaat vereist' : '⏳ SEPA mandate required')
+                        : (language === 'nl' ? '⏳ Automatisch incasso vereist' : '⏳ Automatic collection required')
                       }
                     </p>
                     <p className="text-sm text-gray-500 mt-1">
                       {(user as any)?.sepaMandateStatus === 'valid'
                         ? (language === 'nl' ? 'Je kunt nu automatisch worden geïncasseerd' : 'You can now be automatically debited')
-                        : (language === 'nl' ? 'Activeer automatische incasso voor snelle betalingen' : 'Enable automatic debit for fast payments')
+                        : (language === 'nl' ? 'Activeer automatische incasso voor makkelijk betalen' : 'Enable automatic collection for easy payments')
                       }
                     </p>
                   </div>

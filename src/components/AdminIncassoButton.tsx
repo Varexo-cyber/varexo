@@ -37,7 +37,7 @@ const AdminIncassoButton: React.FC<Props> = ({
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/payments/admin/incasseren', {
+      const response = await fetch('/.netlify/functions/incasseren', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
