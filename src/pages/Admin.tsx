@@ -2212,7 +2212,7 @@ const AdminDashboard: React.FC = () => {
                                   customerName={customer.displayName}
                                   hasMandate={true}
                                   amount={0}
-                                  onSuccess={() => loadCustomers()}
+                                  onSuccess={() => loadData()}
                                 />
                               </div>
                             ) : (
