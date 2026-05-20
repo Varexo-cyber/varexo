@@ -349,13 +349,13 @@ const AdminDashboard: React.FC = () => {
             const mRes = await fetch(`/.netlify/functions/mandate-status?email=${encodeURIComponent(customer.email)}`);
             if (mRes.ok) {
               const mData = await mRes.json();
-              return { ...customer, sepaMandateStatus: mData.hasMandate ? 'valid' : 'none' };
+              return { ...customer, sepaMandateStatus: (mData.hasMandate ? 'valid' : 'none') as 'valid' | 'invalid' | 'pending' | 'revoked' | undefined };
             }
           } catch {}
           return customer;
         })
       );
-      setCustomers(enrichedCustomers);
+      setCustomers(enrichedCustomers as Customer[]);
       
       setProjects(p);
       setInvoices(i);
