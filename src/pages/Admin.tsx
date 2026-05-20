@@ -337,20 +337,25 @@ const AdminDashboard: React.FC = () => {
         company: customer.company 
       })));
       
-      // EMERGENCY FIX: If API returns empty but stats say there are customers, use localStorage
-      if ((!c || c.length === 0) && s && s.totalCustomers > 0) {
-        console.warn('API returned empty customers but stats show', s.totalCustomers, 'customers. Using localStorage...');
-        const localCustomers = projectService.getCustomers();
-        if (localCustomers && localCustomers.length > 0) {
-          console.log('Found customers in localStorage:', localCustomers);
-          setCustomers(localCustomers);
-        } else {
-          console.error('No customers in API or localStorage!');
-          setCustomers([]);
-        }
-      } else {
-        setCustomers(c);
-      }
+      // Fetch mandate status for all customers from NeonSQL
+      const customersToUse = ((!c || c.length === 0) && s && s.totalCustomers > 0)
+        ? projectService.getCustomers()
+        : c;
+
+      // Enrich customers with mandate status from database
+      const enrichedCustomers = await Promise.all(
+        customersToUse.map(async (customer: Customer) => {
+          try {
+            const mRes = await fetch(`/.netlify/functions/mandate-status?email=${encodeURIComponent(customer.email)}`);
+            if (mRes.ok) {
+              const mData = await mRes.json();
+              return { ...customer, sepaMandateStatus: mData.hasMandate ? 'valid' : 'none' };
+            }
+          } catch {}
+          return customer;
+        })
+      );
+      setCustomers(enrichedCustomers);
       
       setProjects(p);
       setInvoices(i);

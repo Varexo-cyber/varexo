@@ -8,6 +8,56 @@ import PageTransition from '../components/PageTransition';
 import SepaMandateButton from '../components/SepaMandateButton';
 import { useLanguage } from '../contexts/LanguageContext';
 
+const MandaatCard: React.FC<{ userEmail: string; language: string }> = ({ userEmail, language }) => {
+  const [hasMandate, setHasMandate] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    if (!userEmail) { setChecking(false); return; }
+    fetch(`/.netlify/functions/mandate-status?email=${encodeURIComponent(userEmail)}`)
+      .then(r => r.json())
+      .then(d => setHasMandate(d.hasMandate === true))
+      .catch(() => setHasMandate(false))
+      .finally(() => setChecking(false));
+  }, [userEmail]);
+
+  return (
+    <div className="mb-8">
+      <div className={`bg-gradient-to-br p-6 rounded-2xl border shadow-xl transition-all ${hasMandate ? 'from-green-900/30 to-dark-900 border-green-500/30' : 'from-dark-800 to-dark-900 border-dark-600/50'}`}>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className={`p-4 rounded-2xl border ${hasMandate ? 'bg-green-500/20 border-green-500/30' : 'bg-yellow-400/20 border-yellow-500/30'}`}>
+              <svg className={`w-8 h-8 ${hasMandate ? 'text-green-400' : 'text-yellow-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-400 uppercase tracking-wider">
+                {language === 'nl' ? 'Automatisch Incasso' : 'Automatic Collection'}
+              </p>
+              <p className={`text-2xl font-bold ${hasMandate ? 'text-green-400' : 'text-white'}`}>
+                {checking ? '...' : hasMandate
+                  ? (language === 'nl' ? '✅ Incasso actief' : '✅ Collection active')
+                  : (language === 'nl' ? '⏳ Incasso instellen' : '⏳ Setup collection')
+                }
+              </p>
+              <p className="text-sm text-gray-500 mt-1">
+                {hasMandate
+                  ? (language === 'nl' ? 'Je facturen worden automatisch betaald' : 'Your invoices are paid automatically')
+                  : (language === 'nl' ? 'Activeer automatische incasso voor makkelijk betalen' : 'Enable automatic collection for easy payments')
+                }
+              </p>
+            </div>
+          </div>
+          <div className="md:w-auto w-full">
+            <SepaMandateButton customerEmail={userEmail} hasMandate={hasMandate} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const CustomerDashboard: React.FC = () => {
   const { t, language } = useLanguage();
   const [user, setUser] = useState<MockUser | null>(null);
@@ -1125,42 +1175,7 @@ const CustomerDashboard: React.FC = () => {
           </div>
 
           {/* SEPA Mandaat Card - Altijd zichtbaar */}
-          <div className="mb-8">
-            <div className="bg-gradient-to-br from-dark-800 to-dark-900 p-6 rounded-2xl border border-dark-600/50 shadow-xl">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-4 bg-gradient-to-br from-yellow-400/20 to-yellow-500/20 rounded-2xl border border-yellow-500/30">
-                    <svg className="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-400 uppercase tracking-wider">
-                      {language === 'nl' ? 'Automatisch Incasso' : 'Automatic Collection'}
-                    </p>
-                    <p className="text-2xl font-bold text-white">
-                      {(user as any)?.sepaMandateStatus === 'valid' 
-                        ? (language === 'nl' ? '✅ Automatisch incasso actief' : '✅ Automatic debit active')
-                        : (language === 'nl' ? '⏳ Automatisch incasso vereist' : '⏳ Automatic collection required')
-                      }
-                    </p>
-                    <p className="text-sm text-gray-500 mt-1">
-                      {(user as any)?.sepaMandateStatus === 'valid'
-                        ? (language === 'nl' ? 'Je kunt nu automatisch worden geïncasseerd' : 'You can now be automatically debited')
-                        : (language === 'nl' ? 'Activeer automatische incasso voor makkelijk betalen' : 'Enable automatic collection for easy payments')
-                      }
-                    </p>
-                  </div>
-                </div>
-                <div className="md:w-auto w-full">
-                  <SepaMandateButton 
-                    customerEmail={user?.email || ''}
-                    hasMandate={(user as any)?.sepaMandateStatus === 'valid'}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          <MandaatCard userEmail={user?.email || ''} language={language} />
 
           {/* Tabs */}
           <div className="border-b border-dark-700 mb-6">
