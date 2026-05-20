@@ -1125,31 +1125,39 @@ const CustomerDashboard: React.FC = () => {
           </div>
 
           {/* SEPA Mandaat Card - Altijd zichtbaar */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-dark-800 p-6 rounded-lg border border-dark-700 md:col-span-4 lg:col-span-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="p-3 bg-yellow-900 rounded-lg">
-                    <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mb-8">
+            <div className="bg-gradient-to-br from-dark-800 to-dark-900 p-6 rounded-2xl border border-dark-600/50 shadow-xl">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-4 bg-gradient-to-br from-yellow-400/20 to-yellow-500/20 rounded-2xl border border-yellow-500/30">
+                    <svg className="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-400">
-                      {language === 'nl' ? 'Automatisch Betalen' : 'Automatic Payment'}
+                  <div>
+                    <p className="text-sm font-medium text-gray-400 uppercase tracking-wider">
+                      {language === 'nl' ? 'Betalingsservice' : 'Payment Service'}
                     </p>
-                    <p className="text-lg font-semibold text-white">
+                    <p className="text-2xl font-bold text-white">
                       {(user as any)?.sepaMandateStatus === 'valid' 
-                        ? (language === 'nl' ? 'Actief' : 'Active')
-                        : (language === 'nl' ? 'Niet ingesteld' : 'Not set up')
+                        ? (language === 'nl' ? '✅ Automatisch incasso actief' : '✅ Automatic debit active')
+                        : (language === 'nl' ? '⏳ SEPA mandaat vereist' : '⏳ SEPA mandate required')
+                      }
+                    </p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {(user as any)?.sepaMandateStatus === 'valid'
+                        ? (language === 'nl' ? 'Je kunt nu automatisch worden geïncasseerd' : 'You can now be automatically debited')
+                        : (language === 'nl' ? 'Activeer automatische incasso voor snelle betalingen' : 'Enable automatic debit for fast payments')
                       }
                     </p>
                   </div>
                 </div>
-                <SepaMandateButton 
-                  customerEmail={user?.email || ''}
-                  hasMandate={(user as any)?.sepaMandateStatus === 'valid'}
-                />
+                <div className="md:w-auto w-full">
+                  <SepaMandateButton 
+                    customerEmail={user?.email || ''}
+                    hasMandate={(user as any)?.sepaMandateStatus === 'valid'}
+                  />
+                </div>
               </div>
             </div>
           </div>
