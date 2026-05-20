@@ -36,7 +36,19 @@ const AdminIncassoButton: React.FC<Props> = ({
     setResult(null);
 
     try {
-      const token = localStorage.getItem('token');
+      // Get user from localStorage and create token
+      const userStr = localStorage.getItem('varexo_user') || localStorage.getItem('token');
+      if (!userStr) {
+        setResult({
+          status: 'error',
+          message: language === 'nl' ? 'Je moet eerst inloggen' : 'Please log in first'
+        });
+        return;
+      }
+
+      const user = JSON.parse(userStr);
+      const token = btoa(JSON.stringify({ email: user.email, exp: Date.now() + 3600000 }));
+
       const response = await fetch('/.netlify/functions/incasseren', {
         method: 'POST',
         headers: {
