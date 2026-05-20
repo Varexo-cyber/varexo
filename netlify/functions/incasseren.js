@@ -27,10 +27,14 @@ exports.handler = async (event, context) => {
   const client = await pool.connect();
   
   try {
-    const { customerEmail, amount, description, products } = JSON.parse(event.body);
+    const body = JSON.parse(event.body);
+    const customerEmail = body.customerEmail;
+    const amount = parseFloat(body.amount);
+    const description = body.description;
+    const products = body.products;
 
-    if (!customerEmail || !amount) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'customerEmail and amount required' }) };
+    if (!customerEmail || !amount || isNaN(amount) || amount <= 0) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'customerEmail and valid amount required' }) };
     }
 
     // Get customer
@@ -49,12 +53,12 @@ exports.handler = async (event, context) => {
     try {
       const axios = require('axios');
       const invoiceLines = (products && products.length > 0) ? products.map(p => ({
-        description: p.name,
-        quantity: p.quantity,
+        description: `${p.name} - Vrijgesteld van BTW i.v.m. KOR`,
+        quantity: p.quantity || 1,
         vatRate: '0.00',
-        unitPrice: { currency: 'EUR', value: p.unitPrice.toFixed(2) }
+        unitPrice: { currency: 'EUR', value: parseFloat(p.unitPrice).toFixed(2) }
       })) : [{
-        description: description || 'Varexo diensten',
+        description: `${description || 'Varexo diensten'} - Vrijgesteld van BTW i.v.m. KOR`,
         quantity: 1,
         vatRate: '0.00',
         unitPrice: { currency: 'EUR', value: amount.toFixed(2) }
@@ -107,10 +111,14 @@ exports.handler = async (event, context) => {
 
   } catch (error) {
     console.error('Incasso error:', error);
-    await client.query(
-      'INSERT INTO incasso_logs (customer_email, amount, status, error_message) VALUES ($1, $2, $3, $4)',
-      [customerEmail, amount, 'error', error.message]
-    );
+    try {
+      await client.query(
+        'INSERT INTO incasso_logs (customer_email, amount, status, error_message) VALUES ($1, $2, $3, $4)',
+        [error._customerEmail || 'unknown', error._amount || 0, 'error', error.message]
+      );
+    } catch (logErr) {
+      console.error('Log error:', logErr.message);
+    }
     return {
       statusCode: 500,
       headers,

@@ -60,8 +60,9 @@ const AdminIncassoButton: React.FC<Props> = ({
     setSelectedProducts(prev => prev.map(sp => sp.product.id === productId ? { ...sp, quantity: qty } : sp));
   };
 
-  const updatePrice = (productId: string, price: number) => {
-    setSelectedProducts(prev => prev.map(sp => sp.product.id === productId ? { ...sp, customPrice: price } : sp));
+  const updatePrice = (productId: string, val: string) => {
+    const price = val === '' ? 0 : parseFloat(val);
+    setSelectedProducts(prev => prev.map(sp => sp.product.id === productId ? { ...sp, customPrice: isNaN(price) ? sp.product.price : price } : sp));
   };
 
   const handleIncasso = async () => {
@@ -149,7 +150,7 @@ const AdminIncassoButton: React.FC<Props> = ({
                       <input
                         type="number"
                         value={selected.customPrice > 0 ? selected.customPrice : product.price}
-                        onChange={e => updatePrice(product.id, parseFloat(e.target.value) || 0)}
+                        onChange={e => updatePrice(product.id, e.target.value)}
                         onClick={e => e.stopPropagation()}
                         className="w-16 px-1 py-0.5 bg-dark-700 border border-dark-500 rounded text-white text-xs"
                         step="0.01"
