@@ -11,6 +11,7 @@ interface Product {
 interface SelectedProduct {
   product: Product;
   quantity: number;
+  customPrice: number;
 }
 
 interface Props {
@@ -44,19 +45,23 @@ const AdminIncassoButton: React.FC<Props> = ({
     }
   }, [showPanel]);
 
-  const total = selectedProducts.reduce((sum, sp) => sum + sp.product.price * sp.quantity, 0);
+  const total = selectedProducts.reduce((sum, sp) => sum + sp.customPrice * sp.quantity, 0);
 
   const toggleProduct = (product: Product) => {
     setSelectedProducts(prev => {
       const exists = prev.find(sp => sp.product.id === product.id);
       if (exists) return prev.filter(sp => sp.product.id !== product.id);
-      return [...prev, { product, quantity: 1 }];
+      return [...prev, { product, quantity: 1, customPrice: product.price }];
     });
   };
 
   const updateQty = (productId: string, qty: number) => {
     if (qty < 1) return;
     setSelectedProducts(prev => prev.map(sp => sp.product.id === productId ? { ...sp, quantity: qty } : sp));
+  };
+
+  const updatePrice = (productId: string, price: number) => {
+    setSelectedProducts(prev => prev.map(sp => sp.product.id === productId ? { ...sp, customPrice: price } : sp));
   };
 
   const handleIncasso = async () => {
@@ -77,8 +82,8 @@ const AdminIncassoButton: React.FC<Props> = ({
           products: selectedProducts.map(sp => ({
             name: sp.product.name,
             quantity: sp.quantity,
-            unitPrice: sp.product.price,
-            total: sp.product.price * sp.quantity
+            unitPrice: sp.customPrice,
+            total: sp.customPrice * sp.quantity
           }))
         })
       });
@@ -116,33 +121,40 @@ const AdminIncassoButton: React.FC<Props> = ({
           {language === 'nl' ? 'Incasseren' : 'Collect Payment'}
         </button>
       ) : (
-        <div className="bg-dark-800 border border-dark-600 rounded-xl p-4 space-y-3 min-w-[320px]">
+        <div className="bg-dark-800 border border-dark-600 rounded-xl p-3 space-y-2 w-72">
           <div className="flex justify-between items-center">
-            <p className="text-white font-semibold text-sm">{language === 'nl' ? 'Producten selecteren' : 'Select products'}</p>
-            <button onClick={() => setShowPanel(false)} className="text-gray-400 hover:text-white text-lg">✕</button>
+            <p className="text-white font-semibold text-xs">{language === 'nl' ? 'Producten selecteren' : 'Select products'}</p>
+            <button onClick={() => setShowPanel(false)} className="text-gray-400 hover:text-white text-sm">✕</button>
           </div>
 
-          <div className="space-y-2 max-h-48 overflow-y-auto">
+          <div className="space-y-1 max-h-56 overflow-y-auto">
             {products.map(product => {
               const selected = selectedProducts.find(sp => sp.product.id === product.id);
               return (
                 <div
                   key={product.id}
-                  className={`p-3 rounded-lg border cursor-pointer transition ${selected ? 'border-primary-500 bg-primary-500/10' : 'border-dark-600 hover:border-dark-400'}`}
+                  className={`p-2 rounded-lg border cursor-pointer transition ${selected ? 'border-primary-500 bg-primary-500/10' : 'border-dark-600 hover:border-dark-400'}`}
                   onClick={() => toggleProduct(product)}
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <p className="text-white text-xs font-medium">{product.name}</p>
-                      <p className="text-gray-400 text-xs mt-0.5">{product.description}</p>
-                    </div>
-                    <p className="text-primary-400 font-bold text-sm ml-2">€{product.price.toFixed(2)}</p>
+                  <div className="flex justify-between items-center gap-1">
+                    <p className="text-white text-xs font-medium truncate flex-1">{product.name}</p>
+                    <p className="text-primary-400 font-bold text-xs whitespace-nowrap">€{product.price.toFixed(2)}</p>
                   </div>
                   {selected && (
-                    <div className="flex items-center gap-2 mt-2" onClick={e => e.stopPropagation()}>
-                      <button onClick={() => updateQty(product.id, selected.quantity - 1)} className="w-6 h-6 bg-dark-700 rounded text-white text-xs hover:bg-dark-600">-</button>
-                      <span className="text-white text-xs w-6 text-center">{selected.quantity}</span>
-                      <button onClick={() => updateQty(product.id, selected.quantity + 1)} className="w-6 h-6 bg-dark-700 rounded text-white text-xs hover:bg-dark-600">+</button>
+                    <div className="flex items-center gap-1.5 mt-1.5" onClick={e => e.stopPropagation()}>
+                      <button onClick={() => updateQty(product.id, selected.quantity - 1)} className="w-5 h-5 bg-dark-700 rounded text-white text-xs hover:bg-dark-600 flex-shrink-0">-</button>
+                      <span className="text-white text-xs w-4 text-center">{selected.quantity}</span>
+                      <button onClick={() => updateQty(product.id, selected.quantity + 1)} className="w-5 h-5 bg-dark-700 rounded text-white text-xs hover:bg-dark-600 flex-shrink-0">+</button>
+                      <span className="text-gray-500 text-xs">€</span>
+                      <input
+                        type="number"
+                        value={selected.customPrice}
+                        onChange={e => updatePrice(product.id, parseFloat(e.target.value) || 0)}
+                        onClick={e => e.stopPropagation()}
+                        className="w-14 px-1 py-0.5 bg-dark-700 border border-dark-500 rounded text-white text-xs"
+                        step="0.01"
+                        min="0"
+                      />
                     </div>
                   )}
                 </div>
@@ -151,17 +163,17 @@ const AdminIncassoButton: React.FC<Props> = ({
           </div>
 
           {selectedProducts.length > 0 && (
-            <div className="border-t border-dark-600 pt-3">
-              <div className="flex justify-between items-center mb-3">
-                <p className="text-gray-400 text-sm">{language === 'nl' ? 'Totaal' : 'Total'}</p>
-                <p className="text-white font-bold">€{total.toFixed(2)}</p>
+            <div className="border-t border-dark-600 pt-2">
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-gray-400 text-xs">{language === 'nl' ? 'Totaal' : 'Total'}</p>
+                <p className="text-white font-bold text-sm">€{total.toFixed(2)}</p>
               </div>
               <button
                 onClick={handleIncasso}
                 disabled={loading}
-                className="w-full bg-primary-500 text-dark-900 px-4 py-2.5 rounded-lg font-bold hover:bg-primary-400 transition disabled:opacity-50 text-sm"
+                className="w-full bg-primary-500 text-dark-900 px-3 py-2 rounded-lg font-bold hover:bg-primary-400 transition disabled:opacity-50 text-xs"
               >
-                {loading ? '⏳ Bezig...' : `💳 Incasseer €${total.toFixed(2)} van ${customerName}`}
+                {loading ? '⏳ Bezig...' : `💳 Incasseer €${total.toFixed(2)}`}
               </button>
             </div>
           )}

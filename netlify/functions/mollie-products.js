@@ -48,12 +48,15 @@ exports.handler = async (event, context) => {
     console.log('Mollie sales-invoices failed:', err.message);
     // No second attempt needed - fall through to full fallback below
 
-    // Final fallback: ALLE Varexo producten van prijzenpagina
+    // Final fallback: ALLE Varexo producten - Mollie producten EERST
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
         products: [
+          // === UIT MOLLIE DASHBOARD (invoice-ar/products) ===
+          { id: 'mollie_website_onderhoud', name: 'Website Onderhoud & Beheer | Varexo', price: 29.99, description: 'Maandelijks website onderhoud & beheer.' },
+          { id: 'mollie_email_hosting', name: 'Zakelijk E-mail & Hosting | Varexo', price: 9.99, description: 'Professioneel zakelijk e-mailadres inclusief hosting.' },
           // === WEBSITE PAKKETTEN (eenmalig) ===
           { id: 'prod_basic', name: 'Basic Website Pakket | Varexo', price: 649.99, description: 'Complete website (1-3 paginas), responsive design, contactformulier, Google Maps, basis SEO. Eenmalig.' },
           { id: 'prod_pro', name: 'Pro Website Pakket | Varexo', price: 1049.99, description: 'Geavanceerde website (5-10 paginas), 0.01s laadtijd garantie, geavanceerde SEO, marketing strategie. Eenmalig.' },
