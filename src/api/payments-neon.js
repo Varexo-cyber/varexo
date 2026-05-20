@@ -223,14 +223,58 @@ router.post('/webhooks/mollie', async (req, res) => {
       [payment.status, payment.paidAt, payment.method, paymentId]
     );
 
-    // If paid, update invoice status
+    // If paid, update invoice status OR create new invoice if none exists
     if (payment.status === 'paid') {
-      await client.query(
-        `UPDATE invoices 
-         SET status = 'paid' 
-         WHERE id IN (SELECT invoice_id FROM payments WHERE mollie_payment_id = $1)`,
+      // Check if payment has linked invoice
+      const paymentResult = await client.query(
+        'SELECT invoice_id FROM payments WHERE mollie_payment_id = $1',
         [paymentId]
       );
+      
+      if (paymentResult.rows.length > 0 && paymentResult.rows[0].invoice_id) {
+        // Update existing invoice
+        await client.query(
+          `UPDATE invoices 
+           SET status = 'paid', paid_at = NOW()
+           WHERE id = $1`,
+          [paymentResult.rows[0].invoice_id]
+        );
+      } else {
+        // NO INVOICE EXISTS - Create automatic invoice from Mollie payment
+        const customerResult = await client.query(
+          'SELECT id, email, company, display_name FROM customers WHERE mollie_customer_id = $1',
+          [payment.customerId]
+        );
+        
+        if (customerResult.rows.length > 0) {
+          const customer = customerResult.rows[0];
+          
+          // Generate invoice number
+          const date = new Date();
+          const invoiceNumber = `F-${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}-${String(Math.floor(Math.random()*10000)).padStart(4,'0')}`;
+          
+          // Create invoice
+          const invoiceResult = await client.query(
+            `INSERT INTO invoices (customer_email, invoice_number, amount, status, description, created_at, paid_at)
+             VALUES ($1, $2, $3, 'paid', $4, NOW(), NOW())
+             RETURNING id`,
+            [
+              customer.email,
+              invoiceNumber,
+              payment.amount.value,
+              payment.description || 'Betaling via Mollie'
+            ]
+          );
+          
+          // Link payment to new invoice
+          await client.query(
+            'UPDATE payments SET invoice_id = $1 WHERE mollie_payment_id = $2',
+            [invoiceResult.rows[0].id, paymentId]
+          );
+          
+          console.log(`✅ Automatische factuur aangemaakt: ${invoiceNumber} voor ${customer.email}`);
+        }
+      }
     }
 
     // If this was first payment (mandate setup), update customer
