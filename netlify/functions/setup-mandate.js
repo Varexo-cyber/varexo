@@ -25,22 +25,53 @@ exports.handler = async (event, context) => {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
-  const client = await pool.connect();
+  // Check environment variables
+  if (!process.env.DATABASE_URL) {
+    console.error('❌ DATABASE_URL missing');
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Database not configured' }) };
+  }
+  if (!process.env.MOLLIE_API_KEY) {
+    console.error('❌ MOLLIE_API_KEY missing');
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Mollie not configured' }) };
+  }
+
+  let client;
+  try {
+    client = await pool.connect();
+    console.log('✅ Database connected');
+  } catch (dbError) {
+    console.error('❌ Database connection failed:', dbError.message);
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Database connection failed' }) };
+  }
   
   try {
     const { redirectUrl } = JSON.parse(event.body);
     
-    // Get user from JWT token
-    const token = event.headers.authorization?.split(' ')[1];
+    // Get user from JWT token (check both lowercase and uppercase)
+    const authHeader = event.headers.authorization || event.headers.Authorization;
+    console.log('Auth header:', authHeader);
+    
+    if (!authHeader) {
+      return { statusCode: 401, headers, body: JSON.stringify({ error: 'No authorization header' }) };
+    }
+    
+    const token = authHeader.split(' ')[1];
     if (!token) {
       return { statusCode: 401, headers, body: JSON.stringify({ error: 'No token' }) };
     }
 
-    // Decode token (simplified - in production verify properly)
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const payload = JSON.parse(Buffer.from(base64, 'base64').toString());
-    const userEmail = payload.email;
+    // Decode token (simplified)
+    let userEmail;
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(Buffer.from(base64, 'base64').toString());
+      userEmail = payload.email;
+      console.log('Token payload:', payload);
+    } catch (e) {
+      console.error('Token decode error:', e);
+      return { statusCode: 401, headers, body: JSON.stringify({ error: 'Invalid token' }) };
+    }
 
     // Get customer from database
     const result = await client.query(
