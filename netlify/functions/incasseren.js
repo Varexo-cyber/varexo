@@ -29,6 +29,10 @@ exports.handler = async (event, context) => {
   try {
     const { customerEmail, amount, description, products } = JSON.parse(event.body);
 
+    if (!customerEmail || !amount) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'customerEmail and amount required' }) };
+    }
+
     // Get customer
     const result = await client.query(
       'SELECT * FROM customers WHERE email = $1',

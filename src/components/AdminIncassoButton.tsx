@@ -148,10 +148,10 @@ const AdminIncassoButton: React.FC<Props> = ({
                       <span className="text-gray-500 text-xs">€</span>
                       <input
                         type="number"
-                        value={selected.customPrice}
+                        value={selected.customPrice > 0 ? selected.customPrice : product.price}
                         onChange={e => updatePrice(product.id, parseFloat(e.target.value) || 0)}
                         onClick={e => e.stopPropagation()}
-                        className="w-14 px-1 py-0.5 bg-dark-700 border border-dark-500 rounded text-white text-xs"
+                        className="w-16 px-1 py-0.5 bg-dark-700 border border-dark-500 rounded text-white text-xs"
                         step="0.01"
                         min="0"
                       />
