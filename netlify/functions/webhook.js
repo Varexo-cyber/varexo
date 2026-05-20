@@ -1,6 +1,7 @@
 // Netlify Function: Mollie Webhook
 const { Pool } = require('pg');
 const { createMollieClient } = require('@mollie/api-client');
+const { sendMandateConfirmationEmail } = require('./utils/send-email');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -108,6 +109,17 @@ exports.handler = async (event, context) => {
            ON CONFLICT (mollie_mandate_id) DO UPDATE SET status = $2`,
           [validMandate.id, 'valid', validMandate.signatureDate, payment.customerId]
         );
+
+        // Send confirmation email to customer
+        const customerRes = await client.query(
+          'SELECT email, display_name FROM customers WHERE mollie_customer_id = $1',
+          [payment.customerId]
+        );
+        if (customerRes.rows.length > 0) {
+          const { email, display_name } = customerRes.rows[0];
+          await sendMandateConfirmationEmail(email, display_name, 'nl');
+          console.log(`✅ Bevestigingsmail verstuurd naar ${email}`);
+        }
       }
     }
 

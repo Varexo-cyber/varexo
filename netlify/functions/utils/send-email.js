@@ -1143,6 +1143,66 @@ async function sendAdminNotification(type, data) {
   }
 }
 
+async function sendMandateConfirmationEmail(customerEmail, customerName, language = 'nl') {
+  const t = {
+    nl: {
+      subject: '✅ Automatisch incasso ingesteld - Varexo',
+      title: 'Automatisch Incasso Actief',
+      greeting: `Beste ${customerName || 'klant'},`,
+      intro: 'Goed nieuws! Je automatisch incasso is succesvol ingesteld. Vanaf nu worden je facturen automatisch geïncasseerd.',
+      whatNext: 'Wat betekent dit voor jou?',
+      items: [
+        '✅ Je facturen worden automatisch betaald — je hoeft niets te doen',
+        '✅ Je ontvangt altijd een e-mail als er een betaling gedaan wordt',
+        '✅ Je kunt je incasso altijd annuleren via je dashboard',
+      ],
+      note: 'Let op: de eerste betaling van €0,01 was alleen om je bankrekening te koppelen. Dit bedrag wordt niet in rekening gebracht.',
+      button: 'Naar mijn dashboard',
+    },
+    en: {
+      subject: '✅ Automatic collection activated - Varexo',
+      title: 'Automatic Collection Active',
+      greeting: `Dear ${customerName || 'customer'},`,
+      intro: 'Great news! Your automatic collection has been successfully set up. From now on, your invoices will be collected automatically.',
+      whatNext: 'What does this mean for you?',
+      items: [
+        '✅ Your invoices will be paid automatically — no action needed',
+        '✅ You will always receive an email when a payment is made',
+        '✅ You can cancel your collection at any time via your dashboard',
+      ],
+      note: 'Note: the initial payment of €0.01 was only to link your bank account. This amount will not be charged.',
+      button: 'Go to my dashboard',
+    }
+  };
+
+  const lang = t[language] || t.nl;
+
+  const content = `
+    <p style="color:#e2e8f0;font-size:16px;line-height:1.7;margin-bottom:16px;">${lang.greeting}</p>
+    <p style="color:#94a3b8;font-size:15px;line-height:1.7;margin-bottom:24px;">${lang.intro}</p>
+
+    <div style="background:rgba(16,185,129,0.1);border-left:4px solid #10b981;padding:20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0 0 12px;color:#10b981;font-size:15px;font-weight:600;">${lang.whatNext}</p>
+      ${lang.items.map(item => `<p style="margin:8px 0;color:#e2e8f0;font-size:14px;">${item}</p>`).join('')}
+    </div>
+
+    <div style="background:rgba(251,191,36,0.1);border-left:4px solid #f59e0b;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
+      <p style="margin:0;color:#fbbf24;font-size:13px;">💡 ${lang.note}</p>
+    </div>
+  `;
+
+  return sendEmail(
+    customerEmail,
+    lang.subject,
+    lang.title,
+    content,
+    lang.button,
+    `${PORTAL_URL}/dashboard`,
+    null,
+    language
+  );
+}
+
 module.exports = {
   sendNewProjectEmail,
   sendProjectDeletedEmail,
@@ -1156,4 +1216,5 @@ module.exports = {
   sendPasswordResetEmail,
   sendRecurringInvoiceSetupEmail,
   sendAdminNotification,
+  sendMandateConfirmationEmail,
 };
