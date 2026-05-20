@@ -89,18 +89,18 @@ const SepaMandateButton: React.FC<Props> = ({ customerEmail, hasMandate: hasMand
 
   if (hasMandate) {
     return (
-      <div className="flex items-center gap-3 px-4 py-3 bg-green-500/10 border border-green-500/30 rounded-xl">
-        <div className="p-2 bg-green-500/20 rounded-full">
-          <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="flex items-center gap-3 px-4 py-3 bg-green-500/20 border border-green-500/40 rounded-xl">
+        <div className="p-2 bg-green-500/30 rounded-full flex-shrink-0">
+          <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
         <div>
-          <p className="text-green-400 font-semibold">
-            {language === 'nl' ? 'Automatisch betalen actief' : 'Automatic payment active'}
+          <p className="text-white font-bold text-base">
+            {language === 'nl' ? '✅ Automatisch betalen actief' : '✅ Automatic payment active'}
           </p>
-          <p className="text-green-400/70 text-sm">
-            {language === 'nl' ? 'Automatisch incasso actief' : 'Automatic collection active'}
+          <p className="text-green-300 text-sm font-medium">
+            {language === 'nl' ? 'Facturen worden automatisch betaald' : 'Invoices are paid automatically'}
           </p>
         </div>
       </div>
