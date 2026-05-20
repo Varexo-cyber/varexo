@@ -79,8 +79,24 @@ exports.handler = async (event, context) => {
       console.log('Sales invoice creation failed (continuing with payment):', invoiceErr.response?.data || invoiceErr.message);
     }
 
+    // Get default Mollie profile ID (needed for recurring payments)
+    let profileId = process.env.MOLLIE_PROFILE_ID;
+    if (!profileId) {
+      try {
+        const axios = require('axios');
+        const profilesRes = await axios.get('https://api.mollie.com/v2/profiles', {
+          headers: { Authorization: `Bearer ${process.env.MOLLIE_API_KEY}` }
+        });
+        const profiles = profilesRes.data?._embedded?.profiles || [];
+        profileId = profiles[0]?.id;
+        console.log('Using Mollie profile:', profileId);
+      } catch (pErr) {
+        console.log('Could not fetch profile:', pErr.message);
+      }
+    }
+
     // Create recurring payment (SEPA incasso)
-    const payment = await mollieClient.payments.create({
+    const paymentPayload = {
       amount: {
         currency: 'EUR',
         value: amount.toFixed(2)
@@ -89,7 +105,10 @@ exports.handler = async (event, context) => {
       webhookUrl: process.env.WEBHOOK_URL,
       customerId: customer.mollie_customer_id,
       sequenceType: 'recurring'
-    });
+    };
+    if (profileId) paymentPayload.profileId = profileId;
+
+    const payment = await mollieClient.payments.create(paymentPayload);
 
     // Save payment
     await client.query(
