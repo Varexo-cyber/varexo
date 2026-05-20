@@ -45,33 +45,14 @@ exports.handler = async (event, context) => {
   }
   
   try {
-    const { redirectUrl } = JSON.parse(event.body);
+    const { redirectUrl, email } = JSON.parse(event.body);
     
-    // Get user from JWT token (check both lowercase and uppercase)
-    const authHeader = event.headers.authorization || event.headers.Authorization;
-    console.log('Auth header:', authHeader);
-    
-    if (!authHeader) {
-      return { statusCode: 401, headers, body: JSON.stringify({ error: 'No authorization header' }) };
-    }
-    
-    const token = authHeader.split(' ')[1];
-    if (!token) {
-      return { statusCode: 401, headers, body: JSON.stringify({ error: 'No token' }) };
+    if (!email) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Email required' }) };
     }
 
-    // Decode token (simplified)
-    let userEmail;
-    try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const payload = JSON.parse(Buffer.from(base64, 'base64').toString());
-      userEmail = payload.email;
-      console.log('Token payload:', payload);
-    } catch (e) {
-      console.error('Token decode error:', e);
-      return { statusCode: 401, headers, body: JSON.stringify({ error: 'Invalid token' }) };
-    }
+    const userEmail = email;
+    console.log('Setup mandate for:', userEmail);
 
     // Get customer from database
     const result = await client.query(

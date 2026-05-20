@@ -17,24 +17,22 @@ const SepaMandateButton: React.FC<Props> = ({ customerEmail, hasMandate, onSucce
     setError('');
 
     try {
-      // Get user from localStorage (mock auth stores user object, not token)
-      const userStr = localStorage.getItem('varexo_user') || localStorage.getItem('token');
+      // Get user from localStorage
+      const userStr = localStorage.getItem('varexo_user');
       if (!userStr) {
         setError(language === 'nl' ? 'Je moet eerst inloggen' : 'Please log in first');
         return;
       }
 
-      // Create a simple JWT-like token from user data
       const user = JSON.parse(userStr);
-      const token = btoa(JSON.stringify({ email: user.email, exp: Date.now() + 3600000 }));
 
       const response = await fetch('/.netlify/functions/setup-mandate', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          email: user.email,
           redirectUrl: `${window.location.origin}/dashboard`
         })
       });
