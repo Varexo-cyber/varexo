@@ -123,9 +123,9 @@ const Home: React.FC = () => {
                 
                 {/* Right side - Content */}
                 <div className="flex-1 text-center lg:text-left">
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/20 border border-primary-500/30 text-primary-400 text-xs font-bold font-mono mb-4">
-                    <span className="w-2 h-2 rounded-full bg-primary-400 animate-pulse"></span>
-                    {language === 'nl' ? 'DOCHTERBEDRIJF VAN VAREXO' : 'SUBSIDIARY OF VAREXO'}
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-bold font-mono mb-4">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    {language === 'nl' ? 'IN BEHANDELING' : 'IN PROGRESS'}
                   </div>
                   
                   <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
@@ -135,11 +135,30 @@ const Home: React.FC = () => {
                     </span>
                   </h2>
                   
-                  <p className="text-gray-400 text-lg mb-6 max-w-xl">
-                    {language === 'nl' 
+                  <p className="text-gray-400 text-lg mb-4 max-w-xl">
+                    {language === 'nl'
                       ? 'Praat gewoon met Boekora AI in normaal Nederlands. Geen ingewikkelde menu\'s. Facturen, bonnetjes en je administratie - automatisch geregeld.'
                       : 'Just chat with Boekora AI in plain English. No complicated menus. Invoices, receipts and your administration - handled automatically.'}
                   </p>
+
+                  {/* In behandeling banner */}
+                  <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 max-w-xl">
+                    <div className="flex items-start gap-3">
+                      <svg className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                      <div>
+                        <p className="text-amber-300 font-semibold text-sm">
+                          {language === 'nl' ? 'Project nog in behandeling' : 'Project still in development'}
+                        </p>
+                        <p className="text-amber-400/70 text-sm mt-1">
+                          {language === 'nl'
+                            ? 'Boekora is een dochterbedrijf van Varexo. De website en functionaliteiten zijn nog in ontwikkeling — niet alles werkt nog naar behoren.'
+                            : 'Boekora is a subsidiary of Varexo. The website and features are still under development — not everything is fully functional yet.'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                   
                   {/* Feature pills */}
                   <div className="flex flex-wrap gap-2 mb-6 justify-center lg:justify-start">
@@ -164,23 +183,20 @@ const Home: React.FC = () => {
                   </div>
                   
                   <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    <a 
-                      href="https://boekora.nl" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="group inline-flex items-center justify-center gap-2 bg-primary-500 text-dark-900 px-8 py-4 rounded-xl font-semibold hover:bg-primary-400 transition-all duration-300 shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transform hover:-translate-y-1"
+                    <span
+                      className="group inline-flex items-center justify-center gap-2 bg-dark-700 text-gray-500 px-8 py-4 rounded-xl font-semibold cursor-not-allowed border border-dark-600"
                     >
                       {language === 'nl' ? 'Start gratis op Boekora' : 'Start free on Boekora'}
-                      <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
-                    </a>
-                    
+                    </span>
+
                     <span className="inline-flex items-center justify-center gap-2 text-gray-500 text-sm">
                       <svg className="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                       </svg>
-                      boekora.nl
+                      boekora.nl — {language === 'nl' ? 'binnenkort beschikbaar' : 'coming soon'}
                     </span>
                   </div>
                 </div>
