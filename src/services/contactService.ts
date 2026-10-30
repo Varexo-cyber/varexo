@@ -1,3 +1,4 @@
+import { detectSpam } from '../utils/spam';
 const API_BASE = '/.netlify/functions';
 
 export interface ContactForm {
@@ -9,6 +10,7 @@ export interface ContactForm {
   telefoon?: string;
   bedrijf?: string;
   projectType?: string;
+  website?: string; // honeypot
 }
 
 export interface ContactMessage {
@@ -25,6 +27,7 @@ export interface ContactMessage {
 }
 
 const saveToLocalStorage = (formData: ContactForm): string => {
+  if (formData.website || detectSpam(formData).spam) return 'skipped';
   const submission = {
     ...formData,
     id: 'contact-' + Date.now(),
@@ -80,7 +83,11 @@ const getLocalMessages = (): ContactMessage[] => {
   }));
 };
 
-export const getContactMessages = async (): Promise<ContactMessage[]> => {
+const withoutSpam = (list: ContactMessage[]) => list.filter((m) => !detectSpam(m).spam);
+
+export const getContactMessages = async (): Promise<ContactMessage[]> => withoutSpam(await loadContactMessages());
+
+const loadContactMessages = async (): Promise<ContactMessage[]> => {
   const localMessages = getLocalMessages();
   
   try {

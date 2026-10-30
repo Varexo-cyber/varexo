@@ -41,7 +41,7 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-dark-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="auth-v3 min-h-[calc(100vh-72px)] flex flex-col justify-center py-16 px-4 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center">
             <h2 className="mt-6 text-center text-3xl font-extrabold text-white">

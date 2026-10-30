@@ -3,6 +3,8 @@ import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
 import { useLanguage } from '../contexts/LanguageContext';
+import { SpotlightCard, TiltCard } from '../components/Interactive';
+import { PageHero, CtaBlock, ArrowIcon } from '../components/Section';
 
 interface Project {
   id: string;
@@ -29,94 +31,52 @@ interface Campaign {
 
 const CampaignCard: React.FC<{ campaign: Campaign; language: string }> = ({ campaign, language }) => {
   const [currentImage, setCurrentImage] = useState(0);
-
-  const nextImage = () => setCurrentImage((prev) => (prev + 1) % campaign.images.length);
-  const prevImage = () => setCurrentImage((prev) => (prev - 1 + campaign.images.length) % campaign.images.length);
+  const nl = language === 'nl';
+  const go = (d: number) => setCurrentImage((p) => (p + d + campaign.images.length) % campaign.images.length);
 
   return (
-    <div 
-      className="group relative overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 h-full"
-      style={{ animation: 'float 3s ease-in-out infinite' }}
-    >
-      <div className="relative overflow-hidden bg-dark-900/50" style={{ height: '450px' }}>
+    <SpotlightCard className="surface h-full overflow-hidden">
+      <div className="relative bg-black/40" style={{ height: 420 }}>
         {campaign.images.map((img, idx) => (
-          <img 
-            key={idx}
-            src={img}
-            alt={`${campaign.title} ${idx + 1}`}
-            className={`absolute inset-0 w-full h-full object-contain transition-all duration-500 ${
-              idx === currentImage ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-            }`}
-          />
+          <img key={idx} src={img} alt={`${campaign.title} ${idx + 1}`}
+            className={`absolute inset-0 w-full h-full object-contain transition-all duration-500 ${idx === currentImage ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`} />
         ))}
-        <div className="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/30 to-transparent opacity-60" />
-        <div className="absolute top-4 left-4">
-          <span className="px-4 py-1.5 bg-blue-500 text-white text-xs font-extrabold rounded-full border-2 border-blue-400">
-            {language === 'nl' ? 'Advertentie' : 'Ad Campaign'}
-          </span>
-        </div>
-        <button
-          onClick={prevImage}
-          className="absolute left-3 top-1/2 -translate-y-1/2 bg-dark-900/70 hover:bg-dark-900 text-white p-2 rounded-full border border-dark-600 transition-all hover:scale-110 z-10"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <button
-          onClick={nextImage}
-          className="absolute right-3 top-1/2 -translate-y-1/2 bg-dark-900/70 hover:bg-dark-900 text-white p-2 rounded-full border border-dark-600 transition-all hover:scale-110 z-10"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        <span className="absolute top-4 left-4 chip !bg-dark-950/80 backdrop-blur">{nl ? 'Advertentie' : 'Ad campaign'}</span>
+        {[-1, 1].map((d) => (
+          <button key={d} onClick={() => go(d)} aria-label={d < 0 ? 'Previous' : 'Next'}
+            className={`absolute ${d < 0 ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-dark-950/70 backdrop-blur border border-white/10 text-white hover:bg-white hover:text-dark-950 transition flex items-center justify-center`}>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={d < 0 ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7'} /></svg>
+          </button>
+        ))}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
           {campaign.images.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentImage(idx)}
-              className={`w-2.5 h-2.5 rounded-full transition-all ${
-                idx === currentImage ? 'bg-primary-400 scale-125' : 'bg-white/40 hover:bg-white/60'
-              }`}
-            />
+            <button key={idx} onClick={() => setCurrentImage(idx)} className={`h-1.5 rounded-full transition-all ${idx === currentImage ? 'w-6 bg-primary-400' : 'w-1.5 bg-white/40'}`} />
           ))}
         </div>
       </div>
-      <div className="p-6">
-        <h3 className="text-xl font-bold text-white mb-2">
-          {campaign.title}
-        </h3>
-        <p className="text-gray-400 text-sm mb-4">
-          {campaign.description}
-        </p>
-        <div className="grid grid-cols-3 gap-3 mb-4">
-          <div className="text-center bg-dark-700 rounded-lg p-2 border border-dark-600">
-            <div className="text-lg font-bold text-primary-400">{campaign.stats.reach}</div>
-            <p className="text-gray-500 text-[10px]">{language === 'nl' ? 'Bereik / dag' : 'Reach / day'}</p>
-          </div>
-          <div className="text-center bg-dark-700 rounded-lg p-2 border border-dark-600">
-            <div className="text-lg font-bold text-primary-400">{campaign.stats.conversions}</div>
-            <p className="text-gray-500 text-[10px]">{language === 'nl' ? 'Leads / dag' : 'Leads / day'}</p>
-          </div>
-          <div className="text-center bg-dark-700 rounded-lg p-2 border border-dark-600">
-            <div className="text-lg font-bold text-green-400">{campaign.stats.status}</div>
-            <p className="text-gray-500 text-[10px]">Status</p>
-          </div>
+      <div className="p-7">
+        <h3 className="text-xl font-semibold text-white mb-2">{campaign.title}</h3>
+        <p className="text-gray-400 text-sm leading-relaxed mb-6">{campaign.description}</p>
+        <div className="grid grid-cols-3 gap-2 mb-5">
+          {[[campaign.stats.reach, nl ? 'bereik / dag' : 'reach / day'], [campaign.stats.conversions, nl ? 'leads / dag' : 'leads / day'], [campaign.stats.status, 'status']].map(([v, l]) => (
+            <div key={l} className="surface-inner p-3">
+              <div className="text-lg font-semibold text-white">{v}</div>
+              <div className="text-[11px] text-gray-500">{l}</div>
+            </div>
+          ))}
         </div>
         <div className="flex flex-wrap gap-2">
-          {campaign.tags.map(tag => (
-            <span key={tag} className="px-2 py-1 bg-dark-700 text-blue-300 text-xs rounded border border-dark-600">{tag}</span>
-          ))}
+          {campaign.tags.map((tag) => <span key={tag} className="text-xs text-gray-400 px-2.5 py-1 rounded-full border border-white/10">{tag}</span>)}
         </div>
       </div>
-    </div>
+    </SpotlightCard>
   );
 };
 
 const Portfolio: React.FC = () => {
   const { t, language } = useLanguage();
-  
+  const nl = language === 'nl';
+
   const projects: Project[] = [
     {
       id: '1',
@@ -161,17 +121,6 @@ const Portfolio: React.FC = () => {
       image: '/portfolio/labfix.jpg',
       technologies: ['React', 'Node.js', 'Payment API'],
       link: 'https://labfix.nl'
-    },
-    {
-      id: '5',
-      title: 'Boekora',
-      category: language === 'nl' ? 'AI Boekhouding • Dochterbedrijf' : 'AI Accounting • Subsidiary',
-      description: language === 'nl'
-        ? 'Revolutionaire AI-gedreven boekhoudsoftware voor ondernemers. Automatische factuurverwerking, real-time btw-inzichten en slimme financiële analyses. Ons dochterbedrijf.'
-        : 'Revolutionary AI-driven accounting software for entrepreneurs. Automatic invoice processing, real-time VAT insights and smart financial analysis. Our subsidiary.',
-      image: '/portfolio/boekora.jpg',
-      technologies: ['AI/ML', 'React', 'Node.js', 'Cloud'],
-      link: 'https://boekora.nl'
     }
   ];
 
@@ -208,196 +157,71 @@ const Portfolio: React.FC = () => {
   
   return (
     <PageTransition>
-    <SEO 
-      title={language === 'nl' ? "Portfolio - Onze Projecten & Websites" : "Portfolio - Our Projects & Websites"}
-      description={language === 'nl' ? "Bekijk ons portfolio met professionele websites en webshops. Van startups tot gevestigde bedrijven, wij leveren maatwerk webdesign dat resultaat oplevert." : "View our portfolio with professional websites and webshops. From startups to established companies, we deliver custom web design that delivers results."}
-      keywords={language === 'nl' ? "portfolio webdesign, website voorbeelden, webshop voorbeelden, webdesign projecten, gemaakte websites" : "portfolio web design, website examples, webshop examples, web design projects, made websites"}
-      canonical="/portfolio"
-    />
-    <div className="py-20 matrix-dots">
-      <div className="container mx-auto px-4">
-        <AnimateOnScroll>
-        <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">$ ls projects/</p>
-        <h1 className="text-4xl font-bold text-center mb-4 text-white">{language === 'nl' ? 'Ons Portfolio' : 'Our Portfolio'}</h1>
-        <p className="text-xl text-center text-gray-400 mb-8 max-w-2xl mx-auto">
-          {language === 'nl' ? 'Ontdek onze recente projecten en zie wat we voor jou kunnen betekenen' : 'Discover our recent projects and see what we can do for you'}
-        </p>
-        </AnimateOnScroll>
-        
-        {/* Project Grid - Cards with Images */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {projects.map((project, index) => (
-            <AnimateOnScroll key={project.id} delay={index * 0.1}>
-              {project.link ? (
-                <a 
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 h-full"
-                  style={{ animation: `float ${3 + index * 0.5}s ease-in-out infinite`, animationDelay: `${index * 0.5}s` }}
-                >
-                  {/* Project Image */}
-                  <div className="relative h-52 overflow-hidden">
-                    <img 
-                      src={project.image} 
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-dark-800 via-transparent to-transparent" />
-                    <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1.5 bg-primary-500 text-dark-900 text-xs font-extrabold rounded-full border-2 border-primary-400 shadow-lg shadow-primary-500/40">
-                        {project.category}
+      <SEO
+        title={language === 'nl' ? "Portfolio - Onze Projecten & Websites" : "Portfolio - Our Projects & Websites"}
+        description={language === 'nl' ? "Bekijk ons portfolio met professionele websites en webshops. Van startups tot gevestigde bedrijven, wij leveren maatwerk webdesign dat resultaat oplevert." : "View our portfolio with professional websites and webshops. From startups to established companies, we deliver custom web design that delivers results."}
+        keywords={language === 'nl' ? "portfolio webdesign, website voorbeelden, webshop voorbeelden, webdesign projecten, gemaakte websites" : "portfolio web design, website examples, webshop examples, web design projects, made websites"}
+        canonical="/portfolio"
+      />
+
+      <PageHero
+        eyebrow="Portfolio"
+        title={nl ? <>Werk waar we <span className="serif text-primary-300">trots</span> op zijn.</> : <>Work we are <span className="serif text-primary-300">proud</span> of.</>}
+        lead={nl ? 'Een selectie van websites, webshops en campagnes die we voor ondernemers hebben gebouwd.' : 'A selection of websites, web shops and campaigns we built for business owners.'}
+      />
+
+      <section className="pb-24 bg-dark-950">
+        <div className="container mx-auto px-4 max-w-6xl space-y-6">
+          {projects.map((p, i) => (
+            <AnimateOnScroll key={p.id}>
+              <a href={p.link} target="_blank" rel="noopener noreferrer" className="block group">
+                <SpotlightCard className="surface overflow-hidden">
+                  <div className={`flex flex-col lg:flex-row items-center ${i % 2 ? 'lg:flex-row-reverse' : ''}`}>
+                    <div className="w-full lg:w-7/12 p-6 md:p-10">
+                      <TiltCard className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-dark-900" max={5}>
+                        <div className="browser-bar"><span /><span /><span /><em className="ml-3 not-italic text-[11px] text-gray-500">{p.link?.replace('https://', '')}</em></div>
+                        <img src={p.image} alt={p.title} loading="lazy" className="w-full aspect-[16/10] object-cover object-top group-hover:scale-[1.02] transition-transform duration-700" />
+                      </TiltCard>
+                    </div>
+                    <div className="w-full lg:w-5/12 p-6 pt-0 md:p-10">
+                      <span className="chip mb-5">{p.category}</span>
+                      <h2 className="display text-3xl md:text-4xl mb-4">{p.title}</h2>
+                      <p className="text-gray-400 leading-relaxed mb-6">{p.description}</p>
+                      <div className="flex flex-wrap gap-2 mb-8">
+                        {p.technologies.map((tech) => <span key={tech} className="text-xs text-gray-400 px-2.5 py-1 rounded-full border border-white/10">{tech}</span>)}
+                      </div>
+                      <span className="inline-flex items-center gap-2 text-sm font-medium text-white group-hover:text-primary-300 transition-colors">
+                        {t('portfolio.viewWebsite')} <ArrowIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                       </span>
                     </div>
                   </div>
-
-                  <div className="p-6">
-                    {/* Title */}
-                    <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">
-                      {project.title}
-                    </h3>
-                    
-                    {/* Description */}
-                    <p className="text-gray-400 text-sm mb-4 line-clamp-3">
-                      {project.description}
-                    </p>
-                    
-                    {/* Technologies */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.technologies.map((tech) => (
-                        <span 
-                          key={tech}
-                          className="px-2 py-1 bg-dark-700 text-primary-300 text-xs rounded border border-dark-600"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                    
-                    {/* Link indicator */}
-                    <div className="flex items-center text-primary-400 text-sm font-medium">
-                      <span>{t('portfolio.viewWebsite')}</span>
-                      <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </div>
-                  </div>
-                </a>
-              ) : (
-                <div 
-                  className="group overflow-hidden rounded-xl bg-dark-800 border border-dark-700 hover:border-primary-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/20 h-full"
-                  style={{ animation: `float ${3 + index * 0.5}s ease-in-out infinite`, animationDelay: `${index * 0.5}s` }}
-                >
-                  {/* Project Image */}
-                  <div className="relative h-52 overflow-hidden">
-                    <img 
-                      src={project.image} 
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-dark-800 via-transparent to-transparent" />
-                    <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1.5 bg-primary-500 text-dark-900 text-xs font-extrabold rounded-full border-2 border-primary-400 shadow-lg shadow-primary-500/40">
-                        {project.category}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6">
-                    {/* Title */}
-                    <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">
-                      {project.title}
-                    </h3>
-                    
-                    {/* Description */}
-                    <p className="text-gray-400 text-sm mb-4 line-clamp-3">
-                      {project.description}
-                    </p>
-                    
-                    {/* Technologies */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.technologies.map((tech) => (
-                        <span 
-                          key={tech}
-                          className="px-2 py-1 bg-dark-700 text-primary-300 text-xs rounded border border-dark-600"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                    
-                    <span className="text-gray-500 text-sm">{t('portfolio.internalProject')}</span>
-                  </div>
-                </div>
-              )}
+                </SpotlightCard>
+              </a>
             </AnimateOnScroll>
           ))}
         </div>
+      </section>
 
-        {/* Ads / Campagnes Section */}
-        <div className="mt-24">
+      <section className="py-24 bg-dark-950 border-t border-white/5">
+        <div className="container mx-auto px-4 max-w-6xl">
           <AnimateOnScroll>
-            <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">$ ls campaigns/</p>
-            <h2 className="text-3xl font-bold text-center mb-4 text-white">
-              {language === 'nl' ? 'Advertentiecampagnes' : 'Ad Campaigns'}
-            </h2>
-            <p className="text-lg text-center text-gray-400 mb-12 max-w-2xl mx-auto">
-              {language === 'nl' 
-                ? 'Naast websites beheren wij ook advertentiecampagnes die dagelijks duizenden mensen bereiken. Sterk, doelgericht en resultaatgericht.'
-                : 'Besides websites, we also manage ad campaigns that reach thousands of people daily. Strong, targeted and results-driven.'}
+            <span className="eyebrow">{nl ? 'Campagnes' : 'Campaigns'}</span>
+            <h2 className="display text-4xl md:text-5xl mt-4 mb-4">{nl ? <>Meer dan alleen <span className="serif text-primary-300">websites.</span></> : <>More than just <span className="serif text-primary-300">websites.</span></>}</h2>
+            <p className="lead max-w-2xl mb-12">
+              {nl ? 'We beheren ook advertentiecampagnes die dagelijks duizenden mensen bereiken.' : 'We also run ad campaigns that reach thousands of people every day.'}
             </p>
           </AnimateOnScroll>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {campaigns.map((campaign, index) => (
-              <AnimateOnScroll key={campaign.id} delay={index * 0.1}>
-                <CampaignCard campaign={campaign} language={language} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {campaigns.map((c, i) => (
+              <AnimateOnScroll key={c.id} delay={i * 0.08}>
+                <CampaignCard campaign={c} language={language} />
               </AnimateOnScroll>
             ))}
           </div>
         </div>
+      </section>
 
-        {/* Stats Section */}
-        <div className="mt-48">
-          <div className="glass-card p-8 rounded-xl max-w-5xl mx-auto">
-            <h2 className="text-2xl font-bold text-center mb-8 text-white">{t('portfolio.stats.title')}</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              <div className="text-center p-6 border border-dark-600 rounded-xl bg-dark-800/50 hover:border-primary-500/50 hover:bg-dark-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/20">
-                <div className="text-3xl md:text-4xl font-bold text-primary-400 text-glow mb-2">10+</div>
-                <p className="text-gray-400 font-medium">{t('portfolio.stats.clients')}</p>
-              </div>
-              <div className="text-center p-6 border border-dark-600 rounded-xl bg-dark-800/50 hover:border-primary-500/50 hover:bg-dark-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/20">
-                <div className="text-3xl md:text-4xl font-bold text-primary-400 text-glow mb-2">10+</div>
-                <p className="text-gray-400 font-medium">{t('portfolio.stats.projects')}</p>
-              </div>
-              <div className="text-center p-6 border border-dark-600 rounded-xl bg-dark-800/50 hover:border-primary-500/50 hover:bg-dark-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/20">
-                <div className="text-3xl md:text-4xl font-bold text-primary-400 text-glow mb-2">99.9%</div>
-                <p className="text-gray-400 font-medium">{t('portfolio.stats.uptime')}</p>
-              </div>
-              <div className="text-center p-6 border border-dark-600 rounded-xl bg-dark-800/50 hover:border-primary-500/50 hover:bg-dark-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/20">
-                <div className="text-3xl md:text-4xl font-bold text-primary-400 text-glow mb-2">&lt;24h</div>
-                <p className="text-gray-400 font-medium">{t('portfolio.stats.response')}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="mt-24 text-center">
-          <div className="glass-card p-12 rounded-xl max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4 text-white">{t('portfolio.cta.title')}</h2>
-            <p className="text-gray-400 mb-8">
-              {t('portfolio.cta.desc')}
-            </p>
-            <a 
-              href="/contact" 
-              className="bg-primary-500 text-dark-900 px-8 py-3 rounded-lg font-bold hover:bg-primary-400 transition inline-block glow-emerald">
-              {t('portfolio.cta.button')}
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
+      <CtaBlock title={t('portfolio.cta.title')} text={t('portfolio.cta.desc')} button={t('portfolio.cta.button')} />
     </PageTransition>
   );
 };

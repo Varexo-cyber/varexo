@@ -1040,13 +1040,13 @@ const CustomerDashboard: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-dark-900 pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="app-panel min-h-screen pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-10">
             <div>
-              <h1 className="text-3xl font-bold text-white">{t('dashboard.title')}</h1>
-              <p className="text-gray-400 mt-1">
+              <p className="text-sm text-gray-500">{t('dashboard.title')}</p>
+              <p className="text-3xl md:text-5xl font-semibold text-white tracking-tight mt-2">
                 {(() => {
                   const hour = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' })).getHours();
                   let greeting = '';
@@ -1061,16 +1061,16 @@ const CustomerDashboard: React.FC = () => {
                     else if (hour >= 18 && hour < 23) greeting = 'Good evening';
                     else greeting = 'Good night';
                   }
-                  return `${greeting}, ${user.displayName} 👋`;
+                  return <>{greeting}, <span className="serif text-primary-300">{user.displayName}.</span></>;
                 })()}
               </p>
             </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {/* Subscription Card */}
-            <div className="bg-dark-800 p-6 rounded-lg border border-dark-700">
+            <div className="kpi-card kpi-accent">
               <div className="flex items-center">
                 <div className="p-3 bg-blue-900 rounded-lg">
                   <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1131,7 +1131,7 @@ const CustomerDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-dark-800 p-6 rounded-lg border border-dark-700">
+            <div className="kpi-card">
               <div className="flex items-center">
                 <div className="p-3 bg-primary-900 rounded-lg">
                   <svg className="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1145,7 +1145,7 @@ const CustomerDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-dark-800 p-6 rounded-lg border border-dark-700">
+            <div className="kpi-card">
               <div className="flex items-center">
                 <div className="p-3 bg-green-900 rounded-lg">
                   <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1159,7 +1159,7 @@ const CustomerDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-dark-800 p-6 rounded-lg border border-dark-700">
+            <div className="kpi-card">
               <div className="flex items-center">
                 <div className="p-3 bg-yellow-900 rounded-lg">
                   <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1178,24 +1178,24 @@ const CustomerDashboard: React.FC = () => {
           <MandaatCard userEmail={user?.email || ''} language={language} />
 
           {/* Tabs */}
-          <div className="border-b border-dark-700 mb-6">
-            <nav className="flex space-x-8">
+          <div className="mb-6 mt-10">
+            <nav className="inline-flex p-1 rounded-full bg-white/[0.04] border border-white/[0.06]">
               <button
                 onClick={() => setActiveTab('projects')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={`px-4 py-1.5 rounded-full font-medium text-sm transition-colors ${
                   activeTab === 'projects'
-                    ? 'border-primary-500 text-primary-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                    ? 'bg-white text-dark-950'
+                    : 'text-gray-400 hover:text-white'
                 }`}
               >
                 {t('dashboard.projects')} ({projects.length})
               </button>
               <button
                 onClick={() => setActiveTab('invoices')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={`px-4 py-1.5 rounded-full font-medium text-sm transition-colors ${
                   activeTab === 'invoices'
-                    ? 'border-primary-500 text-primary-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                    ? 'bg-white text-dark-950'
+                    : 'text-gray-400 hover:text-white'
                 }`}
               >
                 {t('dashboard.invoices')} ({invoices.length})

@@ -1971,160 +1971,122 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
+  const adminTabs: { id: typeof activeTab; label: string; icon: string; count?: number }[] = [
+    { id: 'customers', label: t('admin.customers'), count: customers.length, icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
+    { id: 'projects', label: t('admin.projects'), count: projects.length, icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z' },
+    { id: 'invoices', label: t('admin.invoices'), count: invoices.length, icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+    { id: 'recurring', label: language === 'nl' ? 'Terugkerend' : 'Recurring', count: recurringInvoices.length, icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15' },
+    { id: 'messages', label: t('admin.messages'), count: contactMessages.length, icon: 'M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4' },
+    { id: 'finance', label: t('admin.finance'), icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+    { id: 'boekhouding', label: language === 'nl' ? 'Boekhouding' : 'Accounting', icon: 'M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z' },
+  ];
+
   return (
     <PageTransition>
-      <div className="min-h-screen bg-dark-900 pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="app-panel min-h-screen">
+       <div className="flex">
+        {/* Sidebar */}
+        <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-white/5 min-h-[calc(100vh-72px)] sticky top-[72px] self-start px-4 py-8">
+          <div className="px-3 mb-8">
+            <div className="text-xs text-gray-500 mb-1">Varexo</div>
+            <div className="text-lg font-semibold text-white">Admin</div>
+          </div>
+          <nav className="space-y-1">
+            {adminTabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors ${
+                  activeTab === tab.id ? 'bg-white/[0.07] text-white' : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
+                }`}
+              >
+                <svg className={`w-[18px] h-[18px] ${activeTab === tab.id ? 'text-primary-400' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d={tab.icon} />
+                </svg>
+                <span className="flex-1 text-left">{tab.label}</span>
+                {tab.count !== undefined && (
+                  <span className={`text-xs tabular-nums px-2 py-0.5 rounded-full ${activeTab === tab.id ? 'bg-primary-500/15 text-primary-300' : 'text-gray-500'}`}>{tab.count}</span>
+                )}
+              </button>
+            ))}
+          </nav>
+        </aside>
+
+        <div className="flex-1 min-w-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-10">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white">Admin Panel</h1>
-            <p className="text-gray-400 mt-1">{t('admin.subtitle')}</p>
-          </div>
-
-          {/* Stats */}
-          <div className="mb-8">
-            {/* Period selector */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                {(['total', 'monthly', 'quarterly', 'yearly'] as const).map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => { setStatsPeriod(p); loadStats(p); }}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      statsPeriod === p
-                        ? 'bg-primary-600 text-white'
-                        : 'bg-dark-800 text-gray-400 hover:text-white hover:bg-dark-700 border border-dark-700'
-                    }`}
-                  >
-                    {p === 'total' ? (language === 'nl' ? 'Totaal' : 'Total') :
-                     p === 'monthly' ? (language === 'nl' ? 'Deze maand' : 'This month') :
-                     p === 'quarterly' ? (language === 'nl' ? 'Dit kwartaal' : 'This quarter') :
-                     (language === 'nl' ? 'Dit jaar' : 'This year')}
-                  </button>
-                ))}
-              </div>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+            <div>
+              <p className="text-sm text-gray-500">{new Date().toLocaleDateString(language === 'nl' ? 'nl-NL' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+              <h1 className="text-3xl md:text-4xl font-semibold text-white tracking-tight mt-1">
+                {language === 'nl' ? 'Goedendag' : 'Welcome back'} <span className="serif text-primary-300">admin.</span>
+              </h1>
             </div>
-            {/* Stats cards row 1 - counts */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
-              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                <p className="text-gray-400 text-sm">{t('admin.totalCustomers')}</p>
-                <p className="text-2xl font-bold text-white">{stats.totalCustomers || 0}</p>
-              </div>
-              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                <p className="text-gray-400 text-sm">{t('admin.totalProjects')}</p>
-                <p className="text-2xl font-bold text-white">{stats.totalProjects || 0}</p>
-              </div>
-              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                <p className="text-gray-400 text-sm">{t('admin.activeProjects')}</p>
-                <p className="text-2xl font-bold text-primary-400">{stats.activeProjects || 0}</p>
-              </div>
-              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                <p className="text-gray-400 text-sm">{t('admin.pendingInvoices')}</p>
-                <p className="text-2xl font-bold text-yellow-400">{stats.pendingInvoices || 0}</p>
-              </div>
-              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                <p className="text-gray-400 text-sm">{t('admin.overdueInvoices')}</p>
-                <p className="text-2xl font-bold text-red-400">{stats.overdueInvoices || 0}</p>
-              </div>
-              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                <p className="text-gray-400 text-sm">{language === 'nl' ? 'BTW Saldo' : 'VAT Balance'}</p>
-                <p className={`text-2xl font-bold ${(stats.vatBalance || 0) >= 0 ? 'text-yellow-400' : 'text-blue-400'}`}>
-                  €{Math.abs(stats.vatBalance || 0).toFixed(2)}
-                </p>
-                <p className="text-xs text-gray-500 mt-0.5">{(stats.vatBalance || 0) >= 0 ? (language === 'nl' ? 'Te betalen' : 'To pay') : (language === 'nl' ? 'Terug' : 'Refund')}</p>
-              </div>
-            </div>
-            {/* Stats cards row 2 - financials */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                <p className="text-gray-400 text-sm">{language === 'nl' ? 'Omzet' : 'Revenue'} <span className="text-xs text-gray-500">({language === 'nl' ? 'incl. BTW' : 'incl. VAT'})</span></p>
-                <p className="text-2xl font-bold text-green-400">€{(stats.totalRevenue || 0).toFixed(2)}</p>
-              </div>
-              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                <p className="text-gray-400 text-sm">{language === 'nl' ? 'Kosten' : 'Expenses'} <span className="text-xs text-gray-500">({language === 'nl' ? 'incl. BTW' : 'incl. VAT'})</span></p>
-                <p className="text-2xl font-bold text-red-400">€{(stats.totalExpenses || 0).toFixed(2)}</p>
-              </div>
-              <div className="bg-dark-800 p-4 rounded-lg border border-dark-700">
-                <p className="text-gray-400 text-sm">{language === 'nl' ? 'Winst' : 'Profit'} <span className="text-xs text-gray-500">({language === 'nl' ? 'excl. BTW' : 'excl. VAT'})</span></p>
-                <p className={`text-2xl font-bold ${(stats.profit || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>€{(stats.profit || 0).toFixed(2)}</p>
-              </div>
+            <div className="inline-flex p-1 rounded-full bg-white/[0.04] border border-white/[0.06] self-start md:self-auto">
+              {(['total', 'monthly', 'quarterly', 'yearly'] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => { setStatsPeriod(p); loadStats(p); }}
+                  className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    statsPeriod === p ? 'bg-white text-dark-950' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  {p === 'total' ? (language === 'nl' ? 'Totaal' : 'Total') :
+                   p === 'monthly' ? (language === 'nl' ? 'Maand' : 'Month') :
+                   p === 'quarterly' ? (language === 'nl' ? 'Kwartaal' : 'Quarter') :
+                   (language === 'nl' ? 'Jaar' : 'Year')}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="border-b border-dark-700 mb-6">
-            <nav className="flex space-x-8">
-              <button
-                onClick={() => setActiveTab('customers')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'customers'
-                    ? 'border-primary-500 text-primary-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                {t('admin.customers')} ({customers.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('projects')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'projects'
-                    ? 'border-primary-500 text-primary-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                {t('admin.projects')} ({projects.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('invoices')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'invoices'
-                    ? 'border-primary-500 text-primary-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                {t('admin.invoices')} ({invoices.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('recurring')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'recurring'
-                    ? 'border-primary-500 text-primary-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                {language === 'nl' ? 'Terugkerend' : 'Recurring'} ({recurringInvoices.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('messages')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'messages'
-                    ? 'border-primary-500 text-primary-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                {t('admin.messages')} ({contactMessages.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('finance')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'finance'
-                    ? 'border-primary-500 text-primary-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                {t('admin.finance')}
-              </button>
-              <button
-                onClick={() => setActiveTab('boekhouding')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'boekhouding'
-                    ? 'border-primary-500 text-primary-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                {language === 'nl' ? 'Boekhouding' : 'Accounting'}
-              </button>
-            </nav>
+          {/* Mobile tabs */}
+          <div className="lg:hidden -mx-4 px-4 mb-6 overflow-x-auto">
+            <div className="flex gap-2 w-max">
+              {adminTabs.map((tab) => (
+                <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                  className={`px-4 py-2 rounded-full text-sm whitespace-nowrap border ${activeTab === tab.id ? 'bg-white text-dark-950 border-white' : 'border-white/10 text-gray-300'}`}>
+                  {tab.label}{tab.count !== undefined ? ` · ${tab.count}` : ''}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* KPIs */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            {[
+              { l: language === 'nl' ? 'Omzet' : 'Revenue', sub: language === 'nl' ? 'incl. btw' : 'incl. VAT', v: stats.totalRevenue || 0, c: 'text-white' },
+              { l: language === 'nl' ? 'Kosten' : 'Expenses', sub: language === 'nl' ? 'incl. btw' : 'incl. VAT', v: stats.totalExpenses || 0, c: 'text-white' },
+              { l: language === 'nl' ? 'Winst' : 'Profit', sub: language === 'nl' ? 'excl. btw' : 'excl. VAT', v: stats.profit || 0, c: (stats.profit || 0) >= 0 ? 'text-primary-300' : 'text-red-400' },
+            ].map((k, i) => (
+              <div key={k.l} className={`kpi-card ${i === 2 ? 'kpi-accent' : ''}`}>
+                <div className="flex items-center justify-between text-sm text-gray-400">
+                  <span>{k.l}</span><span className="text-xs text-gray-600">{k.sub}</span>
+                </div>
+                <div className={`text-3xl md:text-4xl font-semibold tracking-tight tabular-nums mt-4 ${k.c}`}>
+                  €{k.v.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+            {[
+              { l: t('admin.totalCustomers'), v: stats.totalCustomers || 0, dot: 'bg-gray-400' },
+              { l: t('admin.totalProjects'), v: stats.totalProjects || 0, dot: 'bg-gray-400' },
+              { l: t('admin.activeProjects'), v: stats.activeProjects || 0, dot: 'bg-primary-400' },
+              { l: t('admin.pendingInvoices'), v: stats.pendingInvoices || 0, dot: 'bg-yellow-400' },
+              { l: t('admin.overdueInvoices'), v: stats.overdueInvoices || 0, dot: 'bg-red-400' },
+            ].map((k) => (
+              <div key={k.l} className="kpi-card !p-5">
+                <div className="flex items-center gap-2 text-xs text-gray-400"><span className={`w-1.5 h-1.5 rounded-full ${k.dot}`} />{k.l}</div>
+                <div className="text-2xl font-semibold text-white mt-3 tabular-nums">{k.v}</div>
+              </div>
+            ))}
+            <div className="kpi-card !p-5">
+              <div className="flex items-center gap-2 text-xs text-gray-400"><span className="w-1.5 h-1.5 rounded-full bg-blue-400" />{language === 'nl' ? 'Btw-saldo' : 'VAT balance'}</div>
+              <div className="text-2xl font-semibold text-white mt-3 tabular-nums">€{Math.abs(stats.vatBalance || 0).toFixed(2)}</div>
+              <div className="text-[11px] text-gray-500">{(stats.vatBalance || 0) >= 0 ? (language === 'nl' ? 'te betalen' : 'to pay') : (language === 'nl' ? 'terug' : 'refund')}</div>
+            </div>
           </div>
 
           {/* Tab Content */}
@@ -5153,6 +5115,8 @@ const AdminDashboard: React.FC = () => {
             </div>
           )}
         </div>
+      </div>
+       </div>
       </div>
     </PageTransition>
   );
