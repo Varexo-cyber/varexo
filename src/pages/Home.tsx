@@ -25,12 +25,9 @@ const Lock = () => (
 );
 
 const work = [
+  { name: 'Dekvloerexperts', domain: 'dekvloerexperts.nl', img: '/portfolio/dekvloerexperts.jpg', tag: 'Dekvloeren' },
   { name: 'HG Transport', domain: 'hgexperts.nl', img: '/portfolio/hgtransport.jpg', tag: 'Transport' },
   { name: 'Labfix', domain: 'labfix.nl', img: '/portfolio/labfix.jpg', tag: 'Webshop' },
-  { name: 'DirectAutoHulp', domain: 'directautohulp.nl', img: '/portfolio/Directautohulp.png?v=2', tag: 'Pechhulp' },
-  { name: 'Samkill', domain: 'samkill.nl', img: '/portfolio/samkill-1.jpg', tag: 'Kleding' },
-  { name: 'Leegstand Meldpunt', domain: 'leegstandmeldpunt.nl', img: '/portfolio/download.png?v=2', tag: 'Platform' },
-  { name: 'Samkill', domain: 'samkill.nl', img: '/portfolio/samkill-2.jpg', tag: 'Webshop' },
 ];
 
 const Home: React.FC = () => {
