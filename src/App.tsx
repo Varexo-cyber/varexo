@@ -26,6 +26,7 @@ import SeoLandingPage from './pages/SeoLandingPage';
 import WhatsAppButton from './components/WhatsAppButton';
 import PromoBanner from './components/PromoBanner';
 import HelpWidget from './components/HelpWidget';
+import CursorFX from './components/CursorFX';
 
 function App() {
   const [, setUser] = React.useState<any>(null);
@@ -84,6 +85,7 @@ function App() {
         <Footer />
         <HelpWidget />
         <WhatsAppButton />
+        <CursorFX />
       </div>
     </Router>
     </LanguageProvider>
