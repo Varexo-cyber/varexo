@@ -3,7 +3,7 @@ import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
 import { useLanguage } from '../contexts/LanguageContext';
-import CountdownTimer from '../components/CountdownTimer';
+import { PageHero } from '../components/Section';
 
 const Prijzen: React.FC = () => {
   const { t, language } = useLanguage();
@@ -16,41 +16,25 @@ const Prijzen: React.FC = () => {
       keywords="website prijzen, webdesign kosten, website onderhoud, SEO, hosting, garantie, professionele website"
       canonical="/prijzen"
     />
-    <div className="py-20 matrix-dots">
+    <PageHero
+      eyebrow={language === 'nl' ? 'Prijzen' : 'Pricing'}
+      title={language === 'nl' ? <>Eerlijke prijzen, <span className="serif text-primary-300">geen</span> verrassingen.</> : <>Fair pricing, <span className="serif text-primary-300">no</span> surprises.</>}
+      lead={t('pricing.subtitle')}
+      center
+    />
+    <div className="pricing-v3 pb-24 pt-6 bg-dark-950">
       <div className="container mx-auto px-4">
-        <AnimateOnScroll>
-        <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">{t('pricing.tag')}</p>
-        <h1 className="text-4xl font-bold text-center mb-4 text-white">{t('pricing.title')}</h1>
-        <p className="text-xl text-center text-gray-400 mb-4 max-w-2xl mx-auto">
-          {t('pricing.subtitle')}
-        </p>
-        
-        {/* Countdown Timer for Promo */}
-        <div className="flex flex-col items-center mb-12">
-          <div className="inline-flex flex-col sm:flex-row items-center gap-2 sm:gap-4 bg-red-500/10 border border-red-500/30 rounded-full px-5 py-2">
-            <div className="flex items-center gap-2">
-              <span className="text-red-400 font-bold text-sm">{language === 'nl' ? 'ACTIE' : 'PROMO'}</span>
-              <span className="text-gray-400 text-sm">{language === 'nl' ? '€250 korting t/m 31 mei' : '€250 discount until May 31'}</span>
-            </div>
-            <CountdownTimer targetDate="2026-05-31T23:59:59" language={language} />
-          </div>
-        </div>
-        </AnimateOnScroll>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
           {/* Basic Pakket */}
           <div className="relative">
-            <div className="absolute -top-3 -right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse z-20">-€250</div>
             <div className="glass-card card-hover p-8 rounded-xl h-full">
               <h3 className="text-2xl font-bold mb-2 text-white">{t('pricing.basic.title')}</h3>
-              <p className="text-xs font-mono text-gray-500 mb-3">{'// starter-complete'}</p>
               <div className="mb-6">
                 <div className="flex items-baseline gap-2">
-                  <div className="text-lg text-gray-500 line-through">€899.99</div>
                   <div className="text-4xl font-bold text-primary-400 text-glow">€649.99</div>
                 </div>
                 <div className="text-sm text-gray-400">{t('pricing.onetime')}</div>
-                <div className="text-xs text-red-400 font-semibold mt-1">{t('pricing.offerValid')}</div>
                 <div className="mt-4 pt-4 border-t border-dark-600">
                   <div className="text-xl font-bold text-white">€39.99 <span className="text-sm font-normal text-gray-400">{t('pricing.month')}</span></div>
                   <div className="text-lg font-semibold text-primary-400 mt-1">{t('pricing.or')} €449.99{t('pricing.perYear')}</div>
@@ -124,21 +108,17 @@ const Prijzen: React.FC = () => {
 
           {/* Pro Pakket */}
           <div className="relative">
-            <div className="absolute -top-7 -right-5 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse z-30 shadow-lg">-€250</div>
             <div className="relative overflow-hidden bg-gradient-to-b from-primary-600 to-primary-700 text-white p-8 rounded-xl shadow-xl transform scale-105 border-2 border-primary-400 glow-emerald-strong">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary-400/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
               <div className="bg-dark-900 text-primary-400 text-xs font-bold font-mono px-3 py-1 rounded-full inline-block mb-4 tracking-wider">
                 {t('pricing.mostPopular')}
               </div>
               <h3 className="text-2xl font-bold mb-2">{t('pricing.pro.title')}</h3>
-              <p className="text-xs font-mono text-primary-200 mb-3">{'// speed-optimized'}</p>
             <div className="mb-6">
               <div className="flex items-baseline gap-2">
-                <div className="text-lg text-primary-300/50 line-through">€1299.99</div>
                 <div className="text-4xl font-bold text-white" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>€1049.99</div>
               </div>
               <div className="text-sm text-primary-200">{t('pricing.onetime')}</div>
-              <div className="text-xs text-red-300 font-semibold mt-1">{t('pricing.offerValid')}</div>
               <div className="mt-4 pt-4 border-t border-primary-500/30">
                 <div className="text-xl font-bold text-white">€39.99 <span className="text-sm font-normal text-primary-200">{t('pricing.month')}</span></div>
                 <div className="text-lg font-semibold text-white mt-1" style={{textShadow: '0 0 10px rgba(16,185,129,0.5)'}}>{t('pricing.or')} €449.99{t('pricing.perYear')}</div>
@@ -212,17 +192,13 @@ const Prijzen: React.FC = () => {
 
           {/* Premium Pakket */}
           <div className="relative">
-            <div className="absolute -top-3 -right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse z-20">-€250</div>
             <div className="glass-card card-hover p-8 rounded-xl h-full">
               <h3 className="text-2xl font-bold mb-2 text-white">{t('pricing.premium.title')}</h3>
-              <p className="text-xs font-mono text-gray-500 mb-3">{'// all-inclusive'}</p>
               <div className="mb-6">
                 <div className="flex items-baseline gap-2">
-                  <div className="text-lg text-gray-500 line-through">€1999.99</div>
                   <div className="text-4xl font-bold text-primary-400 text-glow">€1749.99</div>
                 </div>
                 <div className="text-sm text-gray-400">{t('pricing.onetime')}</div>
-                <div className="text-xs text-red-400 font-semibold mt-1">{t('pricing.offerValid')}</div>
                 <div className="mt-4 pt-4 border-t border-dark-600">
                   <div className="text-xl font-bold text-white">€39.99 <span className="text-sm font-normal text-gray-400">{t('pricing.month')}</span></div>
                   <div className="text-lg font-semibold text-primary-400 mt-1">{t('pricing.or')} €449.99{t('pricing.perYear')}</div>
@@ -330,7 +306,6 @@ const Prijzen: React.FC = () => {
             <div className="text-center mb-4">
               <span className="inline-block px-4 py-1.5 bg-blue-500/10 text-blue-400 text-xs font-bold font-mono rounded-full border border-blue-500/30 mb-4 tracking-wider">NEW</span>
             </div>
-            <p className="text-blue-400 text-center font-mono text-sm mb-2 tracking-wider">$ run ads --target=growth</p>
             <h2 className="text-3xl font-bold text-center mb-4 text-white">
               {language === 'nl' ? 'Social Media & Advertenties' : 'Social Media & Advertising'}
             </h2>
@@ -355,7 +330,6 @@ const Prijzen: React.FC = () => {
                 </svg>
                 <h3 className="text-2xl font-bold text-white">{language === 'nl' ? 'Starter' : 'Starter'}</h3>
               </div>
-              <p className="text-xs font-mono text-gray-500 mb-3">{'// social-starter'}</p>
               <div className="mb-6">
                 <div className="text-4xl font-bold text-blue-400" style={{textShadow: '0 0 10px rgba(59,130,246,0.4)'}}>€399.99</div>
                 <div className="text-sm text-gray-400">{language === 'nl' ? 'per maand' : 'per month'}</div>
@@ -417,7 +391,7 @@ const Prijzen: React.FC = () => {
             <div className="relative overflow-hidden bg-gradient-to-b from-blue-600 to-blue-700 text-white p-8 rounded-xl shadow-xl transform scale-105 border-2 border-blue-400" style={{boxShadow: '0 0 30px rgba(59,130,246,0.4)'}}>
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-400/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
               <div className="bg-dark-900 text-blue-400 text-xs font-bold font-mono px-3 py-1 rounded-full inline-block mb-4 tracking-wider">
-                BEST_RESULTS
+                {language === 'nl' ? 'Beste resultaat' : 'Best results'}
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <svg className="w-6 h-6 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -425,7 +399,6 @@ const Prijzen: React.FC = () => {
                 </svg>
                 <h3 className="text-2xl font-bold">{language === 'nl' ? 'Groei' : 'Growth'}</h3>
               </div>
-              <p className="text-xs font-mono text-blue-200 mb-3">{'// maximum-impact'}</p>
               <div className="mb-6">
                 <div className="text-4xl font-bold text-white" style={{textShadow: '0 0 15px rgba(59,130,246,0.6)'}}>€699.99</div>
                 <div className="text-sm text-blue-200">{language === 'nl' ? 'per maand' : 'per month'}</div>
@@ -503,7 +476,6 @@ const Prijzen: React.FC = () => {
                 </svg>
                 <h3 className="text-2xl font-bold text-white">{language === 'nl' ? 'Dominant' : 'Dominant'}</h3>
               </div>
-              <p className="text-xs font-mono text-gray-500 mb-3">{'// full-dominance'}</p>
               <div className="mb-6">
                 <div className="text-4xl font-bold text-blue-400" style={{textShadow: '0 0 10px rgba(59,130,246,0.4)'}}>€999.99</div>
                 <div className="text-sm text-gray-400">{language === 'nl' ? 'per maand' : 'per month'}</div>
@@ -608,7 +580,6 @@ const Prijzen: React.FC = () => {
             <div className="text-center mb-4">
               <span className="inline-block px-4 py-1.5 text-xs font-bold font-mono rounded-full mb-4 tracking-wider" style={{background: 'rgba(249, 115, 22, 0.1)', color: '#fb923c', border: '1px solid rgba(249, 115, 22, 0.3)'}}>EXTRA</span>
             </div>
-            <p className="text-center font-mono text-sm mb-2 tracking-wider" style={{color: '#fb923c'}}>$ run services --extra</p>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-white">
               {language === 'nl' ? 'Extra Diensten' : 'Additional Services'}
             </h2>
@@ -791,7 +762,6 @@ const Prijzen: React.FC = () => {
             <div className="text-center mb-4">
               <span className="inline-block px-4 py-1.5 text-xs font-bold font-mono rounded-full mb-4 tracking-wider" style={{background: 'rgba(16, 185, 129, 0.1)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.3)'}}>APPS</span>
             </div>
-            <p className="text-center font-mono text-sm mb-2 tracking-wider" style={{color: '#34d399'}}>$ npm run build:apps --platform=all</p>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-white">
               {language === 'nl' ? 'Mobiele Apps' : 'Mobile Apps'}
             </h2>
@@ -920,7 +890,6 @@ const Prijzen: React.FC = () => {
             <div className="text-center mb-4">
               <span className="inline-block px-4 py-1.5 text-xs font-bold font-mono rounded-full mb-4 tracking-wider" style={{background: 'rgba(99, 102, 241, 0.1)', color: '#818cf8', border: '1px solid rgba(99, 102, 241, 0.3)'}}>SOFTWARE</span>
             </div>
-            <p className="text-center font-mono text-sm mb-2 tracking-wider" style={{color: '#818cf8'}}>$ npm run build:software --custom</p>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-white">
               {language === 'nl' ? 'Maatwerk Software' : 'Custom Software'}
             </h2>

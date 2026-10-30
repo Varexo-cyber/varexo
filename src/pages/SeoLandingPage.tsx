@@ -91,7 +91,7 @@ const SeoLandingPage: React.FC = () => {
               }}
             >
               <p className="text-primary-400 font-mono text-sm mb-4 tracking-wider">
-                {isEnglish ? '$ start --project' : '$ start --project'}
+                {isEnglish ? 'Get started' : 'Aan de slag'}
               </p>
               <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">
                 {data.cta.text}

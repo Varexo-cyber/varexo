@@ -1,4 +1,5 @@
 const { neon } = require('@netlify/neon');
+const { detectSpam } = require('./utils/spam');
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -40,7 +41,17 @@ exports.handler = async (event) => {
 
     // GET - Admin reads all messages
     if (event.httpMethod === 'GET') {
-      const result = await sql`SELECT * FROM contact_messages ORDER BY created_at DESC`;
+      const all = await sql`SELECT * FROM contact_messages ORDER BY created_at DESC`;
+
+      // Automatically remove spam that slipped in earlier
+      const spamIds = all
+        .filter(m => detectSpam({ naam: m.naam, email: m.email, bericht: m.bericht, bedrijf: m.bedrijf, telefoon: m.telefoon }).spam)
+        .map(m => m.id);
+      if (spamIds.length) {
+        await sql`DELETE FROM contact_messages WHERE id = ANY(${spamIds})`;
+        console.log(`Removed ${spamIds.length} spam message(s)`);
+      }
+      const result = all.filter(m => !spamIds.includes(m.id));
       const messages = result.map(m => ({
         id: m.id.toString(),
         naam: m.naam,
@@ -59,7 +70,12 @@ exports.handler = async (event) => {
     // POST - Submit new contact message
     if (event.httpMethod === 'POST') {
       const body = JSON.parse(event.body);
-      const { naam, email, bericht, type, telefoon, bedrijf, projectType } = body;
+      const { naam, email, bericht, type, telefoon, bedrijf, projectType, website } = body;
+
+      // Honeypot field (hidden for humans) or detected spam: pretend success, store nothing
+      if (website || detectSpam({ naam, email, bericht, bedrijf, telefoon }).spam) {
+        return { statusCode: 200, headers, body: JSON.stringify({ id: '0', naam, email, bericht, type, status: 'new', createdAt: new Date().toISOString() }) };
+      }
 
       const result = await sql`
         INSERT INTO contact_messages (naam, email, bericht, type, telefoon, bedrijf, project_type)

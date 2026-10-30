@@ -1,5 +1,6 @@
 const { neon } = require('@netlify/neon');
 const { sendPasswordResetEmail } = require('./utils/send-email');
+const { hashPassword, verifyPassword, isLegacy } = require('./utils/password');
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -31,7 +32,7 @@ exports.handler = async (event) => {
   console.log('Method:', event.httpMethod);
   console.log('Path:', rawPath);
   console.log('Clean Path:', path);
-  console.log('Body:', body);
+  // Body is not logged: it contains passwords
   console.log('==================');
 
   // Debug endpoint
@@ -67,10 +68,15 @@ exports.handler = async (event) => {
   try {
     // POST /auth/signup
     if (event.httpMethod === 'POST' && path === '/signup') {
-      const { email, password, displayName } = body;
+      const email = String(body.email || '').trim().toLowerCase();
+      const { password, displayName } = body;
+
+      if (!email || !password || String(password).length < 6) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: 'Vul een geldig e-mailadres en een wachtwoord van minimaal 6 tekens in.' }) };
+      }
 
       // Check if user exists
-      const existing = await sql`SELECT email FROM users WHERE email = ${email}`;
+      const existing = await sql`SELECT email FROM users WHERE lower(email) = lower(${email})`;
       if (existing.length > 0) {
         return { statusCode: 400, headers, body: JSON.stringify({ error: 'Email is al geregistreerd.' }) };
       }
@@ -78,7 +84,7 @@ exports.handler = async (event) => {
       // Create user with email_notifications default TRUE
       const result = await sql`
         INSERT INTO users (email, display_name, password_hash, provider, email_notifications)
-        VALUES (${email}, ${displayName}, ${password}, 'email', TRUE)
+        VALUES (${email}, ${displayName}, ${hashPassword(password)}, 'email', TRUE)
         RETURNING email, display_name, photo_url, provider, email_notifications
       `;
 
@@ -94,12 +100,13 @@ exports.handler = async (event) => {
 
     // POST /auth/login
     if (event.httpMethod === 'POST' && path === '/login') {
-      const { email, password } = body;
+      const email = String(body.email || '').trim();
+      const { password } = body;
 
       // Get user by email (check both password_hash for manual users OR allow if no password set yet)
       const result = await sql`
-        SELECT email, display_name, photo_url, provider, is_admin, password_hash
-        FROM users WHERE email = ${email}
+        SELECT email, display_name, photo_url, provider, is_admin, password_hash, email_notifications
+        FROM users WHERE lower(email) = lower(${email}) AND deleted_at IS NULL
       `;
 
       if (result.length === 0) {
@@ -120,8 +127,13 @@ exports.handler = async (event) => {
       }
 
       // Verify password
-      if (user.password_hash !== password) {
+      if (!verifyPassword(password, user.password_hash)) {
         return { statusCode: 401, headers, body: JSON.stringify({ error: 'Onjuist e-mailadres of wachtwoord.' }) };
+      }
+
+      // Upgrade old plaintext passwords to a hash on successful login
+      if (isLegacy(user.password_hash)) {
+        await sql`UPDATE users SET password_hash = ${hashPassword(password)} WHERE email = ${user.email}`;
       }
 
       return { 
@@ -340,7 +352,7 @@ exports.handler = async (event) => {
       try {
         // Check if user exists
         const user = await sql`
-          SELECT id, email, display_name, email_language FROM users WHERE email = ${email} AND deleted_at IS NULL
+          SELECT id, email, display_name, email_language FROM users WHERE lower(email) = lower(${email}) AND deleted_at IS NULL
         `;
         
         console.log('User found:', user.length > 0 ? 'YES' : 'NO');
@@ -424,7 +436,7 @@ exports.handler = async (event) => {
       // Update password
       await sql`
         UPDATE users 
-        SET password_hash = ${newPassword}, 
+        SET password_hash = ${hashPassword(newPassword)}, 
             updated_at = NOW() 
         WHERE id = ${resetData.user_id}
       `;
@@ -451,13 +463,13 @@ exports.handler = async (event) => {
       }
 
       // If user has no password yet (Google-only), allow setting new password without current
-      if (user[0].password_hash && user[0].password_hash !== currentPassword) {
+      if (user[0].password_hash && !verifyPassword(currentPassword, user[0].password_hash)) {
         return { statusCode: 401, headers, body: JSON.stringify({ error: 'Huidig wachtwoord is onjuist.' }) };
       }
 
       await sql`
         UPDATE users 
-        SET password_hash = ${newPassword}, 
+        SET password_hash = ${hashPassword(newPassword)}, 
             provider = COALESCE(NULLIF(provider, 'google'), 'both'),
             updated_at = NOW() 
         WHERE email = ${email}

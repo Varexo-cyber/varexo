@@ -34,6 +34,17 @@ const saveUsers = (users: StoredUser[]) => {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
 };
 
+// Real answers from the server (4xx) must be shown to the user, not hidden by the offline fallback
+const serverError = (err: any): Error | null => {
+  const m = /^API Error: (4\d\d) - ([\s\S]*)$/.exec(err?.message || '');
+  if (!m) return null;
+  try {
+    return new Error(JSON.parse(m[2]).error || 'Er ging iets mis.');
+  } catch {
+    return new Error(m[2] || 'Er ging iets mis.');
+  }
+};
+
 export const mockAuth = {
   // Demo credentials (always works)
   DEMO_EMAIL: 'demo@varexo.nl',
@@ -46,6 +57,8 @@ export const mockAuth = {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
       return user;
     } catch (apiError: any) {
+      const known = serverError(apiError);
+      if (known) throw known;
       // Fallback to localStorage
       console.warn('API unavailable, using localStorage fallback');
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -72,6 +85,8 @@ export const mockAuth = {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
       return user;
     } catch (apiError: any) {
+      const known = serverError(apiError);
+      if (known) throw known;
       // Fallback to localStorage
       console.warn('API unavailable, using localStorage fallback');
       await new Promise(resolve => setTimeout(resolve, 800));
