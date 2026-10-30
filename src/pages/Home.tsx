@@ -1,507 +1,293 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
+import { SpotlightCard, TiltCard, Magnetic, CountUp } from '../components/Interactive';
 import { useLanguage } from '../contexts/LanguageContext';
 
+const Arrow = ({ className = 'w-4 h-4' }: { className?: string }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+  </svg>
+);
+
 const Home: React.FC = () => {
-  const { t, language } = useLanguage();
-  
+  const { language } = useLanguage();
+  const nl = language === 'nl';
+  const heroRef = useRef<HTMLElement>(null);
+
+  // Cursor-follow light + parallax in the hero
+  const onHeroMove = (e: React.MouseEvent) => {
+    const el = heroRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--hx', `${e.clientX - r.left}px`);
+    el.style.setProperty('--hy', `${e.clientY - r.top}px`);
+    el.style.setProperty('--px', `${((e.clientX - r.left) / r.width - 0.5).toFixed(3)}`);
+    el.style.setProperty('--py', `${((e.clientY - r.top) / r.height - 0.5).toFixed(3)}`);
+  };
+
+  const services = [
+    {
+      title: nl ? 'Websites' : 'Websites',
+      desc: nl
+        ? 'Snelle, strakke websites die werken op elk scherm. Gebouwd om bezoekers klant te maken.'
+        : 'Fast, clean websites that work on every screen. Built to turn visitors into customers.',
+      span: '',
+      icon: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
+    },
+    {
+      title: nl ? 'Webshops' : 'Web shops',
+      desc: nl ? 'Online verkopen met iDEAL, voorraad en alles wat erbij hoort.' : 'Sell online with payments, stock and everything in between.',
+      span: '',
+      icon: 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z',
+    },
+    {
+      title: nl ? 'Maatwerk software' : 'Custom software',
+      desc: nl ? 'CRM, klantportalen en tools die precies doen wat jouw bedrijf nodig heeft.' : 'CRMs, client portals and tools that do exactly what your business needs.',
+      span: '',
+      icon: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4',
+    },
+    {
+      title: nl ? 'Mobiele apps' : 'Mobile apps',
+      desc: nl ? 'iOS en Android, inclusief publicatie in de App Store en Play Store.' : 'iOS and Android, including App Store and Play Store release.',
+      span: '',
+      icon: 'M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z',
+    },
+    {
+      title: nl ? 'Social media & SEO' : 'Social media & SEO',
+      desc: nl ? 'Gevonden worden in Google en zichtbaar blijven op social.' : 'Get found on Google and stay visible on social.',
+      span: '',
+      icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z',
+    },
+  ];
+
+  const reasons = [
+    { title: nl ? 'Binnen 7 dagen live' : 'Live within 7 days', desc: nl ? 'Geen maanden wachten. Korte lijnen, snel schakelen.' : 'No waiting for months. Short lines, quick turnaround.' },
+    { title: nl ? 'Vaste prijs' : 'Fixed price', desc: nl ? 'Vooraf weet je wat het kost. Geen verrassingen achteraf.' : 'You know the cost upfront. No surprises afterwards.' },
+    { title: nl ? 'Eén vast aanspreekpunt' : 'One point of contact', desc: nl ? 'Je spreekt direct met de mensen die jouw project bouwen.' : 'You talk directly to the people building your project.' },
+    { title: nl ? 'Gebouwd om te groeien' : 'Built to grow', desc: nl ? 'Je site groeit mee: van eerste pagina tot volledige webapp.' : 'Your site grows with you: from first page to full web app.' },
+  ];
+
+  const tech = ['React', 'TypeScript', 'Next.js', 'Node.js', 'Tailwind CSS', 'Firebase', 'PostgreSQL', 'Mollie', 'Vercel', 'Figma'];
+
   return (
     <PageTransition>
-      <SEO 
+      <SEO
         title="Varexo | Websites & Software op Maat – Vanaf €650"
         description="Varexo bouwt professionele websites, webshops én maatwerk software (CRM, apps, portalen) vanaf €650. Binnen 7 dagen live. Voor ondernemers in NL, BE & UK."
         keywords="website laten maken, software laten maken, maatwerk software, webdesign, webshop laten maken, app laten maken, crm systeem, webdevelopment, social media beheer, SEO"
         canonical="/"
       />
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800 text-white py-28 code-rain scanlines">
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <AnimateOnScroll animation="reveal-left">
-              <div className="inline-block mb-4 px-4 py-1.5 rounded-full border border-primary-500/30 bg-primary-500/10 text-primary-400 text-sm font-mono tracking-wider">
-                &gt; npm run build-your-dream
-              </div>
-              <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
-                {t('home.hero.title')}{' '}
-                <span className="text-primary-400 text-glow-strong">{t('home.hero.titleHighlight')}</span>
-              </h1>
-              <p className="text-xl mb-8 text-gray-300 max-w-lg">
-                {t('home.hero.subtitle')}
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Link 
-                  to="/contact" 
-                  className="bg-primary-500 text-dark-900 px-8 py-3 rounded-lg font-bold hover:bg-primary-400 transition glow-emerald hover:glow-emerald-strong"
-                >
-                  {t('home.hero.cta.primary')}
-                </Link>
-                <Link 
-                  to="/werkwijze" 
-                  className="border border-primary-500/50 text-primary-400 px-8 py-3 rounded-lg font-semibold hover:bg-primary-500/10 transition"
-                >
-                  {t('home.hero.cta.secondary')} &rarr;
-                </Link>
-              </div>
-            </AnimateOnScroll>
 
-            {/* Terminal Code Block */}
-            <AnimateOnScroll animation="reveal-right" delay={0.2} className="hidden lg:block">
-            <div className="animate-float">
-              <div className="terminal glow-emerald">
-                <div className="terminal-header">
-                  <div className="terminal-dot bg-red-500"></div>
-                  <div className="terminal-dot bg-yellow-500"></div>
-                  <div className="terminal-dot bg-green-500"></div>
-                  <span className="text-gray-400 text-xs ml-2">varexo-project</span>
+      {/* Hero */}
+      <section ref={heroRef} onMouseMove={onHeroMove} className="hero-modern relative overflow-hidden bg-dark-950 text-white">
+        <div className="hero-grid absolute inset-0 pointer-events-none" />
+        <div className="hero-light absolute inset-0 pointer-events-none" />
+        <div className="hero-blob hero-blob-a" />
+        <div className="hero-blob hero-blob-b" />
+
+        <div className="container mx-auto px-4 relative z-10 pt-24 pb-20 lg:pt-32 lg:pb-28">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
+            <div className="lg:col-span-7">
+              <AnimateOnScroll>
+                <div className="inline-flex items-center gap-2 mb-8 pl-1.5 pr-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm text-gray-300 backdrop-blur">
+                  <span className="px-2 py-0.5 rounded-full bg-primary-500 text-dark-950 text-xs font-semibold">{nl ? 'Nieuw' : 'New'}</span>
+                  {nl ? 'Websites vanaf €650 · binnen 7 dagen live' : 'Websites from €650 · live within 7 days'}
                 </div>
-                <div className="p-5 text-sm leading-relaxed">
-                  <p><span className="text-gray-500">$</span> <span className="text-primary-400">varexo</span> create jouw-website</p>
-                  <p className="text-gray-500 mt-2">&#9654; Designing responsive layout...</p>
-                  <p className="text-gray-500">&#9654; Building custom features...</p>
-                  <p className="text-gray-500">&#9654; Optimizing for SEO...</p>
-                  <p className="text-gray-500">&#9654; Running performance tests...</p>
-                  <p className="mt-2 text-primary-400">&#10003; Website deployed successfully!</p>
-                  <p className="mt-2"><span className="text-gray-500">$</span> <span className="text-primary-300 cursor-blink">_</span></p>
-                </div>
-              </div>
-            </div>
-            </AnimateOnScroll>
-          </div>
-
-          {/* Tech Stack Bar */}
-          <AnimateOnScroll delay={0.3}>
-          <div className="mt-16 pt-8 border-t border-dark-700/50">
-            <p className="text-gray-500 text-sm text-center mb-4 uppercase tracking-widest">{t('home.techStack.label')}</p>
-            <div className="flex flex-wrap justify-center gap-6 text-gray-400">
-              <span className="flex items-center gap-2 text-sm font-mono px-3 py-1.5 bg-dark-800/50 rounded border border-dark-700/50 hover:border-primary-500/30 hover:text-primary-400 transition">
-                &lt;React /&gt;
-              </span>
-              <span className="flex items-center gap-2 text-sm font-mono px-3 py-1.5 bg-dark-800/50 rounded border border-dark-700/50 hover:border-primary-500/30 hover:text-primary-400 transition">
-                TypeScript
-              </span>
-              <span className="flex items-center gap-2 text-sm font-mono px-3 py-1.5 bg-dark-800/50 rounded border border-dark-700/50 hover:border-primary-500/30 hover:text-primary-400 transition">
-                Tailwind CSS
-              </span>
-              <span className="flex items-center gap-2 text-sm font-mono px-3 py-1.5 bg-dark-800/50 rounded border border-dark-700/50 hover:border-primary-500/30 hover:text-primary-400 transition">
-                Node.js
-              </span>
-              <span className="flex items-center gap-2 text-sm font-mono px-3 py-1.5 bg-dark-800/50 rounded border border-dark-700/50 hover:border-primary-500/30 hover:text-primary-400 transition">
-                Firebase
-              </span>
-              <span className="flex items-center gap-2 text-sm font-mono px-3 py-1.5 bg-dark-800/50 rounded border border-dark-700/50 hover:border-primary-500/30 hover:text-primary-400 transition">
-                Next.js
-              </span>
-            </div>
-          </div>
-          </AnimateOnScroll>
-        </div>
-      </section>
-
-      {/* Boekora AI Bookkeeping Promotion */}
-      <section className="py-16 bg-dark-800 relative overflow-hidden border-y border-dark-700">
-        <div className="container mx-auto px-4 relative z-10">
-          <AnimateOnScroll>
-            <div className="max-w-5xl mx-auto">
-              <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
-                {/* Left side - Logo/Image */}
-                <div className="flex-shrink-0">
-                  <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-2xl bg-dark-700 border border-dark-600 flex items-center justify-center shadow-xl transform hover:scale-105 transition-transform duration-300 overflow-hidden">
-                    <img 
-                      src="/portfolio/boekora.png" 
-                      alt="Boekora" 
-                      className="w-28 h-28 lg:w-32 lg:h-32 object-contain p-2"
-                      onError={(e) => {
-                        const target = e.currentTarget;
-                        target.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                </div>
-                
-                {/* Right side - Content */}
-                <div className="flex-1 text-center lg:text-left">
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/20 border border-orange-400/40 text-white text-xs font-bold font-mono mb-4">
-                    <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span>
-                    {language === 'nl' ? 'IN BEHANDELING' : 'IN PROGRESS'}
-                  </div>
-                  
-                  <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-                    {language === 'nl' ? 'Boekhouding zo simpel' : 'Bookkeeping made simple'}
-                    <span className="block text-primary-400">
-                      {language === 'nl' ? 'als een praatje.' : 'as a chat.'}
-                    </span>
-                  </h2>
-                  
-                  <p className="text-gray-400 text-lg mb-4 max-w-xl">
-                    {language === 'nl'
-                      ? 'Praat gewoon met Boekora AI in normaal Nederlands. Geen ingewikkelde menu\'s. Facturen, bonnetjes en je administratie - automatisch geregeld.'
-                      : 'Just chat with Boekora AI in plain English. No complicated menus. Invoices, receipts and your administration - handled automatically.'}
-                  </p>
-
-                  {/* In behandeling banner */}
-                  <div className="mb-6 p-4 rounded-xl bg-dark-800 border border-orange-500/30 max-w-xl">
-                    <div className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-orange-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                      <div>
-                        <p className="text-white font-semibold text-sm">
-                          {language === 'nl' ? 'Project nog in behandeling' : 'Project still in development'}
-                        </p>
-                        <p className="text-gray-300 text-sm mt-1 leading-relaxed">
-                          {language === 'nl'
-                            ? 'Boekora is een dochterbedrijf van Varexo. De website en functionaliteiten zijn nog in ontwikkeling — niet alles werkt nog naar behoren.'
-                            : 'Boekora is a subsidiary of Varexo. The website and features are still under development — not everything is fully functional yet.'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Feature pills */}
-                  <div className="flex flex-wrap gap-2 mb-6 justify-center lg:justify-start">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-dark-700 text-gray-300 text-sm rounded-lg border border-dark-600">
-                      <svg className="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                      </svg>
-                      {language === 'nl' ? 'AI Chat' : 'AI Chat'}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-dark-700 text-gray-300 text-sm rounded-lg border border-dark-600">
-                      <svg className="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      {language === 'nl' ? 'Automatische facturen' : 'Auto invoices'}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-dark-700 text-gray-300 text-sm rounded-lg border border-dark-600">
-                      <svg className="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                      </svg>
-                      {language === 'nl' ? 'Bonnetjes scannen' : 'Scan receipts'}
-                    </span>
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    <span
-                      className="group inline-flex items-center justify-center gap-2 bg-dark-700 text-gray-500 px-8 py-4 rounded-xl font-semibold cursor-not-allowed border border-dark-600"
-                    >
-                      {language === 'nl' ? 'Start gratis op Boekora' : 'Start free on Boekora'}
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
-                    </span>
-
-                    <span className="inline-flex items-center justify-center gap-2 text-gray-500 text-sm">
-                      <svg className="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                      </svg>
-                      boekora.nl — {language === 'nl' ? 'binnenkort beschikbaar' : 'coming soon'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </AnimateOnScroll>
-        </div>
-      </section>
-
-      {/* Services Section */}
-      <section className="py-20 bg-dark-800 tech-grid">
-        <div className="container mx-auto px-4">
-          <AnimateOnScroll>
-          <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">{t('home.services.tag')}</p>
-          <h2 className="text-3xl font-bold text-center mb-4 text-white">{t('home.services.title')}</h2>
-          <p className="text-gray-400 text-center mb-12 max-w-xl mx-auto">{t('home.services.subtitle')}</p>
-          </AnimateOnScroll>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <AnimateOnScroll animation="reveal-scale" delay={0.1}>
-            <div className="glass-card card-hover p-6 rounded-xl text-center">
-              <div className="w-16 h-16 bg-primary-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
-                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">{t('home.services.webdesign')}</h3>
-              <p className="text-gray-400 text-sm">{t('home.services.webdesign.desc')}</p>
-            </div>
-            </AnimateOnScroll>
-            <AnimateOnScroll animation="reveal-scale" delay={0.2}>
-            <div className="glass-card card-hover p-6 rounded-xl text-center">
-              <div className="w-16 h-16 bg-primary-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
-                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">{t('home.services.webdev')}</h3>
-              <p className="text-gray-400 text-sm">{t('home.services.webdev.desc')}</p>
-            </div>
-            </AnimateOnScroll>
-            <AnimateOnScroll animation="reveal-scale" delay={0.3}>
-            <div className="glass-card card-hover p-6 rounded-xl text-center">
-              <div className="w-16 h-16 bg-primary-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
-                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">{t('home.services.social')}</h3>
-              <p className="text-gray-400 text-sm">{t('home.services.social.desc')}</p>
-            </div>
-            </AnimateOnScroll>
-            <AnimateOnScroll animation="reveal-scale" delay={0.4}>
-            <div className="glass-card card-hover p-6 rounded-xl text-center">
-              <div className="w-16 h-16 bg-primary-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
-                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">{t('home.services.hosting')}</h3>
-              <p className="text-gray-400 text-sm">{t('home.services.hosting.desc')}</p>
-            </div>
-            </AnimateOnScroll>
-            <AnimateOnScroll animation="reveal-scale" delay={0.5}>
-            <div className="glass-card card-hover p-6 rounded-xl text-center">
-              <div className="w-16 h-16 bg-primary-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
-                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">
-                {language === 'nl' ? 'Mobiele Apps' : 'Mobile Apps'}
-              </h3>
-              <p className="text-gray-400 text-sm">
-                {language === 'nl' ? 'iOS & Android app ontwikkeling met publicatie in App Store en Play Store.' : 'iOS & Android app development with publishing to App Store and Play Store.'}
-              </p>
-            </div>
-            </AnimateOnScroll>
-            <AnimateOnScroll animation="reveal-scale" delay={0.6}>
-            <div className="glass-card card-hover p-6 rounded-xl text-center">
-              <div className="w-16 h-16 bg-primary-500/10 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
-                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">
-                {language === 'nl' ? 'Maatwerk Software' : 'Custom Software'}
-              </h3>
-              <p className="text-gray-400 text-sm">
-                {language === 'nl' ? 'Schaalbare software oplossingen, automatisering en business tools.' : 'Scalable software solutions, automation and business tools.'}
-              </p>
-            </div>
-            </AnimateOnScroll>
-          </div>
-          <p className="text-primary-400 text-center font-mono text-sm mt-12 tracking-wider">{t('home.services.closingTag')}</p>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 bg-dark-900 relative">
-        <div className="container mx-auto px-4">
-          <AnimateOnScroll>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-            <div className="text-center glass-card rounded-xl p-6">
-              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">10+</div>
-              <p className="text-gray-400 text-sm">{t('home.stats.clients')}</p>
-            </div>
-            <div className="text-center glass-card rounded-xl p-6">
-              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">10+</div>
-              <p className="text-gray-400 text-sm">{t('home.stats.projects')}</p>
-            </div>
-            <div className="text-center glass-card rounded-xl p-6">
-              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">99,9%</div>
-              <p className="text-gray-400 text-sm">{t('home.stats.uptime')}</p>
-            </div>
-            <div className="text-center glass-card rounded-xl p-6">
-              <div className="text-4xl font-extrabold text-primary-400 text-glow mb-1">&gt;24h</div>
-              <p className="text-gray-400 text-sm">{t('home.stats.support')}</p>
-            </div>
-          </div>
-          </AnimateOnScroll>
-        </div>
-      </section>
-
-      {/* Why Choose Us Section */}
-      <section className="py-20 bg-dark-800 matrix-dots">
-        <div className="container mx-auto px-4">
-          <p className="text-primary-400 text-center font-mono text-sm mb-2 tracking-wider">{'// why-varexo'}</p>
-          <h2 className="text-3xl font-bold text-center mb-12 text-white">{t('home.why.title')}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center card-hover p-6 rounded-xl">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary-500/20 to-primary-600/10 rounded-xl flex items-center justify-center mx-auto mb-4 border border-primary-500/20">
-                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">{t('home.why.fast')}</h3>
-              <p className="text-gray-400 text-sm">{t('home.why.fast.desc')}</p>
-            </div>
-            <div className="text-center card-hover p-6 rounded-xl">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary-500/20 to-primary-600/10 rounded-xl flex items-center justify-center mx-auto mb-4 border border-primary-500/20">
-                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">{t('home.why.affordable')}</h3>
-              <p className="text-gray-400 text-sm">{t('home.why.affordable.desc')}</p>
-            </div>
-            <div className="text-center card-hover p-6 rounded-xl">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary-500/20 to-primary-600/10 rounded-xl flex items-center justify-center mx-auto mb-4 border border-primary-500/20">
-                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">{t('home.why.personal')}</h3>
-              <p className="text-gray-400 text-sm">{t('home.why.personal.desc')}</p>
-            </div>
-            <div className="text-center card-hover p-6 rounded-xl">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary-500/20 to-primary-600/10 rounded-xl flex items-center justify-center mx-auto mb-4 border border-primary-500/20">
-                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">{t('home.why.results')}</h3>
-              <p className="text-gray-400 text-sm">{t('home.why.results.desc')}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section - Coding themed */}
-      <AnimateOnScroll animation="reveal-scale">
-      <section className="relative py-24 overflow-hidden bg-dark-950">
-        {/* Animated gradient background */}
-        <div 
-          className="absolute inset-0 opacity-40"
-          style={{
-            background: 'radial-gradient(ellipse at center, rgba(16, 185, 129, 0.15) 0%, transparent 70%)',
-          }}
-        />
-        
-        {/* Matrix rain effect background */}
-        <div className="absolute inset-0 overflow-hidden opacity-20">
-          <div className="matrix-rain"></div>
-        </div>
-        
-        {/* Tech grid */}
-        <div className="absolute inset-0 tech-grid opacity-30"></div>
-        
-        {/* Floating code particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {['<div>', '{ }', '</>', 'const', 'npm', '01010', 'fn()', '</>', 'export', '=>'].map((code, i) => (
-            <div
-              key={i}
-              className="absolute font-mono text-primary-400/20 text-sm whitespace-nowrap"
-              style={{
-                left: `${(i * 11) % 95}%`,
-                top: `${(i * 17) % 90}%`,
-                animation: `float-code ${8 + (i % 4) * 2}s ease-in-out infinite`,
-                animationDelay: `${i * 0.5}s`,
-              }}
-            >
-              {code}
-            </div>
-          ))}
-        </div>
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto">
-            {/* Terminal mockup */}
-            <div className="bg-dark-900/90 backdrop-blur-md rounded-2xl border border-primary-500/30 overflow-hidden shadow-2xl" style={{boxShadow: '0 0 60px rgba(16, 185, 129, 0.2)'}}>
-              {/* Terminal header */}
-              <div className="flex items-center gap-2 px-4 py-3 bg-dark-800/80 border-b border-dark-700">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-primary-500/80"></div>
-                </div>
-                <div className="flex-1 text-center">
-                  <span className="text-gray-500 text-xs font-mono">~/varexo/your-project</span>
-                </div>
-              </div>
-              
-              {/* Terminal body */}
-              <div className="p-8 md:p-12 text-center">
-                <div className="font-mono text-primary-400 text-sm mb-6 flex items-center justify-center gap-2">
-                  <span className="text-gray-500">$</span>
-                  <span>varexo --start-project</span>
-                  <span className="inline-block w-2 h-4 bg-primary-400 animate-pulse"></span>
-                </div>
-                
-                <h2 className="text-3xl md:text-5xl font-extrabold mb-4 text-white">
-                  {t('home.cta.title')}
-                </h2>
-                <p className="text-lg md:text-xl mb-8 text-gray-300 max-w-2xl mx-auto">
-                  {t('home.cta.subtitle')}
+              </AnimateOnScroll>
+              <AnimateOnScroll delay={0.08}>
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.02] mb-8">
+                  {nl ? 'Websites die' : 'Websites that'}
+                  <br />
+                  <span className="text-gradient-emerald">{nl ? 'klanten opleveren.' : 'bring in customers.'}</span>
+                </h1>
+              </AnimateOnScroll>
+              <AnimateOnScroll delay={0.16}>
+                <p className="text-lg sm:text-xl text-gray-400 max-w-xl mb-10 leading-relaxed">
+                  {nl
+                    ? 'Wij ontwerpen en bouwen websites, webshops en software voor ondernemers die serieus willen groeien. Strak, snel en zonder gedoe.'
+                    : 'We design and build websites, web shops and software for business owners who are serious about growth. Clean, fast and hassle-free.'}
                 </p>
-                
-                {/* Code snippet decoration */}
-                <div className="font-mono text-xs text-gray-500 mb-8 space-y-1">
-                  <div><span className="text-purple-400">const</span> <span className="text-blue-400">project</span> = <span className="text-yellow-400">await</span> varexo.<span className="text-primary-400">create</span>({'{'}</div>
-                  <div className="ml-4">type: <span className="text-orange-300">'website'</span>,</div>
-                  <div className="ml-4">quality: <span className="text-orange-300">'premium'</span>,</div>
-                  <div className="ml-4">success: <span className="text-primary-400">true</span></div>
-                  <div>{'}'});</div>
+              </AnimateOnScroll>
+              <AnimateOnScroll delay={0.24}>
+                <div className="flex flex-wrap items-center gap-4">
+                  <Magnetic>
+                    <Link to="/contact" className="btn-primary-modern group">
+                      {nl ? 'Vraag een offerte aan' : 'Request a quote'}
+                      <Arrow className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </Magnetic>
+                  <Link to="/portfolio" className="btn-ghost-modern">
+                    {nl ? 'Bekijk ons werk' : 'See our work'}
+                  </Link>
                 </div>
-                
-                <Link 
-                  to="/contact" 
-                  className="group inline-flex items-center gap-3 bg-gradient-to-r from-primary-500 to-primary-400 text-dark-900 px-10 py-4 rounded-lg font-bold transition-all duration-300 text-lg hover:scale-105"
-                  style={{boxShadow: '0 0 30px rgba(16, 185, 129, 0.5)'}}
-                >
-                  <span className="font-mono text-sm opacity-70">{'>'}</span>
-                  {t('home.cta.button')}
-                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
-                
-                {/* Stats below button */}
-                <div className="mt-10 grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-                  <div className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-primary-400" style={{textShadow: '0 0 10px rgba(16, 185, 129, 0.5)'}}>24h</div>
-                    <p className="text-gray-500 text-xs font-mono mt-1">{t('home.cta.delivery') || 'response_time'}</p>
+              </AnimateOnScroll>
+              <AnimateOnScroll delay={0.32}>
+                <div className="mt-12 flex items-center gap-4 text-sm text-gray-400">
+                  <div className="flex -space-x-2">
+                    {['HG', 'LF', 'SK', 'DA'].map((x) => (
+                      <span key={x} className="w-9 h-9 rounded-full border-2 border-dark-950 bg-dark-800 flex items-center justify-center text-[11px] font-semibold text-primary-300">{x}</span>
+                    ))}
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-primary-400" style={{textShadow: '0 0 10px rgba(16, 185, 129, 0.5)'}}>100%</div>
-                    <p className="text-gray-500 text-xs font-mono mt-1">{t('home.cta.satisfaction') || 'satisfaction'}</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-primary-400" style={{textShadow: '0 0 10px rgba(16, 185, 129, 0.5)'}}>0.01s</div>
-                    <p className="text-gray-500 text-xs font-mono mt-1">{t('home.cta.loadtime') || 'load_time'}</p>
-                  </div>
+                  <span>{nl ? '10+ ondernemers gingen je voor' : '10+ businesses went before you'}</span>
+                </div>
+              </AnimateOnScroll>
+            </div>
+
+            {/* Real work instead of a fake terminal */}
+            <div className="lg:col-span-5 hidden lg:block">
+              <div className="hero-stack">
+                <TiltCard className="hero-shot hero-shot-back">
+                  <img src="/portfolio/labfix.jpg" alt="LabFix" loading="lazy" />
+                </TiltCard>
+                <TiltCard className="hero-shot hero-shot-front">
+                  <div className="browser-bar"><span /><span /><span /></div>
+                  <img src="/portfolio/hgtransport.jpg" alt="HG Transport" />
+                </TiltCard>
+                <div className="hero-badge">
+                  <div className="text-2xl font-bold text-white">7 {nl ? 'dagen' : 'days'}</div>
+                  <div className="text-xs text-gray-400">{nl ? 'gemiddelde oplevertijd' : 'average delivery'}</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <style>{`
-          @keyframes float-code {
-            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.2; }
-            50% { transform: translateY(-30px) translateX(10px); opacity: 0.5; }
-          }
-          .matrix-rain {
-            background-image: 
-              linear-gradient(180deg, transparent 0%, rgba(16, 185, 129, 0.03) 50%, transparent 100%),
-              repeating-linear-gradient(
-                90deg,
-                transparent,
-                transparent 50px,
-                rgba(16, 185, 129, 0.05) 50px,
-                rgba(16, 185, 129, 0.05) 51px
-              );
-            background-size: 100% 100%, 51px 100%;
-            width: 100%;
-            height: 100%;
-            animation: matrix-fall 20s linear infinite;
-          }
-          @keyframes matrix-fall {
-            0% { background-position: 0 -100%; }
-            100% { background-position: 0 100%; }
-          }
-        `}</style>
+        {/* Tech marquee */}
+        <div className="relative z-10 border-t border-white/5 py-6 marquee-mask">
+          <div className="marquee">
+            {[...tech, ...tech].map((t, i) => (
+              <span key={i} className="mx-8 text-gray-500 font-medium whitespace-nowrap hover:text-primary-400 transition-colors">{t}</span>
+            ))}
+          </div>
+        </div>
       </section>
-      </AnimateOnScroll>
+
+      {/* Services – bento */}
+      <section className="py-28 bg-dark-900">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <AnimateOnScroll>
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
+              <div>
+                <p className="text-primary-400 text-sm font-medium mb-3">{nl ? 'Wat we doen' : 'What we do'}</p>
+                <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight max-w-xl">
+                  {nl ? 'Alles voor je online zaak, onder één dak.' : 'Everything for your online business, under one roof.'}
+                </h2>
+              </div>
+              <Link to="/diensten" className="inline-flex items-center gap-2 text-gray-300 hover:text-primary-400 transition-colors">
+                {nl ? 'Alle diensten' : 'All services'} <Arrow />
+              </Link>
+            </div>
+          </AnimateOnScroll>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {services.map((s, i) => (
+              <AnimateOnScroll key={s.title} delay={i * 0.06} className={s.span}>
+                <SpotlightCard className="h-full p-8 rounded-3xl">
+                  <div className="w-12 h-12 rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center mb-10">
+                    <svg className="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d={s.icon} />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-2">{s.title}</h3>
+                  <p className="text-gray-400 leading-relaxed">{s.desc}</p>
+                </SpotlightCard>
+              </AnimateOnScroll>
+            ))}
+            <AnimateOnScroll delay={0.3}>
+              <Link to="/prijzen" className="group h-full flex flex-col justify-between p-8 rounded-3xl bg-primary-500 text-dark-950 hover:bg-primary-400 transition-colors min-h-[220px]">
+                <span className="text-sm font-semibold opacity-70">{nl ? 'Pakketten' : 'Packages'}</span>
+                <div>
+                  <div className="text-4xl font-bold tracking-tight">{nl ? 'Vanaf' : 'From'} €650</div>
+                  <div className="mt-2 inline-flex items-center gap-2 font-semibold">
+                    {nl ? 'Bekijk prijzen' : 'View pricing'}
+                    <Arrow className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </div>
+              </Link>
+            </AnimateOnScroll>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="py-20 bg-dark-950 border-y border-white/5">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12">
+            {[
+              { v: <CountUp to={10} suffix="+" />, l: nl ? 'tevreden klanten' : 'happy clients' },
+              { v: <CountUp to={10} suffix="+" />, l: nl ? 'opgeleverde projecten' : 'projects delivered' },
+              { v: <CountUp to={99.9} decimals={1} suffix="%" />, l: 'uptime' },
+              { v: <>&lt;<CountUp to={24} suffix={nl ? 'u' : 'h'} /></>, l: nl ? 'reactietijd' : 'response time' },
+            ].map((s, i) => (
+              <AnimateOnScroll key={i} delay={i * 0.08}>
+                <div className="md:border-l md:border-white/10 md:pl-8">
+                  <div className="text-5xl md:text-6xl font-bold text-white tracking-tight tabular-nums">{s.v}</div>
+                  <div className="mt-2 text-gray-500">{s.l}</div>
+                </div>
+              </AnimateOnScroll>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why */}
+      <section className="py-28 bg-dark-900">
+        <div className="container mx-auto px-4 max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-14">
+          <AnimateOnScroll className="lg:col-span-5">
+            <div className="lg:sticky lg:top-28">
+              <p className="text-primary-400 text-sm font-medium mb-3">{nl ? 'Waarom Varexo' : 'Why Varexo'}</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6">
+                {nl ? 'Geen bureau-gedoe. Gewoon goed werk.' : 'No agency fuss. Just good work.'}
+              </h2>
+              <p className="text-gray-400 text-lg leading-relaxed">
+                {nl
+                  ? 'Je krijgt de kwaliteit van een groot bureau, met de snelheid en betrokkenheid van een klein team.'
+                  : 'You get the quality of a big agency, with the speed and care of a small team.'}
+              </p>
+            </div>
+          </AnimateOnScroll>
+          <div className="lg:col-span-7 divide-y divide-white/10 border-y border-white/10">
+            {reasons.map((r, i) => (
+              <AnimateOnScroll key={r.title} delay={i * 0.06}>
+                <div className="why-row group flex gap-8 py-8">
+                  <span className="text-sm text-gray-600 tabular-nums pt-1.5 group-hover:text-primary-400 transition-colors">0{i + 1}</span>
+                  <div>
+                    <h3 className="text-2xl font-semibold text-white mb-2 group-hover:translate-x-1 transition-transform">{r.title}</h3>
+                    <p className="text-gray-400">{r.desc}</p>
+                  </div>
+                </div>
+              </AnimateOnScroll>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-28 bg-dark-950">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <AnimateOnScroll animation="reveal-scale">
+            <SpotlightCard className="cta-card rounded-[2rem] px-8 py-20 md:px-16 text-center overflow-hidden">
+              <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-6 relative">
+                {nl ? 'Klaar voor de volgende stap?' : 'Ready for the next step?'}
+              </h2>
+              <p className="text-lg md:text-xl text-gray-400 max-w-xl mx-auto mb-10 relative">
+                {nl
+                  ? 'Vertel ons over je plannen. Binnen 24 uur heb je een eerlijk voorstel in je mailbox.'
+                  : 'Tell us about your plans. Within 24 hours you will have an honest proposal in your inbox.'}
+              </p>
+              <Magnetic>
+                <Link to="/contact" className="btn-primary-modern btn-lg group relative">
+                  {nl ? 'Plan een gratis gesprek' : 'Book a free call'}
+                  <Arrow className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Magnetic>
+            </SpotlightCard>
+          </AnimateOnScroll>
+        </div>
+      </section>
     </PageTransition>
   );
 };
