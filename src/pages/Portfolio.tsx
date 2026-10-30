@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
@@ -16,63 +16,6 @@ interface Project {
   link?: string;
 }
 
-interface Campaign {
-  id: string;
-  title: string;
-  description: string;
-  images: string[];
-  stats: {
-    reach: string;
-    conversions: string;
-    status: string;
-  };
-  tags: string[];
-}
-
-const CampaignCard: React.FC<{ campaign: Campaign; language: string }> = ({ campaign, language }) => {
-  const [currentImage, setCurrentImage] = useState(0);
-  const nl = language === 'nl';
-  const go = (d: number) => setCurrentImage((p) => (p + d + campaign.images.length) % campaign.images.length);
-
-  return (
-    <SpotlightCard className="surface h-full overflow-hidden">
-      <div className="relative bg-black/40" style={{ height: 420 }}>
-        {campaign.images.map((img, idx) => (
-          <img key={idx} src={img} alt={`${campaign.title} ${idx + 1}`}
-            className={`absolute inset-0 w-full h-full object-contain transition-all duration-500 ${idx === currentImage ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`} />
-        ))}
-        <span className="absolute top-4 left-4 chip !bg-dark-950/80 backdrop-blur">{nl ? 'Advertentie' : 'Ad campaign'}</span>
-        {[-1, 1].map((d) => (
-          <button key={d} onClick={() => go(d)} aria-label={d < 0 ? 'Previous' : 'Next'}
-            className={`absolute ${d < 0 ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-dark-950/70 backdrop-blur border border-white/10 text-white hover:bg-white hover:text-dark-950 transition flex items-center justify-center`}>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={d < 0 ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7'} /></svg>
-          </button>
-        ))}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-          {campaign.images.map((_, idx) => (
-            <button key={idx} onClick={() => setCurrentImage(idx)} className={`h-1.5 rounded-full transition-all ${idx === currentImage ? 'w-6 bg-primary-400' : 'w-1.5 bg-white/40'}`} />
-          ))}
-        </div>
-      </div>
-      <div className="p-7">
-        <h3 className="text-xl font-semibold text-white mb-2">{campaign.title}</h3>
-        <p className="text-gray-400 text-sm leading-relaxed mb-6">{campaign.description}</p>
-        <div className="grid grid-cols-3 gap-2 mb-5">
-          {[[campaign.stats.reach, nl ? 'bereik / dag' : 'reach / day'], [campaign.stats.conversions, nl ? 'leads / dag' : 'leads / day'], [campaign.stats.status, 'status']].map(([v, l]) => (
-            <div key={l} className="surface-inner p-3">
-              <div className="text-lg font-semibold text-white">{v}</div>
-              <div className="text-[11px] text-gray-500">{l}</div>
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {campaign.tags.map((tag) => <span key={tag} className="text-xs text-gray-400 px-2.5 py-1 rounded-full border border-white/10">{tag}</span>)}
-        </div>
-      </div>
-    </SpotlightCard>
-  );
-};
-
 const Portfolio: React.FC = () => {
   const { t, language } = useLanguage();
   const nl = language === 'nl';
@@ -80,25 +23,14 @@ const Portfolio: React.FC = () => {
   const projects: Project[] = [
     {
       id: '1',
-      title: language === 'nl' ? 'Leegstand Meldpunt' : 'Vacancy Reporting System',
-      category: language === 'nl' ? 'Bedrijfswebsite' : 'Business Website',
-      description: language === 'nl' 
-        ? 'Meldpunt voor het registreren en rapporteren van leegstaande panden. Gebruiksvriendelijke interface met kaartintegratie en automatische rapportage.'
-        : 'Reporting system for vacant properties. User-friendly interface with map integration and automatic reporting.',
-      image: '/portfolio/download.png?v=2',
-      technologies: ['React', 'Node.js', 'Maps API'],
-      link: 'https://leegstandmeldpunt.nl'
-    },
-    {
-      id: '2',
-      title: 'DirectAutoHulp',
-      category: language === 'nl' ? 'Bedrijfswebsite' : 'Business Website',
-      description: language === 'nl'
-        ? 'Complete bedrijfswebsite voor autotransport, pechhulp en auto-inkoop. 24/7 bereikbaar met contactformulier, WhatsApp-integratie en professioneel design.'
-        : 'Complete business website for car transport, roadside assistance and car purchasing. 24/7 available with contact form, WhatsApp integration and professional design.',
-      image: '/portfolio/Directautohulp.png?v=2',
-      technologies: ['React', 'Node.js', 'TypeScript'],
-      link: 'https://directautohulp.nl'
+      title: 'Dekvloerexperts',
+      category: nl ? 'Bedrijfswebsite' : 'Business Website',
+      description: nl
+        ? 'Website voor een specialist in zandcement dekvloeren, actief in heel Nederland. Duidelijke diensten, projecten en een snelle offerte-aanvraag via formulier, WhatsApp of telefoon.'
+        : 'Website for a sand-cement screed specialist working across the Netherlands. Clear services, projects and fast quote requests via form, WhatsApp or phone.',
+      image: '/portfolio/dekvloerexperts.jpg',
+      technologies: ['React', 'TypeScript', 'Tailwind CSS'],
+      link: 'https://dekvloerexperts.nl'
     },
     {
       id: '3',
@@ -124,36 +56,6 @@ const Portfolio: React.FC = () => {
     }
   ];
 
-  const campaigns: Campaign[] = [
-    {
-      id: '1',
-      title: language === 'nl' ? 'Leegstand Meldpunt - Campagne' : 'Vacancy Reporting - Campaign',
-      description: language === 'nl'
-        ? 'Social media advertentiecampagne gericht op het bereiken van vastgoedeigenaren. Meerdere advertentievarianten A/B getest voor maximale conversie.'
-        : 'Social media ad campaign targeting property owners. Multiple ad variants A/B tested for maximum conversion and reach.',
-      images: ['/portfolio/Campagne 1.jpeg', '/portfolio/Campagne 2.jpeg'],
-      stats: {
-        reach: '10K+',
-        conversions: '3.2%',
-        status: 'Active'
-      },
-      tags: ['Meta Ads', 'Instagram', 'Facebook']
-    },
-    {
-      id: '2',
-      title: 'SAMKILL CLOTHING',
-      description: language === 'nl'
-        ? 'Social media advertentiecampagne voor premium streetwear merk. Focus op de nieuwe lente/zomer collectie 2026 en online verkoop.'
-        : 'Social media ad campaign for premium streetwear brand. Focused on the new spring/summer 2026 collection and online sales.',
-      images: ['/portfolio/samkill-1.jpg', '/portfolio/samkill-2.jpg'],
-      stats: {
-        reach: '2K+',
-        conversions: '3-4 / dag',
-        status: 'Active'
-      },
-      tags: ['Streetwear', 'E-commerce', 'Social Media']
-    }
-  ];
   
   return (
     <PageTransition>
@@ -167,7 +69,7 @@ const Portfolio: React.FC = () => {
       <PageHero
         eyebrow="Portfolio"
         title={nl ? <>Werk waar we <span className="serif text-primary-300">trots</span> op zijn.</> : <>Work we are <span className="serif text-primary-300">proud</span> of.</>}
-        lead={nl ? 'Een selectie van websites, webshops en campagnes die we voor ondernemers hebben gebouwd.' : 'A selection of websites, web shops and campaigns we built for business owners.'}
+        lead={nl ? 'Een selectie van websites en webshops die we voor ondernemers hebben gebouwd.' : 'A selection of websites and web shops we built for business owners.'}
       />
 
       <section className="pb-24 bg-dark-950">
@@ -202,24 +104,6 @@ const Portfolio: React.FC = () => {
         </div>
       </section>
 
-      <section className="py-24 bg-dark-950 border-t border-white/5">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <AnimateOnScroll>
-            <span className="eyebrow">{nl ? 'Campagnes' : 'Campaigns'}</span>
-            <h2 className="display text-4xl md:text-5xl mt-4 mb-4">{nl ? <>Meer dan alleen <span className="serif text-primary-300">websites.</span></> : <>More than just <span className="serif text-primary-300">websites.</span></>}</h2>
-            <p className="lead max-w-2xl mb-12">
-              {nl ? 'We beheren ook advertentiecampagnes die dagelijks duizenden mensen bereiken.' : 'We also run ad campaigns that reach thousands of people every day.'}
-            </p>
-          </AnimateOnScroll>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {campaigns.map((c, i) => (
-              <AnimateOnScroll key={c.id} delay={i * 0.08}>
-                <CampaignCard campaign={c} language={language} />
-              </AnimateOnScroll>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <CtaBlock title={t('portfolio.cta.title')} text={t('portfolio.cta.desc')} button={t('portfolio.cta.button')} />
     </PageTransition>
