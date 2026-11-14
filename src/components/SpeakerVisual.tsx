@@ -1,61 +1,113 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
-// Illustrated round conference speaker (Jabra Speak style) with an animated
-// listening ring. Drawn in SVG so no third-party product photo is needed.
-const SpeakerVisual: React.FC<{ className?: string; listening?: boolean }> = ({ className = '', listening = true }) => (
-  <div className={`speaker-visual ${listening ? 'is-listening' : ''} ${className}`}>
-    <span className="speaker-wave w1" />
-    <span className="speaker-wave w2" />
-    <span className="speaker-wave w3" />
-    <svg viewBox="0 0 400 400" className="relative w-full h-full" aria-label="Jabra Speak speaker" role="img">
-      <defs>
-        <radialGradient id="spk-body" cx="50%" cy="38%" r="65%">
-          <stop offset="0%" stopColor="#3b4252" />
-          <stop offset="55%" stopColor="#1f2430" />
-          <stop offset="100%" stopColor="#0b0e14" />
-        </radialGradient>
-        <radialGradient id="spk-top" cx="50%" cy="35%" r="60%">
-          <stop offset="0%" stopColor="#2a303c" />
-          <stop offset="100%" stopColor="#12151c" />
-        </radialGradient>
-        <pattern id="spk-mesh" width="7" height="7" patternUnits="userSpaceOnUse">
-          <circle cx="3.5" cy="3.5" r="1.1" fill="#4b5363" />
-        </pattern>
-        <linearGradient id="spk-ring" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#6ee7b7" />
-          <stop offset="100%" stopColor="#059669" />
-        </linearGradient>
-        <filter id="spk-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="6" />
-        </filter>
-        <filter id="spk-shadow" x="-30%" y="-30%" width="160%" height="180%">
-          <feDropShadow dx="0" dy="28" stdDeviation="22" floodColor="#000" floodOpacity="0.7" />
-        </filter>
-      </defs>
+// Real Jabra Speak 510 photo rendered as a 3D puck that tilts with the mouse.
+// With `hotspots`, every button gets a marker; hovering/tapping shows what it does.
 
-      {/* body */}
-      <g filter="url(#spk-shadow)">
-        <ellipse cx="200" cy="232" rx="168" ry="74" fill="#07090d" />
-        <ellipse cx="200" cy="214" rx="170" ry="76" fill="url(#spk-body)" />
-      </g>
-      {/* top face */}
-      <ellipse cx="200" cy="200" rx="158" ry="68" fill="url(#spk-top)" />
-      <ellipse cx="200" cy="200" rx="140" ry="58" fill="url(#spk-mesh)" opacity="0.85" />
-      {/* LED ring */}
-      <ellipse cx="200" cy="200" rx="150" ry="64" fill="none" stroke="url(#spk-ring)" strokeWidth="5" className="speaker-led" filter="url(#spk-glow)" />
-      <ellipse cx="200" cy="200" rx="150" ry="64" fill="none" stroke="url(#spk-ring)" strokeWidth="2.5" className="speaker-led" />
-      {/* centre button */}
-      <ellipse cx="200" cy="198" rx="44" ry="19" fill="#0d1017" stroke="#2c3240" strokeWidth="1.5" />
-      <ellipse cx="200" cy="196" rx="38" ry="15" fill="#161a23" />
-      <text x="200" y="201" textAnchor="middle" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="13" letterSpacing="2" fill="#cbd5e1">JABRA</text>
-      {/* side buttons */}
-      {[-95, -55, 55, 95].map((dx, i) => (
-        <ellipse key={i} cx={200 + dx} cy={200 + (Math.abs(dx) > 70 ? 14 : 30)} rx="11" ry="5" fill="#0f1218" stroke="#323848" strokeWidth="1" />
-      ))}
-      {/* highlight */}
-      <ellipse cx="160" cy="168" rx="70" ry="16" fill="#fff" opacity="0.05" />
-    </svg>
-  </div>
-);
+type Spot = { id: string; x: number; y: number; nl: [string, string]; en: [string, string] };
+
+const SPOTS: Spot[] = [
+  { id: 'mute', x: 49.4, y: 5.4, nl: ['Microfoon uit', 'Zet de microfoon direct uit. De assistent hoort dan niets: handig als je even privé wilt praten.'], en: ['Mute', 'Turns the microphone off instantly. The assistant hears nothing: handy for a private moment.'] },
+  { id: 'bt', x: 27.6, y: 11.8, nl: ['Bluetooth', 'Koppelt de speaker draadloos met je telefoon, tablet of laptop.'], en: ['Bluetooth', 'Pairs the speaker wirelessly with your phone, tablet or laptop.'] },
+  { id: 'battery', x: 71.6, y: 11.8, nl: ['Batterij', 'Laat zien hoe vol de batterij is. Je kunt hem dus ook zonder kabel neerzetten.'], en: ['Battery', 'Shows how full the battery is, so it can also stand without a cable.'] },
+  { id: 'voldown', x: 5.2, y: 49.6, nl: ['Volume lager', 'Zet het geluid zachter.'], en: ['Volume down', 'Turns the sound down.'] },
+  { id: 'volup', x: 94.2, y: 49.6, nl: ['Volume hoger', 'Zet het geluid harder. Helder geluid door de hele ruimte.'], en: ['Volume up', 'Turns the sound up. Clear sound across the whole room.'] },
+  { id: 'smart', x: 88.6, y: 71.4, nl: ['Smart-knop', 'Snelknop voor de spraakassistent. Wij stellen in wat deze knop voor jou doet.'], en: ['Smart button', 'Shortcut for the voice assistant. We set up what this button does for you.'] },
+  { id: 'answer', x: 27.2, y: 87.6, nl: ['Opnemen', 'Neem een gesprek aan of start een gesprek, handsfree vanaf tafel.'], en: ['Answer', 'Answer or start a call, hands-free from the table.'] },
+  { id: 'end', x: 71.6, y: 87.6, nl: ['Ophangen', 'Beëindig het gesprek met één tik.'], en: ['End call', 'End the call with a single tap.'] },
+  { id: 'power', x: 49.6, y: 93.8, nl: ['Aan / uit', 'Zet de speaker aan of uit.'], en: ['Power', 'Turns the speaker on or off.'] },
+];
+
+const LAYERS = 14;
+
+const SpeakerVisual: React.FC<{ className?: string; hotspots?: boolean; listening?: boolean }> = ({ className = '', hotspots = false, listening = true }) => {
+  const { language } = useLanguage();
+  const nl = language === 'nl';
+  const wrap = useRef<HTMLDivElement>(null);
+  const body = useRef<HTMLDivElement>(null);
+  const spotRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [active, setActive] = useState<string | null>(null);
+  const [tip, setTip] = useState<{ x: number; y: number } | null>(null);
+
+  const baseX = active ? 22 : 52;
+  const tilt = (rx: number, rz: number, ry = 0) => {
+    if (body.current) body.current.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)`;
+  };
+
+  const onMove = (e: React.MouseEvent) => {
+    const el = wrap.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    tilt(baseX - py * 14, -8 + px * 10, px * 10);
+    if (active) placeTip(active);
+  };
+
+  const placeTip = (id: string) => {
+    const s = spotRefs.current[id];
+    const w = wrap.current;
+    if (!s || !w) return;
+    const a = s.getBoundingClientRect();
+    const b = w.getBoundingClientRect();
+    // keep the 240px tooltip inside the viewport
+    const x = Math.min(Math.max(a.left + a.width / 2, 132), window.innerWidth - 132) - b.left;
+    setTip({ x, y: a.top - b.top });
+  };
+
+  const activate = (id: string) => {
+    setActive(id);
+    tilt(22, -4);
+    // wait for the flatten transition before measuring the marker position
+    setTimeout(() => placeTip(id), 360);
+    placeTip(id);
+  };
+
+  const reset = () => {
+    setActive(null);
+    setTip(null);
+    tilt(52, -8);
+  };
+
+  const spot = SPOTS.find((s) => s.id === active);
+  const [title, text] = spot ? (nl ? spot.nl : spot.en) : ['', ''];
+
+  return (
+    <div ref={wrap} onMouseMove={onMove} onMouseLeave={reset} className={`j3d ${listening ? 'is-listening' : ''} ${className}`}>
+      <span className="speaker-wave w1" />
+      <span className="speaker-wave w2" />
+      <span className="speaker-wave w3" />
+      <div className="j3d-shadow" />
+      <div ref={body} className="j3d-body" style={{ transform: 'rotateX(52deg) rotateZ(-8deg)' }}>
+        {Array.from({ length: LAYERS }).map((_, i) => (
+          <div key={i} className="j3d-edge" style={{ transform: `translateZ(${-(i + 1) * 1.6}px)` }} />
+        ))}
+        <div className="j3d-top">
+          <img src="/ai/jabra-speak-510.webp" alt="Jabra Speak 510" draggable={false} />
+          <div className="j3d-gloss" />
+          {hotspots && SPOTS.map((s) => (
+            <button
+              key={s.id}
+              ref={(el) => { spotRefs.current[s.id] = el; }}
+              type="button"
+              aria-label={(nl ? s.nl : s.en)[0]}
+              className={`j3d-spot ${active === s.id ? 'is-active' : ''}`}
+              style={{ left: `${s.x}%`, top: `${s.y}%` }}
+              onMouseEnter={() => activate(s.id)}
+              onFocus={() => activate(s.id)}
+              onClick={() => (active === s.id ? reset() : activate(s.id))}
+            />
+          ))}
+        </div>
+      </div>
+      {hotspots && spot && tip && (
+        <div className="j3d-tip" style={{ left: tip.x, top: tip.y }}>
+          <div className="text-sm font-semibold text-white">{title}</div>
+          <div className="text-xs text-gray-300 leading-relaxed mt-1">{text}</div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default SpeakerVisual;
