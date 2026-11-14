@@ -4,6 +4,7 @@ import { mockAuth, MockUser } from '../services/mockAuth';
 import VarexoLogo from './VarexoLogo';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useLanguage } from '../contexts/LanguageContext';
+import { RexoAnnouncement } from './RexoBanner';
 
 const Header: React.FC = () => {
   const { t, language } = useLanguage();
@@ -42,7 +43,7 @@ const Header: React.FC = () => {
   };
 
   const links: { to: string; label: string; isNew?: boolean }[] = [
-    { to: '/ai-assistent', label: language === 'nl' ? 'AI-assistent' : 'AI assistant', isNew: true },
+    { to: '/ai-assistent', label: 'Rexo AI', isNew: true },
     { to: '/diensten', label: t('nav.services') },
     { to: '/portfolio', label: 'Portfolio' },
     { to: '/werkwijze', label: t('nav.process') },
@@ -62,6 +63,7 @@ const Header: React.FC = () => {
 
   return (
     <header className={`nav-shell sticky top-0 z-50 ${scrolled || mobileMenuOpen ? 'scrolled' : ''}`}>
+      {!['/admin', '/dashboard', '/profile', '/ai-assistent'].some((p) => location.pathname.startsWith(p)) && <RexoAnnouncement />}
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-[72px]">
           <Link to="/" className="flex items-center">

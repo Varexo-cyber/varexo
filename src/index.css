@@ -730,3 +730,30 @@ body { background-color: #020617; color: #e2e8f0; letter-spacing: -0.006em; }
 }
 @keyframes tip-in { from { opacity: 0; transform: translate(-50%, calc(-100% - 4px)); } to { opacity: 1; transform: translate(-50%, calc(-100% - 14px)); } }
 .j3d-tip::after { content: ''; position: absolute; left: 50%; bottom: -6px; width: 12px; height: 12px; transform: translateX(-50%) rotate(45deg); background: rgba(2,6,23,0.92); border-right: 1px solid rgba(52,211,153,0.4); border-bottom: 1px solid rgba(52,211,153,0.4); }
+
+/* ===== Rexo AI branding ===== */
+.rexo-mark { font-weight: 800; letter-spacing: -0.05em; color: #fff; }
+.rexo-mark-ai { margin-left: 0.08em; padding: 0 0.18em; border-radius: 0.22em; background: linear-gradient(135deg, #6ee7b7, #10b981); color: #020617; }
+
+.rexo-band { position: relative; height: 230px; overflow: hidden; background: #020617; }
+.rexo-stripe { position: absolute; left: -5%; right: -5%; top: 50%; padding: 18px 0; overflow: hidden; }
+.rexo-stripe-front { transform: translateY(-50%) rotate(-3deg); background: linear-gradient(90deg, #10b981, #34d399, #10b981); box-shadow: 0 20px 60px -10px rgba(16,185,129,0.6); z-index: 2; }
+.rexo-stripe-back { transform: translateY(-50%) rotate(3deg); background: #0b1324; border-top: 1px solid rgba(52,211,153,0.3); border-bottom: 1px solid rgba(52,211,153,0.3); z-index: 1; }
+.rexo-band-text { font-size: clamp(1.6rem, 3.6vw, 3rem); font-weight: 800; letter-spacing: -0.03em; text-transform: uppercase; white-space: nowrap; padding: 0 1.5rem; }
+.rexo-stripe-front .rexo-band-text { color: #020617; }
+.rexo-stripe-back .rexo-band-text { color: transparent; -webkit-text-stroke: 1.2px rgba(110,231,183,0.7); }
+.rexo-band-star { font-size: 1.6rem; }
+.rexo-stripe-front .rexo-band-star { color: #022c22; }
+.rexo-stripe-back .rexo-band-star { color: #34d399; }
+.rexo-marquee { animation-duration: 30s; }
+.rexo-marquee-rev { animation: marquee 34s linear infinite reverse; }
+.rexo-band:hover .marquee { animation-play-state: paused; }
+
+.rexo-announce {
+  position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+  padding: 7px 16px; font-size: 13px; color: #022c22; text-align: center;
+  background: linear-gradient(90deg, #059669, #34d399, #059669);
+}
+.rexo-announce-shine { position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.45) 50%, transparent 70%); transform: translateX(-100%); animation: shine 4s ease-in-out infinite; pointer-events: none; }
+@keyframes shine { 0%, 60% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+@media (max-width: 640px) { .rexo-band { height: 170px; } }

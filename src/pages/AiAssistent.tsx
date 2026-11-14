@@ -4,6 +4,7 @@ import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
 import SpeakerVisual from '../components/SpeakerVisual';
+import RexoBanner, { RexoMark } from '../components/RexoBanner';
 import { SpotlightCard, Magnetic } from '../components/Interactive';
 import { ArrowIcon, CheckIcon } from '../components/Section';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -106,7 +107,7 @@ const AiAssistent: React.FC = () => {
     {
       '@context': 'https://schema.org',
       '@type': 'Service',
-      name: 'AI-assistent met Jabra Speak – installatie aan huis',
+      name: 'Rexo AI – AI-assistent met Jabra Speak, installatie aan huis',
       serviceType: 'AI spraakassistent installatie',
       provider: { '@type': 'Organization', name: 'Varexo', url: 'https://varexo.nl' },
       areaServed: 'NL',
@@ -129,11 +130,11 @@ const AiAssistent: React.FC = () => {
   return (
     <PageTransition>
       <SEO
-        title={nl ? 'AI-assistent voor thuis & kantoor – Jabra Speak geïnstalleerd' : 'AI assistant for home & office – Jabra Speak installed'}
+        title={nl ? 'Rexo AI – AI-assistent voor thuis & kantoor, geïnstalleerd aan huis' : 'Rexo AI – AI assistant for home & office, installed at your place'}
         description={nl
-          ? 'Een eigen AI-assistent in je kamer, huis of kantoor. Wij kopen de Jabra Speak, stellen alles in en installeren het bij jou op locatie. Vanaf €300 + €19,99 p/m.'
+          ? 'Rexo AI: een eigen AI-assistent in je kamer, huis of kantoor. Wij kopen de Jabra Speak, stellen alles in en installeren het bij jou op locatie. Vanaf €300 + €19,99 p/m.'
           : 'Your own AI assistant in your room, home or office. We buy the Jabra Speak, set everything up and install it at your place. From €300 + €19.99 p/m.'}
-        keywords="AI assistent thuis, AI assistent kantoor, Jabra Speak, slimme speaker installatie, spraakassistent laten installeren, AI in huis, AI voor bedrijven, Varexo AI"
+        keywords="Rexo AI, Rexo, AI assistent thuis, AI assistent kantoor, Jabra Speak, slimme speaker installatie, spraakassistent laten installeren, AI in huis, AI voor bedrijven, Varexo AI"
         canonical="/ai-assistent"
         jsonLd={jsonLd}
       />
@@ -148,7 +149,7 @@ const AiAssistent: React.FC = () => {
               <AnimateOnScroll>
                 <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/30 text-primary-200 text-sm mb-8">
                   <span className="px-2 py-0.5 rounded-full bg-primary-500 text-dark-950 text-xs font-bold">{nl ? 'Nieuw' : 'New'}</span>
-                  {nl ? 'AI in je hele kamer' : 'AI in your whole room'}
+                  {nl ? 'Maak kennis met' : 'Meet'} <RexoMark className="text-base" />
                 </span>
               </AnimateOnScroll>
               <AnimateOnScroll delay={0.06}>
@@ -159,8 +160,8 @@ const AiAssistent: React.FC = () => {
               <AnimateOnScroll delay={0.12}>
                 <p className="lead sm:text-xl max-w-xl mt-8 mb-10">
                   {nl
-                    ? 'Een eigen AI-assistent in je woonkamer, huis of kantoor. Wij kopen de Jabra Speak, stellen alles in en installeren het bij jou thuis. Jij hoeft alleen nog te praten.'
-                    : 'Your own AI assistant in your living room, home or office. We buy the Jabra Speak, set everything up and install it at your place. All you do is talk.'}
+                    ? 'Rexo AI is je eigen AI-assistent in je woonkamer, huis of kantoor. Wij kopen de Jabra Speak, stellen alles in en installeren het bij jou thuis. Jij hoeft alleen nog te praten.'
+                    : 'Rexo AI is your own AI assistant in your living room, home or office. We buy the Jabra Speak, set everything up and install it at your place. All you do is talk.'}
                 </p>
               </AnimateOnScroll>
               <AnimateOnScroll delay={0.18}>
@@ -171,7 +172,7 @@ const AiAssistent: React.FC = () => {
                       <ArrowIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </a>
                   </Magnetic>
-                  <a href={wa(nl ? 'Hoi Varexo! Ik heb interesse in een AI-assistent met Jabra Speak.' : 'Hi Varexo! I am interested in an AI assistant with Jabra Speak.')} target="_blank" rel="noopener noreferrer" className="btn-ghost-modern gap-2">
+                  <a href={wa(nl ? 'Hoi Varexo! Ik heb interesse in Rexo AI.' : 'Hi Varexo! I am interested in Rexo AI.')} target="_blank" rel="noopener noreferrer" className="btn-ghost-modern gap-2">
                     <WaIcon className="w-4 h-4" /> WhatsApp
                   </a>
                 </div>
@@ -197,11 +198,13 @@ const AiAssistent: React.FC = () => {
         </div>
       </section>
 
+      <RexoBanner />
+
       {/* ───────── What it does ───────── */}
       <section className="py-28 bg-dark-950">
         <div className="container mx-auto px-4 max-w-7xl">
           <AnimateOnScroll>
-            <span className="eyebrow">{nl ? 'Wat kan het?' : 'What can it do?'}</span>
+            <span className="eyebrow">{nl ? 'Wat kan Rexo?' : 'What can Rexo do?'}</span>
             <h2 className="display text-4xl md:text-6xl mt-4 mb-14 max-w-3xl">{nl ? <>Een assistent die <span className="serif text-primary-300">altijd</span> luistert als je hem nodig hebt.</> : <>An assistant that is <span className="serif text-primary-300">always</span> there when you need it.</>}</h2>
           </AnimateOnScroll>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -293,7 +296,7 @@ const AiAssistent: React.FC = () => {
                     ))}
                   </ul>
                   <a
-                    href={wa(nl ? `Hoi Varexo! Ik wil graag het ${p.name}-pakket voor de AI-assistent (€${p.once} + €${p.monthly} p/m).` : `Hi Varexo! I would like the ${p.name} AI assistant package (€${p.once} + €${p.monthly} p/m).`)}
+                    href={wa(nl ? `Hoi Varexo! Ik wil graag het ${p.name}-pakket voor Rexo AI (€${p.once} + €${p.monthly} p/m).` : `Hi Varexo! I would like the ${p.name} Rexo AI package (€${p.once} + €${p.monthly} p/m).`)}
                     target="_blank" rel="noopener noreferrer"
                     className={`mt-auto justify-center ${p.featured ? 'btn-primary-modern' : 'btn-ghost-modern'}`}
                   >
@@ -320,6 +323,8 @@ const AiAssistent: React.FC = () => {
         </div>
       </section>
 
+      <RexoBanner />
+
       {/* ───────── FAQ ───────── */}
       <section className="py-24 bg-dark-950 border-t border-white/5">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -334,6 +339,7 @@ const AiAssistent: React.FC = () => {
       <section className="relative bg-dark-950 pt-10 pb-28 overflow-hidden">
         <div className="aurora aurora-bottom" />
         <div className="container mx-auto px-4 max-w-5xl relative z-10 text-center">
+          <div className="mb-6"><RexoMark className="text-4xl md:text-5xl" /></div>
           <h2 className="display text-5xl md:text-8xl mb-8">{nl ? <>Klaar om te <span className="serif text-primary-300">praten?</span></> : <>Ready to <span className="serif text-primary-300">talk?</span></>}</h2>
           <div className="flex flex-wrap justify-center gap-3">
             <Magnetic>
