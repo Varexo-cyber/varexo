@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
           </div>
           <div className="md:col-span-2">
             {col(nl ? 'Bedrijf' : 'Company', [
-              { to: '/ai-assistent', label: nl ? 'AI-assistent' : 'AI assistant' },
+              { to: '/ai-assistent', label: 'Rexo AI' },
               { to: '/diensten', label: t('nav.services') },
               { to: '/portfolio', label: 'Portfolio' },
               { to: '/werkwijze', label: t('nav.process') },

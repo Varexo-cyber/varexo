@@ -7,6 +7,7 @@ import { Magnetic, CountUp } from '../components/Interactive';
 import { ArrowIcon } from '../components/Section';
 import { useLanguage } from '../contexts/LanguageContext';
 import SpeakerVisual from '../components/SpeakerVisual';
+import RexoBanner, { RexoMark } from '../components/RexoBanner';
 
 const work = [
   { name: 'Dekvloerexperts', domain: 'dekvloerexperts.nl', img: '/portfolio/dekvloerexperts.jpg', tag: 'Website · Bouw' },
@@ -174,6 +175,8 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      <RexoBanner />
+
       {/* ───────── News: AI assistant ───────── */}
       <section className="relative bg-dark-950 py-24 overflow-hidden">
         <div className="container mx-auto px-4 max-w-7xl">
@@ -183,16 +186,16 @@ const Home: React.FC = () => {
                 <div className="lg:col-span-7 p-8 md:p-14">
                   <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-500/15 border border-primary-500/30 text-primary-200 text-sm mb-6">
                     <span className="px-2 py-0.5 rounded-full bg-primary-500 text-dark-950 text-xs font-bold">{nl ? 'Nieuw' : 'New'}</span>
-                    {nl ? 'AI in je hele kamer' : 'AI in your whole room'}
+                    {nl ? 'Maak kennis met' : 'Meet'} <RexoMark className="text-base" />
                   </span>
                   <h2 className="display text-4xl md:text-6xl mb-5">{nl ? <>Praat met je <span className="serif text-primary-300">kamer.</span></> : <>Talk to your <span className="serif text-primary-300">room.</span></>}</h2>
                   <p className="lead max-w-lg mb-8">
                     {nl
-                      ? 'Een eigen AI-assistent in je huis of kantoor, met de Jabra Speak. Wij kopen, stellen in en installeren alles bij jou op locatie.'
-                      : 'Your own AI assistant at home or in the office, with the Jabra Speak. We buy, set up and install everything at your place.'}
+                      ? 'Rexo AI is je eigen AI-assistent in huis of op kantoor, met de Jabra Speak. Wij kopen, stellen in en installeren alles bij jou op locatie.'
+                      : 'Rexo AI is your own AI assistant at home or in the office, with the Jabra Speak. We buy, set up and install everything at your place.'}
                   </p>
                   <div className="flex flex-wrap items-center gap-5">
-                    <span className="btn-primary-modern">{nl ? 'Ontdek het' : 'Discover it'} <ArrowIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
+                    <span className="btn-primary-modern">{nl ? 'Ontdek Rexo AI' : 'Discover Rexo AI'} <ArrowIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
                     <span className="text-gray-400">{nl ? 'Vanaf' : 'From'} <span className="text-white font-semibold">€300</span> + €19,99 p/m</span>
                   </div>
                 </div>
