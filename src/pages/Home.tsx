@@ -6,6 +6,7 @@ import SEO from '../components/SEO';
 import { Magnetic, CountUp } from '../components/Interactive';
 import { ArrowIcon } from '../components/Section';
 import { useLanguage } from '../contexts/LanguageContext';
+import SpeakerVisual from '../components/SpeakerVisual';
 
 const work = [
   { name: 'Dekvloerexperts', domain: 'dekvloerexperts.nl', img: '/portfolio/dekvloerexperts.jpg', tag: 'Website · Bouw' },
@@ -170,6 +171,37 @@ const Home: React.FC = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ───────── News: AI assistant ───────── */}
+      <section className="relative bg-dark-950 py-24 overflow-hidden">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <AnimateOnScroll animation="reveal-scale">
+            <Link to="/ai-assistent" className="news-card group block">
+              <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-8">
+                <div className="lg:col-span-7 p-8 md:p-14">
+                  <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-500/15 border border-primary-500/30 text-primary-200 text-sm mb-6">
+                    <span className="px-2 py-0.5 rounded-full bg-primary-500 text-dark-950 text-xs font-bold">{nl ? 'Nieuw' : 'New'}</span>
+                    {nl ? 'AI in je hele kamer' : 'AI in your whole room'}
+                  </span>
+                  <h2 className="display text-4xl md:text-6xl mb-5">{nl ? <>Praat met je <span className="serif text-primary-300">kamer.</span></> : <>Talk to your <span className="serif text-primary-300">room.</span></>}</h2>
+                  <p className="lead max-w-lg mb-8">
+                    {nl
+                      ? 'Een eigen AI-assistent in je huis of kantoor, met de Jabra Speak. Wij kopen, stellen in en installeren alles bij jou op locatie.'
+                      : 'Your own AI assistant at home or in the office, with the Jabra Speak. We buy, set up and install everything at your place.'}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-5">
+                    <span className="btn-primary-modern">{nl ? 'Ontdek het' : 'Discover it'} <ArrowIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
+                    <span className="text-gray-400">{nl ? 'Vanaf' : 'From'} <span className="text-white font-semibold">€300</span> + €19,99 p/m</span>
+                  </div>
+                </div>
+                <div className="lg:col-span-5 px-8 pb-8 lg:p-8">
+                  <SpeakerVisual className="w-full max-w-[420px] mx-auto aspect-square" />
+                </div>
+              </div>
+            </Link>
+          </AnimateOnScroll>
         </div>
       </section>
 
