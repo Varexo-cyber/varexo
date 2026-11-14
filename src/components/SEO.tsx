@@ -9,6 +9,7 @@ interface SEOProps {
   ogImage?: string;
   ogType?: string;
   language?: 'nl' | 'en';
+  jsonLd?: object | object[];
 }
 
 const SEO: React.FC<SEOProps> = ({
@@ -19,6 +20,7 @@ const SEO: React.FC<SEOProps> = ({
   ogImage,
   ogType = 'website',
   language = 'nl',
+  jsonLd,
 }) => {
   const baseUrl = 'https://varexo.nl';
 
@@ -43,6 +45,9 @@ const SEO: React.FC<SEOProps> = ({
 
   return (
     <Helmet>
+      {jsonLd && (Array.isArray(jsonLd) ? jsonLd : [jsonLd]).map((d, i) => (
+        <script key={i} type="application/ld+json">{JSON.stringify(d)}</script>
+      ))}
       {/* Primary */}
       <html lang={language} />
       <title>{fullTitle}</title>

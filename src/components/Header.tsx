@@ -41,7 +41,8 @@ const Header: React.FC = () => {
     navigate('/');
   };
 
-  const links = [
+  const links: { to: string; label: string; isNew?: boolean }[] = [
+    { to: '/ai-assistent', label: language === 'nl' ? 'AI-assistent' : 'AI assistant', isNew: true },
     { to: '/diensten', label: t('nav.services') },
     { to: '/portfolio', label: 'Portfolio' },
     { to: '/werkwijze', label: t('nav.process') },
@@ -69,8 +70,9 @@ const Header: React.FC = () => {
 
           <nav className="hidden lg:flex items-center gap-1">
             {links.map((l) => (
-              <NavLink key={l.to} to={l.to} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <NavLink key={l.to} to={l.to} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''} ${l.isNew ? 'nav-new' : ''}`}>
                 {l.label}
+                {l.isNew && <span className="nav-new-dot" />}
               </NavLink>
             ))}
           </nav>
