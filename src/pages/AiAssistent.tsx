@@ -185,8 +185,8 @@ const AiAssistent: React.FC = () => {
 
             <div className="lg:col-span-6">
               <div className="relative max-w-[560px] mx-auto">
-                <SpeakerVisual className="w-full aspect-square" />
-                <div className="absolute inset-x-0 -bottom-2 flex justify-center">
+                <SpeakerVisual className="w-full aspect-square" hotspots />
+                <div className="flex justify-center -mt-6 min-h-[96px]">
                   <ConversationLoop lines={nl
                     ? [['"Wat staat er vandaag op de planning?"', 'Om 10:00 een afspraak met Daan en om 14:00 bellen met de leverancier.'], ['"Zet de lampen in de woonkamer op 30%."', 'Gedaan. Fijne avond!'], ['"Onthoud dat ik melk moet halen."', 'Staat genoteerd voor vanavond.']]
                     : [['"What is on my schedule today?"', 'A meeting with Daan at 10:00 and a supplier call at 14:00.'], ['"Dim the living room lights to 30%."', 'Done. Enjoy your evening!'], ['"Remember I need to buy milk."', 'Noted for tonight.']]} />
@@ -223,11 +223,12 @@ const AiAssistent: React.FC = () => {
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 45% 55% at 30% 50%, rgba(16,185,129,0.16), transparent 70%)' }} />
         <div className="container mx-auto px-4 max-w-7xl relative grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
           <AnimateOnScroll animation="reveal-scale">
-            <SpeakerVisual className="w-full max-w-[520px] mx-auto aspect-square" />
+            <SpeakerVisual className="w-full max-w-[560px] mx-auto aspect-square" hotspots />
+            <p className="text-center text-sm text-gray-500 mt-2">{nl ? 'Ga met je muis over de groene punten (of tik erop) voor uitleg per knop.' : 'Hover over (or tap) the green dots to learn what each button does.'}</p>
           </AnimateOnScroll>
           <AnimateOnScroll>
             <span className="eyebrow">{nl ? 'De hardware' : 'The hardware'}</span>
-            <h2 className="display text-4xl md:text-6xl mt-4 mb-6">Jabra <span className="serif text-primary-300">Speak.</span></h2>
+            <h2 className="display text-4xl md:text-6xl mt-4 mb-6">Jabra Speak <span className="serif text-primary-300">510.</span></h2>
             <p className="lead mb-8">
               {nl
                 ? 'Een speaker en microfoon in één, gemaakt om spraak in een hele ruimte helder op te vangen. Wij kopen hem voor je in, stellen hem in en zetten hem neer waar hij het beste werkt.'
