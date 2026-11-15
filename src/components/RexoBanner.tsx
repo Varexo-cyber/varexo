@@ -51,7 +51,7 @@ export const RexoAnnouncement: React.FC = () => {
     <Link to="/ai-assistent" className="rexo-announce group">
       <span className="rexo-announce-shine" />
       <span className="px-2 py-0.5 rounded-full bg-dark-950 text-primary-300 text-[11px] font-bold">{nl ? 'NIEUW' : 'NEW'}</span>
-      <span><b>Rexo AI</b> {nl ? '— geen Alexa, iets beters: een assistent die je hele pc bedient en jou echt kent.' : '— not an Alexa, something better: an assistant that runs your whole PC and really knows you.'}</span>
+      <span><b>Rexo AI</b><span className="hidden sm:inline"> {nl ? '— geen Alexa, iets beters: een assistent die je hele pc bedient en jou echt kent.' : '— not an Alexa, something better: an assistant that runs your whole PC and really knows you.'}</span><span className="sm:hidden"> {nl ? '— geen Alexa, iets beters.' : '— not an Alexa, something better.'}</span></span>
       <span className="font-semibold underline underline-offset-2 group-hover:no-underline">{nl ? 'Ontdek' : 'Discover'} →</span>
     </Link>
   );

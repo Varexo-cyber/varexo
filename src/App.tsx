@@ -28,6 +28,8 @@ import WhatsAppButton from './components/WhatsAppButton';
 import PromoBanner from './components/PromoBanner';
 import HelpWidget from './components/HelpWidget';
 import CursorFX from './components/CursorFX';
+import MobileDock from './components/MobileDock';
+import ScrollProgress from './components/ScrollProgress';
 
 function App() {
   const [, setUser] = React.useState<any>(null);
@@ -88,6 +90,9 @@ function App() {
         <HelpWidget />
         <WhatsAppButton />
         <CursorFX />
+        <MobileDock />
+        <ScrollProgress />
+        <div className="grain" aria-hidden />
       </div>
     </Router>
     </LanguageProvider>

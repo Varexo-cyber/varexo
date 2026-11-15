@@ -130,11 +130,13 @@ const Header: React.FC = () => {
         </div>
 
         {mobileMenuOpen && (
-          <div className="lg:hidden pb-6">
+          <div className="mobile-menu lg:hidden">
             <div className="flex flex-col">
-              {[{ to: '/', label: t('nav.home') }, ...links].map((l) => (
-                <Link key={l.to} to={l.to} className="text-2xl font-semibold tracking-tight text-white py-3 border-b border-white/5">
-                  {l.label}
+              {[{ to: '/', label: t('nav.home') }, ...links].map((l, i) => (
+                <Link key={l.to} to={l.to} className="mobile-menu-link" style={{ animationDelay: `${i * 45}ms` }}>
+                  <span className="text-xs text-gray-600 tabular-nums w-6">0{i + 1}</span>
+                  <span className="flex-1">{l.label}</span>
+                  {'isNew' in l && l.isNew && <span className="chip !text-[10px]">{language === 'nl' ? 'NIEUW' : 'NEW'}</span>}
                 </Link>
               ))}
             </div>
