@@ -30,7 +30,7 @@ const HelpWidget: React.FC = () => {
   ];
 
   return (
-    <div className="fixed bottom-24 right-6 z-40 flex flex-col items-end">
+    <div className="hidden lg:flex fixed bottom-24 right-6 z-40 flex-col items-end">
       {/* FAQ Panel */}
       {isOpen && (
         <div className="mb-3 w-80 glass-card rounded-xl shadow-2xl overflow-hidden animate-slide-up">

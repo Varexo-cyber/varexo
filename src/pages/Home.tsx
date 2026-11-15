@@ -147,7 +147,7 @@ const Home: React.FC = () => {
               </AnimateOnScroll>
             </div>
 
-            <div className="lg:col-span-5 hidden lg:block">
+            <div className="lg:col-span-5">
               <div className="deck cursor-hover">
                 {work.map((w, i) => (
                   <a key={w.name} href={`https://${w.domain}`} target="_blank" rel="noopener noreferrer" className={`deck-card deck-${i}`}>
