@@ -14,11 +14,11 @@ const RexoBanner: React.FC = () => {
   const { language } = useLanguage();
   const nl = language === 'nl';
   const a = nl
-    ? ['Rexo AI', 'Praat met je kamer', 'Nu beschikbaar', 'Installatie aan huis', 'Vanaf €300']
-    : ['Rexo AI', 'Talk to your room', 'Available now', 'Installed at your home', 'From €300'];
+    ? ['Rexo AI', 'Bedient je hele pc', 'Kent jouw accounts', 'Geen Alexa, iets beters', 'Installatie aan huis']
+    : ['Rexo AI', 'Controls your whole PC', 'Knows your accounts', 'Not an Alexa, something better', 'Installed at your home'];
   const b = nl
-    ? ['Thuis', 'Kantoor', 'Praktijk', 'Winkel', 'Jabra Speak', 'Gewoon praten']
-    : ['Home', 'Office', 'Practice', 'Shop', 'Jabra Speak', 'Just talk'];
+    ? ['WhatsApp', 'Gmail', 'Discord', 'Instagram', 'Je eigen apps', 'Echt geheugen']
+    : ['WhatsApp', 'Gmail', 'Discord', 'Instagram', 'Your own apps', 'Real memory'];
 
   const row = (items: string[], k: number) => (
     <div className="flex items-center shrink-0" key={k}>
@@ -51,7 +51,7 @@ export const RexoAnnouncement: React.FC = () => {
     <Link to="/ai-assistent" className="rexo-announce group">
       <span className="rexo-announce-shine" />
       <span className="px-2 py-0.5 rounded-full bg-dark-950 text-primary-300 text-[11px] font-bold">{nl ? 'NIEUW' : 'NEW'}</span>
-      <span><b>Rexo AI</b> {nl ? '— een AI-assistent die je kamer laat praten. Installatie aan huis.' : '— an AI assistant that makes your room talk. Installed at your home.'}</span>
+      <span><b>Rexo AI</b> {nl ? '— geen Alexa, iets beters: een assistent die je hele pc bedient en jou echt kent.' : '— not an Alexa, something better: an assistant that runs your whole PC and really knows you.'}</span>
       <span className="font-semibold underline underline-offset-2 group-hover:no-underline">{nl ? 'Ontdek' : 'Discover'} →</span>
     </Link>
   );
