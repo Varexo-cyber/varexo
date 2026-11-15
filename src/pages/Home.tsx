@@ -188,12 +188,17 @@ const Home: React.FC = () => {
                     <span className="px-2 py-0.5 rounded-full bg-primary-500 text-dark-950 text-xs font-bold">{nl ? 'Nieuw' : 'New'}</span>
                     {nl ? 'Maak kennis met' : 'Meet'} <RexoMark className="text-base" />
                   </span>
-                  <h2 className="display text-4xl md:text-6xl mb-5">{nl ? <>Praat met je <span className="serif text-primary-300">kamer.</span></> : <>Talk to your <span className="serif text-primary-300">room.</span></>}</h2>
+                  <h2 className="display text-4xl md:text-6xl mb-5">{nl ? <>Praat tegen je pc. <span className="serif text-primary-300">Hij doet het.</span></> : <>Talk to your PC. <span className="serif text-primary-300">It gets it done.</span></>}</h2>
                   <p className="lead max-w-lg mb-8">
                     {nl
-                      ? 'Rexo AI is je eigen AI-assistent in huis of op kantoor, met de Jabra Speak. Wij kopen, stellen in en installeren alles bij jou op locatie.'
-                      : 'Rexo AI is your own AI assistant at home or in the office, with the Jabra Speak. We buy, set up and install everything at your place.'}
+                      ? 'Geen Alexa, iets beters. Rexo AI zit in je computer: hij bedient je pc en je eigen apps, kent je accounts en onthoudt wat je vertelt. Wij installeren alles bij jou thuis.'
+                      : 'Not an Alexa, something better. Rexo AI lives in your computer: it controls your PC and your own apps, knows your accounts and remembers what you tell it. We install everything at your place.'}
                   </p>
+                  <div className="flex flex-wrap gap-2 mb-8">
+                    {(nl ? ['Bedient je hele pc', 'Kent je accounts', 'WhatsApp, Discord & Instagram', 'Onthoudt alles'] : ['Controls your whole PC', 'Knows your accounts', 'WhatsApp, Discord & Instagram', 'Remembers everything']).map((x) => (
+                      <span key={x} className="chip !text-xs !py-1">✓ {x}</span>
+                    ))}
+                  </div>
                   <div className="flex flex-wrap items-center gap-5">
                     <span className="btn-primary-modern">{nl ? 'Ontdek Rexo AI' : 'Discover Rexo AI'} <ArrowIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
                     <span className="text-gray-400">{nl ? 'Vanaf' : 'From'} <span className="text-white font-semibold">€300</span> + €19,99 p/m</span>

@@ -18,7 +18,8 @@ const SPOTS: Spot[] = [
   { id: 'power', x: 49.6, y: 93.8, nl: ['Aan / uit', 'Zet de speaker aan of uit.'], en: ['Power', 'Turns the speaker on or off.'] },
 ];
 
-const LAYERS = 14;
+const LAYERS = 30; // puck thickness: 30 x 1.5px
+const BASE = 12;   // smaller foot underneath (cable wrap base)
 
 const SpeakerVisual: React.FC<{ className?: string; hotspots?: boolean; listening?: boolean }> = ({ className = '', hotspots = false, listening = true }) => {
   const { language } = useLanguage();
@@ -29,7 +30,7 @@ const SpeakerVisual: React.FC<{ className?: string; hotspots?: boolean; listenin
   const [active, setActive] = useState<string | null>(null);
   const [tip, setTip] = useState<{ x: number; y: number } | null>(null);
 
-  const baseX = active ? 22 : 52;
+  const baseX = active ? 24 : 58;
   const tilt = (rx: number, rz: number, ry = 0) => {
     if (body.current) body.current.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)`;
   };
@@ -57,7 +58,7 @@ const SpeakerVisual: React.FC<{ className?: string; hotspots?: boolean; listenin
 
   const activate = (id: string) => {
     setActive(id);
-    tilt(22, -4);
+    tilt(24, -4);
     // wait for the flatten transition before measuring the marker position
     setTimeout(() => placeTip(id), 360);
     placeTip(id);
@@ -66,7 +67,7 @@ const SpeakerVisual: React.FC<{ className?: string; hotspots?: boolean; listenin
   const reset = () => {
     setActive(null);
     setTip(null);
-    tilt(52, -8);
+    tilt(58, -8);
   };
 
   const spot = SPOTS.find((s) => s.id === active);
@@ -78,9 +79,16 @@ const SpeakerVisual: React.FC<{ className?: string; hotspots?: boolean; listenin
       <span className="speaker-wave w2" />
       <span className="speaker-wave w3" />
       <div className="j3d-shadow" />
-      <div ref={body} className="j3d-body" style={{ transform: 'rotateX(52deg) rotateZ(-8deg)' }}>
+      <div ref={body} className="j3d-body" style={{ transform: 'rotateX(58deg) rotateZ(-8deg)' }}>
+        {Array.from({ length: BASE }).map((_, i) => (
+          <div key={`b${i}`} className="j3d-base" style={{ transform: `translateZ(${-(LAYERS * 1.5) - (i + 1) * 1.5}px)` }} />
+        ))}
         {Array.from({ length: LAYERS }).map((_, i) => (
-          <div key={i} className="j3d-edge" style={{ transform: `translateZ(${-(i + 1) * 1.6}px)` }} />
+          <div
+            key={i}
+            className={`j3d-edge ${i === 0 ? 'j3d-edge-rim' : ''}`}
+            style={{ transform: `translateZ(${-(i + 1) * 1.5}px)`, filter: `brightness(${1.25 - (i / LAYERS) * 0.7})` }}
+          />
         ))}
         <div className="j3d-top">
           <img src="/ai/jabra-speak-510.webp" alt="Jabra Speak 510" draggable={false} />
