@@ -65,7 +65,7 @@ const Diensten: React.FC = () => {
 
       <PageHero
         eyebrow={nl ? 'Diensten' : 'Services'}
-        title={nl ? <>Alles wat je online <span>nodig</span> hebt.</> : <>Everything you <span>need</span> online.</>}
+        title={nl ? 'Alles wat je online nodig hebt.' : 'Everything you need online.'}
         lead={t('services.page.subtitle')}
       />
 

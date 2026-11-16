@@ -6,6 +6,7 @@ const canHover = () =>
   !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Card with a soft emerald glow that follows the cursor (border + surface)
+// Also tilts slightly towards the cursor, so every card on the site feels 3D
 export const SpotlightCard: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => {
   const ref = useRef<HTMLDivElement>(null);
   const onMove = (e: React.MouseEvent) => {
@@ -14,9 +15,17 @@ export const SpotlightCard: React.FC<{ children: React.ReactNode; className?: st
     const r = el.getBoundingClientRect();
     el.style.setProperty('--mx', `${e.clientX - r.left}px`);
     el.style.setProperty('--my', `${e.clientY - r.top}px`);
+    if (canHover()) {
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      el.style.transform = `perspective(1000px) rotateX(${(-y * 5).toFixed(2)}deg) rotateY(${(x * 5).toFixed(2)}deg) translateY(-2px)`;
+    }
+  };
+  const onLeave = () => {
+    if (ref.current) ref.current.style.transform = '';
   };
   return (
-    <div ref={ref} onMouseMove={onMove} className={`spotlight-card ${className}`}>
+    <div ref={ref} onMouseMove={onMove} onMouseLeave={onLeave} className={`spotlight-card ${className}`}>
       {children}
     </div>
   );

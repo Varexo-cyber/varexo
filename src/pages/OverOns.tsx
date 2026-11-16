@@ -21,7 +21,7 @@ const OverOns: React.FC = () => {
 
       <PageHero
         eyebrow={t('about.title')}
-        title={nl ? <>Een klein team met <span>grote</span> standaarden.</> : <>A small team with <span>high</span> standards.</>}
+        title={nl ? 'Een klein team met grote standaarden.' : 'A small team with high standards.'}
         lead={t('about.company.desc1')}
       />
 
