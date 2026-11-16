@@ -31,6 +31,7 @@ import CursorFX from './components/CursorFX';
 import MobileDock from './components/MobileDock';
 import ScrollProgress from './components/ScrollProgress';
 import RouteCurtain from './components/RouteCurtain';
+import ScrambleLabels from './components/ScrambleLabels';
 
 function App() {
   const [, setUser] = React.useState<any>(null);
@@ -94,6 +95,7 @@ function App() {
         <MobileDock />
         <ScrollProgress />
         <RouteCurtain />
+        <ScrambleLabels />
         <div className="grain" aria-hidden />
       </div>
     </Router>

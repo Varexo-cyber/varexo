@@ -80,7 +80,7 @@ const Portfolio: React.FC = () => {
                 <SpotlightCard className="surface overflow-hidden">
                   <div className={`flex flex-col lg:flex-row items-center ${i % 2 ? 'lg:flex-row-reverse' : ''}`}>
                     <div className="w-full lg:w-7/12 p-6 md:p-10">
-                      <TiltCard className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-dark-900" max={5}>
+                      <TiltCard className="img-reveal rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-dark-900" max={5}>
                         <div className="browser-bar"><span /><span /><span /><em className="ml-3 not-italic text-[11px] text-gray-500">{p.link?.replace('https://', '')}</em></div>
                         <img src={p.image} alt={p.title} loading="lazy" className="w-full aspect-[16/10] object-cover object-top group-hover:scale-[1.02] transition-transform duration-700" />
                       </TiltCard>
