@@ -77,7 +77,7 @@ const Contact: React.FC = () => {
 
       <PageHero
         eyebrow={nl ? 'Contact' : 'Contact'}
-        title={nl ? <>Laten we iets moois <span>bouwen.</span></> : <>Let&apos;s build something <span>great.</span></>}
+        title={nl ? 'Laten we iets moois bouwen.' : "Let's build something great."}
         lead={t('contact.subtitle')}
       />
 

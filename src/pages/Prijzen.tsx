@@ -18,7 +18,7 @@ const Prijzen: React.FC = () => {
     />
     <PageHero
       eyebrow={language === 'nl' ? 'Prijzen' : 'Pricing'}
-      title={language === 'nl' ? <>Eerlijke prijzen, <span>geen</span> verrassingen.</> : <>Fair pricing, <span>no</span> surprises.</>}
+      title={language === 'nl' ? 'Eerlijke prijzen, geen verrassingen.' : 'Fair pricing, no surprises.'}
       lead={t('pricing.subtitle')}
       center
     />

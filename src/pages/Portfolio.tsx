@@ -68,7 +68,7 @@ const Portfolio: React.FC = () => {
 
       <PageHero
         eyebrow="Portfolio"
-        title={nl ? <>Werk waar we <span>trots</span> op zijn.</> : <>Work we are <span>proud</span> of.</>}
+        title={nl ? 'Werk waar we trots op zijn.' : 'Work we are proud of.'}
         lead={nl ? 'Een selectie van websites en webshops die we voor ondernemers hebben gebouwd.' : 'A selection of websites and web shops we built for business owners.'}
       />
 
