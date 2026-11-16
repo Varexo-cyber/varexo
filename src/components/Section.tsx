@@ -47,7 +47,7 @@ export const CtaBlock: React.FC<{ title?: React.ReactNode; text?: string; button
         <AnimateOnScroll animation="reveal-scale">
           <SpotlightCard className="cta-card rounded-[2rem] px-8 py-20 md:px-16 text-center overflow-hidden border border-white/10">
             <h2 className="display text-4xl md:text-6xl mb-6 relative">
-              {title || (nl ? <>Klaar om te <span className="serif text-primary-300">beginnen?</span></> : <>Ready to <span className="serif text-primary-300">start?</span></>)}
+              {title || (nl ? <>Klaar om te <span>beginnen?</span></> : <>Ready to <span>start?</span></>)}
             </h2>
             <p className="lead md:text-xl max-w-xl mx-auto mb-10 relative">
               {text || (nl ? 'Vertel ons over je plannen. Binnen 24 uur heb je een eerlijk voorstel.' : 'Tell us about your plans. You will have an honest proposal within 24 hours.')}

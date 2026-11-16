@@ -14,8 +14,8 @@ const RexoBanner: React.FC = () => {
   const { language } = useLanguage();
   const nl = language === 'nl';
   const a = nl
-    ? ['Rexo AI', 'Bedient je hele pc', 'Kent jouw accounts', 'Geen Alexa, iets beters', 'Installatie aan huis']
-    : ['Rexo AI', 'Controls your whole PC', 'Knows your accounts', 'Not an Alexa, something better', 'Installed at your home'];
+    ? ['Rexo AI', 'Bedient je hele pc', 'Kent jouw accounts', 'Je pc op spraak', 'Installatie aan huis']
+    : ['Rexo AI', 'Controls your whole PC', 'Knows your accounts', 'Your PC by voice', 'Installed at your home'];
   const b = nl
     ? ['WhatsApp', 'Gmail', 'Discord', 'Instagram', 'Je eigen apps', 'Echt geheugen']
     : ['WhatsApp', 'Gmail', 'Discord', 'Instagram', 'Your own apps', 'Real memory'];
@@ -25,7 +25,7 @@ const RexoBanner: React.FC = () => {
       {items.map((t) => (
         <span key={t + k} className="flex items-center">
           <span className="rexo-band-text">{t}</span>
-          <span className="rexo-band-star">✦</span>
+          <span className="rexo-band-star" />
         </span>
       ))}
     </div>
@@ -51,7 +51,7 @@ export const RexoAnnouncement: React.FC = () => {
     <Link to="/ai-assistent" className="rexo-announce group">
       <span className="rexo-announce-shine" />
       <span className="px-2 py-0.5 rounded-full bg-dark-950 text-primary-300 text-[11px] font-bold">{nl ? 'NIEUW' : 'NEW'}</span>
-      <span><b>Rexo AI</b><span className="hidden sm:inline"> {nl ? '— geen Alexa, iets beters: een assistent die je hele pc bedient en jou echt kent.' : '— not an Alexa, something better: an assistant that runs your whole PC and really knows you.'}</span><span className="sm:hidden"> {nl ? '— geen Alexa, iets beters.' : '— not an Alexa, something better.'}</span></span>
+      <span><b>Rexo AI</b><span className="hidden sm:inline"> {nl ? 'bedient je hele pc en je eigen apps, en kent jou echt.' : 'runs your whole PC and your own apps, and really knows you.'}</span><span className="sm:hidden"> {nl ? 'bedient je hele pc.' : 'runs your whole PC.'}</span></span>
       <span className="font-semibold underline underline-offset-2 group-hover:no-underline">{nl ? 'Ontdek' : 'Discover'} →</span>
     </Link>
   );

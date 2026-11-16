@@ -1061,7 +1061,7 @@ const CustomerDashboard: React.FC = () => {
                     else if (hour >= 18 && hour < 23) greeting = 'Good evening';
                     else greeting = 'Good night';
                   }
-                  return <>{greeting}, <span className="serif text-primary-300">{user.displayName}.</span></>;
+                  return <>{greeting}, <span>{user.displayName}.</span></>;
                 })()}
               </p>
             </div>

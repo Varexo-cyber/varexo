@@ -233,7 +233,7 @@ const AiAssistent: React.FC = () => {
         <div className="container mx-auto px-4 max-w-7xl">
           <AnimateOnScroll>
             <span className="eyebrow">{nl ? 'Wat maakt Rexo anders?' : 'What makes Rexo different?'}</span>
-            <h2 className="display text-4xl md:text-6xl mt-4 mb-14 max-w-3xl">{nl ? <>Een assistent die <span className="serif text-primary-300">altijd</span> luistert als je hem nodig hebt.</> : <>An assistant that is <span className="serif text-primary-300">always</span> there when you need it.</>}</h2>
+            <h2 className="display text-4xl md:text-6xl mt-4 mb-14 max-w-3xl">{nl ? 'Rexo zit in je computer, en dat maakt het verschil.' : 'Rexo lives inside your computer, and that makes the difference.'}</h2>
           </AnimateOnScroll>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {uses.map(([t, d], i) => (
@@ -255,7 +255,7 @@ const AiAssistent: React.FC = () => {
           <AnimateOnScroll>
             <div className="text-center mb-12">
               <span className="eyebrow">{nl ? 'Eerlijk vergeleken' : 'An honest comparison'}</span>
-              <h2 className="display text-4xl md:text-6xl mt-4 mb-4">{nl ? <>Geen Alexa. <span className="serif text-primary-300">Iets beters.</span></> : <>Not an Alexa. <span className="serif text-primary-300">Something better.</span></>}</h2>
+              <h2 className="display text-4xl md:text-6xl mt-4 mb-4">{nl ? 'Rexo naast Alexa en Google Home' : 'Rexo next to Alexa and Google Home'}</h2>
               <p className="lead max-w-2xl mx-auto">{nl ? '"Een assistent die je hele computer en je eigen apps bedient en jou echt kent." Dat bieden Alexa en Google Home niet.' : '"An assistant that controls your whole computer and your own apps, and really knows you." Alexa and Google Home do not offer that.'}</p>
             </div>
           </AnimateOnScroll>
@@ -294,7 +294,7 @@ const AiAssistent: React.FC = () => {
           </AnimateOnScroll>
           <AnimateOnScroll>
             <span className="eyebrow">{nl ? 'De hardware' : 'The hardware'}</span>
-            <h2 className="display text-4xl md:text-6xl mt-4 mb-6">Jabra Speak <span className="serif text-primary-300">510.</span></h2>
+            <h2 className="display text-4xl md:text-6xl mt-4 mb-6">Jabra Speak <span>510.</span></h2>
             <p className="lead mb-8">
               {nl
                 ? 'Een speaker en microfoon in één, gemaakt om spraak in een hele ruimte helder op te vangen. Wij kopen hem voor je in, stellen hem in en zetten hem neer waar hij het beste werkt.'
@@ -313,7 +313,7 @@ const AiAssistent: React.FC = () => {
         <div className="container mx-auto px-4 max-w-7xl">
           <AnimateOnScroll>
             <span className="eyebrow">{nl ? 'Zo werkt het' : 'How it works'}</span>
-            <h2 className="display text-4xl md:text-6xl mt-4 mb-14">{nl ? <>Wij doen het werk. <span className="serif text-primary-300">Jij praat.</span></> : <>We do the work. <span className="serif text-primary-300">You talk.</span></>}</h2>
+            <h2 className="display text-4xl md:text-6xl mt-4 mb-14">{nl ? 'Van bestelling tot installatie' : 'From order to installation'}</h2>
           </AnimateOnScroll>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {steps.map(([t, d], i) => (
@@ -335,7 +335,7 @@ const AiAssistent: React.FC = () => {
           <AnimateOnScroll>
             <div className="text-center mb-14">
               <span className="eyebrow">{nl ? 'Pakketten' : 'Packages'}</span>
-              <h2 className="display text-4xl md:text-6xl mt-4 mb-4">{nl ? <>Kies je <span className="serif text-primary-300">ruimte.</span></> : <>Choose your <span className="serif text-primary-300">space.</span></>}</h2>
+              <h2 className="display text-4xl md:text-6xl mt-4 mb-4">{nl ? 'Pakketten en prijzen' : 'Packages and pricing'}</h2>
               <p className="lead max-w-xl mx-auto">{nl ? 'Alle prijzen excl. btw en excl. Jabra Speak (€100 per stuk).' : 'All prices excl. VAT and excl. Jabra Speak (€100 each).'}</p>
             </div>
           </AnimateOnScroll>
@@ -374,7 +374,7 @@ const AiAssistent: React.FC = () => {
           <AnimateOnScroll>
             <SpotlightCard className="surface mt-4 p-8 md:p-10 flex flex-col md:flex-row md:items-center gap-6">
               <div className="flex-1">
-                <h3 className="text-2xl font-semibold text-white mb-2">{nl ? <>Iets anders in gedachten? <span className="serif text-primary-300">Laten we praten.</span></> : <>Something else in mind? <span className="serif text-primary-300">Let's talk.</span></>}</h3>
+                <h3 className="text-2xl font-semibold text-white mb-2">{nl ? <>Iets anders in gedachten? <span>Laten we praten.</span></> : <>Something else in mind? <span>Let's talk.</span></>}</h3>
                 <p className="text-gray-400">{nl ? 'Meer ruimtes, een ander budget of een speciale wens? We maken graag een offerte op maat en kunnen andere prijzen afspreken. Stuur ons gewoon een WhatsApp-bericht.' : 'More rooms, a different budget or a special request? We are happy to make a custom quote and agree on different pricing. Just send us a WhatsApp message.'}</p>
               </div>
               <a href={wa(nl ? 'Hoi Varexo! Ik wil graag een offerte op maat voor een AI-assistent.' : 'Hi Varexo! I would like a custom quote for an AI assistant.')} target="_blank" rel="noopener noreferrer"
@@ -392,7 +392,7 @@ const AiAssistent: React.FC = () => {
       <section className="py-24 bg-dark-950 border-t border-white/5">
         <div className="container mx-auto px-4 max-w-4xl">
           <AnimateOnScroll>
-            <h2 className="display text-4xl md:text-5xl mb-10 text-center">{nl ? <>Veelgestelde <span className="serif text-primary-300">vragen.</span></> : <>Frequently asked <span className="serif text-primary-300">questions.</span></>}</h2>
+            <h2 className="display text-4xl md:text-5xl mb-10 text-center">{nl ? <>Veelgestelde <span>vragen.</span></> : <>Frequently asked <span>questions.</span></>}</h2>
           </AnimateOnScroll>
           <FaqList items={faqs} />
         </div>
@@ -403,7 +403,7 @@ const AiAssistent: React.FC = () => {
         <div className="aurora aurora-bottom" />
         <div className="container mx-auto px-4 max-w-5xl relative z-10 text-center">
           <div className="mb-6"><RexoMark className="text-4xl md:text-5xl" /></div>
-          <h2 className="display text-5xl md:text-8xl mb-8">{nl ? <>Klaar om te <span className="serif text-primary-300">praten?</span></> : <>Ready to <span className="serif text-primary-300">talk?</span></>}</h2>
+          <h2 className="display text-5xl md:text-8xl mb-8">{nl ? <>Klaar om te <span>praten?</span></> : <>Ready to <span>talk?</span></>}</h2>
           <div className="flex flex-wrap justify-center gap-3">
             <Magnetic>
               <a href={wa(nl ? 'Hoi Varexo! Ik wil graag een AI-assistent bij mij thuis/op kantoor.' : 'Hi Varexo! I would like an AI assistant at my home/office.')} target="_blank" rel="noopener noreferrer" className="btn-primary-modern btn-lg gap-2">

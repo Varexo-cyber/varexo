@@ -28,7 +28,7 @@ const Werkwijze: React.FC = () => {
 
       <PageHero
         eyebrow={nl ? 'Werkwijze' : 'Process'}
-        title={nl ? <>Van eerste gesprek tot <span className="serif text-primary-300">livegang.</span></> : <>From first call to <span className="serif text-primary-300">launch.</span></>}
+        title={nl ? <>Van eerste gesprek tot <span>livegang.</span></> : <>From first call to <span>launch.</span></>}
         lead={nl ? 'Vijf heldere stappen. Je weet altijd waar we staan en wat er nog komt.' : 'Five clear steps. You always know where we are and what comes next.'}
       />
 

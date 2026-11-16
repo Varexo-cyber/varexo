@@ -30,6 +30,7 @@ import HelpWidget from './components/HelpWidget';
 import CursorFX from './components/CursorFX';
 import MobileDock from './components/MobileDock';
 import ScrollProgress from './components/ScrollProgress';
+import RouteCurtain from './components/RouteCurtain';
 
 function App() {
   const [, setUser] = React.useState<any>(null);
@@ -92,6 +93,7 @@ function App() {
         <CursorFX />
         <MobileDock />
         <ScrollProgress />
+        <RouteCurtain />
         <div className="grain" aria-hidden />
       </div>
     </Router>
