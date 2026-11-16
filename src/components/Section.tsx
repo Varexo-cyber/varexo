@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import AnimateOnScroll from './AnimateOnScroll';
 import KineticText from './KineticText';
+import DotField from './DotField';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export const ArrowIcon = ({ className = 'w-4 h-4' }: { className?: string }) => (
@@ -69,7 +70,7 @@ export const PageHero: React.FC<{
     <>
       <section ref={ref} onMouseMove={onMove} className="page-hero relative overflow-hidden bg-dark-950 -mt-[72px] pt-[72px]">
         <div className="aurora" />
-        <div className="hero-grid absolute inset-0 pointer-events-none" />
+        <DotField />
         <div className="page-hero-word" aria-hidden>{eyebrow}</div>
         <div className={`container mx-auto px-4 max-w-6xl relative z-10 pt-24 pb-20 md:pt-32 md:pb-28 ${center ? 'text-center' : ''}`}>
           <AnimateOnScroll>

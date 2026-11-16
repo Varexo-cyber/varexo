@@ -8,6 +8,7 @@ import { ArrowIcon } from '../components/Section';
 import { useLanguage } from '../contexts/LanguageContext';
 import SpeakerVisual from '../components/SpeakerVisual';
 import KineticText from '../components/KineticText';
+import DotField from '../components/DotField';
 import RexoBanner, { RexoMark } from '../components/RexoBanner';
 
 const work = [
@@ -111,7 +112,7 @@ const Home: React.FC = () => {
       {/* ───────── Hero: type left, fanned project deck right ───────── */}
       <section ref={heroRef} onMouseMove={onHeroMove} className="hero-modern relative overflow-hidden bg-dark-950 -mt-[72px] pt-[72px]">
         <div className="aurora" />
-        <div className="hero-grid absolute inset-0 pointer-events-none" />
+        <DotField />
         <div className="container mx-auto px-4 max-w-7xl relative z-10 pt-20 pb-16 lg:pt-28 lg:pb-24">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7">
@@ -282,7 +283,7 @@ const Home: React.FC = () => {
             {work.map((w, i) => (
               <AnimateOnScroll key={w.name} delay={i * 0.08} className={i === 0 ? 'md:col-span-2' : ''}>
                 <a href={`https://${w.domain}`} target="_blank" rel="noopener noreferrer" className="work-card group block">
-                  <div className={`overflow-hidden rounded-[1.5rem] ${i === 0 ? 'aspect-[16/8]' : 'aspect-[16/11]'}`}>
+                  <div className={`img-reveal overflow-hidden rounded-[1.5rem] ${i === 0 ? 'aspect-[16/8]' : 'aspect-[16/11]'}`}>
                     <img src={w.img} alt={w.name} loading="lazy" className="w-full h-full object-cover object-top transition-transform duration-[1.2s] ease-out group-hover:scale-[1.04]" />
                   </div>
                   <span className="work-view">{nl ? 'Bekijk' : 'View'}</span>

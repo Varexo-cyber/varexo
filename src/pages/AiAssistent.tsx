@@ -4,6 +4,7 @@ import PageTransition from '../components/PageTransition';
 import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
 import SpeakerVisual from '../components/SpeakerVisual';
+import DotField from '../components/DotField';
 import RexoBanner, { RexoMark } from '../components/RexoBanner';
 import { SpotlightCard, Magnetic } from '../components/Interactive';
 import { ArrowIcon, CheckIcon } from '../components/Section';
@@ -170,7 +171,7 @@ const AiAssistent: React.FC = () => {
       {/* ───────── Hero ───────── */}
       <section className="relative overflow-hidden bg-dark-950 -mt-[72px] pt-[72px]">
         <div className="aurora" />
-        <div className="hero-grid absolute inset-0 pointer-events-none" />
+        <DotField />
         <div className="container mx-auto px-4 max-w-7xl relative z-10 pt-16 pb-20 lg:pt-24 lg:pb-28">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6">

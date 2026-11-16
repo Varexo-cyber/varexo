@@ -80,8 +80,8 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-20 select-none pointer-events-none text-center font-semibold tracking-tighter leading-none text-[22vw] md:text-[17vw] bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(180deg, rgba(255,255,255,0.08), transparent)" }}>
-          varexo
+        <div className="footer-word mt-20 select-none text-center font-semibold tracking-tighter leading-none text-[22vw] md:text-[17vw]" aria-hidden>
+          {'varexo'.split('').map((c, i) => <span key={i}>{c}</span>)}
         </div>
 
         <div className="pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between gap-3 text-xs text-gray-500">
