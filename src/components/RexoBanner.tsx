@@ -14,8 +14,8 @@ const RexoBanner: React.FC = () => {
   const { language } = useLanguage();
   const nl = language === 'nl';
   const a = nl
-    ? ['Rexo AI', 'Bedient je hele pc', 'Kent jouw accounts', 'Je pc op spraak', 'Installatie aan huis']
-    : ['Rexo AI', 'Controls your whole PC', 'Knows your accounts', 'Your PC by voice', 'Installed at your home'];
+    ? ['Rexo AI', 'Praat met je kamer', 'Praat met je kantoor', 'Kent jou echt', 'Installatie aan huis']
+    : ['Rexo AI', 'Talk to your room', 'Talk to your office', 'Really knows you', 'Installed at your home'];
   const b = nl
     ? ['WhatsApp', 'Gmail', 'Discord', 'Instagram', 'Je eigen apps', 'Echt geheugen']
     : ['WhatsApp', 'Gmail', 'Discord', 'Instagram', 'Your own apps', 'Real memory'];
@@ -51,7 +51,7 @@ export const RexoAnnouncement: React.FC = () => {
     <Link to="/ai-assistent" className="rexo-announce group">
       <span className="rexo-announce-shine" />
       <span className="px-2 py-0.5 rounded-full bg-dark-950 text-primary-300 text-[11px] font-bold">{nl ? 'NIEUW' : 'NEW'}</span>
-      <span><b>Rexo AI</b><span className="hidden sm:inline"> {nl ? 'bedient je hele pc en je eigen apps, en kent jou echt.' : 'runs your whole PC and your own apps, and really knows you.'}</span><span className="sm:hidden"> {nl ? 'bedient je hele pc.' : 'runs your whole PC.'}</span></span>
+      <span><b>Rexo AI</b><span className="hidden sm:inline"> {nl ? 'praat met je kamer, kantoor of wat dan ook.' : 'talk to your room, office or any space.'}</span><span className="sm:hidden"> {nl ? 'praat met je kamer.' : 'talk to your room.'}</span></span>
       <span className="font-semibold underline underline-offset-2 group-hover:no-underline">{nl ? 'Ontdek' : 'Discover'} →</span>
     </Link>
   );

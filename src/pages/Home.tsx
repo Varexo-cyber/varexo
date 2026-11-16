@@ -190,14 +190,14 @@ const Home: React.FC = () => {
                     <span className="px-2 py-0.5 rounded-full bg-primary-500 text-dark-950 text-xs font-bold">{nl ? 'Nieuw' : 'New'}</span>
                     {nl ? 'Maak kennis met' : 'Meet'} <RexoMark className="text-base" />
                   </span>
-                  <h2 className="display text-4xl md:text-6xl mb-5">{nl ? <>Praat tegen je pc. <span>Hij doet het.</span></> : <>Talk to your PC. <span>It gets it done.</span></>}</h2>
+                  <h2 className="display text-4xl md:text-6xl mb-5">{nl ? 'Praat met je kamer.' : 'Talk to your room.'}</h2>
                   <p className="lead max-w-lg mb-8">
                     {nl
-                      ? 'Rexo AI zit in je computer: hij bedient je pc en je eigen apps, kent je accounts en onthoudt wat je vertelt. Wij installeren alles bij jou thuis.'
-                      : 'Rexo AI lives in your computer: it controls your PC and your own apps, knows your accounts and remembers what you tell it. We install everything at your place.'}
+                      ? 'Rexo AI maakt van je kamer, kantoor of praktijk een ruimte waar je mee praat. Hij bedient je eigen apps, kent je accounts en onthoudt wat je vertelt. Wij installeren alles bij jou op locatie.'
+                      : 'Rexo AI turns your room, office or practice into a space you talk to. It runs your own apps, knows your accounts and remembers what you tell it. We install everything on site.'}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-8">
-                    {(nl ? ['Bedient je hele pc', 'Kent je accounts', 'WhatsApp, Discord & Instagram', 'Onthoudt alles'] : ['Controls your whole PC', 'Knows your accounts', 'WhatsApp, Discord & Instagram', 'Remembers everything']).map((x) => (
+                    {(nl ? ['Kamer, kantoor of praktijk', 'Kent je accounts', 'WhatsApp, Discord & Instagram', 'Onthoudt alles'] : ['Room, office or practice', 'Knows your accounts', 'WhatsApp, Discord & Instagram', 'Remembers everything']).map((x) => (
                       <span key={x} className="chip !text-xs !py-1">✓ {x}</span>
                     ))}
                   </div>
