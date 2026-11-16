@@ -65,7 +65,7 @@ const Diensten: React.FC = () => {
 
       <PageHero
         eyebrow={nl ? 'Diensten' : 'Services'}
-        title={nl ? <>Alles wat je online <span className="serif text-primary-300">nodig</span> hebt.</> : <>Everything you <span className="serif text-primary-300">need</span> online.</>}
+        title={nl ? <>Alles wat je online <span>nodig</span> hebt.</> : <>Everything you <span>need</span> online.</>}
         lead={t('services.page.subtitle')}
       />
 
@@ -103,7 +103,7 @@ const Diensten: React.FC = () => {
         <div className="container mx-auto px-4 max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-12">
           <AnimateOnScroll className="lg:col-span-4">
             <span className="eyebrow">Extra</span>
-            <h2 className="display text-4xl md:text-5xl mt-4 mb-4">{nl ? <>Losse <span className="serif text-primary-300">diensten.</span></> : <>Individual <span className="serif text-primary-300">services.</span></>}</h2>
+            <h2 className="display text-4xl md:text-5xl mt-4 mb-4">{nl ? <>Losse <span>diensten.</span></> : <>Individual <span>services.</span></>}</h2>
             <p className="lead">{nl ? 'Om je online aanwezigheid compleet te maken.' : 'To complete your online presence.'}</p>
           </AnimateOnScroll>
           <div className="lg:col-span-8 divide-y divide-white/10 border-y border-white/10">

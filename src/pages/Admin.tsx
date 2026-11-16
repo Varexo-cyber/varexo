@@ -2019,7 +2019,7 @@ const AdminDashboard: React.FC = () => {
             <div>
               <p className="text-sm text-gray-500">{new Date().toLocaleDateString(language === 'nl' ? 'nl-NL' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
               <h1 className="text-3xl md:text-4xl font-semibold text-white tracking-tight mt-1">
-                {language === 'nl' ? 'Goedendag' : 'Welcome back'} <span className="serif text-primary-300">admin.</span>
+                {language === 'nl' ? 'Goedendag' : 'Welcome back'} <span>admin.</span>
               </h1>
             </div>
             <div className="inline-flex p-1 rounded-full bg-white/[0.04] border border-white/[0.06] self-start md:self-auto">

@@ -7,6 +7,7 @@ import { Magnetic, CountUp } from '../components/Interactive';
 import { ArrowIcon } from '../components/Section';
 import { useLanguage } from '../contexts/LanguageContext';
 import SpeakerVisual from '../components/SpeakerVisual';
+import KineticText from '../components/KineticText';
 import RexoBanner, { RexoMark } from '../components/RexoBanner';
 
 const work = [
@@ -117,12 +118,12 @@ const Home: React.FC = () => {
               <AnimateOnScroll>
                 <div className="flex items-center gap-3 mb-8 text-sm text-gray-400">
                   <span className="relative flex w-2 h-2"><span className="absolute inset-0 rounded-full bg-primary-400 animate-ping opacity-60" /><span className="relative w-2 h-2 rounded-full bg-primary-400" /></span>
-                  {nl ? 'Plek voor 2 nieuwe projecten deze maand' : 'Room for 2 new projects this month'}
+                  {nl ? 'Websites vanaf €650 · binnen 7 dagen live' : 'Websites from €650 · live within 7 days'}
                 </div>
               </AnimateOnScroll>
               <AnimateOnScroll delay={0.06}>
                 <h1 className="display text-[3.1rem] sm:text-7xl xl:text-[6.4rem]">
-                  {nl ? 'Websites die' : 'Websites that'}
+                  <KineticText text={nl ? 'Websites die' : 'Websites that'} />
                   <br />
                   <RotatingWord words={nl ? ['verkopen.', 'opvallen.', 'groeien.', 'werken.'] : ['sell.', 'stand out.', 'grow.', 'work.']} />
                 </h1>
@@ -188,11 +189,11 @@ const Home: React.FC = () => {
                     <span className="px-2 py-0.5 rounded-full bg-primary-500 text-dark-950 text-xs font-bold">{nl ? 'Nieuw' : 'New'}</span>
                     {nl ? 'Maak kennis met' : 'Meet'} <RexoMark className="text-base" />
                   </span>
-                  <h2 className="display text-4xl md:text-6xl mb-5">{nl ? <>Praat tegen je pc. <span className="serif text-primary-300">Hij doet het.</span></> : <>Talk to your PC. <span className="serif text-primary-300">It gets it done.</span></>}</h2>
+                  <h2 className="display text-4xl md:text-6xl mb-5">{nl ? <>Praat tegen je pc. <span>Hij doet het.</span></> : <>Talk to your PC. <span>It gets it done.</span></>}</h2>
                   <p className="lead max-w-lg mb-8">
                     {nl
-                      ? 'Geen Alexa, iets beters. Rexo AI zit in je computer: hij bedient je pc en je eigen apps, kent je accounts en onthoudt wat je vertelt. Wij installeren alles bij jou thuis.'
-                      : 'Not an Alexa, something better. Rexo AI lives in your computer: it controls your PC and your own apps, knows your accounts and remembers what you tell it. We install everything at your place.'}
+                      ? 'Rexo AI zit in je computer: hij bedient je pc en je eigen apps, kent je accounts en onthoudt wat je vertelt. Wij installeren alles bij jou thuis.'
+                      : 'Rexo AI lives in your computer: it controls your PC and your own apps, knows your accounts and remembers what you tell it. We install everything at your place.'}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-8">
                     {(nl ? ['Bedient je hele pc', 'Kent je accounts', 'WhatsApp, Discord & Instagram', 'Onthoudt alles'] : ['Controls your whole PC', 'Knows your accounts', 'WhatsApp, Discord & Instagram', 'Remembers everything']).map((x) => (
@@ -235,7 +236,7 @@ const Home: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-12">
             <AnimateOnScroll className="lg:col-span-6">
               <span className="eyebrow">{nl ? 'Wat we doen' : 'What we do'}</span>
-              <h2 className="display text-4xl md:text-6xl mt-4">{nl ? <>Eén partner voor <span className="serif text-primary-300">alles</span> online.</> : <>One partner for <span className="serif text-primary-300">everything</span> online.</>}</h2>
+              <h2 className="display text-4xl md:text-6xl mt-4">{nl ? <>Eén partner voor <span>alles</span> online.</> : <>One partner for <span>everything</span> online.</>}</h2>
             </AnimateOnScroll>
             <AnimateOnScroll className="lg:col-span-5 lg:col-start-8 self-end" delay={0.08}>
               <p className="lead">{nl ? 'Van je eerste website tot een compleet klantportaal. Je spreekt altijd met de mensen die het bouwen.' : 'From your first website to a complete client portal. You always talk to the people who build it.'}</p>
@@ -272,7 +273,7 @@ const Home: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
               <div>
                 <span className="eyebrow">{nl ? 'Geselecteerd werk' : 'Selected work'}</span>
-                <h2 className="display text-4xl md:text-6xl mt-4">{nl ? <>Recent <span className="serif text-primary-300">opgeleverd.</span></> : <>Recently <span className="serif text-primary-300">launched.</span></>}</h2>
+                <h2 className="display text-4xl md:text-6xl mt-4">{nl ? <>Recent <span>opgeleverd.</span></> : <>Recently <span>launched.</span></>}</h2>
               </div>
               <Link to="/portfolio" className="btn-ghost-modern self-start md:self-auto">{nl ? 'Alle projecten' : 'All projects'} <ArrowIcon className="w-4 h-4 ml-2" /></Link>
             </div>
@@ -305,7 +306,7 @@ const Home: React.FC = () => {
           <div className="lg:col-span-5">
             <div className="lg:sticky lg:top-32">
               <span className="eyebrow">{nl ? 'Hoe het werkt' : 'How it works'}</span>
-              <h2 className="display text-4xl md:text-6xl mt-4 mb-6">{nl ? <>Vier stappen. <span className="serif text-primary-300">Nul gedoe.</span></> : <>Four steps. <span className="serif text-primary-300">Zero hassle.</span></>}</h2>
+              <h2 className="display text-4xl md:text-6xl mt-4 mb-6">{nl ? 'Zo pakken we het aan.' : 'How we work.'}</h2>
               <p className="lead mb-8">{nl ? 'Je weet altijd waar we staan. Gemiddeld staat je site binnen een week online.' : 'You always know where we are. On average your site is live within a week.'}</p>
               <div className="text-7xl font-semibold text-white/10 tabular-nums">{String(Math.min(4, Math.floor(progress * 4) + 1)).padStart(2, '0')}<span className="text-white/5">/04</span></div>
             </div>
@@ -335,7 +336,7 @@ const Home: React.FC = () => {
       <section className="py-24 bg-dark-950 border-t border-white/5">
         <div className="container mx-auto px-4 max-w-4xl">
           <AnimateOnScroll>
-            <h2 className="display text-4xl md:text-5xl mb-10 text-center">{nl ? <>Vragen? <span className="serif text-primary-300">Antwoorden.</span></> : <>Questions? <span className="serif text-primary-300">Answers.</span></>}</h2>
+            <h2 className="display text-4xl md:text-5xl mb-10 text-center">{nl ? 'Veelgestelde vragen' : 'Frequently asked questions'}</h2>
           </AnimateOnScroll>
           <div className="border-t border-white/10">
             {faqs.map(([q, a], i) => (
