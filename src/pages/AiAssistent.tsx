@@ -66,17 +66,17 @@ const AiAssistent: React.FC = () => {
 
   const uses = nl
     ? [
-        ['Bedient je computer', 'Apps openen en sluiten, typen waar je cursor staat, sneltoetsen, je cv openen en printen. Rexo zit ín je pc, een slimme speaker niet.'],
+        ['Doet het werk voor je', 'Apps openen en sluiten, teksten typen, je cv openen en printen. Je zegt het hardop in de ruimte en Rexo regelt het.'],
         ['Kent jouw accounts', '"Mijn Gmail", "de zakelijke mail", "school-mail" of die ene ChatGPT-chat. Rexo weet welk account in welk Chrome-profiel zit.'],
-        ['Berichten in jouw apps', 'WhatsApp, Discord en Instagram op je pc: berichten lezen, beantwoorden en spraakmemo\'s sturen, met zijn stem of de jouwe.'],
+        ['Berichten in jouw apps', 'WhatsApp, Discord en Instagram: berichten laten voorlezen, beantwoorden en spraakmemo\'s sturen, met zijn stem of de jouwe.'],
         ['Echt geheugen', 'Hij onthoudt lopende zaken, wat je gisteren zei en leert van zijn fouten. Rexo past zich aan jou aan.'],
         ['Snapt wat je bedoelt', 'Halve of rommelige zinnen en context, zoals "zet hem harder" tijdens een nummer. Geen vast commandolijstje.'],
         ['Helemaal van jou', 'Stem, gedrag en nieuwe functies: alles is aan te passen. Geen Amazon of Google die bepaalt wat mag.'],
       ]
     : [
-        ['Controls your computer', 'Open and close apps, type where your cursor is, shortcuts, open and print your CV. Rexo lives inside your PC, a smart speaker does not.'],
+        ['Does the work for you', 'Open and close apps, type text, open and print your CV. Say it out loud in the room and Rexo takes care of it.'],
         ['Knows your accounts', '"My Gmail", "the work mail", "school mail" or that one ChatGPT chat. Rexo knows which account sits in which Chrome profile.'],
-        ['Messages in your apps', 'WhatsApp, Discord and Instagram on your PC: read, reply and send voice notes, in its voice or yours.'],
+        ['Messages in your apps', 'WhatsApp, Discord and Instagram: have messages read out, reply and send voice notes, in its voice or yours.'],
         ['Real memory', 'It remembers ongoing things, what you said yesterday, and learns from its mistakes. Rexo adapts to you.'],
         ['Gets what you mean', 'Half or messy sentences and context, like "turn it up" during a song. No fixed command list.'],
         ['Truly yours', 'Voice, behaviour and new features: everything can be customised. No Amazon or Google deciding what is allowed.'],
@@ -84,18 +84,18 @@ const AiAssistent: React.FC = () => {
 
   const compare: [string, string, string][] = nl
     ? [
-        ['Bedient je computer en apps', 'yes', 'no'],
+        ['Bedient je apps en programma\'s', 'yes', 'no'],
         ['Kent je eigen accounts (Gmail, school, Chrome-profielen)', 'yes', 'no'],
-        ['WhatsApp, Discord en Instagram op je pc', 'yes', 'limited'],
+        ['WhatsApp, Discord en Instagram', 'yes', 'limited'],
         ['Onthoudt lopende zaken en leert van fouten', 'yes', 'limited'],
         ['Begrijpt halve zinnen en context', 'yes', 'limited'],
         ['Stem, gedrag en functies volledig aanpasbaar', 'yes', 'no'],
         ['Lampen, stekkers en thermostaat', 'soon', 'yes'],
       ]
     : [
-        ['Controls your computer and apps', 'yes', 'no'],
+        ['Controls your apps and programs', 'yes', 'no'],
         ['Knows your own accounts (Gmail, school, Chrome profiles)', 'yes', 'no'],
-        ['WhatsApp, Discord and Instagram on your PC', 'yes', 'limited'],
+        ['WhatsApp, Discord and Instagram', 'yes', 'limited'],
         ['Remembers ongoing things and learns from mistakes', 'yes', 'limited'],
         ['Understands half sentences and context', 'yes', 'limited'],
         ['Voice, behaviour and features fully customisable', 'yes', 'no'],
@@ -103,8 +103,8 @@ const AiAssistent: React.FC = () => {
       ];
 
   const steps = nl
-    ? [['Kennismaken', 'We bespreken wat je wilt en welke ruimte(s).'], ['Wij regelen de hardware', 'We kopen de Jabra Speak(s) en stellen alles vooraf in.'], ['Installatie aan huis', 'We installeren Rexo op je pc, zetten de speaker neer en testen alles op jouw adres.'], ['Praten maar', 'Je kunt direct beginnen. Wij blijven het onderhouden.']]
-    : [['Intro', 'We discuss what you want and which room(s).'], ['We handle the hardware', 'We buy the Jabra Speak(s) and set everything up in advance.'], ['Installed at your place', 'We install Rexo on your PC, place the speaker and test everything at your address.'], ['Start talking', 'You can start right away. We keep maintaining it.']];
+    ? [['Kennismaken', 'We bespreken wat je wilt en welke ruimte(s).'], ['Wij regelen de hardware', 'We kopen de Jabra Speak(s) en stellen alles vooraf in.'], ['Installatie aan huis', 'We installeren Rexo in je ruimte, zetten de speaker neer en testen alles op jouw adres.'], ['Praten maar', 'Je kunt direct beginnen. Wij blijven het onderhouden.']]
+    : [['Intro', 'We discuss what you want and which room(s).'], ['We handle the hardware', 'We buy the Jabra Speak(s) and set everything up in advance.'], ['Installed at your place', 'We set Rexo up in your space, place the speaker and test everything at your address.'], ['Start talking', 'You can start right away. We keep maintaining it.']];
 
   const faqs = nl
     ? [
@@ -114,8 +114,8 @@ const AiAssistent: React.FC = () => {
         ['Hoe zit het met mijn privacy?', 'Voor de installatie leggen we je duidelijk uit wat er met je gesprekken gebeurt en maken we daar afspraken over. Op kantoor stemmen we dat ook af met je team.'],
         ['Kan ik een andere prijs of een pakket op maat krijgen?', 'Zeker. Stuur ons een WhatsApp-bericht, dan maken we een offerte die past bij jouw situatie.'],
         ['Kan ik later uitbreiden?', 'Ja. Extra kamers of speakers voegen we gewoon toe.'],
-        ['Wat is het verschil met Alexa of Google Home?', 'Rexo zit in je computer. Hij bedient je pc en je eigen apps, kent je accounts en onthoudt wat je vertelt. Een slimme speaker kan dat niet.'],
-        ['Moet mijn computer aan staan?', 'Ja. Rexo draait op je pc, dus die moet aan staan om hem te gebruiken.'],
+        ['Wat is het verschil met Alexa of Google Home?', 'Rexo is je eigen assistent voor je kamer of kantoor. Hij bedient je eigen apps, kent je accounts en onthoudt wat je vertelt. Een standaard slimme speaker kan dat niet.'],
+        ['Moet er iets aan blijven staan?', 'Ja. Rexo draait op een computer in je ruimte; die moet aan staan om met Rexo te praten. Dat richten wij bij de installatie voor je in.'],
         ['Kan Rexo ook mijn lampen bedienen?', 'Nog niet standaard. Smart home (lampen, stekkers, thermostaat) bouwen we nog, bijvoorbeeld via Home Assistant. Vraag gerust wat er bij jou mogelijk is.'],
         ['Werkt Rexo altijd perfect?', 'Rexo is nieuw en wordt elke week beter. Soms mist hij je nog, of vinden we een foutje. Updates en verbeteringen zitten in je maandbedrag.'],
       ]
@@ -126,8 +126,8 @@ const AiAssistent: React.FC = () => {
         ['What about my privacy?', 'Before installing, we clearly explain what happens to your conversations and agree on it together. For offices we also align with your team.'],
         ['Can I get a different price or a custom package?', 'Absolutely. Send us a WhatsApp message and we will make a quote that fits your situation.'],
         ['Can I expand later?', 'Yes. We simply add extra rooms or speakers.'],
-        ['How is this different from Alexa or Google Home?', 'Rexo lives inside your computer. It controls your PC and your own apps, knows your accounts and remembers what you tell it. A smart speaker cannot do that.'],
-        ['Does my computer need to be on?', 'Yes. Rexo runs on your PC, so it needs to be on to use it.'],
+        ['How is this different from Alexa or Google Home?', 'Rexo is your own assistant for your room or office. It controls your own apps, knows your accounts and remembers what you tell it. A standard smart speaker cannot do that.'],
+        ['Does anything need to stay on?', 'Yes. Rexo runs on a computer in your space, which needs to be on to talk to Rexo. We set that up for you during installation.'],
         ['Can Rexo control my lights?', 'Not out of the box yet. Smart home (lights, plugs, thermostat) is still being built, for example via Home Assistant. Ask us what is possible for you.'],
         ['Does Rexo always work perfectly?', 'Rexo is new and gets better every week. Sometimes it still misses you, or we find a bug. Updates and improvements are included in your monthly fee.'],
       ];
@@ -161,9 +161,9 @@ const AiAssistent: React.FC = () => {
       <SEO
         title={nl ? 'Rexo AI – AI-assistent voor thuis & kantoor, geïnstalleerd aan huis' : 'Rexo AI – AI assistant for home & office, installed at your place'}
         description={nl
-          ? 'Rexo AI: een AI-assistent die je hele computer en je eigen apps bedient en jou echt kent. Anders dan Alexa of Google Home. Installatie aan huis, vanaf €300 + €19,99 p/m.'
-          : 'Rexo AI: an assistant that controls your whole computer and your own apps, and really knows you. Unlike Alexa or Google Home. Installed at your place, from €300 + €19.99 p/m.'}
-        keywords="Rexo AI, Rexo, AI assistent pc, spraakassistent computer, alternatief voor Alexa, alternatief voor Google Home, AI assistent thuis, AI assistent kantoor, Jabra Speak, slimme speaker installatie, spraakassistent laten installeren, AI in huis, AI voor bedrijven, Varexo AI"
+          ? 'Rexo AI: praat met je kamer, kantoor of welke ruimte dan ook. Een assistent die je eigen apps bedient en jou echt kent. Anders dan Alexa of Google Home. Installatie aan huis, vanaf €300 + €19,99 p/m.'
+          : 'Rexo AI: talk to your room, office or any space. An assistant that runs your own apps and really knows you. Unlike Alexa or Google Home. Installed at your place, from €300 + €19.99 p/m.'}
+        keywords="Rexo AI, Rexo, praat met je kamer, AI kamer, AI kantoor, slimme ruimte, alternatief voor Alexa, alternatief voor Google Home, AI assistent thuis, AI assistent kantoor, Jabra Speak, slimme speaker installatie, spraakassistent laten installeren, AI in huis, AI voor bedrijven, Varexo AI"
         canonical="/ai-assistent"
         jsonLd={jsonLd}
       />
@@ -183,14 +183,14 @@ const AiAssistent: React.FC = () => {
               </AnimateOnScroll>
               <AnimateOnScroll delay={0.06}>
                 <h1 className="display text-[3rem] sm:text-7xl xl:text-[5.6rem]">
-                  {nl ? <>Praat tegen je pc. <span className="serif text-primary-300">Hij doet het.</span></> : <>Talk to your PC. <span className="serif text-primary-300">It gets it done.</span></>}
+                  {nl ? <>Praat met je kamer. <span className="serif text-primary-300">Hij praat terug.</span></> : <>Talk to your room. <span className="serif text-primary-300">It talks back.</span></>}
                 </h1>
               </AnimateOnScroll>
               <AnimateOnScroll delay={0.12}>
                 <p className="lead sm:text-xl max-w-xl mt-8 mb-10">
                   {nl
-                    ? 'Rexo AI is een assistent die je hele computer en je eigen apps bedient en jou echt kent. Iets wat Alexa en Google Home niet kunnen. Wij leveren de Jabra Speak, installeren alles bij jou thuis en jij hoeft alleen te praten.'
-                    : 'Rexo AI is an assistant that controls your whole computer and your own apps, and really knows you. Something Alexa and Google Home cannot do. We deliver the Jabra Speak, install everything at your place and all you do is talk.'}
+                    ? 'Rexo AI maakt van je kamer, kantoor of praktijk een ruimte waar je gewoon mee praat. Hij bedient je eigen apps en kent jou echt. Iets wat Alexa en Google Home niet kunnen. Wij leveren de Jabra Speak, installeren alles bij jou thuis en jij hoeft alleen te praten.'
+                    : 'Rexo AI turns your room, office or practice into a space you simply talk to. It runs your own apps and really knows you. Something Alexa and Google Home cannot do. We deliver the Jabra Speak, install everything at your place and all you do is talk.'}
                 </p>
               </AnimateOnScroll>
               <AnimateOnScroll delay={0.18}>
@@ -206,7 +206,7 @@ const AiAssistent: React.FC = () => {
                   </a>
                 </div>
                 <div className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-400">
-                  {(nl ? ['Bedient je hele pc', 'Kent je eigen accounts', 'Installatie aan huis'] : ['Controls your whole PC', 'Knows your accounts', 'Installed at your home']).map((x) => (
+                  {(nl ? ['Praat met je hele ruimte', 'Kent je eigen accounts', 'Installatie aan huis'] : ['Talk to your whole space', 'Knows your accounts', 'Installed at your home']).map((x) => (
                     <span key={x} className="flex items-center gap-2"><span className="check-dot !w-[18px] !h-[18px]"><CheckIcon className="w-2.5 h-2.5" /></span>{x}</span>
                   ))}
                 </div>
@@ -234,7 +234,7 @@ const AiAssistent: React.FC = () => {
         <div className="container mx-auto px-4 max-w-7xl">
           <AnimateOnScroll>
             <span className="eyebrow">{nl ? 'Wat maakt Rexo anders?' : 'What makes Rexo different?'}</span>
-            <h2 className="display text-4xl md:text-6xl mt-4 mb-14 max-w-3xl">{nl ? 'Rexo zit in je computer, en dat maakt het verschil.' : 'Rexo lives inside your computer, and that makes the difference.'}</h2>
+            <h2 className="display text-4xl md:text-6xl mt-4 mb-14 max-w-3xl">{nl ? 'Je kamer, kantoor of praktijk die luistert en meedenkt.' : 'A room, office or practice that listens and thinks along.'}</h2>
           </AnimateOnScroll>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {uses.map(([t, d], i) => (
@@ -257,7 +257,7 @@ const AiAssistent: React.FC = () => {
             <div className="text-center mb-12">
               <span className="eyebrow">{nl ? 'Eerlijk vergeleken' : 'An honest comparison'}</span>
               <h2 className="display text-4xl md:text-6xl mt-4 mb-4">{nl ? 'Rexo naast Alexa en Google Home' : 'Rexo next to Alexa and Google Home'}</h2>
-              <p className="lead max-w-2xl mx-auto">{nl ? '"Een assistent die je hele computer en je eigen apps bedient en jou echt kent." Dat bieden Alexa en Google Home niet.' : '"An assistant that controls your whole computer and your own apps, and really knows you." Alexa and Google Home do not offer that.'}</p>
+              <p className="lead max-w-2xl mx-auto">{nl ? '"Praat met je kamer, kantoor of wat dan ook. Rexo bedient je eigen apps en kent jou echt." Dat bieden Alexa en Google Home niet.' : '"Talk to your room, office or any space. Rexo runs your own apps and really knows you." Alexa and Google Home do not offer that.'}</p>
             </div>
           </AnimateOnScroll>
           <AnimateOnScroll>
