@@ -5,6 +5,8 @@ import AnimateOnScroll from '../components/AnimateOnScroll';
 import SEO from '../components/SEO';
 import SpeakerVisual from '../components/SpeakerVisual';
 import DotField from '../components/DotField';
+import RotatingWord from '../components/RotatingWord';
+import RexoEmployeeBuilder from '../components/RexoEmployeeBuilder';
 import RexoBanner, { RexoMark } from '../components/RexoBanner';
 import { SpotlightCard, Magnetic } from '../components/Interactive';
 import { ArrowIcon, CheckIcon } from '../components/Section';
@@ -114,6 +116,7 @@ const AiAssistent: React.FC = () => {
         ['Hoe zit het met mijn privacy?', 'Voor de installatie leggen we je duidelijk uit wat er met je gesprekken gebeurt en maken we daar afspraken over. Op kantoor stemmen we dat ook af met je team.'],
         ['Kan ik een andere prijs of een pakket op maat krijgen?', 'Zeker. Stuur ons een WhatsApp-bericht, dan maken we een offerte die past bij jouw situatie.'],
         ['Kan ik later uitbreiden?', 'Ja. Extra kamers of speakers voegen we gewoon toe.'],
+        ['Wat is een Rexo Werknemer?', 'Een AI-collega voor je bedrijf, op maat gebouwd. Hij neemt taken over zoals klantvragen, planning, mail en administratie, zodat jij en je team uren per week terugkrijgen. Stel hem samen op deze pagina; je krijgt een offerte op maat.'],
         ['Wat is het verschil met Alexa of Google Home?', 'Rexo is je eigen assistent voor je kamer of kantoor. Hij bedient je eigen apps, kent je accounts en onthoudt wat je vertelt. Een standaard slimme speaker kan dat niet.'],
         ['Moet er iets aan blijven staan?', 'Ja. Rexo draait op een computer in je ruimte; die moet aan staan om met Rexo te praten. Dat richten wij bij de installatie voor je in.'],
         ['Kan Rexo ook mijn lampen bedienen?', 'Nog niet standaard. Smart home (lampen, stekkers, thermostaat) bouwen we nog, bijvoorbeeld via Home Assistant. Vraag gerust wat er bij jou mogelijk is.'],
@@ -126,6 +129,7 @@ const AiAssistent: React.FC = () => {
         ['What about my privacy?', 'Before installing, we clearly explain what happens to your conversations and agree on it together. For offices we also align with your team.'],
         ['Can I get a different price or a custom package?', 'Absolutely. Send us a WhatsApp message and we will make a quote that fits your situation.'],
         ['Can I expand later?', 'Yes. We simply add extra rooms or speakers.'],
+        ['What is a Rexo Employee?', 'A custom-built AI colleague for your business. It takes over tasks like customer questions, scheduling, email and admin, so you and your team get hours back every week. Build it on this page; you will receive a custom quote.'],
         ['How is this different from Alexa or Google Home?', 'Rexo is your own assistant for your room or office. It controls your own apps, knows your accounts and remembers what you tell it. A standard smart speaker cannot do that.'],
         ['Does anything need to stay on?', 'Yes. Rexo runs on a computer in your space, which needs to be on to talk to Rexo. We set that up for you during installation.'],
         ['Can Rexo control my lights?', 'Not out of the box yet. Smart home (lights, plugs, thermostat) is still being built, for example via Home Assistant. Ask us what is possible for you.'],
@@ -163,7 +167,7 @@ const AiAssistent: React.FC = () => {
         description={nl
           ? 'Rexo AI: praat met je kamer, kantoor of welke ruimte dan ook. Een assistent die je eigen apps bedient en jou echt kent. Anders dan Alexa of Google Home. Installatie aan huis, vanaf €300 + €19,99 p/m.'
           : 'Rexo AI: talk to your room, office or any space. An assistant that runs your own apps and really knows you. Unlike Alexa or Google Home. Installed at your place, from €300 + €19.99 p/m.'}
-        keywords="Rexo AI, Rexo, praat met je kamer, AI kamer, AI kantoor, slimme ruimte, alternatief voor Alexa, alternatief voor Google Home, AI assistent thuis, AI assistent kantoor, Jabra Speak, slimme speaker installatie, spraakassistent laten installeren, AI in huis, AI voor bedrijven, Varexo AI"
+        keywords="Rexo AI, Rexo, AI werknemer, AI medewerker, AI personeel, AI receptionist, AI secretaresse, uren besparen ondernemer, praat met je kamer, AI kamer, AI kantoor, slimme ruimte, alternatief voor Alexa, alternatief voor Google Home, AI assistent thuis, AI assistent kantoor, Jabra Speak, slimme speaker installatie, spraakassistent laten installeren, AI in huis, AI voor bedrijven, Varexo AI"
         canonical="/ai-assistent"
         jsonLd={jsonLd}
       />
@@ -183,14 +187,14 @@ const AiAssistent: React.FC = () => {
               </AnimateOnScroll>
               <AnimateOnScroll delay={0.06}>
                 <h1 className="display text-[3rem] sm:text-7xl xl:text-[5.6rem]">
-                  {nl ? <>Praat met je kamer. <span className="serif text-primary-300">Hij praat terug.</span></> : <>Talk to your room. <span className="serif text-primary-300">It talks back.</span></>}
+                  {nl ? 'Praat met je' : 'Talk to your'}<br /><RotatingWord words={nl ? ['kamer.', 'huis.', 'kantoor.', 'praktijk.'] : ['room.', 'home.', 'office.', 'practice.']} />
                 </h1>
               </AnimateOnScroll>
               <AnimateOnScroll delay={0.12}>
                 <p className="lead sm:text-xl max-w-xl mt-8 mb-10">
                   {nl
-                    ? 'Rexo AI maakt van je kamer, kantoor of praktijk een ruimte waar je gewoon mee praat. Hij bedient je eigen apps en kent jou echt. Iets wat Alexa en Google Home niet kunnen. Wij leveren de Jabra Speak, installeren alles bij jou thuis en jij hoeft alleen te praten.'
-                    : 'Rexo AI turns your room, office or practice into a space you simply talk to. It runs your own apps and really knows you. Something Alexa and Google Home cannot do. We deliver the Jabra Speak, install everything at your place and all you do is talk.'}
+                    ? 'Rexo AI maakt van je kamer, huis of kantoor een ruimte waar je gewoon mee praat. Voor bedrijven neemt hij als AI-werknemer het werk over dat managers en eigenaren nu uren per week kost. Iets wat Alexa en Google Home niet kunnen. Wij leveren de Jabra Speak, installeren alles bij jou thuis en jij hoeft alleen te praten.'
+                    : 'Rexo AI turns your room, home or office into a space you simply talk to. For businesses it works as an AI employee, taking over the work that costs managers and owners hours every week. Something Alexa and Google Home cannot do. We deliver the Jabra Speak, install everything at your place and all you do is talk.'}
                 </p>
               </AnimateOnScroll>
               <AnimateOnScroll delay={0.18}>
@@ -201,12 +205,13 @@ const AiAssistent: React.FC = () => {
                       <ArrowIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </a>
                   </Magnetic>
+                  <a href="#werknemer" className="btn-ghost-modern">{nl ? 'Stel je AI-werknemer samen' : 'Build your AI employee'}</a>
                   <a href={wa(nl ? 'Hoi Varexo! Ik heb interesse in Rexo AI.' : 'Hi Varexo! I am interested in Rexo AI.')} target="_blank" rel="noopener noreferrer" className="btn-ghost-modern gap-2">
                     <WaIcon className="w-4 h-4" /> WhatsApp
                   </a>
                 </div>
                 <div className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-400">
-                  {(nl ? ['Praat met je hele ruimte', 'Kent je eigen accounts', 'Installatie aan huis'] : ['Talk to your whole space', 'Knows your accounts', 'Installed at your home']).map((x) => (
+                  {(nl ? ['Kamer, huis of kantoor', 'AI-werknemer op maat', 'Installatie op locatie'] : ['Room, home or office', 'Custom AI employee', 'Installed on site']).map((x) => (
                     <span key={x} className="flex items-center gap-2"><span className="check-dot !w-[18px] !h-[18px]"><CheckIcon className="w-2.5 h-2.5" /></span>{x}</span>
                   ))}
                 </div>
@@ -282,6 +287,43 @@ const AiAssistent: React.FC = () => {
               ))}
             </div>
           </AnimateOnScroll>
+        </div>
+      </section>
+
+      {/* ───────── Rexo Werknemer (custom AI employee) ───────── */}
+      <section id="werknemer" className="relative py-28 bg-dark-950 border-t border-white/5 scroll-mt-20 overflow-hidden">
+        <div className="aurora" />
+        <div className="container mx-auto px-4 max-w-7xl relative z-10">
+          <AnimateOnScroll>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-14 items-end">
+              <div className="lg:col-span-7">
+                <span className="eyebrow">{nl ? 'Voor bedrijven' : 'For businesses'}</span>
+                <h2 className="display text-4xl md:text-7xl mt-4">{nl ? 'Rexo Werknemer: een AI-collega op maat.' : 'Rexo Employee: a custom AI colleague.'}</h2>
+              </div>
+              <div className="lg:col-span-5">
+                <p className="lead">
+                  {nl
+                    ? 'Voor managers en eigenaren die hun dag kwijt zijn aan mail, planning, klantvragen en papierwerk. Stel hieronder je eigen AI-werknemer samen en zie direct hoeveel uren en loonkosten hij je kan besparen.'
+                    : 'For managers and owners who lose their day to email, scheduling, customer questions and paperwork. Build your own AI employee below and instantly see how many hours and wage costs it can save you.'}
+                </p>
+              </div>
+            </div>
+          </AnimateOnScroll>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+            {(nl
+              ? [['Neemt functies over', 'Receptie, klantenservice, planning, administratie of sales. Eén Rexo kan meerdere rollen combineren.'], ['Werkt in jouw systemen', 'Mail, agenda, WhatsApp Business, je CRM of boekhouding. Wij koppelen het op maat.'], ['Groeit met je bedrijf mee', 'Begin met één taak en breid uit. Hij leert je bedrijf, je klanten en je toon kennen.']]
+              : [['Takes over roles', 'Reception, customer service, planning, admin or sales. One Rexo can combine several roles.'], ['Works in your systems', 'Email, calendar, WhatsApp Business, your CRM or accounting. We connect it to fit.'], ['Grows with your business', 'Start with one task and expand. It learns your business, your customers and your tone.']]
+            ).map(([t, d], i) => (
+              <AnimateOnScroll key={t} delay={i * 0.06}>
+                <SpotlightCard className="surface h-full p-7">
+                  <div className="text-sm text-primary-400 mb-4 tabular-nums">0{i + 1}</div>
+                  <h3 className="text-lg font-semibold text-white mb-2">{t}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{d}</p>
+                </SpotlightCard>
+              </AnimateOnScroll>
+            ))}
+          </div>
+          <RexoEmployeeBuilder />
         </div>
       </section>
 
@@ -370,6 +412,17 @@ const AiAssistent: React.FC = () => {
               </AnimateOnScroll>
             ))}
           </div>
+
+          <AnimateOnScroll>
+            <a href="#werknemer" className="news-card group mt-4 p-8 md:p-10 flex flex-col md:flex-row md:items-center gap-6">
+              <div className="flex-1">
+                <span className="chip mb-3">{nl ? 'Voor bedrijven' : 'For businesses'}</span>
+                <h3 className="text-2xl font-semibold text-white mb-2">{nl ? 'Rexo Werknemer op maat' : 'Custom Rexo Employee'}</h3>
+                <p className="text-gray-400">{nl ? 'Een AI-collega die taken van je team overneemt. Stel hem samen en bereken direct je besparing. Prijs op maat.' : 'An AI colleague that takes over tasks from your team. Build it and calculate your savings right away. Custom pricing.'}</p>
+              </div>
+              <span className="btn-primary-modern shrink-0">{nl ? 'Stel samen' : 'Build it'} <ArrowIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
+            </a>
+          </AnimateOnScroll>
 
           {/* Custom quote */}
           <AnimateOnScroll>
