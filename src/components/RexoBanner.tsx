@@ -14,11 +14,11 @@ const RexoBanner: React.FC = () => {
   const { language } = useLanguage();
   const nl = language === 'nl';
   const a = nl
-    ? ['Rexo AI', 'Praat met je kamer', 'Praat met je kantoor', 'Kent jou echt', 'Installatie aan huis']
-    : ['Rexo AI', 'Talk to your room', 'Talk to your office', 'Really knows you', 'Installed at your home'];
+    ? ['Rexo AI', 'Praat met je kamer', 'Praat met je kantoor', 'AI-werknemer op maat', 'Bespaar uren per week']
+    : ['Rexo AI', 'Talk to your room', 'Talk to your office', 'Custom AI employee', 'Save hours every week'];
   const b = nl
-    ? ['WhatsApp', 'Gmail', 'Discord', 'Instagram', 'Je eigen apps', 'Echt geheugen']
-    : ['WhatsApp', 'Gmail', 'Discord', 'Instagram', 'Your own apps', 'Real memory'];
+    ? ['Receptie', 'Klantenservice', 'Planning', 'Administratie', 'Sales', 'Mail']
+    : ['Reception', 'Customer service', 'Planning', 'Admin', 'Sales', 'Email'];
 
   const row = (items: string[], k: number) => (
     <div className="flex items-center shrink-0" key={k}>
@@ -51,7 +51,7 @@ export const RexoAnnouncement: React.FC = () => {
     <Link to="/ai-assistent" className="rexo-announce group">
       <span className="rexo-announce-shine" />
       <span className="px-2 py-0.5 rounded-full bg-dark-950 text-primary-300 text-[11px] font-bold">{nl ? 'NIEUW' : 'NEW'}</span>
-      <span><b>Rexo AI</b><span className="hidden sm:inline"> {nl ? 'praat met je kamer, kantoor of wat dan ook.' : 'talk to your room, office or any space.'}</span><span className="sm:hidden"> {nl ? 'praat met je kamer.' : 'talk to your room.'}</span></span>
+      <span><b>Rexo AI</b><span className="hidden sm:inline"> {nl ? 'praat met je kamer, huis of kantoor. Nu ook als AI-werknemer voor bedrijven.' : 'talk to your room, home or office. Now also as an AI employee for businesses.'}</span><span className="sm:hidden"> {nl ? 'praat met je kamer.' : 'talk to your room.'}</span></span>
       <span className="font-semibold underline underline-offset-2 group-hover:no-underline">{nl ? 'Ontdek' : 'Discover'} →</span>
     </Link>
   );

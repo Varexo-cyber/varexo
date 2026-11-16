@@ -8,6 +8,7 @@ import { ArrowIcon } from '../components/Section';
 import { useLanguage } from '../contexts/LanguageContext';
 import SpeakerVisual from '../components/SpeakerVisual';
 import KineticText from '../components/KineticText';
+import RotatingWord from '../components/RotatingWord';
 import DotField from '../components/DotField';
 import RexoBanner, { RexoMark } from '../components/RexoBanner';
 
@@ -16,23 +17,6 @@ const work = [
   { name: 'HG Transport', domain: 'hgexperts.nl', img: '/portfolio/hgtransport.jpg', tag: 'Website · Logistiek' },
   { name: 'Labfix', domain: 'labfix.nl', img: '/portfolio/labfix.jpg', tag: 'Webshop · Elektronica' },
 ];
-
-// Word that cycles through a list with a vertical slide
-const RotatingWord: React.FC<{ words: string[] }> = ({ words }) => {
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setI((v) => (v + 1) % words.length), 2400);
-    return () => clearInterval(id);
-  }, [words.length]);
-  return (
-    <span className="rotator">
-      {words.map((w, idx) => (
-        <span key={w} className={`rotator-word serif text-primary-300 ${idx === i ? 'is-in' : idx === (i - 1 + words.length) % words.length ? 'is-out' : ''}`}>{w}</span>
-      ))}
-      <span className="invisible serif">{words.reduce((a, b) => (a.length > b.length ? a : b))}</span>
-    </span>
-  );
-};
 
 const Home: React.FC = () => {
   const { language } = useLanguage();
@@ -190,14 +174,14 @@ const Home: React.FC = () => {
                     <span className="px-2 py-0.5 rounded-full bg-primary-500 text-dark-950 text-xs font-bold">{nl ? 'Nieuw' : 'New'}</span>
                     {nl ? 'Maak kennis met' : 'Meet'} <RexoMark className="text-base" />
                   </span>
-                  <h2 className="display text-4xl md:text-6xl mb-5">{nl ? 'Praat met je kamer.' : 'Talk to your room.'}</h2>
+                  <h2 className="display text-4xl md:text-6xl mb-5"><>{nl ? 'Praat met je' : 'Talk to your'} <RotatingWord words={nl ? ['kamer.', 'huis.', 'kantoor.'] : ['room.', 'home.', 'office.']} /></></h2>
                   <p className="lead max-w-lg mb-8">
                     {nl
                       ? 'Rexo AI maakt van je kamer, kantoor of praktijk een ruimte waar je mee praat. Hij bedient je eigen apps, kent je accounts en onthoudt wat je vertelt. Wij installeren alles bij jou op locatie.'
                       : 'Rexo AI turns your room, office or practice into a space you talk to. It runs your own apps, knows your accounts and remembers what you tell it. We install everything on site.'}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-8">
-                    {(nl ? ['Kamer, kantoor of praktijk', 'Kent je accounts', 'WhatsApp, Discord & Instagram', 'Onthoudt alles'] : ['Room, office or practice', 'Knows your accounts', 'WhatsApp, Discord & Instagram', 'Remembers everything']).map((x) => (
+                    {(nl ? ['AI-werknemer op maat', 'Bespaart managers uren', 'WhatsApp, Discord & Instagram', 'Onthoudt alles'] : ['Custom AI employee', 'Saves managers hours', 'WhatsApp, Discord & Instagram', 'Remembers everything']).map((x) => (
                       <span key={x} className="chip !text-xs !py-1">✓ {x}</span>
                     ))}
                   </div>
