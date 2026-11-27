@@ -33,6 +33,28 @@ const Portfolio: React.FC = () => {
       link: 'https://dekvloerexperts.nl'
     },
     {
+      id: '6',
+      title: 'Truckbandenhulp',
+      category: nl ? 'Bedrijfswebsite' : 'Business Website',
+      description: nl
+        ? 'Website voor mobiele truckbandenservice, dag en nacht. Chauffeurs melden bandenpech direct via kenteken, bellen of WhatsApp, en de servicewagen rijdt uit naar de vluchtstrook of het bedrijfsterrein.'
+        : 'Website for a mobile truck tyre service, day and night. Drivers report a flat via licence plate, phone or WhatsApp, and the service van drives out to the hard shoulder or yard.',
+      image: '/portfolio/truckbandenhulp.jpg',
+      technologies: ['React', 'TypeScript', 'Tailwind CSS'],
+      link: 'https://truckbandenhulp.nl'
+    },
+    {
+      id: '7',
+      title: 'Mobiele Autobanden',
+      category: nl ? 'Bedrijfswebsite' : 'Business Website',
+      description: nl
+        ? 'Website voor een bandenservice aan huis voor personenauto\'s. Klanten vullen hun bandenmaat in en sturen hun aanvraag direct via WhatsApp; repareren, vervangen en wisselen op de plek waar de auto staat.'
+        : 'Website for an at-home tyre service for cars. Customers enter their tyre size and send their request straight via WhatsApp; repair, replace and swap wherever the car is parked.',
+      image: '/portfolio/mobieleautobanden.jpg',
+      technologies: ['React', 'TypeScript', 'Tailwind CSS'],
+      link: 'https://mobieleautobanden.nl'
+    },
+    {
       id: '3',
       title: 'HG Transport',
       category: language === 'nl' ? 'Bedrijfswebsite' : 'Business Website',

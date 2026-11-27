@@ -6,14 +6,17 @@ import SEO from '../components/SEO';
 import { Magnetic, CountUp } from '../components/Interactive';
 import { ArrowIcon } from '../components/Section';
 import { useLanguage } from '../contexts/LanguageContext';
+import { ProjectDeck, WorkCarousel, WorkItem } from '../components/WorkShowcase';
 import SpeakerVisual from '../components/SpeakerVisual';
 import KineticText from '../components/KineticText';
 import RotatingWord from '../components/RotatingWord';
 import DotField from '../components/DotField';
 import RexoBanner, { RexoMark } from '../components/RexoBanner';
 
-const work = [
+const work: WorkItem[] = [
   { name: 'Dekvloerexperts', domain: 'dekvloerexperts.nl', img: '/portfolio/dekvloerexperts.jpg', tag: 'Website · Bouw' },
+  { name: 'Truckbandenhulp', domain: 'truckbandenhulp.nl', img: '/portfolio/truckbandenhulp.jpg', tag: 'Website · Pechhulp' },
+  { name: 'Mobiele Autobanden', domain: 'mobieleautobanden.nl', img: '/portfolio/mobieleautobanden.jpg', tag: 'Website · Bandenservice' },
   { name: 'HG Transport', domain: 'hgexperts.nl', img: '/portfolio/hgtransport.jpg', tag: 'Website · Logistiek' },
   { name: 'Labfix', domain: 'labfix.nl', img: '/portfolio/labfix.jpg', tag: 'Webshop · Elektronica' },
 ];
@@ -134,14 +137,7 @@ const Home: React.FC = () => {
             </div>
 
             <div className="lg:col-span-5">
-              <div className="deck cursor-hover">
-                {work.map((w, i) => (
-                  <a key={w.name} href={`https://${w.domain}`} target="_blank" rel="noopener noreferrer" className={`deck-card deck-${i}`}>
-                    <img src={w.img} alt={w.name} />
-                    <span className="deck-label">{w.name}</span>
-                  </a>
-                ))}
-              </div>
+              <ProjectDeck items={work} />
             </div>
           </div>
 
@@ -263,25 +259,7 @@ const Home: React.FC = () => {
               <Link to="/portfolio" className="btn-ghost-modern self-start md:self-auto">{nl ? 'Alle projecten' : 'All projects'} <ArrowIcon className="w-4 h-4 ml-2" /></Link>
             </div>
           </AnimateOnScroll>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {work.map((w, i) => (
-              <AnimateOnScroll key={w.name} delay={i * 0.08} className={i === 0 ? 'md:col-span-2' : ''}>
-                <a href={`https://${w.domain}`} target="_blank" rel="noopener noreferrer" className="work-card group block">
-                  <div className={`img-reveal overflow-hidden rounded-[1.5rem] ${i === 0 ? 'aspect-[16/8]' : 'aspect-[16/11]'}`}>
-                    <img src={w.img} alt={w.name} loading="lazy" className="w-full h-full object-cover object-top transition-transform duration-[1.2s] ease-out group-hover:scale-[1.04]" />
-                  </div>
-                  <span className="work-view">{nl ? 'Bekijk' : 'View'}</span>
-                  <div className="flex items-center justify-between mt-5">
-                    <div>
-                      <div className="text-xl font-semibold text-white">{w.name}</div>
-                      <div className="text-sm text-gray-500">{w.tag}</div>
-                    </div>
-                    <span className="text-sm text-gray-400 group-hover:text-primary-300 transition-colors">{w.domain} ↗</span>
-                  </div>
-                </a>
-              </AnimateOnScroll>
-            ))}
-          </div>
+          <WorkCarousel items={work} />
         </div>
       </section>
 
