@@ -534,7 +534,7 @@ export const seoLandingPages: Record<string, LandingPageData> = {
     sections: [
       { h2: 'Onze prijspakketten', text: 'Basic (€650): 1-pager voor ZZP/freelancer. Pro (€849): tot 10 pagina\'s, ideaal voor MKB. Premium (€1499): uitgebreide site met blog, klantenportaal of webshop. Ieder pakket inclusief design, ontwikkeling, hosting (eerste jaar) en SSL.' },
       { h2: 'Wat zit er in de prijs?', text: 'Custom design op maat van jouw merk, professionele ontwikkeling met React/Next.js, mobiel-vriendelijk, SEO-basis, eigen domein, hosting & SSL eerste jaar gratis, eerste maand support. Geen losse facturen voor essentiele onderdelen.' },
-      { h2: 'Optionele extra\'s', text: 'Email hosting €9,99/m, onderhoud & backups €39,99/m, SEO €89,99/m, logo & huisstijl €199 eenmalig. Alles transparant gepriced — jij kiest wat je nodig hebt. Geen "advies" om dingen te kopen die je niet nodig hebt.' },
+      { h2: 'Optionele extra\'s', text: 'Email hosting €9,99/m, onderhoud & backups €29,99/m, SEO €89,99/m, logo & huisstijl €199 eenmalig. Alles transparant gepriced — jij kiest wat je nodig hebt. Geen "advies" om dingen te kopen die je niet nodig hebt.' },
     ],
     cta: { text: 'Bekijk alle prijzen of vraag offerte', button: 'Bekijk prijzen' },
   },
@@ -547,7 +547,7 @@ export const seoLandingPages: Record<string, LandingPageData> = {
     sections: [
       { h2: 'Prijsranges in Nederland', text: 'Goedkope template-sites: €100-€400 (vaak slechte kwaliteit). Standaard professionele sites: €650-€2000. Uitgebreide custom sites: €2000-€10.000. Enterprise platforms: €10.000+. Bij Varexo zit je in de tweede categorie — top kwaliteit voor scherpe prijs.' },
       { h2: 'Waar zit je geld in?', text: '70% gaat naar ontwikkeltijd (design, code, testen). 15% naar tools (hosting, plugins). 15% naar service (support, projectmanagement). Hoe complexer de site, hoe meer ontwikkelingstijd, hoe hoger de prijs. Logisch.' },
-      { h2: 'Maandelijkse kosten', text: 'Naast eenmalige bouwkosten zijn er optionele maandelijkse kosten: hosting (€10-30/m), onderhoud (€39,99/m bij ons), SEO (€89,99/m). Email hosting €9,99/m. Allemaal optioneel — jij beslist wat je afneemt.' },
+      { h2: 'Maandelijkse kosten', text: 'Naast eenmalige bouwkosten zijn er optionele maandelijkse kosten: hosting (€10-30/m), onderhoud (€29,99/m bij ons), SEO (€89,99/m). Email hosting €9,99/m. Allemaal optioneel — jij beslist wat je afneemt.' },
     ],
     cta: { text: 'Wil je een precieze offerte? Vraag aan!', button: 'Vraag offerte aan' },
   },

@@ -5003,7 +5003,7 @@ const AdminDashboard: React.FC = () => {
                       <div className="space-y-2">
                         {[
                           { value: 'email' as const, label: `Email Hosting - €9,99/${language === 'nl' ? 'maand' : 'month'}` },
-                          { value: 'maintenance' as const, label: `${language === 'nl' ? 'Onderhoud & Backups' : 'Maintenance & Backups'} - €39,99/${language === 'nl' ? 'maand' : 'month'}` },
+                          { value: 'maintenance' as const, label: `${language === 'nl' ? 'Onderhoud & Backups' : 'Maintenance & Backups'} - €29,99/${language === 'nl' ? 'maand' : 'month'}` },
                           { value: 'seo' as const, label: `SEO - €89,99/${language === 'nl' ? 'maand' : 'month'}` },
                           { value: 'logo' as const, label: `Logo & ${language === 'nl' ? 'Huisstijl' : 'Branding'} - €199,99 (${language === 'nl' ? 'eenmalig' : 'one-time'})` },
                           { value: 'domain' as const, label: `${language === 'nl' ? 'Domein Registratie' : 'Domain Registration'} - €19,99/${language === 'nl' ? 'jaar' : 'year'}` },
