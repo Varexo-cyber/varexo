@@ -6,7 +6,7 @@ import SEO from '../components/SEO';
 import { Magnetic, CountUp } from '../components/Interactive';
 import { ArrowIcon } from '../components/Section';
 import { useLanguage } from '../contexts/LanguageContext';
-import { ProjectDeck, WorkCarousel, WorkItem } from '../components/WorkShowcase';
+import { ProjectDeck, WorkItem } from '../components/WorkShowcase';
 import SpeakerVisual from '../components/SpeakerVisual';
 import KineticText from '../components/KineticText';
 import RotatingWord from '../components/RotatingWord';
@@ -247,8 +247,9 @@ const Home: React.FC = () => {
       </section>
 
       {/* ───────── Selected work ───────── */}
-      <section className="py-28 bg-black relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 50% 40% at 80% 0%, rgba(16,185,129,0.14), transparent 70%)' }} />
+      <section className="work-section py-28 relative overflow-hidden">
+        <div className="aurora" />
+        <DotField gap={30} />
         <div className="container mx-auto px-4 max-w-7xl relative">
           <AnimateOnScroll>
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
@@ -259,7 +260,34 @@ const Home: React.FC = () => {
               <Link to="/portfolio" className="btn-ghost-modern self-start md:self-auto">{nl ? 'Alle projecten' : 'All projects'} <ArrowIcon className="w-4 h-4 ml-2" /></Link>
             </div>
           </AnimateOnScroll>
-          <WorkCarousel items={work} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {work.map((w, i) => (
+              <AnimateOnScroll key={w.name} delay={(i % 2) * 0.08} className={i === 0 ? 'md:col-span-2' : ''}>
+                <a href={`https://${w.domain}`} target="_blank" rel="noopener noreferrer" className="work-tile group block">
+                  <div className="work-frame">
+                    <div className="work-frame-bar">
+                      <span /><span /><span />
+                      <em>{w.domain}</em>
+                    </div>
+                    <div className={`img-reveal overflow-hidden ${i === 0 ? 'aspect-[16/8]' : 'aspect-[16/10]'}`}>
+                      <img src={w.img} alt={w.name} loading="lazy" className="w-full h-full object-cover object-top transition-transform duration-[1.4s] ease-out group-hover:scale-[1.05]" />
+                    </div>
+                    <span className="work-view">{nl ? 'Bekijk' : 'View'}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-4 mt-5 px-1">
+                    <div className="flex items-center gap-4">
+                      <span className="work-num">{String(i + 1).padStart(2, '0')}</span>
+                      <div>
+                        <div className="text-xl font-semibold text-white group-hover:text-primary-300 transition-colors">{w.name}</div>
+                        <div className="text-sm text-gray-500">{w.tag}</div>
+                      </div>
+                    </div>
+                    <span className="work-go"><ArrowIcon className="w-4 h-4 -rotate-45 group-hover:rotate-0 transition-transform duration-500" /></span>
+                  </div>
+                </a>
+              </AnimateOnScroll>
+            ))}
+          </div>
         </div>
       </section>
 
